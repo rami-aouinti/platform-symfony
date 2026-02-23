@@ -18,6 +18,7 @@ use App\User\Domain\Entity\Interfaces\UserInterface;
 use App\User\Domain\Entity\Traits\Blameable;
 use App\User\Domain\Entity\Traits\UserRelations;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Override;
@@ -257,6 +258,12 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     private ?CandidateProfile $candidateProfile = null;
 
     /**
+     * @var Collection<int, SocialAccount>|ArrayCollection<int, SocialAccount>
+     */
+    #[ORM\OneToMany(targetEntity: SocialAccount::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection | ArrayCollection $socialAccounts;
+
+    /**
      * @throws Throwable
      */
     public function __construct()
@@ -270,6 +277,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         $this->logsLoginFailure = new ArrayCollection();
         $this->userProfile = new UserProfile($this);
         $this->companyMemberships = new ArrayCollection();
+        $this->socialAccounts = new ArrayCollection();
     }
 
     /**
@@ -283,6 +291,31 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     public function getCandidateProfile(): ?CandidateProfile
     {
         return $this->candidateProfile;
+    }
+
+    /**
+     * @return Collection<int, SocialAccount>|ArrayCollection<int, SocialAccount>
+     */
+    public function getSocialAccounts(): Collection | ArrayCollection
+    {
+        return $this->socialAccounts;
+    }
+
+    public function addSocialAccount(SocialAccount $socialAccount): self
+    {
+        if (!$this->socialAccounts->contains($socialAccount)) {
+            $this->socialAccounts->add($socialAccount);
+            $socialAccount->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSocialAccount(SocialAccount $socialAccount): self
+    {
+        $this->socialAccounts->removeElement($socialAccount);
+
+        return $this;
     }
 
     /**

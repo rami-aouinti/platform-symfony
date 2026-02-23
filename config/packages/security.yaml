@@ -27,6 +27,10 @@ security:
                 check_path: /api/v1/auth/get_token
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: App\User\Application\Security\Handler\TranslatedAuthenticationFailureHandler
+        social_login:
+            pattern: ^/api/v1/auth/social/connect$
+            stateless: true
+            security: false
         root:
             pattern: ^/($|command-scheduler)
             stateless: true
