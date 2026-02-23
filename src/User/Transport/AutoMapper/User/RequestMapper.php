@@ -7,9 +7,12 @@ namespace App\User\Transport\AutoMapper\User;
 use App\General\Domain\Enum\Language;
 use App\General\Domain\Enum\Locale;
 use App\General\Transport\AutoMapper\RestRequestMapper;
+use App\User\Application\DTO\User\Address;
+use App\User\Application\DTO\User\UserAvatar;
 use App\User\Application\DTO\User\UserProfile;
 use App\User\Application\Resource\UserGroupResource;
 use App\User\Domain\Entity\UserGroup;
+use App\User\Domain\Enum\AddressType;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use Throwable;
@@ -74,10 +77,6 @@ class RequestMapper extends RestRequestMapper
     {
         $profile = new UserProfile();
 
-        if (isset($userProfile['photo'])) {
-            $profile->setPhoto($userProfile['photo']);
-        }
-
         if (isset($userProfile['phone'])) {
             $profile->setPhone($userProfile['phone']);
         }
@@ -90,15 +89,67 @@ class RequestMapper extends RestRequestMapper
             $profile->setBio($userProfile['bio']);
         }
 
-        if (isset($userProfile['address'])) {
-            $profile->setAddress($userProfile['address']);
-        }
-
         if (array_key_exists('contacts', $userProfile)) {
             $contacts = $userProfile['contacts'];
             $profile->setContacts(is_array($contacts) ? $contacts : null);
         }
 
+        if (isset($userProfile['avatar']) && is_array($userProfile['avatar'])) {
+            $profile->setAvatar($this->transformAvatar($userProfile['avatar']));
+        }
+
+        if (isset($userProfile['addresses']) && is_array($userProfile['addresses'])) {
+            $profile->setAddresses($this->transformAddresses($userProfile['addresses']));
+        }
+
         return $profile;
+    }
+
+    /**
+     * @param array<string, mixed> $avatar
+     */
+    protected function transformAvatar(array $avatar): UserAvatar
+    {
+        $dto = new UserAvatar();
+
+        if (array_key_exists('mediaId', $avatar)) {
+            $dto->setMediaId(is_string($avatar['mediaId']) ? $avatar['mediaId'] : null);
+        }
+
+        if (isset($avatar['url']) && is_string($avatar['url'])) {
+            $dto->setUrl($avatar['url']);
+        }
+
+        return $dto;
+    }
+
+    /**
+     * @param array<int, mixed> $addresses
+     *
+     * @return array<int, Address>
+     */
+    protected function transformAddresses(array $addresses): array
+    {
+        return array_map(function (mixed $item): Address {
+            if (!is_array($item)) {
+                throw new InvalidArgumentException('Invalid address payload.');
+            }
+
+            $typeRaw = $item['type'] ?? null;
+            if (!is_string($typeRaw)) {
+                throw new InvalidArgumentException('Address type must be a string.');
+            }
+
+            $dto = (new Address())
+                ->setType(AddressType::tryFrom($typeRaw) ?? throw new InvalidArgumentException('Invalid address type.'))
+                ->setStreetLine1((string) ($item['streetLine1'] ?? ''))
+                ->setStreetLine2(isset($item['streetLine2']) ? (string) $item['streetLine2'] : null)
+                ->setPostalCode((string) ($item['postalCode'] ?? ''))
+                ->setCity((string) ($item['city'] ?? ''))
+                ->setState(isset($item['state']) ? (string) $item['state'] : null)
+                ->setCountryCode((string) ($item['countryCode'] ?? ''));
+
+            return $dto;
+        }, $addresses);
     }
 }

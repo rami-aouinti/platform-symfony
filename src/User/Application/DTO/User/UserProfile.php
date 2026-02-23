@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\User\Application\DTO\User;
 
 use App\User\Domain\Entity\UserProfile as Entity;
-use DateTimeImmutable;
 use Symfony\Component\Validator\Constraints as Assert;
+
+use function array_map;
 
 /**
  * @package App\User
@@ -14,34 +15,28 @@ use Symfony\Component\Validator\Constraints as Assert;
 class UserProfile
 {
     #[Assert\Length(max: 255)]
-    protected ?string $photo = null;
-
-    #[Assert\Length(max: 255)]
+    #[Assert\Regex(pattern: '/^\+?[1-9]\d{6,14}$/')]
     protected ?string $phone = null;
 
-    protected ?DateTimeImmutable $birthDate = null;
+    protected ?\DateTimeImmutable $birthDate = null;
 
     protected ?string $bio = null;
-
-    #[Assert\Length(max: 255)]
-    protected ?string $address = null;
 
     /**
      * @var array<mixed>|null
      */
     protected ?array $contacts = null;
 
-    public function getPhoto(): ?string
-    {
-        return $this->photo;
-    }
+    #[Assert\Valid]
+    protected ?UserAvatar $avatar = null;
 
-    public function setPhoto(?string $photo): self
-    {
-        $this->photo = $photo;
+    /**
+     * @var array<int, Address>
+     */
+    #[Assert\Valid]
+    protected array $addresses = [];
 
-        return $this;
-    }
+    protected ?string $avatarUrl = null;
 
     public function getPhone(): ?string
     {
@@ -55,12 +50,12 @@ class UserProfile
         return $this;
     }
 
-    public function getBirthDate(): ?DateTimeImmutable
+    public function getBirthDate(): ?\DateTimeImmutable
     {
         return $this->birthDate;
     }
 
-    public function setBirthDate(?DateTimeImmutable $birthDate): self
+    public function setBirthDate(?\DateTimeImmutable $birthDate): self
     {
         $this->birthDate = $birthDate;
 
@@ -75,18 +70,6 @@ class UserProfile
     public function setBio(?string $bio): self
     {
         $this->bio = $bio;
-
-        return $this;
-    }
-
-    public function getAddress(): ?string
-    {
-        return $this->address;
-    }
-
-    public function setAddress(?string $address): self
-    {
-        $this->address = $address;
 
         return $this;
     }
@@ -109,14 +92,63 @@ class UserProfile
         return $this;
     }
 
+    public function getAvatar(): ?UserAvatar
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?UserAvatar $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    /**
+     * @return array<int, Address>
+     */
+    public function getAddresses(): array
+    {
+        return $this->addresses;
+    }
+
+    /**
+     * @param array<int, Address> $addresses
+     */
+    public function setAddresses(array $addresses): self
+    {
+        $this->addresses = $addresses;
+
+        return $this;
+    }
+
+    public function getAvatarUrl(): ?string
+    {
+        return $this->avatarUrl;
+    }
+
+    public function setAvatarUrl(?string $avatarUrl): self
+    {
+        $this->avatarUrl = $avatarUrl;
+
+        return $this;
+    }
+
     public static function fromEntity(Entity $entity): self
     {
+        /** @var array<int, Address> $addresses */
+        $addresses = array_map(
+            static fn (\App\User\Domain\Entity\Address $address): Address => Address::fromEntity($address),
+            $entity->getAddresses()->toArray(),
+        );
+
         return (new self())
-            ->setPhoto($entity->getPhoto())
             ->setPhone($entity->getPhone())
             ->setBirthDate($entity->getBirthDate())
             ->setBio($entity->getBio())
-            ->setAddress($entity->getAddress())
-            ->setContacts($entity->getContacts());
+            ->setContacts($entity->getContacts())
+            ->setAvatar($entity->getAvatar() ? UserAvatar::fromEntity($entity->getAvatar()) : null)
+            ->setAvatarUrl($entity->getAvatarUrl())
+            ->setAddresses($addresses);
     }
 }
