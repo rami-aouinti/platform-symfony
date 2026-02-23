@@ -10,10 +10,12 @@ use App\General\Domain\Rest\UuidHelper;
 use App\Role\Application\Security\Interfaces\RolesServiceInterface;
 use App\Tests\Utils\PhpUnitUtil;
 use App\User\Domain\Entity\Address;
+use App\User\Domain\Entity\SocialAccount;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Entity\UserAvatar;
 use App\User\Domain\Entity\UserGroup;
 use App\User\Domain\Enum\AddressType;
+use App\User\Domain\Enum\SocialProvider;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -21,6 +23,7 @@ use Override;
 use Throwable;
 
 use function array_map;
+use function str_replace;
 
 /**
  * @package App\User
@@ -39,6 +42,9 @@ final class LoadUserData extends Fixture implements OrderedFixtureInterface
         'john-user' => '20000000-0000-1000-8000-000000000004',
         'john-admin' => '20000000-0000-1000-8000-000000000005',
         'john-root' => '20000000-0000-1000-8000-000000000006',
+        'alice-user' => '20000000-0000-1000-8000-000000000007',
+        'bob-admin' => '20000000-0000-1000-8000-000000000008',
+        'carol-user' => '20000000-0000-1000-8000-000000000009',
     ];
 
     public function __construct(
@@ -54,21 +60,31 @@ final class LoadUserData extends Fixture implements OrderedFixtureInterface
     #[Override]
     public function load(ObjectManager $manager): void
     {
-        // Create entities
         array_map(
-            fn (?string $role): bool => $this->createUser($manager, $role),
+            fn (?string $role): bool => $this->createRoleUser($manager, $role),
             [
                 null,
                 ...$this->rolesService->getRoles(),
             ],
         );
-        // Flush database changes
+
+        $this->createNamedUser($manager, 'alice', 'user', [
+            [SocialProvider::GOOGLE, 'alice-google-id'],
+            [SocialProvider::GITHUB, 'alice-github-id'],
+            [SocialProvider::LINKEDIN, 'alice-linkedin-id'],
+        ]);
+        $this->createNamedUser($manager, 'bob', 'admin', [
+            [SocialProvider::AZURE, 'bob-azure-id'],
+            [SocialProvider::GITLAB, 'bob-gitlab-id'],
+        ]);
+        $this->createNamedUser($manager, 'carol', 'user', [
+            [SocialProvider::FACEBOOK, 'carol-facebook-id'],
+            [SocialProvider::INSTAGRAM, 'carol-instagram-id'],
+        ]);
+
         $manager->flush();
     }
 
-    /**
-     * Get the order of this fixture
-     */
     #[Override]
     public function getOrder(): int
     {
@@ -81,14 +97,12 @@ final class LoadUserData extends Fixture implements OrderedFixtureInterface
     }
 
     /**
-     * Method to create User entity with specified role.
-     *
      * @throws Throwable
      */
-    private function createUser(ObjectManager $manager, ?string $role = null): true
+    private function createRoleUser(ObjectManager $manager, ?string $role = null): true
     {
         $suffix = $role === null ? '' : '-' . $this->rolesService->getShort($role);
-        // Create new entity
+
         $entity = new User()
             ->setUsername('john' . $suffix)
             ->setFirstName('John')
@@ -98,25 +112,16 @@ final class LoadUserData extends Fixture implements OrderedFixtureInterface
             ->setLocale(Locale::EN)
             ->setPlainPassword('password' . $suffix);
 
-
         if ($role === null) {
-            $profile = $entity->getOrCreateUserProfile()
-                ->setPhone('+33123456789')
-                ->setBio('Demo profile for fixtures');
+            $this->fillProfile($entity, '+33123456789', 'Demo profile for fixtures');
 
-            $profile->setAvatar(
-                (new UserAvatar($profile))
-                    ->setUrl('https://example.test/avatar.jpg')
-                    ->setMediaId('demo-media-id')
+            $entity->addSocialAccount(
+                (new SocialAccount($entity, SocialProvider::GOOGLE, 'john-google-id'))
+                    ->setProviderEmail('john.doe@test.com'),
             );
-
-            $profile->addAddress(
-                (new Address())
-                    ->setType(AddressType::HOME)
-                    ->setStreetLine1('1 Demo Street')
-                    ->setPostalCode('75001')
-                    ->setCity('Paris')
-                    ->setCountryCode('FR')
+            $entity->addSocialAccount(
+                (new SocialAccount($entity, SocialProvider::GITHUB, 'john-github-id'))
+                    ->setProviderEmail('john.doe@test.com'),
             );
         }
 
@@ -126,17 +131,69 @@ final class LoadUserData extends Fixture implements OrderedFixtureInterface
             $entity->addUserGroup($userGroup);
         }
 
-        PhpUnitUtil::setProperty(
-            'id',
-            UuidHelper::fromString(self::$uuids['john' . $suffix]),
-            $entity
-        );
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString(self::$uuids['john' . $suffix]), $entity);
 
-        // Persist entity
         $manager->persist($entity);
-        // Create reference for later usage
         $this->addReference('User-' . $entity->getUsername(), $entity);
 
         return true;
+    }
+
+    /**
+     * @param array<int, array{0: SocialProvider, 1: string}> $socialAccounts
+     *
+     * @throws Throwable
+     */
+    private function createNamedUser(ObjectManager $manager, string $name, string $roleShort, array $socialAccounts): void
+    {
+        $entity = new User()
+            ->setUsername($name . '-' . $roleShort)
+            ->setFirstName(ucfirst($name))
+            ->setLastName('Fixture')
+            ->setEmail($name . '.' . $roleShort . '@test.com')
+            ->setLanguage(Language::EN)
+            ->setLocale(Locale::EN)
+            ->setPlainPassword('password-' . $roleShort);
+
+        /** @var UserGroup $userGroup */
+        $userGroup = $this->getReference('UserGroup-' . $roleShort, UserGroup::class);
+        $entity->addUserGroup($userGroup);
+
+        $this->fillProfile($entity, '+33000000000', 'Fixture account for social auth tests: ' . $name);
+
+        foreach ($socialAccounts as [$provider, $providerUserId]) {
+            $entity->addSocialAccount(
+                (new SocialAccount($entity, $provider, $providerUserId))
+                    ->setProviderEmail($entity->getEmail()),
+            );
+        }
+
+        $uuidKey = $name . '-' . $roleShort;
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString(self::$uuids[$uuidKey]), $entity);
+
+        $manager->persist($entity);
+        $this->addReference('User-' . str_replace('.', '-', $entity->getUsername()), $entity);
+    }
+
+    private function fillProfile(User $entity, string $phone, string $bio): void
+    {
+        $profile = $entity->getOrCreateUserProfile()
+            ->setPhone($phone)
+            ->setBio($bio);
+
+        $profile->setAvatar(
+            (new UserAvatar($profile))
+                ->setUrl('https://example.test/avatar.jpg')
+                ->setMediaId('demo-media-id'),
+        );
+
+        $profile->addAddress(
+            (new Address())
+                ->setType(AddressType::HOME)
+                ->setStreetLine1('1 Demo Street')
+                ->setPostalCode('75001')
+                ->setCity('Paris')
+                ->setCountryCode('FR'),
+        );
     }
 }
