@@ -12,7 +12,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use function array_column;
 use function array_key_exists;
+use function in_array;
 use function hash;
 use function implode;
 
@@ -83,6 +85,20 @@ class JWTDecodedSubscriber implements EventSubscriberInterface
         // Custom checks to validate user's JWT
         if (!array_key_exists('checksum', $payload) || $payload['checksum'] !== $checksum) {
             $event->markAsInvalid();
+
+            return;
+        }
+
+        if (array_key_exists('organization_context', $payload) && array_key_exists('organizations', $payload)) {
+            /** @var array<int, string> $companyIds */
+            $companyIds = array_column((array)$payload['organizations'], 'companyId');
+
+            if (
+                $payload['organization_context'] !== null
+                && !in_array($payload['organization_context'], $companyIds, true)
+            ) {
+                $event->markAsInvalid();
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\User\Application\Security;
 
+use App\Company\Domain\Entity\CompanyMembership;
 use App\General\Domain\Enum\Language;
 use App\General\Domain\Enum\Locale;
 use App\User\Domain\Entity\User;
@@ -11,6 +12,8 @@ use Deprecated;
 use Override;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+
+use function array_values;
 
 /**
  * @package App\User
@@ -27,6 +30,11 @@ class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
     private readonly string $timezone;
 
     /**
+     * @var array<int, array{companyId: string, role: string, status: string}>
+     */
+    private readonly array $organizations;
+
+    /**
      * @param array<int, string> $roles
      */
     public function __construct(
@@ -38,6 +46,11 @@ class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
         $this->language = $user->getLanguage();
         $this->locale = $user->getLocale();
         $this->timezone = $user->getTimezone();
+        $this->organizations = array_values($user->getCompanyMemberships()->map(static fn (CompanyMembership $membership): array => [
+            'companyId' => $membership->getCompany()->getId(),
+            'role' => $membership->getRole(),
+            'status' => $membership->getStatus(),
+        ])->toArray());
     }
 
     public function getUuid(): string
@@ -105,5 +118,13 @@ class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
     public function getTimezone(): string
     {
         return $this->timezone;
+    }
+
+    /**
+     * @return array<int, array{companyId: string, role: string, status: string}>
+     */
+    public function getOrganizations(): array
+    {
+        return $this->organizations;
     }
 }
