@@ -76,6 +76,18 @@ doctrine:
                         dir: '%kernel.project_dir%/src/User/Domain/Entity'
                         prefix: 'App\User\Domain\Entity'
                         alias: User
+                    Candidate:
+                        type: attribute
+                        is_bundle: false
+                        dir: '%kernel.project_dir%/src/Candidate/Domain/Entity'
+                        prefix: 'App\Candidate\Domain\Entity'
+                        alias: Candidate
+                    Company:
+                        type: attribute
+                        is_bundle: false
+                        dir: '%kernel.project_dir%/src/Company/Domain/Entity'
+                        prefix: 'App\Company\Domain\Entity'
+                        alias: Company
                 dql:
                     datetime_functions:
                         datesub: DoctrineExtensions\Query\Mysql\DateSub
