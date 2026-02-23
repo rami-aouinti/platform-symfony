@@ -7,8 +7,10 @@ namespace App\User\Transport\AutoMapper\User;
 use App\General\Domain\Enum\Language;
 use App\General\Domain\Enum\Locale;
 use App\General\Transport\AutoMapper\RestRequestMapper;
+use App\User\Application\DTO\User\UserProfile;
 use App\User\Application\Resource\UserGroupResource;
 use App\User\Domain\Entity\UserGroup;
+use DateTimeImmutable;
 use InvalidArgumentException;
 use Throwable;
 
@@ -30,6 +32,7 @@ class RequestMapper extends RestRequestMapper
         'language',
         'locale',
         'timezone',
+        'userProfile',
         'userGroups',
         'password',
     ];
@@ -62,5 +65,40 @@ class RequestMapper extends RestRequestMapper
     protected function transformLocale(string $locale): Locale
     {
         return Locale::tryFrom($locale) ?? throw new InvalidArgumentException('Invalid locale');
+    }
+
+    /**
+     * @param array<string, mixed> $userProfile
+     */
+    protected function transformUserProfile(array $userProfile): UserProfile
+    {
+        $profile = new UserProfile();
+
+        if (isset($userProfile['photo'])) {
+            $profile->setPhoto($userProfile['photo']);
+        }
+
+        if (isset($userProfile['phone'])) {
+            $profile->setPhone($userProfile['phone']);
+        }
+
+        if (isset($userProfile['birthDate']) && is_string($userProfile['birthDate'])) {
+            $profile->setBirthDate(new DateTimeImmutable($userProfile['birthDate']));
+        }
+
+        if (isset($userProfile['bio'])) {
+            $profile->setBio($userProfile['bio']);
+        }
+
+        if (isset($userProfile['address'])) {
+            $profile->setAddress($userProfile['address']);
+        }
+
+        if (array_key_exists('contacts', $userProfile)) {
+            $contacts = $userProfile['contacts'];
+            $profile->setContacts(is_array($contacts) ? $contacts : null);
+        }
+
+        return $profile;
     }
 }

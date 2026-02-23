@@ -16,6 +16,7 @@ use App\User\Application\Validator\Constraints as UserAppAssert;
 use App\User\Domain\Entity\Interfaces\UserGroupAwareInterface;
 use App\User\Domain\Entity\User as Entity;
 use App\User\Domain\Entity\UserGroup as UserGroupEntity;
+use App\User\Domain\Entity\UserProfile as UserProfileEntity;
 use Override;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -38,6 +39,7 @@ class User extends RestDto
     protected static array $mappings = [
         'password' => 'updatePassword',
         'userGroups' => 'updateUserGroups',
+        'userProfile' => 'updateUserProfile',
     ];
 
     #[Assert\NotBlank]
@@ -73,6 +75,9 @@ class User extends RestDto
     #[ToolAppAssert\Timezone]
     protected string $timezone = LocalizationServiceInterface::DEFAULT_TIMEZONE;
 
+
+    protected UserProfile $userProfile;
+
     /**
      * @var UserGroupEntity[]|array<int, UserGroupEntity>
      */
@@ -87,6 +92,7 @@ class User extends RestDto
     {
         $this->language = Language::getDefault();
         $this->locale = Locale::getDefault();
+        $this->userProfile = new UserProfile();
     }
 
     public function getUsername(): string
@@ -183,6 +189,19 @@ class User extends RestDto
         return $this;
     }
 
+    public function getUserProfile(): UserProfile
+    {
+        return $this->userProfile;
+    }
+
+    public function setUserProfile(UserProfile $userProfile): self
+    {
+        $this->setVisited('userProfile');
+        $this->userProfile = $userProfile;
+
+        return $this;
+    }
+
     /**
      * @return array<int, UserGroupEntity>
      */
@@ -237,6 +256,9 @@ class User extends RestDto
             /** @var array<int, UserGroupEntity> $groups */
             $groups = $entity->getUserGroups()->toArray();
             $this->userGroups = $groups;
+            $this->userProfile = $entity->getUserProfile() instanceof UserProfileEntity
+                ? UserProfile::fromEntity($entity->getUserProfile())
+                : new UserProfile();
         }
 
         return $this;
@@ -265,6 +287,24 @@ class User extends RestDto
             static fn (UserGroupEntity $userGroup): UserGroupAwareInterface => $entity->addUserGroup($userGroup),
             $value,
         );
+
+        return $this;
+    }
+
+    /**
+     * Method to update User entity profile.
+     */
+    protected function updateUserProfile(Entity $entity, UserProfile $value): self
+    {
+        $profile = $entity->getOrCreateUserProfile();
+
+        $profile
+            ->setPhoto($value->getPhoto())
+            ->setPhone($value->getPhone())
+            ->setBirthDate($value->getBirthDate())
+            ->setBio($value->getBio())
+            ->setAddress($value->getAddress())
+            ->setContacts($value->getContacts());
 
         return $this;
     }

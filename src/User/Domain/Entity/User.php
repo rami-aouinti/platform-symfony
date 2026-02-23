@@ -234,6 +234,17 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
      */
     private string $plainPassword = '';
 
+    #[ORM\OneToOne(
+        targetEntity: UserProfile::class,
+        mappedBy: 'user',
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true,
+    )]
+    #[Groups([
+        'User.userProfile',
+    ])]
+    private ?UserProfile $userProfile = null;
+
     /**
      * @throws Throwable
      */
@@ -246,6 +257,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         $this->logsRequest = new ArrayCollection();
         $this->logsLogin = new ArrayCollection();
         $this->logsLoginFailure = new ArrayCollection();
+        $this->userProfile = new UserProfile($this);
     }
 
     /**
@@ -381,5 +393,30 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     public function eraseCredentials(): void
     {
         $this->plainPassword = '';
+    }
+
+    public function getUserProfile(): ?UserProfile
+    {
+        return $this->userProfile;
+    }
+
+    public function setUserProfile(?UserProfile $userProfile): self
+    {
+        $this->userProfile = $userProfile;
+
+        if ($this->userProfile instanceof UserProfile && $this->userProfile->getUser() !== $this) {
+            $this->userProfile->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function getOrCreateUserProfile(): UserProfile
+    {
+        if (!$this->userProfile instanceof UserProfile) {
+            $this->setUserProfile(new UserProfile($this));
+        }
+
+        return $this->userProfile;
     }
 }
