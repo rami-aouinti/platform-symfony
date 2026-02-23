@@ -63,6 +63,8 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
         $this->setLocalizationData($payload, $event->getUser());
         // Update JWT expiration data
         $this->setExpiration($payload);
+        // Add organization context to payload
+        $this->setOrganizationData($payload, $event->getUser());
         // Add some extra security data to payload
         $this->setSecurityData($payload);
         // And set new payload for JWT
@@ -85,6 +87,24 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
             : LocalizationServiceInterface::DEFAULT_TIMEZONE;
     }
 
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function setOrganizationData(array &$payload, UserInterface $user): void
+    {
+        if (!($user instanceof SecurityUser)) {
+            return;
+        }
+
+        $payload['organizations'] = $user->getOrganizations();
+
+        $request = $this->requestStack->getCurrentRequest();
+
+        if ($request !== null) {
+            $payload['organization_context'] = $request->headers->get('X-Company-Id');
+        }
+    }
     /**
      * Method to set/modify JWT expiration date dynamically.
      *

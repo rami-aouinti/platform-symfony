@@ -33,3 +33,21 @@ user-controllers:
     prefix: /api
     defaults:
         _format: json
+
+company-controllers:
+    resource:
+        path: ../src/Company/Transport/Controller/Api/
+        namespace: App\Company\Transport\Controller\Api
+    type: attribute
+    prefix: /api
+    defaults:
+        _format: json
+
+candidate-controllers:
+    resource:
+        path: ../src/Candidate/Transport/Controller/Api/
+        namespace: App\Candidate\Transport\Controller\Api
+    type: attribute
+    prefix: /api
+    defaults:
+        _format: json

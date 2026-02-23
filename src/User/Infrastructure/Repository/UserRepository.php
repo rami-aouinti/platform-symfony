@@ -76,9 +76,11 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
             // Build query
             $queryBuilder = $this
                 ->createQueryBuilder('u')
-                ->select('u, g, r')
+                ->select('u, g, r, cm, c')
                 ->leftJoin('u.userGroups', 'g')
-                ->leftJoin('g.role', 'r');
+                ->leftJoin('g.role', 'r')
+                ->leftJoin('u.companyMemberships', 'cm')
+                ->leftJoin('cm.company', 'c');
 
             if ($uuid) {
                 $queryBuilder

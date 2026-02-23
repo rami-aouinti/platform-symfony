@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\User\Domain\Entity;
 
+use App\Candidate\Domain\Entity\CandidateProfile;
+use App\Company\Domain\Entity\CompanyMembership;
 use App\General\Domain\Doctrine\DBAL\Types\Types as AppTypes;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
@@ -246,6 +248,15 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     private ?UserProfile $userProfile = null;
 
     /**
+     * @var Collection<int, CompanyMembership>|ArrayCollection<int, CompanyMembership>
+     */
+    #[ORM\OneToMany(targetEntity: CompanyMembership::class, mappedBy: 'user')]
+    private Collection | ArrayCollection $companyMemberships;
+
+    #[ORM\OneToOne(targetEntity: CandidateProfile::class, mappedBy: 'user')]
+    private ?CandidateProfile $candidateProfile = null;
+
+    /**
      * @throws Throwable
      */
     public function __construct()
@@ -258,6 +269,20 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         $this->logsLogin = new ArrayCollection();
         $this->logsLoginFailure = new ArrayCollection();
         $this->userProfile = new UserProfile($this);
+        $this->companyMemberships = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<int, CompanyMembership>|ArrayCollection<int, CompanyMembership>
+     */
+    public function getCompanyMemberships(): Collection | ArrayCollection
+    {
+        return $this->companyMemberships;
+    }
+
+    public function getCandidateProfile(): ?CandidateProfile
+    {
+        return $this->candidateProfile;
     }
 
     /**
