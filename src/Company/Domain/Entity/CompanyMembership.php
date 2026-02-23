@@ -15,6 +15,10 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * @package
+ * @author
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'company_membership')]
 #[ORM\UniqueConstraint(name: 'uq_company_membership_user_company', columns: ['user_id', 'company_id'])]

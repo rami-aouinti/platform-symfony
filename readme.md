@@ -1,13 +1,13 @@
 # PHP symfony environment with JSON REST API example
 Docker environment (based on official php and mysql docker hub repositories) required to run Symfony with JSON REST API example.
 
-[![Actions Status](https://github.com/systemsdk/docker-symfony-api/workflows/Symfony%20Rest%20API/badge.svg)](https://github.com/systemsdk/docker-symfony-api/actions)
-[![CircleCI](https://circleci.com/gh/systemsdk/docker-symfony-api.svg?style=svg)](https://circleci.com/gh/systemsdk/docker-symfony-api)
-[![Coverage Status](https://coveralls.io/repos/github/systemsdk/docker-symfony-api/badge.svg)](https://coveralls.io/github/systemsdk/docker-symfony-api)
-[![Latest Stable Version](https://poser.pugx.org/systemsdk/docker-symfony-api/v)](https://packagist.org/packages/systemsdk/docker-symfony-api)
+[![Actions Status](https://github.com/rami-aouinti/platform-symfony/workflows/Symfony%20Rest%20API/badge.svg)](https://github.com/rami-aouinti/platform-symfony/actions)
+[![CircleCI](https://circleci.com/gh/rami-aouinti/platform-symfony.svg?style=svg)](https://circleci.com/gh/rami-aouinti/platform-symfony)
+[![Coverage Status](https://coveralls.io/repos/github/rami-aouinti/platform-symfony/badge.svg)](https://coveralls.io/github/rami-aouinti/platform-symfony)
+[![Latest Stable Version](https://poser.pugx.org/rami-aouinti/platform-symfony/v)](https://packagist.org/packages/rami-aouinti/platform-symfony)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-[Source code](https://github.com/systemsdk/docker-symfony-api.git)
+[Source code](https://github.com/rami-aouinti/platform-symfony.git)
 
 ## Requirements
 * Docker Engine version 23.0 or later
