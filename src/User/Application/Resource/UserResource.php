@@ -48,6 +48,17 @@ class UserResource extends RestResource
         parent::__construct($repository);
     }
 
+
+    public function isLegacyProfileFieldsEnabled(): bool
+    {
+        return true;
+    }
+
+    public function getProfileContractVersion(): string
+    {
+        return 'v1+v2';
+    }
+
     /**
      * Method to fetch users for specified user group, note that this method will also check user role inheritance so
      * return value will contain all users that belong to specified user group via role inheritance.
@@ -56,6 +67,8 @@ class UserResource extends RestResource
      *
      * @return array<int, Entity>
      */
+
+
     public function getUsersForGroup(UserGroup $userGroup): array
     {
         /**
