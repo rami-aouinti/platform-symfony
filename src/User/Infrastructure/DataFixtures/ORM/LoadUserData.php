@@ -9,8 +9,11 @@ use App\General\Domain\Enum\Locale;
 use App\General\Domain\Rest\UuidHelper;
 use App\Role\Application\Security\Interfaces\RolesServiceInterface;
 use App\Tests\Utils\PhpUnitUtil;
+use App\User\Domain\Entity\Address;
 use App\User\Domain\Entity\User;
+use App\User\Domain\Entity\UserAvatar;
 use App\User\Domain\Entity\UserGroup;
+use App\User\Domain\Enum\AddressType;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -94,6 +97,28 @@ final class LoadUserData extends Fixture implements OrderedFixtureInterface
             ->setLanguage(Language::EN)
             ->setLocale(Locale::EN)
             ->setPlainPassword('password' . $suffix);
+
+
+        if ($role === null) {
+            $profile = $entity->getOrCreateUserProfile()
+                ->setPhone('+33123456789')
+                ->setBio('Demo profile for fixtures');
+
+            $profile->setAvatar(
+                (new UserAvatar($profile))
+                    ->setUrl('https://example.test/avatar.jpg')
+                    ->setMediaId('demo-media-id')
+            );
+
+            $profile->addAddress(
+                (new Address())
+                    ->setType(AddressType::HOME)
+                    ->setStreetLine1('1 Demo Street')
+                    ->setPostalCode('75001')
+                    ->setCity('Paris')
+                    ->setCountryCode('FR')
+            );
+        }
 
         if ($role !== null) {
             /** @var UserGroup $userGroup */

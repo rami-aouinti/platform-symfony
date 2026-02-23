@@ -38,6 +38,10 @@ class UserProfile
 
     protected ?string $avatarUrl = null;
 
+    protected ?string $photo = null;
+
+    protected ?string $address = null;
+
     public function getPhone(): ?string
     {
         return $this->phone;
@@ -134,6 +138,31 @@ class UserProfile
         return $this;
     }
 
+
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?string $photo): self
+    {
+        $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
     public static function fromEntity(Entity $entity): self
     {
         /** @var array<int, Address> $addresses */
@@ -149,6 +178,8 @@ class UserProfile
             ->setContacts($entity->getContacts())
             ->setAvatar($entity->getAvatar() ? UserAvatar::fromEntity($entity->getAvatar()) : null)
             ->setAvatarUrl($entity->getAvatarUrl())
+            ->setPhoto($entity->getPhoto())
+            ->setAddress($entity->getAddress())
             ->setAddresses($addresses);
     }
 }

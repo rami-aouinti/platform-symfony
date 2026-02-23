@@ -96,10 +96,25 @@ class RequestMapper extends RestRequestMapper
 
         if (isset($userProfile['avatar']) && is_array($userProfile['avatar'])) {
             $profile->setAvatar($this->transformAvatar($userProfile['avatar']));
+        } elseif (array_key_exists('photo', $userProfile)) {
+            $profile->setAvatar(
+                $this->transformAvatar([
+                    'url' => is_string($userProfile['photo']) ? $userProfile['photo'] : '',
+                ])
+            );
         }
 
         if (isset($userProfile['addresses']) && is_array($userProfile['addresses'])) {
             $profile->setAddresses($this->transformAddresses($userProfile['addresses']));
+        } elseif (array_key_exists('address', $userProfile) && is_string($userProfile['address']) && $userProfile['address'] !== '') {
+            $profile->setAddresses([
+                (new Address())
+                    ->setType(AddressType::HOME)
+                    ->setStreetLine1($userProfile['address'])
+                    ->setPostalCode('00000')
+                    ->setCity('Unknown')
+                    ->setCountryCode('FR'),
+            ]);
         }
 
         return $profile;

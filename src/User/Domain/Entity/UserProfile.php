@@ -230,6 +230,35 @@ class UserProfile implements EntityInterface
         return $this->avatar?->getUrl();
     }
 
+
+    #[Groups([
+        'UserProfile',
+        'UserProfile.photo',
+
+        'User.userProfile',
+    ])]
+    public function getPhoto(): ?string
+    {
+        return $this->avatar?->getUrl();
+    }
+
+    #[Groups([
+        'UserProfile',
+        'UserProfile.address',
+
+        'User.userProfile',
+    ])]
+    public function getAddress(): ?string
+    {
+        $firstAddress = $this->addresses->first();
+
+        if (!$firstAddress instanceof Address) {
+            return null;
+        }
+
+        return $firstAddress->getStreetLine1();
+    }
+
     /**
      * @return Collection<int, Address>
      */
