@@ -21,6 +21,12 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class CompanyMembership implements EntityInterface
 {
+    final public const string ROLE_MEMBER = 'member';
+    final public const string ROLE_CRM_MANAGER = 'crm_manager';
+    final public const string ROLE_SHOP_ADMIN = 'shop_admin';
+    final public const string ROLE_TEACHER = 'teacher';
+    final public const string ROLE_CANDIDATE = 'candidate';
+
     use Timestampable;
     use Uuid;
 
@@ -40,7 +46,7 @@ class CompanyMembership implements EntityInterface
 
     #[ORM\Column(name: 'role', type: Types::STRING, length: 64, nullable: false)]
     #[Groups(['CompanyMembership', 'CompanyMembership.role'])]
-    private string $role = 'member';
+    private string $role = self::ROLE_MEMBER;
 
     #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
     #[Groups(['CompanyMembership', 'CompanyMembership.status'])]
