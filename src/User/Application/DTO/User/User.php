@@ -16,6 +16,8 @@ use App\User\Application\Validator\Constraints as UserAppAssert;
 use App\User\Domain\Entity\Interfaces\UserGroupAwareInterface;
 use App\User\Domain\Entity\User as Entity;
 use App\User\Domain\Entity\UserGroup as UserGroupEntity;
+use App\User\Domain\Entity\Address as AddressEntity;
+use App\User\Domain\Entity\UserAvatar as UserAvatarEntity;
 use App\User\Domain\Entity\UserProfile as UserProfileEntity;
 use Override;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -299,12 +301,36 @@ class User extends RestDto
         $profile = $entity->getOrCreateUserProfile();
 
         $profile
-            ->setPhoto($value->getPhoto())
             ->setPhone($value->getPhone())
             ->setBirthDate($value->getBirthDate())
             ->setBio($value->getBio())
-            ->setAddress($value->getAddress())
             ->setContacts($value->getContacts());
+
+        if ($value->getAvatar() instanceof UserAvatar) {
+            $avatar = $profile->getAvatar() ?? new UserAvatarEntity($profile);
+            $avatar
+                ->setMediaId($value->getAvatar()->getMediaId())
+                ->setUrl($value->getAvatar()->getUrl());
+            $profile->setAvatar($avatar);
+        } else {
+            $profile->setAvatar(null);
+        }
+
+        $addresses = array_map(
+            static function (Address $address): AddressEntity {
+                return (new AddressEntity())
+                    ->setType($address->getType())
+                    ->setStreetLine1($address->getStreetLine1())
+                    ->setStreetLine2($address->getStreetLine2())
+                    ->setPostalCode($address->getPostalCode())
+                    ->setCity($address->getCity())
+                    ->setState($address->getState())
+                    ->setCountryCode($address->getCountryCode());
+            },
+            $value->getAddresses(),
+        );
+
+        $profile->replaceAddresses($addresses);
 
         return $this;
     }
