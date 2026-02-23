@@ -48,7 +48,6 @@ class UserResource extends RestResource
         parent::__construct($repository);
     }
 
-
     public function isLegacyProfileFieldsEnabled(): bool
     {
         return true;
@@ -67,7 +66,6 @@ class UserResource extends RestResource
      *
      * @return array<int, Entity>
      */
-
 
     public function getUsersForGroup(UserGroup $userGroup): array
     {

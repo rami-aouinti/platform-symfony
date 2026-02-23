@@ -13,11 +13,11 @@ use App\General\Domain\Enum\Locale;
 use App\Tool\Application\Validator\Constraints as ToolAppAssert;
 use App\Tool\Domain\Service\Interfaces\LocalizationServiceInterface;
 use App\User\Application\Validator\Constraints as UserAppAssert;
+use App\User\Domain\Entity\Address as AddressEntity;
 use App\User\Domain\Entity\Interfaces\UserGroupAwareInterface;
 use App\User\Domain\Entity\User as Entity;
-use App\User\Domain\Entity\UserGroup as UserGroupEntity;
-use App\User\Domain\Entity\Address as AddressEntity;
 use App\User\Domain\Entity\UserAvatar as UserAvatarEntity;
+use App\User\Domain\Entity\UserGroup as UserGroupEntity;
 use App\User\Domain\Entity\UserProfile as UserProfileEntity;
 use Override;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -76,7 +76,6 @@ class User extends RestDto
     #[Assert\NotNull]
     #[ToolAppAssert\Timezone]
     protected string $timezone = LocalizationServiceInterface::DEFAULT_TIMEZONE;
-
 
     protected UserProfile $userProfile;
 

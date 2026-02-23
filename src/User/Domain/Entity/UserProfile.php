@@ -230,7 +230,6 @@ class UserProfile implements EntityInterface
         return $this->avatar?->getUrl();
     }
 
-
     #[Groups([
         'UserProfile',
         'UserProfile.photo',

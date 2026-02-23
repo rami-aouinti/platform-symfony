@@ -98,7 +98,9 @@ class SocialConnectController
 
         if (!$account instanceof SocialAccount) {
             /** @var User|null $user */
-            $user = $this->userRepository->findOneBy(['email' => $email]);
+            $user = $this->userRepository->findOneBy([
+                'email' => $email,
+            ]);
 
             if (!$user instanceof User) {
                 throw new BadRequestHttpException('No local user found for specified social account/email.');

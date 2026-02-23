@@ -21,14 +21,13 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class CompanyMembership implements EntityInterface
 {
+    use Timestampable;
+    use Uuid;
     final public const string ROLE_MEMBER = 'member';
     final public const string ROLE_CRM_MANAGER = 'crm_manager';
     final public const string ROLE_SHOP_ADMIN = 'shop_admin';
     final public const string ROLE_TEACHER = 'teacher';
     final public const string ROLE_CANDIDATE = 'candidate';
-
-    use Timestampable;
-    use Uuid;
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]

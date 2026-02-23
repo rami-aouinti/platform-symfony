@@ -14,9 +14,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use function array_column;
 use function array_key_exists;
-use function in_array;
 use function hash;
 use function implode;
+use function in_array;
 
 /**
  * @package App\User

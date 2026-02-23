@@ -157,12 +157,12 @@ class RequestMapper extends RestRequestMapper
 
             $dto = (new Address())
                 ->setType(AddressType::tryFrom($typeRaw) ?? throw new InvalidArgumentException('Invalid address type.'))
-                ->setStreetLine1((string) ($item['streetLine1'] ?? ''))
-                ->setStreetLine2(isset($item['streetLine2']) ? (string) $item['streetLine2'] : null)
-                ->setPostalCode((string) ($item['postalCode'] ?? ''))
-                ->setCity((string) ($item['city'] ?? ''))
-                ->setState(isset($item['state']) ? (string) $item['state'] : null)
-                ->setCountryCode((string) ($item['countryCode'] ?? ''));
+                ->setStreetLine1((string)($item['streetLine1'] ?? ''))
+                ->setStreetLine2(isset($item['streetLine2']) ? (string)$item['streetLine2'] : null)
+                ->setPostalCode((string)($item['postalCode'] ?? ''))
+                ->setCity((string)($item['city'] ?? ''))
+                ->setState(isset($item['state']) ? (string)$item['state'] : null)
+                ->setCountryCode((string)($item['countryCode'] ?? ''));
 
             return $dto;
         }, $addresses);

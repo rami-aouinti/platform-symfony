@@ -19,7 +19,8 @@ class CandidateProfileRepository extends BaseRepository implements CandidateProf
     protected static array $searchColumns = ['status'];
     protected static string $entityName = Entity::class;
 
-    public function __construct(protected ManagerRegistry $managerRegistry)
-    {
+    public function __construct(
+        protected ManagerRegistry $managerRegistry
+    ) {
     }
 }

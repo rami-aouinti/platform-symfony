@@ -32,12 +32,16 @@ class CompanyMembersController extends Controller
         parent::__construct($resource);
     }
 
-    #[Route(path: '/{id}/members', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
+    #[Route(path: '/{id}/members', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_GET])]
     public function membersAction(Request $request, string $id): Response
     {
         return $this->getResponseHandler()->createResponse(
             $request,
-            $this->getResource()->find(criteria: ['company' => $id]),
+            $this->getResource()->find(criteria: [
+                'company' => $id,
+            ]),
             $this->getResource(),
         );
     }

@@ -19,7 +19,8 @@ class CompanyMembershipRepository extends BaseRepository implements CompanyMembe
     protected static array $searchColumns = ['role', 'status'];
     protected static string $entityName = Entity::class;
 
-    public function __construct(protected ManagerRegistry $managerRegistry)
-    {
+    public function __construct(
+        protected ManagerRegistry $managerRegistry
+    ) {
     }
 }

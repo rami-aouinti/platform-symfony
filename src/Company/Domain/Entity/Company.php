@@ -46,11 +46,15 @@ class Company implements EntityInterface
     #[Groups(['Company', 'Company.mainAddress'])]
     private ?string $mainAddress = null;
 
-    /** @var Collection<int, CompanyMembership> */
+    /**
+     * @var Collection<int, CompanyMembership>
+     */
     #[ORM\OneToMany(targetEntity: CompanyMembership::class, mappedBy: 'company', cascade: ['persist'], orphanRemoval: true)]
     private Collection $memberships;
 
-    /** @var Collection<int, CandidateProfile> */
+    /**
+     * @var Collection<int, CandidateProfile>
+     */
     #[ORM\OneToMany(targetEntity: CandidateProfile::class, mappedBy: 'company')]
     private Collection $candidateProfiles;
 
@@ -114,7 +118,9 @@ class Company implements EntityInterface
         return $this;
     }
 
-    /** @return Collection<int, CompanyMembership> */
+    /**
+     * @return Collection<int, CompanyMembership>
+     */
     public function getMemberships(): Collection
     {
         return $this->memberships;

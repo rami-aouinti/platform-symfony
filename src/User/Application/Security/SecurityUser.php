@@ -128,7 +128,6 @@ class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->organizations;
     }
 
-
     public function getMembershipRole(string $companyId): ?string
     {
         foreach ($this->organizations as $organization) {

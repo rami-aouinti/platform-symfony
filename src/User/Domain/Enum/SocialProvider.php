@@ -19,4 +19,3 @@ enum SocialProvider: string implements DatabaseEnumInterface
     case AZURE = 'azure';
     case GITLAB = 'gitlab';
 }
-

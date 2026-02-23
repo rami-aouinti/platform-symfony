@@ -40,7 +40,9 @@ class UserProfileRepository extends BaseRepository implements UserProfileReposit
     public function findOneByUser(User $user): ?Entity
     {
         /** @var Entity|null $profile */
-        $profile = $this->findOneBy(['user' => $user]);
+        $profile = $this->findOneBy([
+            'user' => $user,
+        ]);
 
         return $profile;
     }

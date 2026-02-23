@@ -87,7 +87,6 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
             : LocalizationServiceInterface::DEFAULT_TIMEZONE;
     }
 
-
     /**
      * @param array<string, mixed> $payload
      */

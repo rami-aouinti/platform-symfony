@@ -20,8 +20,9 @@ class SocialAccountRepository extends BaseRepository implements SocialAccountRep
 {
     protected static string $entityName = SocialAccount::class;
 
-    public function __construct(protected ManagerRegistry $managerRegistry)
-    {
+    public function __construct(
+        protected ManagerRegistry $managerRegistry
+    ) {
     }
 
     public function findOneByProviderAndExternalId(SocialProvider $provider, string $providerUserId): ?SocialAccount
