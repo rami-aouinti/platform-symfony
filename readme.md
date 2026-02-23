@@ -26,7 +26,11 @@ Note: OS recommendation - Linux Ubuntu based.
 6. Elasticsearch 7
 7. Kibana 7
 8. Redis 8
-9. Mailpit (only for debug emails on dev environment)
+9. MongoDB 8
+10. Adminer
+11. Mercure Hub
+12. GraphQL Playground
+13. Mailpit (only for debug emails on dev environment)
 
 ## Setting up Docker Engine with Docker Compose
 For installing Docker Engine with docker compose please follow steps mentioned on page [Docker Engine](https://docs.docker.com/engine/install/).
@@ -100,6 +104,9 @@ make elastic-create-or-update-template
 - [http://localhost/api/doc](http://localhost/api/doc)
 - [http://localhost:15672 (RabbitMQ)](http://localhost:15672)
 - [http://localhost:5601 (Kibana)](http://localhost:5601)
+- [http://localhost:8081 (Adminer)](http://localhost:8081)
+- [http://localhost:3000/.well-known/mercure/ui/ (Mercure)](http://localhost:3000/.well-known/mercure/ui/)
+- [http://localhost:4000 (GraphQL Playground)](http://localhost:4000)
 - [http://localhost:8025 (Mailpit)](http://localhost:8025)
 
 ## Setting up STAGING environment locally
