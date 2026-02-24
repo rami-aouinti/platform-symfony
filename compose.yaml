@@ -221,11 +221,11 @@ services:
             - ./VueBro:/app:cached
         environment:
             HOST: 0.0.0.0
-            PORT: ${VUEBRO_INTERNAL_PORT:-3000}
+            PORT: ${VUEBRO_INTERNAL_PORT:-3001}
             NUXT_HOST: 0.0.0.0
-            NUXT_PORT: ${VUEBRO_INTERNAL_PORT:-3000}
+            NUXT_PORT: ${VUEBRO_INTERNAL_PORT:-3001}
         ports:
-            - "${VUEBRO_PORT:-3000}:${VUEBRO_INTERNAL_PORT:-3000}"
+            - "${VUEBRO_PORT:-3001}:${VUEBRO_INTERNAL_PORT:-3001}"
         networks:
             - symfony
 
