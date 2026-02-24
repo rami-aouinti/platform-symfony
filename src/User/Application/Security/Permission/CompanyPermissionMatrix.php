@@ -67,21 +67,26 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
                 Permission::CRM_VIEW,
                 Permission::SHOP_VIEW,
                 Permission::EDUCATION_VIEW,
+                Permission::NOTIFICATION_VIEW,
             ],
             CompanyMembership::ROLE_CRM_MANAGER => [
                 Permission::CRM_VIEW,
                 Permission::CRM_MANAGE,
+                Permission::NOTIFICATION_VIEW,
             ],
             CompanyMembership::ROLE_SHOP_ADMIN => [
                 Permission::SHOP_VIEW,
                 Permission::SHOP_MANAGE,
+                Permission::NOTIFICATION_VIEW,
             ],
             CompanyMembership::ROLE_TEACHER => [
                 Permission::EDUCATION_VIEW,
                 Permission::EDUCATION_MANAGE,
+                Permission::NOTIFICATION_VIEW,
             ],
             CompanyMembership::ROLE_CANDIDATE => [
                 Permission::EDUCATION_VIEW,
+                Permission::NOTIFICATION_VIEW,
             ],
         ];
     }
@@ -96,6 +101,7 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
             Permission::CRM_VIEW,
             Permission::SHOP_VIEW,
             Permission::EDUCATION_VIEW,
+            Permission::NOTIFICATION_VIEW,
         ];
     }
 }
