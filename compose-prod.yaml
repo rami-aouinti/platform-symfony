@@ -178,14 +178,16 @@ services:
             - symfony
 
     graphql:
-        image: graphqlplayground/graphql-playground:${GRAPHQL_PLAYGROUND_VERSION:-latest}
+        image: ${COMPOSE_PROJECT_NAME}-graphql:latest
+        build:
+            context: ./docker/graphql-playground
+            dockerfile: ./Dockerfile
         container_name: ${COMPOSE_PROJECT_NAME}-graphql
         restart: always
         environment:
             GRAPHQL_ENDPOINT: ${GRAPHQL_ENDPOINT}
-            PORT: 8080
         ports:
-            - "${GRAPHQL_PORT}:8080"
+            - "${GRAPHQL_PORT}:80"
         depends_on:
             - nginx
         networks:
