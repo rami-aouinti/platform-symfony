@@ -8,6 +8,7 @@ use App\General\Transport\Rest\Controller;
 use App\General\Transport\Rest\ResponseHandler;
 use App\Notification\Application\Resource\Interfaces\NotificationResourceInterface;
 use App\Notification\Application\Resource\NotificationResource;
+use App\Notification\Application\Service\Interfaces\NotificationServiceInterface;
 use App\User\Domain\Entity\User;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,19 +29,27 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[OA\Tag(name: 'Notification Management')]
 class NotificationController extends Controller
 {
-    public function __construct(NotificationResourceInterface $resource)
-    {
+    public function __construct(
+        NotificationResourceInterface $resource,
+        private readonly NotificationServiceInterface $notificationService,
+    ) {
         parent::__construct($resource);
     }
 
     #[Route(path: '', methods: [Request::METHOD_GET])]
     public function findAction(Request $request, User $loggedInUser): Response
     {
+        $filters = [
+            'read' => $request->query->has('read') ? $request->query->getBoolean('read') : null,
+            'type' => $request->query->get('type'),
+            'search' => $request->query->get('search'),
+            'limit' => $request->query->has('limit') ? $request->query->getInt('limit') : null,
+            'offset' => $request->query->has('offset') ? $request->query->getInt('offset') : null,
+        ];
+
         return $this->getResponseHandler()->createResponse(
             $request,
-            $this->getResource()->find(criteria: [
-                'user' => $loggedInUser->getId(),
-            ]),
+            $this->notificationService->listForUser($loggedInUser, $filters),
             $this->getResource(),
         );
     }
@@ -48,16 +57,38 @@ class NotificationController extends Controller
     #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
     public function findOneAction(Request $request, string $id, User $loggedInUser): Response
     {
-        $notification = $this->getResource()->findOne($id, true);
-
-        if ($notification->getUser()->getId() !== $loggedInUser->getId()) {
-            throw $this->createAccessDeniedException();
-        }
-
         return $this->getResponseHandler()->createResponse(
             $request,
-            $notification,
+            $this->notificationService->getForUser($id, $loggedInUser),
             $this->getResource(),
+        );
+    }
+
+    #[Route(path: '/{id}/read', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
+    public function markAsReadAction(Request $request, string $id, User $loggedInUser): Response
+    {
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            $this->notificationService->markAsRead($id, $loggedInUser),
+            $this->getResource(),
+        );
+    }
+
+    #[Route(path: '/read-all', methods: [Request::METHOD_PATCH])]
+    public function markAllAsReadAction(Request $request, User $loggedInUser): Response
+    {
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            ['updated' => $this->notificationService->markAllAsRead($loggedInUser)],
+        );
+    }
+
+    #[Route(path: '/unread-count', methods: [Request::METHOD_GET])]
+    public function unreadCountAction(Request $request, User $loggedInUser): Response
+    {
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            ['count' => $this->notificationService->countUnread($loggedInUser)],
         );
     }
 }
