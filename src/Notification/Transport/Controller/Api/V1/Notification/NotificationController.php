@@ -9,6 +9,7 @@ use App\General\Transport\Rest\ResponseHandler;
 use App\Notification\Application\Resource\Interfaces\NotificationResourceInterface;
 use App\Notification\Application\Resource\NotificationResource;
 use App\Notification\Application\Service\Interfaces\NotificationServiceInterface;
+use App\User\Application\Security\Permission;
 use App\User\Domain\Entity\User;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
-use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -25,7 +25,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 #[AsController]
 #[Route(path: '/v1/notifications')]
-#[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'Notification Management')]
 class NotificationController extends Controller
 {
@@ -37,6 +36,7 @@ class NotificationController extends Controller
     }
 
     #[Route(path: '', methods: [Request::METHOD_GET])]
+    #[IsGranted(Permission::NOTIFICATION_VIEW->value)]
     public function findAction(Request $request, User $loggedInUser): Response
     {
         $filters = [
@@ -55,6 +55,7 @@ class NotificationController extends Controller
     }
 
     #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
+    #[IsGranted(Permission::NOTIFICATION_VIEW->value)]
     public function findOneAction(Request $request, string $id, User $loggedInUser): Response
     {
         return $this->getResponseHandler()->createResponse(
@@ -65,6 +66,7 @@ class NotificationController extends Controller
     }
 
     #[Route(path: '/{id}/read', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
+    #[IsGranted(Permission::NOTIFICATION_MANAGE->value)]
     public function markAsReadAction(Request $request, string $id, User $loggedInUser): Response
     {
         return $this->getResponseHandler()->createResponse(
@@ -75,6 +77,7 @@ class NotificationController extends Controller
     }
 
     #[Route(path: '/read-all', methods: [Request::METHOD_PATCH])]
+    #[IsGranted(Permission::NOTIFICATION_MANAGE->value)]
     public function markAllAsReadAction(Request $request, User $loggedInUser): Response
     {
         return $this->getResponseHandler()->createResponse(
@@ -84,6 +87,7 @@ class NotificationController extends Controller
     }
 
     #[Route(path: '/unread-count', methods: [Request::METHOD_GET])]
+    #[IsGranted(Permission::NOTIFICATION_VIEW->value)]
     public function unreadCountAction(Request $request, User $loggedInUser): Response
     {
         return $this->getResponseHandler()->createResponse(

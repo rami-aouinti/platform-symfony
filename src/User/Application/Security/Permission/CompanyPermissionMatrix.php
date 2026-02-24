@@ -40,6 +40,12 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
             if ($membershipRole !== null && $this->membershipGrantsPermission($membershipRole, $normalizedPermission)) {
                 return true;
             }
+        } else {
+            foreach ($user->getOrganizations() as $organization) {
+                if ($this->membershipGrantsPermission($organization['role'], $normalizedPermission)) {
+                    return true;
+                }
+            }
         }
 
         return $isOwner && in_array($normalizedPermission, $this->ownershipPermissions(), true);
@@ -67,21 +73,31 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
                 Permission::CRM_VIEW,
                 Permission::SHOP_VIEW,
                 Permission::EDUCATION_VIEW,
+                Permission::NOTIFICATION_VIEW,
+                Permission::NOTIFICATION_MANAGE,
             ],
             CompanyMembership::ROLE_CRM_MANAGER => [
                 Permission::CRM_VIEW,
                 Permission::CRM_MANAGE,
+                Permission::NOTIFICATION_VIEW,
+                Permission::NOTIFICATION_MANAGE,
             ],
             CompanyMembership::ROLE_SHOP_ADMIN => [
                 Permission::SHOP_VIEW,
                 Permission::SHOP_MANAGE,
+                Permission::NOTIFICATION_VIEW,
+                Permission::NOTIFICATION_MANAGE,
             ],
             CompanyMembership::ROLE_TEACHER => [
                 Permission::EDUCATION_VIEW,
                 Permission::EDUCATION_MANAGE,
+                Permission::NOTIFICATION_VIEW,
+                Permission::NOTIFICATION_MANAGE,
             ],
             CompanyMembership::ROLE_CANDIDATE => [
                 Permission::EDUCATION_VIEW,
+                Permission::NOTIFICATION_VIEW,
+                Permission::NOTIFICATION_MANAGE,
             ],
         ];
     }
@@ -96,6 +112,8 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
             Permission::CRM_VIEW,
             Permission::SHOP_VIEW,
             Permission::EDUCATION_VIEW,
+            Permission::NOTIFICATION_VIEW,
+            Permission::NOTIFICATION_MANAGE,
         ];
     }
 }

@@ -17,4 +17,7 @@ enum Permission: string
 
     case EDUCATION_VIEW = 'education.view';
     case EDUCATION_MANAGE = 'education.manage';
+
+    case NOTIFICATION_VIEW = 'notification.view';
+    case NOTIFICATION_MANAGE = 'notification.manage';
 }
