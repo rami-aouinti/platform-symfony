@@ -8,7 +8,7 @@ use App\Notification\Application\Service\Interfaces\NotificationServiceInterface
 use App\Notification\Domain\Entity\Notification;
 use App\Notification\Domain\Repository\Interfaces\NotificationRepositoryInterface;
 use App\User\Domain\Entity\User;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use DateTime;
 
 class NotificationService implements NotificationServiceInterface
 {
@@ -17,41 +17,46 @@ class NotificationService implements NotificationServiceInterface
     ) {
     }
 
-    public function listForUser(User $user, array $filters = []): array
+    public function findByUser(User $user): array
     {
-        return $this->notificationRepository->findByUser($user, $filters);
+        return $this->notificationRepository->findBy(
+            criteria: ['user' => $user->getId()],
+            orderBy: ['createdAt' => 'DESC'],
+        );
     }
 
-    public function getForUser(string $id, User $user): Notification
+    public function findOneByUser(string $id, User $user): ?Notification
     {
-        $notification = $this->notificationRepository->findOneByIdAndUser($id, $user);
+        $notification = $this->notificationRepository->find($id);
 
-        if (!$notification instanceof Notification) {
-            throw new NotFoundHttpException('Notification not found.');
+        if (!$notification instanceof Notification || $notification->getUser()->getId() !== $user->getId()) {
+            return null;
         }
 
         return $notification;
     }
 
-    public function markAsRead(string $id, User $user): Notification
+    public function countUnread(User $user): int
     {
-        $notification = $this->getForUser($id, $user);
+        return $this->notificationRepository->countUnreadByUserId($user->getId());
+    }
 
-        if (!$notification->isRead()) {
-            $notification->setReadAt(new \DateTime());
-            $this->notificationRepository->save($notification);
+    public function markAsRead(string $id, User $user): ?Notification
+    {
+        $notification = $this->findOneByUser($id, $user);
+
+        if (!$notification instanceof Notification) {
+            return null;
         }
+
+        $notification->setReadAt(new DateTime());
+        $this->notificationRepository->save($notification);
 
         return $notification;
     }
 
     public function markAllAsRead(User $user): int
     {
-        return $this->notificationRepository->markAllAsReadForUser($user);
-    }
-
-    public function countUnread(User $user): int
-    {
-        return $this->notificationRepository->countUnreadForUser($user);
+        return $this->notificationRepository->markAllAsReadByUserId($user->getId(), new DateTime());
     }
 }

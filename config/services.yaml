@@ -128,6 +128,29 @@ services:
         arguments:
             $serializer: '@app.serializer.external_message'
 
+    App\Notification\Application\Service\Channel\EmailNotification:
+        arguments:
+            $senderEmail: '%env(resolve:APP_SENDER_EMAIL)%'
+
+    App\Notification\Application\Service\Channel\SmsNotification:
+        arguments:
+            $fromNumber: '%env(SMS_FROM_NUMBER)%'
+
+    App\Notification\Application\Service\Interfaces\NotificationServiceInterface:
+        class: App\Notification\Application\Service\NotificationService
+
+    App\Notification\Application\Service\Interfaces\NotificationChannelServiceInterface:
+        class: App\Notification\Application\Service\NotificationChannelService
+
+    App\Notification\Application\Service\Channel\Interfaces\EmailNotificationInterface:
+        class: App\Notification\Application\Service\Channel\EmailNotification
+
+    App\Notification\Application\Service\Channel\Interfaces\PushNotificationInterface:
+        class: App\Notification\Application\Service\Channel\PushNotification
+
+    App\Notification\Application\Service\Channel\Interfaces\SmsNotificationInterface:
+        class: App\Notification\Application\Service\Channel\SmsNotification
+
 
     App\User\Application\Security\Permission\Interfaces\CompanyPermissionMatrixInterface:
         class: App\User\Application\Security\Permission\CompanyPermissionMatrix

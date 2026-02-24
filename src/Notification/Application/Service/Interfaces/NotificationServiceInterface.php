@@ -10,17 +10,15 @@ use App\User\Domain\Entity\User;
 interface NotificationServiceInterface
 {
     /**
-     * @param array<string, mixed> $filters
-     *
-     * @return array<int, Notification>
+     * @return Notification[]
      */
-    public function listForUser(User $user, array $filters = []): array;
+    public function findByUser(User $user): array;
 
-    public function getForUser(string $id, User $user): Notification;
-
-    public function markAsRead(string $id, User $user): Notification;
-
-    public function markAllAsRead(User $user): int;
+    public function findOneByUser(string $id, User $user): ?Notification;
 
     public function countUnread(User $user): int;
+
+    public function markAsRead(string $id, User $user): ?Notification;
+
+    public function markAllAsRead(User $user): int;
 }

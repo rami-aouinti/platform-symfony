@@ -4,95 +4,114 @@ declare(strict_types=1);
 
 namespace App\Notification\Transport\Controller\Api\V1\Notification;
 
-use App\General\Transport\Rest\Controller;
-use App\General\Transport\Rest\ResponseHandler;
-use App\Notification\Application\Resource\Interfaces\NotificationResourceInterface;
-use App\Notification\Application\Resource\NotificationResource;
 use App\Notification\Application\Service\Interfaces\NotificationServiceInterface;
-use App\User\Application\Security\Permission;
+use App\Notification\Domain\Entity\Notification;
 use App\User\Domain\Entity\User;
 use OpenApi\Attributes as OA;
+use OpenApi\Attributes\JsonContent;
+use OpenApi\Attributes\Property;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\SerializerInterface;
 
-/**
- * @method NotificationResource getResource()
- * @method ResponseHandler getResponseHandler()
- */
 #[AsController]
 #[Route(path: '/v1/notifications')]
+#[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'Notification Management')]
-class NotificationController extends Controller
+class NotificationController
 {
     public function __construct(
-        NotificationResourceInterface $resource,
         private readonly NotificationServiceInterface $notificationService,
+        private readonly SerializerInterface $serializer,
     ) {
-        parent::__construct($resource);
     }
 
     #[Route(path: '', methods: [Request::METHOD_GET])]
-    #[IsGranted(Permission::NOTIFICATION_VIEW->value)]
-    public function findAction(Request $request, User $loggedInUser): Response
+    public function findAction(User $loggedInUser): JsonResponse
     {
-        $filters = [
-            'read' => $request->query->has('read') ? $request->query->getBoolean('read') : null,
-            'type' => $request->query->get('type'),
-            'search' => $request->query->get('search'),
-            'limit' => $request->query->has('limit') ? $request->query->getInt('limit') : null,
-            'offset' => $request->query->has('offset') ? $request->query->getInt('offset') : null,
-        ];
+        $notifications = $this->notificationService->findByUser($loggedInUser);
 
-        return $this->getResponseHandler()->createResponse(
-            $request,
-            $this->notificationService->listForUser($loggedInUser, $filters),
-            $this->getResource(),
-        );
+        return $this->serializeNotificationResponse($notifications);
     }
 
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
-    #[IsGranted(Permission::NOTIFICATION_VIEW->value)]
-    public function findOneAction(Request $request, string $id, User $loggedInUser): Response
+    #[Route(
+        path: '/{id}',
+        requirements: ['id' => Requirement::UUID_V1],
+        methods: [Request::METHOD_GET],
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Notification not found',
+        content: new JsonContent(
+            properties: [
+                new Property(property: 'code', type: 'integer'),
+                new Property(property: 'message', type: 'string'),
+            ],
+            type: 'object',
+        ),
+    )]
+    public function findOneAction(string $id, User $loggedInUser): JsonResponse
     {
-        return $this->getResponseHandler()->createResponse(
-            $request,
-            $this->notificationService->getForUser($id, $loggedInUser),
-            $this->getResource(),
-        );
+        $notification = $this->notificationService->findOneByUser($id, $loggedInUser);
+
+        if (!$notification instanceof Notification) {
+            return new JsonResponse(['code' => 404, 'message' => 'Notification not found'], 404);
+        }
+
+        return $this->serializeNotificationResponse($notification);
     }
 
-    #[Route(path: '/{id}/read', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
-    #[IsGranted(Permission::NOTIFICATION_MANAGE->value)]
-    public function markAsReadAction(Request $request, string $id, User $loggedInUser): Response
+    #[Route(
+        path: '/{id}/read',
+        requirements: ['id' => Requirement::UUID_V1],
+        methods: [Request::METHOD_PATCH],
+    )]
+    public function markAsReadAction(string $id, User $loggedInUser): JsonResponse
     {
-        return $this->getResponseHandler()->createResponse(
-            $request,
-            $this->notificationService->markAsRead($id, $loggedInUser),
-            $this->getResource(),
-        );
+        $notification = $this->notificationService->markAsRead($id, $loggedInUser);
+
+        if (!$notification instanceof Notification) {
+            return new JsonResponse(['code' => 404, 'message' => 'Notification not found'], 404);
+        }
+
+        return $this->serializeNotificationResponse($notification);
     }
 
     #[Route(path: '/read-all', methods: [Request::METHOD_PATCH])]
-    #[IsGranted(Permission::NOTIFICATION_MANAGE->value)]
-    public function markAllAsReadAction(Request $request, User $loggedInUser): Response
+    public function markAllAsReadAction(User $loggedInUser): JsonResponse
     {
-        return $this->getResponseHandler()->createResponse(
-            $request,
-            ['updated' => $this->notificationService->markAllAsRead($loggedInUser)],
-        );
+        $updated = $this->notificationService->markAllAsRead($loggedInUser);
+
+        return new JsonResponse(['updated' => $updated]);
     }
 
     #[Route(path: '/unread-count', methods: [Request::METHOD_GET])]
-    #[IsGranted(Permission::NOTIFICATION_VIEW->value)]
-    public function unreadCountAction(Request $request, User $loggedInUser): Response
+    public function unreadCountAction(User $loggedInUser): JsonResponse
     {
-        return $this->getResponseHandler()->createResponse(
-            $request,
-            ['count' => $this->notificationService->countUnread($loggedInUser)],
+        return new JsonResponse([
+            'unread' => $this->notificationService->countUnread($loggedInUser),
+        ]);
+    }
+
+    private function serializeNotificationResponse(array|Notification $payload): JsonResponse
+    {
+        return new JsonResponse(
+            $this->serializer->serialize($payload, 'json', [
+                'groups' => [
+                    'Notification',
+                    'Notification.id',
+                    'Notification.title',
+                    'Notification.message',
+                    'Notification.type',
+                    'Notification.readAt',
+                ],
+            ]),
+            json: true,
         );
     }
 }
