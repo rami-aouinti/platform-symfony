@@ -27,6 +27,7 @@ class CompanyMembership implements EntityInterface
 {
     use Timestampable;
     use Uuid;
+
     final public const string ROLE_MEMBER = 'member';
     final public const string ROLE_CRM_MANAGER = 'crm_manager';
     final public const string ROLE_SHOP_ADMIN = 'shop_admin';

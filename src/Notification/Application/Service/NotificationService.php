@@ -9,22 +9,36 @@ use App\Notification\Domain\Entity\Notification;
 use App\Notification\Domain\Repository\Interfaces\NotificationRepositoryInterface;
 use App\User\Domain\Entity\User;
 use DateTime;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 
-class NotificationService implements NotificationServiceInterface
+/**
+ * @package
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+readonly class NotificationService implements NotificationServiceInterface
 {
     public function __construct(
-        private readonly NotificationRepositoryInterface $notificationRepository,
+        private NotificationRepositoryInterface $notificationRepository,
     ) {
     }
 
     public function findByUser(User $user): array
     {
         return $this->notificationRepository->findBy(
-            criteria: ['user' => $user->getId()],
-            orderBy: ['createdAt' => 'DESC'],
+            criteria: [
+                'user' => $user->getId(),
+            ],
+            orderBy: [
+                'createdAt' => 'DESC',
+            ],
         );
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function findOneByUser(string $id, User $user): ?Notification
     {
         $notification = $this->notificationRepository->find($id);
@@ -41,6 +55,10 @@ class NotificationService implements NotificationServiceInterface
         return $this->notificationRepository->countUnreadByUserId($user->getId());
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function markAsRead(string $id, User $user): ?Notification
     {
         $notification = $this->findOneByUser($id, $user);

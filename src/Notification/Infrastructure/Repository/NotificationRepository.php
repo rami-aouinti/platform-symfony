@@ -27,7 +27,7 @@ class NotificationRepository extends BaseRepository implements NotificationRepos
 
     public function countUnreadByUserId(string $userId): int
     {
-        return (int) $this->createQueryBuilder('notification')
+        return (int)$this->createQueryBuilder('notification')
             ->select('COUNT(notification.id)')
             ->where('notification.user = :userId')
             ->andWhere('notification.readAt IS NULL')

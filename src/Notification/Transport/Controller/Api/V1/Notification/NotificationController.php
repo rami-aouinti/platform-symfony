@@ -17,20 +17,28 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
+/**
+ * @package
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
 #[AsController]
 #[Route(path: '/v1/notifications')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'Notification Management')]
-class NotificationController
+readonly class NotificationController
 {
     public function __construct(
-        private readonly NotificationServiceInterface $notificationService,
-        private readonly SerializerInterface $serializer,
+        private NotificationServiceInterface $notificationService,
+        private SerializerInterface $serializer,
     ) {
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route(path: '', methods: [Request::METHOD_GET])]
     public function findAction(User $loggedInUser): JsonResponse
     {
@@ -39,9 +47,14 @@ class NotificationController
         return $this->serializeNotificationResponse($notifications);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route(
         path: '/{id}',
-        requirements: ['id' => Requirement::UUID_V1],
+        requirements: [
+            'id' => Requirement::UUID_V1,
+        ],
         methods: [Request::METHOD_GET],
     )]
     #[OA\Response(
@@ -60,15 +73,23 @@ class NotificationController
         $notification = $this->notificationService->findOneByUser($id, $loggedInUser);
 
         if (!$notification instanceof Notification) {
-            return new JsonResponse(['code' => 404, 'message' => 'Notification not found'], 404);
+            return new JsonResponse([
+                'code' => 404,
+                'message' => 'Notification not found',
+            ], 404);
         }
 
         return $this->serializeNotificationResponse($notification);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route(
         path: '/{id}/read',
-        requirements: ['id' => Requirement::UUID_V1],
+        requirements: [
+            'id' => Requirement::UUID_V1,
+        ],
         methods: [Request::METHOD_PATCH],
     )]
     public function markAsReadAction(string $id, User $loggedInUser): JsonResponse
@@ -76,7 +97,10 @@ class NotificationController
         $notification = $this->notificationService->markAsRead($id, $loggedInUser);
 
         if (!$notification instanceof Notification) {
-            return new JsonResponse(['code' => 404, 'message' => 'Notification not found'], 404);
+            return new JsonResponse([
+                'code' => 404,
+                'message' => 'Notification not found',
+            ], 404);
         }
 
         return $this->serializeNotificationResponse($notification);
@@ -87,7 +111,9 @@ class NotificationController
     {
         $updated = $this->notificationService->markAllAsRead($loggedInUser);
 
-        return new JsonResponse(['updated' => $updated]);
+        return new JsonResponse([
+            'updated' => $updated,
+        ]);
     }
 
     #[Route(path: '/unread-count', methods: [Request::METHOD_GET])]
@@ -98,6 +124,9 @@ class NotificationController
         ]);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     private function serializeNotificationResponse(array|Notification $payload): JsonResponse
     {
         return new JsonResponse(

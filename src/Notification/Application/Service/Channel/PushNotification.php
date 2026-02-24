@@ -8,6 +8,10 @@ use App\Notification\Application\Service\Channel\Interfaces\PushNotificationInte
 use Symfony\Component\Notifier\Message\ChatMessage;
 use Symfony\Component\Notifier\NotifierInterface;
 
+/**
+ * @package
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
 readonly class PushNotification implements PushNotificationInterface
 {
     public function __construct(

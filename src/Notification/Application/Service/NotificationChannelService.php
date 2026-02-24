@@ -9,6 +9,10 @@ use App\Notification\Application\Service\Channel\Interfaces\PushNotificationInte
 use App\Notification\Application\Service\Channel\Interfaces\SmsNotificationInterface;
 use App\Notification\Application\Service\Interfaces\NotificationChannelServiceInterface;
 
+/**
+ * @package
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
 readonly class NotificationChannelService implements NotificationChannelServiceInterface
 {
     public function __construct(

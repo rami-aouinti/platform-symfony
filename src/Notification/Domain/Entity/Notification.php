@@ -114,6 +114,6 @@ class Notification implements EntityInterface
 
     public function isRead(): bool
     {
-        return null !== $this->readAt;
+        return $this->readAt !== null;
     }
 }
