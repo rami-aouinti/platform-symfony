@@ -161,7 +161,7 @@ services:
             - symfony
 
     mercure:
-        image: dunglas/mercure:${MERCURE_VERSION}
+        image: dunglas/mercure:${MERCURE_VERSION:-latest}
         container_name: ${COMPOSE_PROJECT_NAME}-mercure
         restart: always
         environment:
@@ -178,7 +178,7 @@ services:
             - symfony
 
     graphql:
-        image: graphql/graphql-playground:${GRAPHQL_PLAYGROUND_VERSION}
+        image: graphqlplayground/graphql-playground:${GRAPHQL_PLAYGROUND_VERSION:-latest}
         container_name: ${COMPOSE_PROJECT_NAME}-graphql
         restart: always
         environment:
