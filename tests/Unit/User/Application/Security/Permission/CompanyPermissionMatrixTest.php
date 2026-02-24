@@ -38,6 +38,23 @@ class CompanyPermissionMatrixTest extends TestCase
         self::assertFalse($matrix->isGranted($user, Permission::BLOG_MANAGE, null, true));
     }
 
+    public function testNotificationPermissionGrantedFromMembershipWithoutExplicitCompanyContext(): void
+    {
+        $matrix = new CompanyPermissionMatrix();
+        $user = $this->createSecurityUser([], 'company-1', 'member');
+
+        self::assertTrue($matrix->isGranted($user, Permission::NOTIFICATION_VIEW));
+        self::assertTrue($matrix->isGranted($user, Permission::NOTIFICATION_MANAGE));
+    }
+
+    public function testNotificationPermissionDeniedWhenNoRoleMatches(): void
+    {
+        $matrix = new CompanyPermissionMatrix();
+        $user = $this->createSecurityUser([]);
+
+        self::assertFalse($matrix->isGranted($user, Permission::NOTIFICATION_VIEW));
+    }
+
     private function createSecurityUser(array $roles, ?string $companyId = null, ?string $membershipRole = null): SecurityUser
     {
         return new class(new User(), $roles, $companyId, $membershipRole) extends SecurityUser {
@@ -57,6 +74,19 @@ class CompanyPermissionMatrixTest extends TestCase
                 }
 
                 return null;
+            }
+
+            public function getOrganizations(): array
+            {
+                if ($this->companyId === null || $this->membershipRole === null) {
+                    return [];
+                }
+
+                return [[
+                    'companyId' => $this->companyId,
+                    'role' => $this->membershipRole,
+                    'status' => 'active',
+                ]];
             }
         };
     }
