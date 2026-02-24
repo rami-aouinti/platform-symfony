@@ -209,6 +209,26 @@ services:
         networks:
             - symfony
 
+    vuebro:
+        image: ${COMPOSE_PROJECT_NAME}-vuebro:latest
+        build:
+            context: ./docker/vuebro
+            dockerfile: ./Dockerfile
+        container_name: ${COMPOSE_PROJECT_NAME}-vuebro
+        restart: always
+        working_dir: /app
+        volumes:
+            - ./VueBro:/app:cached
+        environment:
+            HOST: 0.0.0.0
+            PORT: ${VUEBRO_INTERNAL_PORT:-3000}
+            NUXT_HOST: 0.0.0.0
+            NUXT_PORT: ${VUEBRO_INTERNAL_PORT:-3000}
+        ports:
+            - "${VUEBRO_PORT:-3000}:${VUEBRO_INTERNAL_PORT:-3000}"
+        networks:
+            - symfony
+
 networks:
     symfony:
         name: symfony
