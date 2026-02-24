@@ -40,6 +40,12 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
             if ($membershipRole !== null && $this->membershipGrantsPermission($membershipRole, $normalizedPermission)) {
                 return true;
             }
+        } else {
+            foreach ($user->getOrganizations() as $organization) {
+                if ($this->membershipGrantsPermission($organization['role'], $normalizedPermission)) {
+                    return true;
+                }
+            }
         }
 
         return $isOwner && in_array($normalizedPermission, $this->ownershipPermissions(), true);
