@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Notification\Application\Service\Channel;
 
 use App\Notification\Application\Service\Channel\Interfaces\PushNotificationInterface;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
 
+use function class_exists;
+use function is_object;
 use function json_encode;
+use function method_exists;
 use function sprintf;
 
 /**
@@ -18,7 +19,7 @@ use function sprintf;
 readonly class PushNotification implements PushNotificationInterface
 {
     public function __construct(
-        private HubInterface $hub,
+        private ?object $hub = null,
     ) {
     }
 
@@ -30,13 +31,22 @@ readonly class PushNotification implements PushNotificationInterface
             'content' => $content,
         ]);
 
-        if ($payload === false) {
+        if ($payload === false || !$this->canPublish()) {
             return;
         }
 
-        $this->hub->publish(new Update(
+        $updateClass = 'Symfony\\Component\\Mercure\\Update';
+
+        $this->hub->publish(new $updateClass(
             sprintf('/users/%s/notifications', $userId),
             $payload,
         ));
+    }
+
+    private function canPublish(): bool
+    {
+        return is_object($this->hub)
+            && class_exists('Symfony\\Component\\Mercure\\Update')
+            && method_exists($this->hub, 'publish');
     }
 }

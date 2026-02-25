@@ -6,7 +6,9 @@ namespace App\Notification\Application\Service\Channel;
 
 use App\Notification\Application\Service\Channel\Interfaces\SmsNotificationInterface;
 use Symfony\Component\Notifier\Message\SmsMessage;
-use Symfony\Component\Notifier\TexterInterface;
+
+use function is_object;
+use function method_exists;
 
 /**
  * @package
@@ -15,15 +17,24 @@ use Symfony\Component\Notifier\TexterInterface;
 readonly class SmsNotification implements SmsNotificationInterface
 {
     public function __construct(
-        private TexterInterface $texter,
-        private string $fromNumber,
+        private ?object $texter = null,
+        private string $fromNumber = '',
     ) {
     }
 
     public function send(string $phoneNumber, string $content): void
     {
+        if (!$this->canSend()) {
+            return;
+        }
+
         $message = (new SmsMessage($phoneNumber, $content))->from($this->fromNumber);
 
         $this->texter->send($message);
+    }
+
+    private function canSend(): bool
+    {
+        return is_object($this->texter) && method_exists($this->texter, 'send');
     }
 }
