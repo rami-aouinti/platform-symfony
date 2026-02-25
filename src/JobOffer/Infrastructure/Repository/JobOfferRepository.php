@@ -11,12 +11,13 @@ use App\General\Infrastructure\Repository\BaseRepository;
 use App\JobOffer\Domain\Entity\JobOffer as Entity;
 use App\JobOffer\Domain\Repository\Interfaces\JobOfferRepositoryInterface;
 use App\User\Domain\Entity\User;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 use function assert;
+use function usort;
 
 /**
  * @method Entity|null find(string $id, LockMode|int|null $lockMode = null, ?int $lockVersion = null, ?string $entityManagerName = null)
@@ -111,6 +112,93 @@ class JobOfferRepository extends BaseRepository implements JobOfferRepositoryInt
         return $this->executeQueryBuilder($queryBuilder);
     }
 
+    public function computeFacets(
+        ?array $criteria = null,
+        ?array $search = null,
+        ?array $postFilters = null,
+        ?string $entityManagerName = null,
+    ): array {
+        $baseQueryBuilder = $this->createFacetBaseQueryBuilder(
+            $criteria,
+            $search,
+            $postFilters ?? ['skills' => [], 'languages' => []],
+            $entityManagerName,
+        );
+
+        return [
+            'facets' => [
+                [
+                    'key' => 'skills',
+                    'sort' => 'count_desc,label_asc',
+                    'values' => $this->fetchAssociationFacet(
+                        clone $baseQueryBuilder,
+                        'entity.skills',
+                        'facetValue',
+                        'facetValue.name',
+                    ),
+                ],
+                [
+                    'key' => 'languages',
+                    'sort' => 'count_desc,label_asc',
+                    'values' => $this->fetchAssociationFacet(
+                        clone $baseQueryBuilder,
+                        'entity.languages',
+                        'facetValue',
+                        'facetValue.code',
+                    ),
+                ],
+                [
+                    'key' => 'cities',
+                    'sort' => 'count_desc,label_asc',
+                    'values' => $this->fetchAssociationFacet(
+                        clone $baseQueryBuilder,
+                        'entity.city',
+                        'facetValue',
+                        'facetValue.name',
+                        false,
+                    ),
+                ],
+                [
+                    'key' => 'regions',
+                    'sort' => 'count_desc,label_asc',
+                    'values' => $this->fetchAssociationFacet(
+                        clone $baseQueryBuilder,
+                        'entity.region',
+                        'facetValue',
+                        'facetValue.name',
+                        false,
+                    ),
+                ],
+                [
+                    'key' => 'jobCategories',
+                    'sort' => 'count_desc,label_asc',
+                    'values' => $this->fetchAssociationFacet(
+                        clone $baseQueryBuilder,
+                        'entity.jobCategory',
+                        'facetValue',
+                        'facetValue.name',
+                        false,
+                    ),
+                ],
+                [
+                    'key' => 'employmentTypes',
+                    'sort' => 'count_desc,label_asc',
+                    'values' => $this->fetchScalarFacet(clone $baseQueryBuilder, 'entity.employmentType'),
+                ],
+                [
+                    'key' => 'remotePolicies',
+                    'sort' => 'count_desc,label_asc',
+                    'values' => $this->fetchScalarFacet(clone $baseQueryBuilder, 'entity.remoteMode', true),
+                ],
+                [
+                    'key' => 'workTimes',
+                    'sort' => 'count_desc,label_asc',
+                    'values' => $this->fetchScalarFacet(clone $baseQueryBuilder, 'entity.workTime', true),
+                ],
+            ],
+        ];
+    }
+
     /**
      * @param array<int|string, mixed>|null $criteria
      * @param array<string, array<int, string>>|null $search
@@ -139,6 +227,44 @@ class JobOfferRepository extends BaseRepository implements JobOfferRepositoryInt
     }
 
     /**
+     * @param array<int|string, mixed>|null $criteria
+     * @param array<string, array<int, string>>|null $search
+     * @param array{skills: array<int, string>, languages: array<int, string>} $postFilters
+     */
+    private function createFacetBaseQueryBuilder(
+        ?array $criteria,
+        ?array $search,
+        array $postFilters,
+        ?string $entityManagerName,
+    ): QueryBuilder {
+        $queryBuilder = $this->createQueryBuilder(entityManagerName: $entityManagerName);
+
+        RepositoryHelper::processCriteria($queryBuilder, $criteria ?? []);
+        RepositoryHelper::processSearchTerms($queryBuilder, $this->getSearchColumns(), $search ?? []);
+
+        if ($postFilters['skills'] !== []) {
+            $queryBuilder
+                ->innerJoin('entity.skills', 'filterSkill')
+                ->andWhere('filterSkill.id IN (:facetFilterSkills)')
+                ->setParameter('facetFilterSkills', $postFilters['skills']);
+        }
+
+        if ($postFilters['languages'] !== []) {
+            $queryBuilder
+                ->innerJoin('entity.languages', 'filterLanguage')
+                ->andWhere('filterLanguage.id IN (:facetFilterLanguages)')
+                ->setParameter('facetFilterLanguages', $postFilters['languages']);
+        }
+
+        $queryBuilder
+            ->setFirstResult(null)
+            ->setMaxResults(null)
+            ->distinct();
+
+        return $queryBuilder;
+    }
+
+    /**
      * @return array<int, Entity>
      */
     private function executeQueryBuilder(QueryBuilder $queryBuilder): array
@@ -151,5 +277,73 @@ class JobOfferRepository extends BaseRepository implements JobOfferRepositoryInt
         assert($iterator instanceof ArrayIterator);
 
         return $iterator->getArrayCopy();
+    }
+
+    /**
+     * @return array<int, array{id: string, label: string, count: int}>
+     */
+    private function fetchAssociationFacet(
+        QueryBuilder $queryBuilder,
+        string $join,
+        string $alias,
+        string $labelField,
+        bool $isManyToMany = true,
+    ): array {
+        $joinMethod = $isManyToMany ? 'innerJoin' : 'leftJoin';
+
+        $queryBuilder->{$joinMethod}($join, $alias)
+            ->andWhere($alias . '.id IS NOT NULL')
+            ->select($alias . '.id AS id', $labelField . ' AS label', 'COUNT(DISTINCT entity.id) AS count')
+            ->groupBy($alias . '.id')
+            ->addGroupBy($labelField)
+            ->orderBy('count', 'DESC')
+            ->addOrderBy('label', 'ASC');
+
+        return $this->executeFacetAggregation($queryBuilder);
+    }
+
+    /**
+     * @return array<int, array{id: string, label: string, count: int}>
+     */
+    private function fetchScalarFacet(QueryBuilder $queryBuilder, string $field, bool $excludeNull = false): array
+    {
+        if ($excludeNull) {
+            $queryBuilder->andWhere($field . ' IS NOT NULL');
+        }
+
+        $queryBuilder
+            ->select($field . ' AS id', $field . ' AS label', 'COUNT(DISTINCT entity.id) AS count')
+            ->groupBy($field)
+            ->orderBy('count', 'DESC')
+            ->addOrderBy('label', 'ASC');
+
+        return $this->executeFacetAggregation($queryBuilder);
+    }
+
+    /**
+     * @return array<int, array{id: string, label: string, count: int}>
+     */
+    private function executeFacetAggregation(QueryBuilder $queryBuilder): array
+    {
+        $this->processQueryBuilder($queryBuilder);
+        $result = $queryBuilder->getQuery()->getArrayResult();
+        RepositoryHelper::resetParameterCount();
+
+        $rows = [];
+
+        foreach ($result as $row) {
+            $rows[] = [
+                'id' => (string) $row['id'],
+                'label' => (string) $row['label'],
+                'count' => (int) $row['count'],
+            ];
+        }
+
+        usort(
+            $rows,
+            static fn (array $left, array $right): int => $right['count'] <=> $left['count'] ?: $left['label'] <=> $right['label'],
+        );
+
+        return $rows;
     }
 }

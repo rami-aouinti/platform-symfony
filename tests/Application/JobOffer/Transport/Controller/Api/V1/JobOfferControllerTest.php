@@ -207,20 +207,30 @@ class JobOfferControllerTest extends WebTestCase
 
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
-        $facets = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $payload = JSON::decode((string) $client->getResponse()->getContent(), true);
+
+        $facetsByKey = [];
+        foreach ($payload['facets'] as $facetDefinition) {
+            self::assertSame('count_desc,label_asc', $facetDefinition['sort']);
+            $facetsByKey[$facetDefinition['key']] = $facetDefinition['values'];
+        }
+
+        self::assertArrayHasKey('skills', $facetsByKey);
+        self::assertArrayHasKey('languages', $facetsByKey);
+        self::assertArrayHasKey('jobCategories', $facetsByKey);
 
         $skillCounts = [];
-        foreach ($facets['skills'] as $facet) {
+        foreach ($facetsByKey['skills'] as $facet) {
             $skillCounts[$facet['id']] = $facet['count'];
         }
 
         $languageCounts = [];
-        foreach ($facets['languages'] as $facet) {
+        foreach ($facetsByKey['languages'] as $facet) {
             $languageCounts[$facet['id']] = $facet['count'];
         }
 
         $jobCategoryCounts = [];
-        foreach ($facets['jobCategories'] as $facet) {
+        foreach ($facetsByKey['jobCategories'] as $facet) {
             $jobCategoryCounts[$facet['id']] = $facet['count'];
         }
 
