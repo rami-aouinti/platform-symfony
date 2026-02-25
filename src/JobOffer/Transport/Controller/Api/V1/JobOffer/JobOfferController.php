@@ -34,8 +34,10 @@ use function array_filter;
 use function array_map;
 use function array_values;
 use function explode;
+use function in_array;
 use function is_array;
 use function is_numeric;
+use function preg_match;
 use function sprintf;
 use function trim;
 
@@ -179,6 +181,7 @@ class JobOfferController extends Controller
     #[OA\Parameter(name: 'languages', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
     #[OA\Parameter(name: 'city', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
     #[OA\Parameter(name: 'region', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'jobCategory', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
     public function findAction(Request $request): Response
     {
         $this->validateRestMethod($request, [Request::METHOD_GET]);
@@ -229,6 +232,7 @@ class JobOfferController extends Controller
     #[OA\Parameter(name: 'languages', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
     #[OA\Parameter(name: 'city', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
     #[OA\Parameter(name: 'region', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'jobCategory', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
     public function facetsAction(Request $request): Response
     {
         $this->validateRestMethod($request, [Request::METHOD_GET]);
@@ -397,8 +401,8 @@ class JobOfferController extends Controller
     private function normalizeBusinessQueryParams(Request $request, array $criteria): array
     {
         $postFilters = [
-            'skills' => $this->getQueryList($request, 'skills'),
-            'languages' => $this->getQueryList($request, 'languages'),
+            'skills' => $this->normalizeUuidValues($this->getQueryList($request, 'skills')),
+            'languages' => $this->normalizeUuidValues($this->getQueryList($request, 'languages')),
         ];
 
         $mappedInFilters = [
@@ -408,10 +412,15 @@ class JobOfferController extends Controller
             'workTime' => 'workTime',
             'city' => 'city',
             'region' => 'region',
+            'jobCategory' => 'jobCategory',
         ];
 
         foreach ($mappedInFilters as $queryKey => $criteriaField) {
             $values = $this->getQueryList($request, $queryKey);
+
+            if (in_array($queryKey, ['skills', 'languages', 'city', 'region', 'jobCategory'], true)) {
+                $values = $this->normalizeUuidValues($values);
+            }
 
             if ($values === []) {
                 continue;
@@ -486,6 +495,7 @@ class JobOfferController extends Controller
             'languages' => [],
             'cities' => [],
             'regions' => [],
+            'jobCategories' => [],
             'employmentTypes' => [],
             'remotePolicies' => [],
             'workTimes' => [],
@@ -516,6 +526,12 @@ class JobOfferController extends Controller
                 $facets['regions'][$facetKey]['count']++;
             }
 
+            if ($offer->getJobCategory() !== null) {
+                $facetKey = $offer->getJobCategory()->getId();
+                $facets['jobCategories'][$facetKey] ??= ['id' => $facetKey, 'label' => $offer->getJobCategory()->getName(), 'count' => 0];
+                $facets['jobCategories'][$facetKey]['count']++;
+            }
+
             $employmentType = $offer->getEmploymentType();
             $facets['employmentTypes'][$employmentType] ??= ['id' => $employmentType, 'label' => $employmentType, 'count' => 0];
             $facets['employmentTypes'][$employmentType]['count']++;
@@ -538,10 +554,22 @@ class JobOfferController extends Controller
             'languages' => array_values($facets['languages']),
             'cities' => array_values($facets['cities']),
             'regions' => array_values($facets['regions']),
+            'jobCategories' => array_values($facets['jobCategories']),
             'employmentTypes' => array_values($facets['employmentTypes']),
             'remotePolicies' => array_values($facets['remotePolicies']),
             'workTimes' => array_values($facets['workTimes']),
         ];
+    }
+
+
+    /**
+     * @param array<int, string> $values
+     *
+     * @return array<int, string>
+     */
+    private function normalizeUuidValues(array $values): array
+    {
+        return array_values(array_filter($values, static fn (string $value): bool => preg_match('/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/', $value) === 1));
     }
 
     /**
