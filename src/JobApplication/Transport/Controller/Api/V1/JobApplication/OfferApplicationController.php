@@ -32,12 +32,12 @@ class OfferApplicationController extends Controller
         parent::__construct($resource);
     }
 
-    #[Route(path: '/{jobOfferId}/applications', requirements: ['jobOfferId' => Requirement::UUID_V1], methods: [Request::METHOD_POST])]
-    public function createForOfferAction(Request $request, string $jobOfferId): Response
+    #[Route(path: '/{id}/apply', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_POST])]
+    public function createForOfferAction(Request $request, string $id): Response
     {
         return $this->getResponseHandler()->createResponse(
             $request,
-            $this->getResource()->apply($jobOfferId),
+            $this->getResource()->apply($id),
             $this->getResource(),
             Response::HTTP_CREATED,
         );

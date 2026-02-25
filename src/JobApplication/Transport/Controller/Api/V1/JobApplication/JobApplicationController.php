@@ -13,7 +13,6 @@ use App\JobApplication\Application\DTO\JobApplication\JobApplicationUpdate;
 use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobApplication\Application\Resource\JobApplicationResource;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
-use App\JobApplication\Domain\Exception\JobApplicationException;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -54,32 +53,32 @@ class JobApplicationController extends Controller
         parent::__construct($resource);
     }
 
+    #[Route(path: '/{id}/accept', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
+    public function acceptAction(Request $request, string $id): Response
+    {
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            $this->getResource()->decide($id, JobApplicationStatus::ACCEPTED),
+            $this->getResource(),
+        );
+    }
+
+    #[Route(path: '/{id}/reject', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
+    public function rejectAction(Request $request, string $id): Response
+    {
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            $this->getResource()->decide($id, JobApplicationStatus::REJECTED),
+            $this->getResource(),
+        );
+    }
+
     #[Route(path: '/{id}/withdraw', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
     public function withdrawAction(Request $request, string $id): Response
     {
         return $this->getResponseHandler()->createResponse(
             $request,
             $this->getResource()->withdraw($id),
-            $this->getResource(),
-        );
-    }
-
-    #[Route(path: '/{id}/decision', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
-    public function decisionAction(Request $request, string $id): Response
-    {
-        $payload = (array) json_decode($request->getContent(), true);
-        $status = JobApplicationStatus::tryFrom((string) ($payload['status'] ?? ''));
-
-        if (!$status instanceof JobApplicationStatus) {
-            throw new JobApplicationException(
-                'Field "status" is required and must be one of: pending, accepted, rejected, withdrawn.',
-                Response::HTTP_BAD_REQUEST,
-            );
-        }
-
-        return $this->getResponseHandler()->createResponse(
-            $request,
-            $this->getResource()->decide($id, $status),
             $this->getResource(),
         );
     }
