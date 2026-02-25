@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\JobApplication\Application\Resource\Interfaces;
 
 use App\General\Application\Rest\Interfaces\RestResourceInterface;
+use App\JobApplication\Application\DTO\JobApplication\OfferApplicationPayload;
 use App\JobApplication\Domain\Entity\JobApplication;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
 
 interface JobApplicationResourceInterface extends RestResourceInterface
 {
-    public function apply(string $jobOfferId): JobApplication;
+    public function apply(string $jobOfferId, ?OfferApplicationPayload $payload = null): JobApplication;
 
     public function withdraw(string $applicationId): JobApplication;
 
