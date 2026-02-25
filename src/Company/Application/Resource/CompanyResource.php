@@ -99,9 +99,11 @@ class CompanyResource extends RestResource implements CompanyResourceInterface
 
         $this->messageService->sendMessage(new CompanyCreatedMessage(
             companyId: $entity->getId(),
-            companyLegalName: $entity->getLegalName(),
-            ownerId: $currentUser->getId(),
-            ownerEmail: $currentUser->getEmail(),
+            ownerUserId: $currentUser->getId(),
+            metadata: [
+                'legalName' => $entity->getLegalName(),
+                'slug' => $entity->getSlug(),
+            ],
         ));
     }
 
