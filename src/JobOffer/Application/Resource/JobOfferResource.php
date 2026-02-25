@@ -11,6 +11,7 @@ use App\JobOffer\Application\DTO\JobOffer\JobOffer as JobOfferDto;
 use App\JobOffer\Application\Resource\Interfaces\JobOfferResourceInterface;
 use App\JobOffer\Domain\Entity\JobOffer as Entity;
 use App\JobOffer\Domain\Repository\Interfaces\JobOfferRepositoryInterface as RepositoryInterface;
+use App\Role\Domain\Enum\Role;
 use App\User\Application\Security\Permission;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
@@ -19,20 +20,22 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-use function array_filter;
-use function array_values;
+use function in_array;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
  */
 class JobOfferResource extends RestResource implements JobOfferResourceInterface
 {
+    private readonly RepositoryInterface $jobOfferRepository;
+
     public function __construct(
         RepositoryInterface $repository,
         private readonly UserTypeIdentification $userTypeIdentification,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
         parent::__construct($repository);
+        $this->jobOfferRepository = $repository;
     }
 
     public function beforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
@@ -80,12 +83,18 @@ class JobOfferResource extends RestResource implements JobOfferResourceInterface
         ?string $entityManagerName = null,
     ): array {
         $user = $this->getCurrentUser();
+        $hasGlobalManagePermission = $this->hasGlobalPermission($user);
 
-        return array_values(array_filter(
-            $this->find($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
-            fn (Entity $offer): bool => $offer->getCreatedBy()?->getId() === $user->getId()
-                || $this->authorizationChecker->isGranted(Permission::JOB_OFFER_MANAGE->value, $offer),
-        ));
+        return $this->jobOfferRepository->findMyOffersQuery(
+            $user,
+            $hasGlobalManagePermission,
+            $criteria,
+            $orderBy,
+            $limit,
+            $offset,
+            $search,
+            $entityManagerName,
+        );
     }
 
     public function findAvailableOffers(
@@ -96,11 +105,25 @@ class JobOfferResource extends RestResource implements JobOfferResourceInterface
         ?array $search = null,
         ?string $entityManagerName = null,
     ): array {
-        return array_values(array_filter(
-            $this->find($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
-            fn (Entity $offer): bool => $offer->getStatus() === 'open'
-                && $this->authorizationChecker->isGranted(Permission::JOB_APPLICATION_APPLY->value, $offer),
-        ));
+        $user = $this->getCurrentUser();
+        $hasGlobalApplyPermission = $this->hasGlobalPermission($user);
+
+        return $this->jobOfferRepository->findAvailableOffersQuery(
+            $user,
+            $hasGlobalApplyPermission,
+            $criteria,
+            $orderBy,
+            $limit,
+            $offset,
+            $search,
+            $entityManagerName,
+        );
+    }
+
+    private function hasGlobalPermission(User $user): bool
+    {
+        return in_array(Role::ROOT->value, $user->getRoles(), true)
+            || in_array(Role::ADMIN->value, $user->getRoles(), true);
     }
 
     private function assertGranted(string $permission, Entity $offer): void
