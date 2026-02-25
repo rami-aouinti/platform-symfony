@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\JobApplication\Application\Security\Voter;
 
 use App\JobApplication\Domain\Entity\JobApplication;
-use App\Offer\Domain\Entity\Offer;
+use App\JobOffer\Domain\Entity\JobOffer;
 use App\User\Application\Security\Permission;
 use App\User\Application\Security\Permission\Interfaces\CompanyPermissionMatrixInterface;
 use App\User\Application\Security\SecurityUser;
@@ -37,7 +37,7 @@ class OfferApplicationPermissionVoter extends Voter
             return false;
         }
 
-        return $subject instanceof Offer || $subject instanceof JobApplication;
+        return $subject instanceof JobOffer || $subject instanceof JobApplication;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -48,7 +48,7 @@ class OfferApplicationPermissionVoter extends Voter
             return false;
         }
 
-        if ($subject instanceof Offer) {
+        if ($subject instanceof JobOffer) {
             return $this->voteForOffer($user, $attribute, $subject);
         }
 
@@ -59,7 +59,7 @@ class OfferApplicationPermissionVoter extends Voter
         return $this->voteForApplication($user, $attribute, $subject);
     }
 
-    private function voteForOffer(SecurityUser $user, string $attribute, Offer $offer): bool
+    private function voteForOffer(SecurityUser $user, string $attribute, JobOffer $offer): bool
     {
         if (!in_array($attribute, [Permission::OFFER_VIEW->value, Permission::OFFER_MANAGE->value], true)) {
             return false;
@@ -75,17 +75,17 @@ class OfferApplicationPermissionVoter extends Voter
 
     private function voteForApplication(SecurityUser $user, string $attribute, JobApplication $application): bool
     {
-        $offer = $application->getOffer();
-        $companyId = $offer->getCompany()?->getId();
-        $isOfferOwner = $offer->getCreatedBy()?->getId() === $user->getUserIdentifier();
+        $offer = $application->getJobOffer();
+        $companyId = $offer?->getCompany()?->getId();
+        $isOfferOwner = $offer?->getCreatedBy()?->getId() === $user->getUserIdentifier();
 
         if ($attribute === Permission::APPLICATION_WITHDRAW->value) {
-            return $application->getUser()->getId() === $user->getUserIdentifier()
+            return $application->getCandidate()?->getId() === $user->getUserIdentifier()
                 || $this->companyPermissionMatrix->isGranted($user, $attribute, $companyId);
         }
 
         if ($attribute === Permission::APPLICATION_VIEW->value
-            && $application->getUser()->getId() === $user->getUserIdentifier()) {
+            && $application->getCandidate()?->getId() === $user->getUserIdentifier()) {
             return true;
         }
 

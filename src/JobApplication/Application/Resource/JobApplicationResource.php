@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace App\JobApplication\Application\Resource;
 
+use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
+use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\JobApplication\Application\DTO\JobApplication\JobApplication as JobApplicationDto;
 use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobApplication\Domain\Entity\JobApplication as Entity;
-use App\JobApplication\Domain\Enum\ApplicationStatus;
+use App\JobApplication\Domain\Enum\JobApplicationStatus;
 use App\JobApplication\Domain\Exception\JobApplicationException;
 use App\JobApplication\Domain\Repository\Interfaces\JobApplicationRepositoryInterface as RepositoryInterface;
-use App\Offer\Infrastructure\Repository\OfferRepository;
+use App\JobOffer\Infrastructure\Repository\JobOfferRepository;
 use App\User\Application\Security\Permission;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
+use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -28,39 +32,53 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
 {
     public function __construct(
         RepositoryInterface $repository,
-        private readonly OfferRepository $offerRepository,
+        private readonly JobOfferRepository $jobOfferRepository,
         private readonly UserTypeIdentification $userTypeIdentification,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
         parent::__construct($repository);
     }
 
-    public function apply(string $offerId): Entity
+    public function beforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
     {
-        $user = $this->getCurrentUser();
-        $offer = $this->offerRepository->find($offerId);
-
-        if ($offer === null) {
-            throw new JobApplicationException('Offer not found.', Response::HTTP_NOT_FOUND);
+        if (!$entity instanceof Entity || !$restDto instanceof JobApplicationDto) {
+            return;
         }
 
-        if (!$this->authorizationChecker->isGranted(Permission::OFFER_VIEW->value, $offer)) {
-            throw new JobApplicationException('Offer not found.', Response::HTTP_NOT_FOUND);
+        $user = $this->userTypeIdentification->getUser();
+
+        if ($user instanceof User && $entity->getCandidate() === null) {
+            $entity->setCandidate($user);
+        }
+    }
+
+    public function apply(string $jobOfferId): Entity
+    {
+        $candidate = $this->getCurrentUser();
+        $jobOffer = $this->jobOfferRepository->find($jobOfferId);
+
+        if ($jobOffer === null) {
+            throw new JobApplicationException('Job offer not found.', Response::HTTP_NOT_FOUND);
+        }
+
+        if (!$this->authorizationChecker->isGranted(Permission::OFFER_VIEW->value, $jobOffer)) {
+            throw new JobApplicationException('Job offer not found.', Response::HTTP_NOT_FOUND);
         }
 
         $existing = $this->getRepository()->findOneBy([
-            'offer' => $offer,
-            'user' => $user,
+            'jobOffer' => $jobOffer,
+            'candidate' => $candidate,
         ]);
 
         if ($existing instanceof Entity) {
-            throw new JobApplicationException(
-                'You have already applied to this offer.',
-                Response::HTTP_CONFLICT,
-            );
+            throw new JobApplicationException('You have already applied to this job offer.', Response::HTTP_CONFLICT);
         }
 
-        $application = new Entity($offer, $user);
+        $application = (new Entity())
+            ->setJobOffer($jobOffer)
+            ->setCandidate($candidate)
+            ->setStatus(JobApplicationStatus::PENDING);
+
         $this->getRepository()->save($application);
 
         return $application;
@@ -71,41 +89,42 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
         $application = $this->getByIdOrFail($applicationId);
 
         if (!$this->authorizationChecker->isGranted(Permission::APPLICATION_WITHDRAW->value, $application)) {
-            throw new JobApplicationException(
-                'Only the applicant can withdraw this application.',
-                Response::HTTP_FORBIDDEN,
-            );
+            throw new JobApplicationException('Only the candidate can withdraw this application.', Response::HTTP_FORBIDDEN);
         }
 
-        $this->assertTransition($application, ApplicationStatus::WITHDRAWN);
+        $this->assertTransition($application, JobApplicationStatus::WITHDRAWN);
 
-        $application->setStatus(ApplicationStatus::WITHDRAWN);
+        $application
+            ->setStatus(JobApplicationStatus::WITHDRAWN)
+            ->setDecidedBy(null)
+            ->setDecidedAt(null);
+
         $this->getRepository()->save($application);
 
         return $application;
     }
 
-    public function decide(string $applicationId, ApplicationStatus $status): Entity
+    public function decide(string $applicationId, JobApplicationStatus $status): Entity
     {
-        if (!in_array($status, [ApplicationStatus::ACCEPTED, ApplicationStatus::REJECTED], true)) {
-            throw new JobApplicationException(
-                'Decision status must be ACCEPTED or REJECTED.',
-                Response::HTTP_BAD_REQUEST,
-            );
+        if (!in_array($status, [JobApplicationStatus::ACCEPTED, JobApplicationStatus::REJECTED], true)) {
+            throw new JobApplicationException('Decision status must be accepted or rejected.', Response::HTTP_BAD_REQUEST);
         }
 
         $application = $this->getByIdOrFail($applicationId);
+        $user = $this->getCurrentUser();
 
-        if ($application->getOffer()->getCreatedBy()?->getId() !== $this->getCurrentUser()->getId()) {
-            throw new JobApplicationException(
-                'Only the offer creator can decide this application.',
-                Response::HTTP_FORBIDDEN,
-            );
+        if (!$this->authorizationChecker->isGranted(Permission::APPLICATION_DECIDE->value, $application)
+            && $application->getJobOffer()?->getCreatedBy()?->getId() !== $user->getId()) {
+            throw new JobApplicationException('Only the job offer owner can decide this application.', Response::HTTP_FORBIDDEN);
         }
 
         $this->assertTransition($application, $status);
 
-        $application->setStatus($status);
+        $application
+            ->setStatus($status)
+            ->setDecidedBy($user)
+            ->setDecidedAt(new DateTimeImmutable());
+
         $this->getRepository()->save($application);
 
         return $application;
@@ -152,7 +171,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
         return $user;
     }
 
-    private function assertTransition(Entity $application, ApplicationStatus $target): void
+    private function assertTransition(Entity $application, JobApplicationStatus $target): void
     {
         if (!$application->getStatus()->canTransitionTo($target)) {
             throw new JobApplicationException(
