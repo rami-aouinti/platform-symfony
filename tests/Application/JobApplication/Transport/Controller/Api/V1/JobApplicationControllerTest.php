@@ -13,6 +13,7 @@ class JobApplicationControllerTest extends WebTestCase
 {
     private const string OFFER_ID = '40000000-0000-1000-8000-000000000001';
     private const string APPLICATION_ID = '50000000-0000-1000-8000-000000000001';
+    private const string UNAUTHORIZED_APPLICATION_ID = '50000000-0000-1000-8000-000000000004';
     private const string BASE_URL = self::API_URL_PREFIX . '/v1/job-applications';
 
     /** @throws Throwable */
@@ -95,9 +96,17 @@ class JobApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
         $candidateList = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
         self::assertIsArray($candidateList);
+        self::assertNotEmpty($candidateList);
+
+        foreach ($candidateList as $application) {
+            self::assertNotSame(self::UNAUTHORIZED_APPLICATION_ID, $application['id'] ?? null);
+        }
 
         $candidateClient->request('GET', self::BASE_URL . '/' . self::APPLICATION_ID);
         self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
+
+        $candidateClient->request('GET', self::BASE_URL . '/' . self::UNAUTHORIZED_APPLICATION_ID);
+        self::assertSame(Response::HTTP_NOT_FOUND, $candidateClient->getResponse()->getStatusCode());
 
         $outsiderClient = $this->getTestClient('bob-admin', 'password-admin');
         $outsiderClient->request('GET', self::BASE_URL . '/' . self::APPLICATION_ID);

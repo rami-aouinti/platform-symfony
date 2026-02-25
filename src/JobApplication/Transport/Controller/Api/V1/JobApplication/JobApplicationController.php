@@ -41,8 +41,6 @@ class JobApplicationController extends Controller
     use UpdateMethod;
     use PatchMethod;
     use \App\General\Transport\Rest\Traits\Actions\Authenticated\DeleteAction;
-    use \App\General\Transport\Rest\Traits\Actions\Authenticated\FindAction;
-    use \App\General\Transport\Rest\Traits\Actions\Authenticated\FindOneAction;
 
     /**
      * @var array<string, string>
@@ -138,6 +136,34 @@ class JobApplicationController extends Controller
     public function patchAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
         return $this->patchMethod($request, $restDto, $id);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '', methods: [Request::METHOD_GET])]
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    public function findAction(Request $request): Response
+    {
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            $this->getResource()->findAllowedForCurrentUser(),
+            $this->getResource(),
+        );
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    public function findOneAction(Request $request, string $id): Response
+    {
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            $this->getResource()->getAllowedForCurrentUser($id),
+            $this->getResource(),
+        );
     }
 
     #[Route(path: '/{id}/accept', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
