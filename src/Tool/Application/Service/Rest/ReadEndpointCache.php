@@ -80,12 +80,12 @@ class ReadEndpointCache
             'user' => $this->resolveUserContext(),
         ];
 
-        return 'read_endpoint:' . hash('sha256', (string) json_encode($this->normalize($payload), JSON_THROW_ON_ERROR));
+        return 'read_endpoint_' . hash('sha256', (string) json_encode($this->normalize($payload), JSON_THROW_ON_ERROR));
     }
 
     private function buildTag(string $scope): string
     {
-        return 'read_endpoint_scope:' . hash('sha256', $scope);
+        return 'read_endpoint_scope_' . hash('sha256', $scope);
     }
 
     private function resolveTtl(string $scope): int
