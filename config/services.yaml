@@ -145,6 +145,7 @@ services:
 
     App\Notification\Application\Service\Channel\SmsNotification:
         arguments:
+            $texter: '@?texter'
             $fromNumber: '%env(SMS_FROM_NUMBER)%'
 
     App\Notification\Application\Service\Channel\PushNotification:
