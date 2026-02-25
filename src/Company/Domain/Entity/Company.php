@@ -8,6 +8,7 @@ use App\Candidate\Domain\Entity\CandidateProfile;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
+use App\User\Domain\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -27,24 +28,29 @@ class Company implements EntityInterface
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
-    #[Groups(['Company', 'Company.id'])]
+    #[Groups(['Company', 'Company.id', 'Company.show', 'Company.edit'])]
     private UuidInterface $id;
 
     #[ORM\Column(name: 'legal_name', type: Types::STRING, length: 255, nullable: false)]
-    #[Groups(['Company', 'Company.legalName'])]
+    #[Groups(['Company', 'Company.legalName', 'Company.create', 'Company.show', 'Company.edit'])]
     private string $legalName = '';
 
     #[ORM\Column(name: 'slug', type: Types::STRING, length: 255, nullable: false)]
-    #[Groups(['Company', 'Company.slug'])]
+    #[Groups(['Company', 'Company.slug', 'Company.create', 'Company.show', 'Company.edit'])]
     private string $slug = '';
 
     #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
-    #[Groups(['Company', 'Company.status'])]
+    #[Groups(['Company', 'Company.status', 'Company.create', 'Company.show', 'Company.edit'])]
     private string $status = 'active';
 
     #[ORM\Column(name: 'main_address', type: Types::TEXT, nullable: true)]
-    #[Groups(['Company', 'Company.mainAddress'])]
+    #[Groups(['Company', 'Company.mainAddress', 'Company.create', 'Company.show', 'Company.edit'])]
     private ?string $mainAddress = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'owner_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[Groups(['Company', 'Company.owner', 'Company.show'])]
+    private ?User $owner = null;
 
     /**
      * @var Collection<int, CompanyMembership>
@@ -118,11 +124,32 @@ class Company implements EntityInterface
         return $this;
     }
 
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, CompanyMembership>
      */
     public function getMemberships(): Collection
     {
         return $this->memberships;
+    }
+
+    public function addMembership(CompanyMembership $membership): self
+    {
+        if (!$this->memberships->contains($membership)) {
+            $this->memberships->add($membership);
+        }
+
+        return $this;
     }
 }
