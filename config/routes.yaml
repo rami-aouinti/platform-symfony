@@ -61,6 +61,15 @@ job-controllers:
     defaults:
         _format: json
 
+job-offer-controllers:
+    resource:
+        path: ../src/JobOffer/Transport/Controller/Api/
+        namespace: App\JobOffer\Transport\Controller\Api
+    type: attribute
+    prefix: /api
+    defaults:
+        _format: json
+
 offer-controllers:
     resource:
         path: ../src/Offer/Transport/Controller/Api/
