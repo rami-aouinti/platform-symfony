@@ -75,6 +75,14 @@ class JobOfferController extends Controller
     }
 
     private const string CACHE_SCOPE = "job_offer";
+    private const int DEFAULT_LIMIT = 20;
+    private const int DEFAULT_OFFSET = 0;
+
+    /**
+     * @var array<string, string>
+     */
+    private const array DEFAULT_ORDER_BY = ['publishedAt' => 'DESC'];
+    private const string DEFAULT_CANDIDATE_STATUS = 'open';
 
     /**
      * @throws Throwable
@@ -171,17 +179,22 @@ class JobOfferController extends Controller
      */
     #[Route(path: '', methods: [Request::METHOD_GET])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-    #[OA\Parameter(name: 'salaryMin', in: 'query', schema: new OA\Schema(type: 'integer'), description: 'Minimum expected salary. Matches offers with salaryMax >= value.')]
-    #[OA\Parameter(name: 'salaryMax', in: 'query', schema: new OA\Schema(type: 'integer'), description: 'Maximum expected salary. Matches offers with salaryMin <= value.')]
-    #[OA\Parameter(name: 'remoteMode', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
-    #[OA\Parameter(name: 'employmentType', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
-    #[OA\Parameter(name: 'workTime', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
-    #[OA\Parameter(name: 'publishedWithinDays', in: 'query', schema: new OA\Schema(type: 'integer'), description: 'Keep only offers published within the given number of days.')]
-    #[OA\Parameter(name: 'skills', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
-    #[OA\Parameter(name: 'languages', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
-    #[OA\Parameter(name: 'city', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
-    #[OA\Parameter(name: 'region', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
-    #[OA\Parameter(name: 'jobCategory', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'salaryMin', in: 'query', schema: new OA\Schema(type: 'integer'), description: 'Minimum expected salary. Mapped to internal criteria: entity.salaryMax >= salaryMin.')]
+    #[OA\Parameter(name: 'salaryMax', in: 'query', schema: new OA\Schema(type: 'integer'), description: 'Maximum expected salary. Mapped to internal criteria: entity.salaryMin <= salaryMax.')]
+    #[OA\Parameter(name: 'remoteMode', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true, description: 'Business filter mapped to internal criteria key remoteMode (supports alias remotePolicy).')]
+    #[OA\Parameter(name: 'employmentType', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true, description: 'Business filter mapped to internal criteria key employmentType.')]
+    #[OA\Parameter(name: 'workTime', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true, description: 'Business filter mapped to internal criteria key workTime.')]
+    #[OA\Parameter(name: 'publishedWithinDays', in: 'query', schema: new OA\Schema(type: 'integer', minimum: 0), description: 'Keep only offers published within the given number of days. Mapped to entity.publishedAt >= now - N days.')]
+    #[OA\Parameter(name: 'skills', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true, description: 'Business filter applied as post-filter on offer skill ids.')]
+    #[OA\Parameter(name: 'language', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true, description: 'Business alias of languages[], applied as post-filter on offer language ids.')]
+    #[OA\Parameter(name: 'languages', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true, description: 'Business filter applied as post-filter on offer language ids.')]
+    #[OA\Parameter(name: 'city', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true, description: 'Business filter mapped to internal criteria key city.')]
+    #[OA\Parameter(name: 'region', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true, description: 'Business filter mapped to internal criteria key region.')]
+    #[OA\Parameter(name: 'jobCategory', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true, description: 'Business filter mapped to internal criteria key jobCategory.')]
+    #[OA\Parameter(name: 'status', in: 'query', schema: new OA\Schema(type: 'string', enum: ['draft', 'open', 'closed'], default: 'open'), description: 'Offer status. Default is open for candidate journey.')]
+    #[OA\Parameter(name: 'order[publishedAt]', in: 'query', schema: new OA\Schema(type: 'string', enum: ['ASC', 'DESC'], default: 'DESC'), description: 'Sorting. Default is publishedAt DESC.')]
+    #[OA\Parameter(name: 'limit', in: 'query', schema: new OA\Schema(type: 'integer', minimum: 1, default: self::DEFAULT_LIMIT), description: 'Pagination size. Default: 20.')]
+    #[OA\Parameter(name: 'offset', in: 'query', schema: new OA\Schema(type: 'integer', minimum: 0, default: self::DEFAULT_OFFSET), description: 'Pagination offset. Default: 0.')]
     public function findAction(Request $request): Response
     {
         $this->validateRestMethod($request, [Request::METHOD_GET]);
@@ -196,6 +209,7 @@ class JobOfferController extends Controller
         $this->processCriteria($criteria, $request, __METHOD__);
 
         [$criteria, $postFilters] = $this->normalizeBusinessQueryParams($request, $criteria);
+        $this->applyCandidateSearchDefaults($criteria, $orderBy, $limit, $offset);
 
         $data = $this->readEndpointCache->remember(
             self::CACHE_SCOPE,
@@ -400,9 +414,14 @@ class JobOfferController extends Controller
      */
     private function normalizeBusinessQueryParams(Request $request, array $criteria): array
     {
+        $languageFilters = $this->normalizeUuidValues([
+            ...$this->getQueryList($request, 'language'),
+            ...$this->getQueryList($request, 'languages'),
+        ]);
+
         $postFilters = [
             'skills' => $this->normalizeUuidValues($this->getQueryList($request, 'skills')),
-            'languages' => $this->normalizeUuidValues($this->getQueryList($request, 'languages')),
+            'languages' => $languageFilters,
         ];
 
         $mappedInFilters = [
@@ -452,6 +471,20 @@ class JobOfferController extends Controller
         }
 
         return [$criteria, $postFilters];
+    }
+
+    private function applyCandidateSearchDefaults(array &$criteria, array &$orderBy, ?int &$limit, ?int &$offset): void
+    {
+        if (!isset($criteria['status']) || $criteria['status'] === null || $criteria['status'] === '') {
+            $criteria['status'] = self::DEFAULT_CANDIDATE_STATUS;
+        }
+
+        if ($orderBy === []) {
+            $orderBy = self::DEFAULT_ORDER_BY;
+        }
+
+        $limit ??= self::DEFAULT_LIMIT;
+        $offset ??= self::DEFAULT_OFFSET;
     }
 
     /**
