@@ -68,9 +68,26 @@ class JobApplicationController extends Controller
         properties: [
             new OA\Property(property: 'jobOffer', type: 'string', format: 'uuid', example: '0195f7ac-199f-7188-bc2c-fe59f1161b08'),
             new OA\Property(property: 'candidate', type: 'string', format: 'uuid', example: '0195f798-7a12-7303-8db6-ece0cabf335d'),
-            new OA\Property(property: 'coverLetter', type: 'string', nullable: true, example: 'I built high-scale Symfony APIs for 5 years.'),
-            new OA\Property(property: 'cvUrl', type: 'string', format: 'uri', nullable: true, example: 'https://cdn.example.com/cv/jane-doe.pdf'),
-            new OA\Property(property: 'attachments', type: 'array', nullable: true, items: new OA\Items(type: 'string', format: 'uri'), example: ['https://cdn.example.com/portfolio.pdf']),
+            new OA\Property(
+                property: 'coverLetter',
+                type: 'string',
+                example: 'I built high-scale Symfony APIs for 5 years.',
+                nullable: true
+            ),
+            new OA\Property(
+                property: 'cvUrl',
+                type: 'string',
+                format: 'uri',
+                example: 'https://cdn.example.com/cv/jane-doe.pdf',
+                nullable: true
+            ),
+            new OA\Property(
+                property: 'attachments',
+                type: 'array',
+                items: new OA\Items(type: 'string', format: 'uri'),
+                example: ['https://cdn.example.com/portfolio.pdf'],
+                nullable: true
+            ),
             new OA\Property(property: 'status', type: 'string', enum: ['pending', 'accepted', 'rejected', 'withdrawn'], example: 'pending'),
         ],
         type: 'object',
@@ -127,9 +144,26 @@ class JobApplicationController extends Controller
         properties: [
             new OA\Property(property: 'jobOffer', type: 'string', format: 'uuid', example: '0195f7ac-199f-7188-bc2c-fe59f1161b08'),
             new OA\Property(property: 'candidate', type: 'string', format: 'uuid', example: '0195f798-7a12-7303-8db6-ece0cabf335d'),
-            new OA\Property(property: 'coverLetter', type: 'string', nullable: true, example: 'I built high-scale Symfony APIs for 5 years.'),
-            new OA\Property(property: 'cvUrl', type: 'string', format: 'uri', nullable: true, example: 'https://cdn.example.com/cv/jane-doe.pdf'),
-            new OA\Property(property: 'attachments', type: 'array', nullable: true, items: new OA\Items(type: 'string', format: 'uri'), example: ['https://cdn.example.com/portfolio.pdf']),
+            new OA\Property(
+                property: 'coverLetter',
+                type: 'string',
+                example: 'I built high-scale Symfony APIs for 5 years.',
+                nullable: true
+            ),
+            new OA\Property(
+                property: 'cvUrl',
+                type: 'string',
+                format: 'uri',
+                example: 'https://cdn.example.com/cv/jane-doe.pdf',
+                nullable: true
+            ),
+            new OA\Property(
+                property: 'attachments',
+                type: 'array',
+                items: new OA\Items(type: 'string', format: 'uri'),
+                example: ['https://cdn.example.com/portfolio.pdf'],
+                nullable: true
+            ),
             new OA\Property(property: 'status', type: 'string', enum: ['pending', 'accepted', 'rejected', 'withdrawn'], example: 'pending'),
         ],
         type: 'object',
