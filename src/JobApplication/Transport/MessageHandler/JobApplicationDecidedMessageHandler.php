@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\JobApplication\Transport\MessageHandler;
 
-use App\JobApplication\Domain\Message\JobApplicationSubmittedMessage;
+use App\JobApplication\Domain\Enum\JobApplicationStatus;
+use App\JobApplication\Domain\Message\JobApplicationDecidedMessage;
 use App\Notification\Application\Service\Interfaces\NotificationOrchestratorInterface;
 use App\User\Infrastructure\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-readonly class JobApplicationSubmittedMessageHandler
+readonly class JobApplicationDecidedMessageHandler
 {
     public function __construct(
         private NotificationOrchestratorInterface $notificationOrchestrator,
@@ -18,7 +19,7 @@ readonly class JobApplicationSubmittedMessageHandler
     ) {
     }
 
-    public function __invoke(JobApplicationSubmittedMessage $message): void
+    public function __invoke(JobApplicationDecidedMessage $message): void
     {
         $candidate = $this->userRepository->find($message->candidateUserId);
 
@@ -26,15 +27,18 @@ readonly class JobApplicationSubmittedMessageHandler
             return;
         }
 
-        $ownerOrCreator = $message->offerOwnerOrCreatorUserId !== null
-            ? $this->userRepository->find($message->offerOwnerOrCreatorUserId)
-            : null;
+        $status = JobApplicationStatus::tryFrom($message->status);
 
-        $this->notificationOrchestrator->notifyJobApplicationSubmitted(
+        if ($status === null) {
+            return;
+        }
+
+        $this->notificationOrchestrator->notifyJobApplicationDecided(
             candidate: $candidate,
-            offerOwnerOrCreator: $ownerOrCreator,
+            status: $status,
             applicationId: $message->applicationId,
             offerId: $message->offerId,
         );
     }
 }
+

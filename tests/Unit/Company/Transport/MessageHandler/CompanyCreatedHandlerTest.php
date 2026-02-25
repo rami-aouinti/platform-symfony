@@ -8,17 +8,16 @@ use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Message\CompanyCreatedMessage;
 use App\Company\Infrastructure\Repository\CompanyRepository;
 use App\Company\Transport\MessageHandler\CompanyCreatedHandler;
-use App\Notification\Application\Service\Interfaces\NotificationChannelServiceInterface;
+use App\Notification\Application\Service\Interfaces\NotificationOrchestratorInterface;
 use App\User\Domain\Entity\User;
 use App\User\Infrastructure\Repository\UserRepository;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
-use Twig\Environment;
 
 class CompanyCreatedHandlerTest extends TestCase
 {
     #[AllowMockObjectsWithoutExpectations]
-    public function testInvokeSendsEmailNotificationWithTwigContent(): void
+    public function testInvokeDelegatesToNotificationOrchestrator(): void
     {
         $owner = (new User())
             ->setFirstName('Alice')
@@ -39,14 +38,13 @@ class CompanyCreatedHandlerTest extends TestCase
             ],
         );
 
-        $notificationChannelService = $this->createMock(NotificationChannelServiceInterface::class);
-        $notificationChannelService
+        $notificationOrchestrator = $this->createMock(NotificationOrchestratorInterface::class);
+        $notificationOrchestrator
             ->expects($this->once())
-            ->method('sendEmailNotification')
+            ->method('notifyCompanyCreated')
             ->with(
-                'alice@example.com',
-                'Société "Acme Corp" créée',
-                '<p>Email body</p>'
+                $owner,
+                'Acme Corp',
             );
 
         $companyRepository = $this->getMockBuilder(CompanyRepository::class)
@@ -69,22 +67,10 @@ class CompanyCreatedHandlerTest extends TestCase
             ->with($owner->getId())
             ->willReturn($owner);
 
-        $twig = $this->createMock(Environment::class);
-        $twig
-            ->expects($this->once())
-            ->method('render')
-            ->with('Emails/company_created.html.twig', $this->callback(static function (array $context) use ($owner, $company): bool {
-                return $context['owner'] === $owner
-                    && $context['company'] === $company
-                    && $context['metadata']['slug'] === 'acme-corp';
-            }))
-            ->willReturn('<p>Email body</p>');
-
         $handler = new CompanyCreatedHandler(
-            $notificationChannelService,
+            $notificationOrchestrator,
             $companyRepository,
             $userRepository,
-            $twig,
         );
 
         $handler($message);
