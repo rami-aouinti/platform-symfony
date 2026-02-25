@@ -91,6 +91,49 @@ class JobOfferControllerTest extends WebTestCase
     }
 
     /** @throws Throwable */
+    public function testMyRoutePaginationIsAppliedAfterVisibilityConstraints(): void
+    {
+        $client = $this->getTestClient('alice-user', 'password-user');
+        $client->request('GET', self::BASE_URL . '/my', [
+            'order' => ['title' => 'ASC'],
+            'limit' => 2,
+            'offset' => 1,
+        ]);
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $offerIds = array_column($offers, 'id');
+
+        self::assertCount(2, $offers);
+        self::assertSame([
+            '60000000-0000-1000-8000-000000000002',
+            '60000000-0000-1000-8000-000000000001',
+        ], $offerIds);
+    }
+
+    /** @throws Throwable */
+    public function testAvailableRoutePaginationIsAppliedAfterVisibilityConstraints(): void
+    {
+        $client = $this->getTestClient('carol-user', 'password-user');
+        $client->request('GET', self::BASE_URL . '/available', [
+            'order' => ['title' => 'ASC'],
+            'limit' => 1,
+            'offset' => 1,
+        ]);
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $offerIds = array_column($offers, 'id');
+
+        self::assertCount(1, $offers);
+        self::assertSame([
+            '60000000-0000-1000-8000-000000000001',
+        ], $offerIds);
+    }
+
+    /** @throws Throwable */
     public function testFindActionSupportsCombinedBusinessFilters(): void
     {
         $client = $this->getTestClient('alice-user', 'password-user');
