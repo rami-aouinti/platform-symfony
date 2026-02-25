@@ -28,6 +28,42 @@ class JobApplicationControllerTest extends WebTestCase
     }
 
     /** @throws Throwable */
+    public function testCandidateCanApplyToOpenOfferWithPayloadPersistence(): void
+    {
+        $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
+        $requestPayload = [
+            'coverLetter' => 'Motivation personnalisée',
+            'cvUrl' => 'https://cdn.example.com/cv/bob-admin.pdf',
+            'attachments' => ['https://cdn.example.com/portfolio/bob-admin.pdf'],
+        ];
+
+        $candidateClient->request(
+            'POST',
+            self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply',
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: JSON::encode($requestPayload),
+        );
+
+        self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
+        $createdPayload = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+
+        self::assertSame($requestPayload['coverLetter'], $createdPayload['coverLetter']);
+        self::assertSame($requestPayload['cvUrl'], $createdPayload['cvUrl']);
+        self::assertSame($requestPayload['attachments'], $createdPayload['attachments']);
+
+        $applicationId = (string) $createdPayload['id'];
+
+        $candidateClient->request('GET', self::BASE_URL . '/' . $applicationId);
+        self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
+
+        $persistedPayload = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+
+        self::assertSame($requestPayload['coverLetter'], $persistedPayload['coverLetter']);
+        self::assertSame($requestPayload['cvUrl'], $persistedPayload['cvUrl']);
+        self::assertSame($requestPayload['attachments'], $persistedPayload['attachments']);
+    }
+
+    /** @throws Throwable */
     public function testDuplicateApplicationIsBlocked(): void
     {
         $candidateClient = $this->getTestClient('carol-user', 'password-user');

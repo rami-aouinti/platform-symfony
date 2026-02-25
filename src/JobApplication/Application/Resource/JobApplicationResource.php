@@ -8,6 +8,7 @@ use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\JobApplication\Application\DTO\JobApplication\JobApplication as JobApplicationDto;
+use App\JobApplication\Application\DTO\JobApplication\OfferApplicationPayload;
 use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobApplication\Domain\Entity\JobApplication as Entity;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
@@ -52,7 +53,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
         }
     }
 
-    public function apply(string $jobOfferId): Entity
+    public function apply(string $jobOfferId, ?OfferApplicationPayload $payload = null): Entity
     {
         $candidate = $this->getCurrentUser();
         $jobOffer = $this->jobOfferRepository->find($jobOfferId);
@@ -77,6 +78,9 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
         $application = (new Entity())
             ->setJobOffer($jobOffer)
             ->setCandidate($candidate)
+            ->setCoverLetter($payload?->getCoverLetter())
+            ->setCvUrl($payload?->getCvUrl())
+            ->setAttachments($payload?->getAttachments())
             ->setStatus(JobApplicationStatus::PENDING);
 
         $this->getRepository()->save($application);

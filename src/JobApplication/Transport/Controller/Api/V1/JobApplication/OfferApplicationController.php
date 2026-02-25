@@ -6,6 +6,7 @@ namespace App\JobApplication\Transport\Controller\Api\V1\JobApplication;
 
 use App\General\Transport\Rest\Controller;
 use App\General\Transport\Rest\ResponseHandler;
+use App\JobApplication\Application\DTO\JobApplication\OfferApplicationPayload;
 use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobApplication\Application\Resource\JobApplicationResource;
 use OpenApi\Attributes as OA;
@@ -38,10 +39,16 @@ class OfferApplicationController extends Controller
         required: false,
         content: new JsonContent(
             properties: [
-                new OA\Property(property: 'note', type: 'string', nullable: true, example: 'Status changed by recruiter workflow.'),
+                new OA\Property(property: 'coverLetter', type: 'string', nullable: true, example: 'I built high-scale Symfony APIs for 5 years.'),
+                new OA\Property(property: 'cvUrl', type: 'string', format: 'uri', nullable: true, example: 'https://cdn.example.com/cv/jane-doe.pdf'),
+                new OA\Property(property: 'attachments', type: 'array', nullable: true, items: new OA\Items(type: 'string', format: 'uri'), example: ['https://cdn.example.com/portfolio.pdf']),
             ],
             type: 'object',
-            example: ['note' => 'Application submitted from candidate dashboard.'],
+            example: [
+                'coverLetter' => 'I built high-scale Symfony APIs for 5 years.',
+                'cvUrl' => 'https://cdn.example.com/cv/jane-doe.pdf',
+                'attachments' => ['https://cdn.example.com/portfolio.pdf'],
+            ],
         ),
     )]
     #[OA\Response(
@@ -64,9 +71,11 @@ class OfferApplicationController extends Controller
     )]
     public function createForOfferAction(Request $request, string $id): Response
     {
+        $payload = OfferApplicationPayload::fromArray($request->getContent() === '' ? [] : $request->toArray());
+
         return $this->getResponseHandler()->createResponse(
             $request,
-            $this->getResource()->apply($id),
+            $this->getResource()->apply($id, $payload),
             $this->getResource(),
             Response::HTTP_CREATED,
         );
