@@ -147,6 +147,11 @@ services:
         arguments:
             $fromNumber: '%env(SMS_FROM_NUMBER)%'
 
+    App\Notification\Application\Service\Channel\PushNotification:
+        arguments:
+            $hub: '@?mercure.hub.default'
+
+
     App\Notification\Application\Service\Interfaces\NotificationServiceInterface:
         class: App\Notification\Application\Service\NotificationService
 
