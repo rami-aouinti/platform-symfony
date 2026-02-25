@@ -6,7 +6,11 @@ namespace App\JobOffer\Infrastructure\DataFixtures\ORM;
 
 use App\Company\Domain\Entity\Company;
 use App\General\Domain\Rest\UuidHelper;
+use App\JobOffer\Domain\Entity\City;
 use App\JobOffer\Domain\Entity\JobOffer;
+use App\JobOffer\Domain\Entity\Language;
+use App\JobOffer\Domain\Entity\Region;
+use App\JobOffer\Domain\Entity\Skill;
 use App\Tests\Utils\PhpUnitUtil;
 use App\User\Domain\Entity\User;
 use DateTimeImmutable;
@@ -34,6 +38,44 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
         /** @var User $carol */
         $carol = $this->getReference('User-carol-user', User::class);
 
+        /** @var City $paris */
+        $paris = $this->getReference('City-paris', City::class);
+        /** @var City $berlin */
+        $berlin = $this->getReference('City-berlin', City::class);
+        /** @var City $lyon */
+        $lyon = $this->getReference('City-lyon', City::class);
+        /** @var City $toulouse */
+        $toulouse = $this->getReference('City-toulouse', City::class);
+
+        /** @var Region $idf */
+        $idf = $this->getReference('Region-idf', Region::class);
+        /** @var Region $berlinRegion */
+        $berlinRegion = $this->getReference('Region-berlin', Region::class);
+        /** @var Region $ara */
+        $ara = $this->getReference('Region-ara', Region::class);
+        /** @var Region $occitanie */
+        $occitanie = $this->getReference('Region-occitanie', Region::class);
+
+        /** @var Skill $php */
+        $php = $this->getReference('Skill-php', Skill::class);
+        /** @var Skill $symfony */
+        $symfony = $this->getReference('Skill-symfony', Skill::class);
+        /** @var Skill $devops */
+        $devops = $this->getReference('Skill-devops', Skill::class);
+        /** @var Skill $aws */
+        $aws = $this->getReference('Skill-aws', Skill::class);
+        /** @var Skill $react */
+        $react = $this->getReference('Skill-react', Skill::class);
+        /** @var Skill $sql */
+        $sql = $this->getReference('Skill-sql', Skill::class);
+
+        /** @var Language $fr */
+        $fr = $this->getReference('Language-fr', Language::class);
+        /** @var Language $en */
+        $en = $this->getReference('Language-en', Language::class);
+        /** @var Language $de */
+        $de = $this->getReference('Language-de', Language::class);
+
         $jobs = [
             [
                 'reference' => 'JobOffer-php-backend-engineer',
@@ -54,8 +96,10 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'workTime' => 'full-time',
                 'applicationType' => 'internal',
                 'publishedAt' => new DateTimeImmutable('2026-06-01 09:00:00'),
-                'city' => 'Paris',
-                'region' => 'Île-de-France',
+                'city' => $paris,
+                'region' => $idf,
+                'skills' => [$php, $symfony],
+                'languages' => [$fr, $en],
                 'country' => 'FR',
                 'languageLevel' => 'fluent',
             ],
@@ -78,8 +122,10 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'workTime' => 'full-time',
                 'applicationType' => 'external-link',
                 'publishedAt' => new DateTimeImmutable('2026-05-15 10:30:00'),
-                'city' => 'Berlin',
-                'region' => 'Berlin',
+                'city' => $berlin,
+                'region' => $berlinRegion,
+                'skills' => [$devops, $aws],
+                'languages' => [$en, $de],
                 'country' => 'DE',
                 'languageLevel' => 'advanced',
             ],
@@ -102,8 +148,10 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'workTime' => 'full-time',
                 'applicationType' => 'email',
                 'publishedAt' => new DateTimeImmutable('2026-03-20 08:15:00'),
-                'city' => 'Lyon',
-                'region' => 'Auvergne-Rhône-Alpes',
+                'city' => $lyon,
+                'region' => $ara,
+                'skills' => [$sql, $php],
+                'languages' => [$fr],
                 'country' => 'FR',
                 'languageLevel' => 'intermediate',
             ],
@@ -126,8 +174,10 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'workTime' => 'part-time',
                 'applicationType' => 'internal',
                 'publishedAt' => null,
-                'city' => 'Toulouse',
-                'region' => 'Occitanie',
+                'city' => $toulouse,
+                'region' => $occitanie,
+                'skills' => [$react],
+                'languages' => [$fr],
                 'country' => 'FR',
                 'languageLevel' => 'basic',
             ],
@@ -154,7 +204,9 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 ->setCity($data['city'])
                 ->setRegion($data['region'])
                 ->setCountry($data['country'])
-                ->setLanguageLevel($data['languageLevel']);
+                ->setLanguageLevel($data['languageLevel'])
+                ->setSkills($data['skills'])
+                ->setLanguages($data['languages']);
 
             PhpUnitUtil::setProperty('id', UuidHelper::fromString($data['uuid']), $job);
             $manager->persist($job);
@@ -167,6 +219,6 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
     #[Override]
     public function getOrder(): int
     {
-        return 6;
+        return 7;
     }
 }
