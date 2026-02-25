@@ -61,11 +61,11 @@ class JobApplication implements EntityInterface
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'decided_by_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[Groups(['JobApplication', 'JobApplication.decidedBy', 'JobApplication.show', 'JobApplication.edit'])]
+    #[Groups(['JobApplication.decidedBy', 'JobApplication.show'])]
     private ?User $decidedBy = null;
 
     #[ORM\Column(name: 'decided_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    #[Groups(['JobApplication', 'JobApplication.decidedAt', 'JobApplication.show', 'JobApplication.edit'])]
+    #[Groups(['JobApplication.decidedAt', 'JobApplication.show'])]
     private ?DateTimeImmutable $decidedAt = null;
 
     public function __construct()
