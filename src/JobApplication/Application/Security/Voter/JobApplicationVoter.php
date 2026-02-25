@@ -17,7 +17,7 @@ use function in_array;
 /**
  * @extends Voter<string, mixed>
  */
-class OfferApplicationPermissionVoter extends Voter
+class JobApplicationVoter extends Voter
 {
     public function __construct(
         private readonly CompanyPermissionMatrixInterface $companyPermissionMatrix,
@@ -26,18 +26,19 @@ class OfferApplicationPermissionVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
+        if ($attribute === Permission::JOB_APPLICATION_APPLY->value) {
+            return $subject instanceof JobOffer;
+        }
+
         if (!in_array($attribute, [
-            Permission::OFFER_VIEW->value,
-            Permission::OFFER_MANAGE->value,
-            Permission::APPLICATION_VIEW->value,
-            Permission::APPLICATION_MANAGE->value,
-            Permission::APPLICATION_DECIDE->value,
-            Permission::APPLICATION_WITHDRAW->value,
+            Permission::JOB_APPLICATION_VIEW->value,
+            Permission::JOB_APPLICATION_DECIDE->value,
+            Permission::JOB_APPLICATION_WITHDRAW->value,
         ], true)) {
             return false;
         }
 
-        return $subject instanceof JobOffer || $subject instanceof JobApplication;
+        return $subject instanceof JobApplication;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -49,42 +50,27 @@ class OfferApplicationPermissionVoter extends Voter
         }
 
         if ($subject instanceof JobOffer) {
-            return $this->voteForOffer($user, $attribute, $subject);
+            return $this->companyPermissionMatrix->isGranted(
+                $user,
+                Permission::JOB_APPLICATION_APPLY,
+                $subject->getCompany()?->getId(),
+            );
         }
 
         if (!$subject instanceof JobApplication) {
             return false;
         }
 
-        return $this->voteForApplication($user, $attribute, $subject);
-    }
-
-    private function voteForOffer(SecurityUser $user, string $attribute, JobOffer $offer): bool
-    {
-        if (!in_array($attribute, [Permission::OFFER_VIEW->value, Permission::OFFER_MANAGE->value], true)) {
-            return false;
-        }
-
-        return $this->companyPermissionMatrix->isGranted(
-            $user,
-            $attribute,
-            $offer->getCompany()?->getId(),
-            $offer->getCreatedBy()?->getId() === $user->getUserIdentifier(),
-        );
-    }
-
-    private function voteForApplication(SecurityUser $user, string $attribute, JobApplication $application): bool
-    {
-        $offer = $application->getJobOffer();
+        $offer = $subject->getJobOffer();
         $companyId = $offer?->getCompany()?->getId();
         $isOfferOwner = $offer?->getCreatedBy()?->getId() === $user->getUserIdentifier();
 
-        if ($attribute === Permission::APPLICATION_WITHDRAW->value) {
-            return $application->getCandidate()?->getId() === $user->getUserIdentifier();
+        if ($attribute === Permission::JOB_APPLICATION_WITHDRAW->value) {
+            return $subject->getCandidate()?->getId() === $user->getUserIdentifier();
         }
 
-        if ($attribute === Permission::APPLICATION_VIEW->value
-            && $application->getCandidate()?->getId() === $user->getUserIdentifier()) {
+        if ($attribute === Permission::JOB_APPLICATION_VIEW->value
+            && $subject->getCandidate()?->getId() === $user->getUserIdentifier()) {
             return true;
         }
 

@@ -61,7 +61,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
             throw new JobApplicationException('Job offer not found.', Response::HTTP_NOT_FOUND);
         }
 
-        if (!$this->authorizationChecker->isGranted(Permission::OFFER_VIEW->value, $jobOffer)) {
+        if (!$this->authorizationChecker->isGranted(Permission::JOB_APPLICATION_APPLY->value, $jobOffer)) {
             throw new JobApplicationException('Job offer not found.', Response::HTTP_NOT_FOUND);
         }
 
@@ -88,7 +88,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
     {
         $application = $this->getByIdOrFail($applicationId);
 
-        if (!$this->authorizationChecker->isGranted(Permission::APPLICATION_WITHDRAW->value, $application)) {
+        if (!$this->authorizationChecker->isGranted(Permission::JOB_APPLICATION_WITHDRAW->value, $application)) {
             throw new JobApplicationException('Only the candidate can withdraw this application.', Response::HTTP_FORBIDDEN);
         }
 
@@ -112,9 +112,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
 
         $application = $this->getByIdOrFail($applicationId);
         $user = $this->getCurrentUser();
-
-        if (!$this->authorizationChecker->isGranted(Permission::APPLICATION_DECIDE->value, $application)
-            && $application->getJobOffer()?->getCreatedBy()?->getId() !== $user->getId()) {
+        if (!$this->authorizationChecker->isGranted(Permission::JOB_APPLICATION_DECIDE->value, $application)) {
             throw new JobApplicationException('Only the job offer owner or an authorized company manager can decide this application.', Response::HTTP_FORBIDDEN);
         }
 
@@ -134,7 +132,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
     {
         return array_values(array_filter(
             $this->find(orderBy: ['createdAt' => 'DESC']),
-            fn (Entity $application): bool => $this->authorizationChecker->isGranted(Permission::APPLICATION_VIEW->value, $application),
+            fn (Entity $application): bool => $this->authorizationChecker->isGranted(Permission::JOB_APPLICATION_VIEW->value, $application),
         ));
     }
 
@@ -142,7 +140,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
     {
         $application = $this->getByIdOrFail($applicationId);
 
-        if (!$this->authorizationChecker->isGranted(Permission::APPLICATION_VIEW->value, $application)) {
+        if (!$this->authorizationChecker->isGranted(Permission::JOB_APPLICATION_VIEW->value, $application)) {
             throw new JobApplicationException('Application not found.', Response::HTTP_NOT_FOUND);
         }
 
