@@ -9,11 +9,13 @@ use App\Tests\TestCase\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
+use function array_column;
+
 class JobOfferControllerTest extends WebTestCase
 {
     private const string BASE_URL = self::API_URL_PREFIX . '/v1/job-offers';
     private const string COMPANY_ID = '30000000-0000-1000-8000-000000000001';
-    private const string OFFER_ID = '40000000-0000-1000-8000-000000000001';
+    private const string OFFER_ID = '60000000-0000-1000-8000-000000000001';
 
     /** @throws Throwable */
     public function testAuthorizedAuthorCanCreateEditAndDeleteOffer(): void
@@ -52,5 +54,39 @@ class JobOfferControllerTest extends WebTestCase
         $externalClient = $this->getTestClient('carol-user', 'password-user');
         $externalClient->request('GET', self::BASE_URL . '/' . self::OFFER_ID);
         self::assertSame(Response::HTTP_FORBIDDEN, $externalClient->getResponse()->getStatusCode());
+    }
+
+    /** @throws Throwable */
+    public function testMyRouteReturnsOwnedAndManageableOffers(): void
+    {
+        $client = $this->getTestClient('alice-user', 'password-user');
+        $client->request('GET', self::BASE_URL . '/my');
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $offerIds = array_column($offers, 'id');
+
+        self::assertContains('60000000-0000-1000-8000-000000000001', $offerIds);
+        self::assertContains('60000000-0000-1000-8000-000000000002', $offerIds);
+        self::assertContains('60000000-0000-1000-8000-000000000004', $offerIds);
+        self::assertNotContains('60000000-0000-1000-8000-000000000003', $offerIds);
+    }
+
+    /** @throws Throwable */
+    public function testAvailableRouteReturnsOnlyOpenOffersUserCanApplyTo(): void
+    {
+        $client = $this->getTestClient('carol-user', 'password-user');
+        $client->request('GET', self::BASE_URL . '/available');
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $offerIds = array_column($offers, 'id');
+
+        self::assertContains('60000000-0000-1000-8000-000000000001', $offerIds);
+        self::assertContains('60000000-0000-1000-8000-000000000002', $offerIds);
+        self::assertNotContains('60000000-0000-1000-8000-000000000003', $offerIds);
+        self::assertNotContains('60000000-0000-1000-8000-000000000004', $offerIds);
     }
 }

@@ -6,6 +6,7 @@ namespace App\JobOffer\Transport\Controller\Api\V1\JobOffer;
 
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Transport\Rest\Controller;
+use App\General\Transport\Rest\RequestHandler;
 use App\General\Transport\Rest\ResponseHandler;
 use App\General\Transport\Rest\Traits\Methods\CreateMethod;
 use App\General\Transport\Rest\Traits\Methods\PatchMethod;
@@ -136,5 +137,85 @@ class JobOfferController extends Controller
     public function patchAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
         return $this->patchMethod($request, $restDto, $id);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '/my', methods: [Request::METHOD_GET])]
+    #[OA\Response(
+        response: 200,
+        description: 'Job offers created by the current user or manageable with current permissions.',
+        content: new JsonContent(type: 'array', items: new OA\Items(type: 'object')),
+    )]
+    public function findMyAction(Request $request): Response
+    {
+        return $this->findWithCustomResourceMethod(
+            $request,
+            fn (
+                array $criteria,
+                array $orderBy,
+                ?int $limit,
+                ?int $offset,
+                array $search,
+                ?string $entityManagerName,
+            ): array => $this->getResource()->findMyOffers($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+        );
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '/available', methods: [Request::METHOD_GET])]
+    #[OA\Response(
+        response: 200,
+        description: 'Open job offers that the current user can apply for.',
+        content: new JsonContent(type: 'array', items: new OA\Items(type: 'object')),
+    )]
+    public function findAvailableAction(Request $request): Response
+    {
+        return $this->findWithCustomResourceMethod(
+            $request,
+            fn (
+                array $criteria,
+                array $orderBy,
+                ?int $limit,
+                ?int $offset,
+                array $search,
+                ?string $entityManagerName,
+            ): array => $this->getResource()->findAvailableOffers($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+        );
+    }
+
+    /**
+     * @param callable(array<string, mixed>, array<string, string>, ?int, ?int, array<int, string>, ?string): array<int, object> $resolver
+     *
+     * @throws Throwable
+     */
+    private function findWithCustomResourceMethod(Request $request, callable $resolver): Response
+    {
+        $this->validateRestMethod($request, [Request::METHOD_GET]);
+
+        $orderBy = RequestHandler::getOrderBy($request);
+        $limit = RequestHandler::getLimit($request);
+        $offset = RequestHandler::getOffset($request);
+        $search = RequestHandler::getSearchTerms($request);
+
+        try {
+            $criteria = RequestHandler::getCriteria($request);
+            $entityManagerName = RequestHandler::getTenant($request);
+            $this->processCriteria($criteria, $request, __METHOD__);
+
+            return $this->getResponseHandler()->createResponse(
+                $request,
+                $resolver($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+                $this->getResource(),
+            );
+        } catch (Throwable $exception) {
+            throw $this->handleRestMethodException(
+                exception: $exception,
+                entityManagerName: $entityManagerName ?? null,
+            );
+        }
     }
 }
