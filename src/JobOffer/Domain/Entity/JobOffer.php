@@ -21,10 +21,12 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity]
 #[ORM\Table(name: 'job_offer')]
 #[ORM\Index(name: 'idx_job_offer_company_status', columns: ['company_id', 'status'])]
+#[ORM\Index(name: 'idx_job_offer_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_job_offer_published_at', columns: ['published_at'])]
 #[ORM\Index(name: 'idx_job_offer_work_time', columns: ['work_time'])]
 #[ORM\Index(name: 'idx_job_offer_employment_type', columns: ['employment_type'])]
-#[ORM\Index(name: 'idx_job_offer_remote_policy', columns: ['remote_policy'])]
+#[ORM\Index(name: 'idx_job_offer_remote_mode', columns: ['remote_mode'])]
+#[ORM\Index(name: 'idx_job_offer_experience_level', columns: ['experience_level'])]
 #[ORM\Index(name: 'idx_job_offer_city_id', columns: ['city_id'])]
 #[ORM\Index(name: 'idx_job_offer_region_id', columns: ['region_id'])]
 #[ORM\Index(name: 'idx_job_offer_salary_min', columns: ['salary_min'])]
@@ -86,9 +88,9 @@ class JobOffer implements EntityInterface
     #[Groups(['JobOffer', 'JobOffer.salaryPeriod', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?string $salaryPeriod = null;
 
-    #[ORM\Column(name: 'remote_policy', type: Types::STRING, length: 32, nullable: true)]
-    #[Groups(['JobOffer', 'JobOffer.remotePolicy', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private ?string $remotePolicy = null;
+    #[ORM\Column(name: 'remote_mode', type: Types::STRING, length: 32, nullable: true)]
+    #[Groups(['JobOffer', 'JobOffer.remoteMode', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
+    private ?string $remoteMode = null;
 
     #[ORM\Column(name: 'experience_level', type: Types::STRING, length: 32, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.experienceLevel', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
@@ -288,14 +290,26 @@ class JobOffer implements EntityInterface
         return $this;
     }
 
+    public function getRemoteMode(): ?string
+    {
+        return $this->remoteMode;
+    }
+
+    public function setRemoteMode(?string $remoteMode): self
+    {
+        $this->remoteMode = $remoteMode;
+
+        return $this;
+    }
+
     public function getRemotePolicy(): ?string
     {
-        return $this->remotePolicy;
+        return $this->getRemoteMode();
     }
 
     public function setRemotePolicy(?string $remotePolicy): self
     {
-        $this->remotePolicy = $remotePolicy;
+        $this->setRemoteMode($remotePolicy);
 
         return $this;
     }
