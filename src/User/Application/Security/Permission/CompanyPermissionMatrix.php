@@ -69,11 +69,10 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
     {
         return [
             CompanyMembership::ROLE_OWNER => [
-                Permission::OFFER_VIEW,
-                Permission::OFFER_MANAGE,
-                Permission::APPLICATION_VIEW,
-                Permission::APPLICATION_MANAGE,
-                Permission::APPLICATION_DECIDE,
+                Permission::JOB_OFFER_VIEW,
+                Permission::JOB_OFFER_MANAGE,
+                Permission::JOB_APPLICATION_VIEW,
+                Permission::JOB_APPLICATION_DECIDE,
                 Permission::BLOG_VIEW,
                 Permission::CRM_VIEW,
                 Permission::CRM_MANAGE,
@@ -84,8 +83,8 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
                 Permission::NOTIFICATION_VIEW,
             ],
             CompanyMembership::ROLE_MEMBER => [
-                Permission::OFFER_VIEW,
-                Permission::APPLICATION_VIEW,
+                Permission::JOB_OFFER_VIEW,
+                Permission::JOB_APPLICATION_VIEW,
                 Permission::BLOG_VIEW,
                 Permission::CRM_VIEW,
                 Permission::SHOP_VIEW,
@@ -93,11 +92,10 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
                 Permission::NOTIFICATION_VIEW,
             ],
             CompanyMembership::ROLE_CRM_MANAGER => [
-                Permission::OFFER_VIEW,
-                Permission::OFFER_MANAGE,
-                Permission::APPLICATION_VIEW,
-                Permission::APPLICATION_MANAGE,
-                Permission::APPLICATION_DECIDE,
+                Permission::JOB_OFFER_VIEW,
+                Permission::JOB_OFFER_MANAGE,
+                Permission::JOB_APPLICATION_VIEW,
+                Permission::JOB_APPLICATION_DECIDE,
                 Permission::CRM_VIEW,
                 Permission::CRM_MANAGE,
                 Permission::NOTIFICATION_VIEW,
@@ -113,9 +111,10 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
                 Permission::NOTIFICATION_VIEW,
             ],
             CompanyMembership::ROLE_CANDIDATE => [
-                Permission::OFFER_VIEW,
-                Permission::APPLICATION_VIEW,
-                Permission::APPLICATION_WITHDRAW,
+                Permission::JOB_OFFER_VIEW,
+                Permission::JOB_APPLICATION_VIEW,
+                Permission::JOB_APPLICATION_APPLY,
+                Permission::JOB_APPLICATION_WITHDRAW,
                 Permission::EDUCATION_VIEW,
                 Permission::NOTIFICATION_VIEW,
             ],
@@ -128,11 +127,10 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
     private function ownershipPermissions(): array
     {
         return [
-            Permission::OFFER_VIEW,
-            Permission::OFFER_MANAGE,
-            Permission::APPLICATION_VIEW,
-            Permission::APPLICATION_MANAGE,
-            Permission::APPLICATION_DECIDE,
+            Permission::JOB_OFFER_VIEW,
+            Permission::JOB_OFFER_MANAGE,
+            Permission::JOB_APPLICATION_VIEW,
+            Permission::JOB_APPLICATION_DECIDE,
             Permission::BLOG_VIEW,
             Permission::CRM_VIEW,
             Permission::CRM_MANAGE,
