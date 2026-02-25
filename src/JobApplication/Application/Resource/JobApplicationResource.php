@@ -89,13 +89,10 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
         $this->getRepository()->save($application);
 
         $this->messageService->sendMessage(new JobApplicationSubmittedMessage(
-            jobApplicationId: $application->getId(),
-            jobOfferId: $jobOffer->getId(),
-            jobOfferTitle: $jobOffer->getTitle(),
-            candidateId: $candidate->getId(),
-            candidateEmail: $candidate->getEmail(),
-            reviewerId: $jobOffer->getCreatedBy()?->getId(),
-            reviewerEmail: $jobOffer->getCreatedBy()?->getEmail(),
+            applicationId: $application->getId(),
+            candidateUserId: $candidate->getId(),
+            offerId: $jobOffer->getId(),
+            offerOwnerOrCreatorUserId: $jobOffer->getCompany()?->getOwner()?->getId() ?? $jobOffer->getCreatedBy()?->getId(),
         ));
 
         return $application;

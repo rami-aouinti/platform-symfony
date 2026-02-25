@@ -9,13 +9,10 @@ use App\General\Domain\Message\Interfaces\MessageHighInterface;
 readonly class JobApplicationSubmittedMessage implements MessageHighInterface
 {
     public function __construct(
-        public string $jobApplicationId,
-        public string $jobOfferId,
-        public string $jobOfferTitle,
-        public string $candidateId,
-        public string $candidateEmail,
-        public ?string $reviewerId,
-        public ?string $reviewerEmail,
+        public string $applicationId,
+        public string $candidateUserId,
+        public string $offerId,
+        public ?string $offerOwnerOrCreatorUserId,
     ) {
     }
 }
