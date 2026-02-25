@@ -120,6 +120,21 @@ class JobOfferResource extends RestResource implements JobOfferResourceInterface
         );
     }
 
+
+    public function computeFacets(
+        ?array $criteria = null,
+        ?array $search = null,
+        ?array $postFilters = null,
+        ?string $entityManagerName = null,
+    ): array {
+        return $this->jobOfferRepository->computeFacets(
+            $criteria,
+            $search,
+            $postFilters,
+            $entityManagerName,
+        );
+    }
+
     private function hasGlobalPermission(User $user): bool
     {
         return in_array(Role::ROOT->value, $user->getRoles(), true)

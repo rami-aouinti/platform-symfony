@@ -31,4 +31,20 @@ interface JobOfferResourceInterface extends RestResourceInterface
         ?array $search = null,
         ?string $entityManagerName = null,
     ): array;
+
+    /**
+     * @param array<int|string, mixed>|null $criteria
+     * @param array<string, array<int, string>>|null $search
+     * @param array{skills: array<int, string>, languages: array<int, string>}|null $postFilters
+     *
+     * @return array{facets: array<int, array{key: string, sort: string, values: array<int, array{id: string, label: string, count: int}>}>}
+     */
+    public function computeFacets(
+        ?array $criteria = null,
+        ?array $search = null,
+        ?array $postFilters = null,
+        ?string $entityManagerName = null,
+    ): array;
+
 }
+

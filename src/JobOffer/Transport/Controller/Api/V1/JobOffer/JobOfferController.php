@@ -258,14 +258,31 @@ class JobOfferController extends Controller
         $this->processCriteria($criteria, $request, __METHOD__);
         [$criteria, $postFilters] = $this->normalizeBusinessQueryParams($request, $criteria);
 
-        $offers = $this->applyPostFilters(
-            $this->getResource()->find($criteria, ['publishedAt' => 'DESC'], null, null, $search, $entityManagerName),
-            $postFilters,
+        $orderBy = [];
+        $limit = null;
+        $offset = null;
+        $this->applyCandidateSearchDefaults($criteria, $orderBy, $limit, $offset);
+
+        $data = $this->readEndpointCache->remember(
+            self::CACHE_SCOPE,
+            $request,
+            [
+                'criteria' => $criteria,
+                'search' => $search,
+                'postFilters' => $postFilters,
+                'tenant' => $entityManagerName,
+            ],
+            fn (): array => $this->getResource()->computeFacets(
+                $criteria,
+                $search,
+                $postFilters,
+                $entityManagerName,
+            ),
         );
 
         return $this->getResponseHandler()->createResponse(
             $request,
-            $this->buildFacets($offers),
+            $data,
             null,
         );
     }
@@ -515,85 +532,6 @@ class JobOfferController extends Controller
             return true;
         }));
     }
-
-    /**
-     * @param array<int, object> $offers
-     *
-     * @return array<string, array<int, array<string, int|string>>>
-     */
-    private function buildFacets(array $offers): array
-    {
-        $facets = [
-            'skills' => [],
-            'languages' => [],
-            'cities' => [],
-            'regions' => [],
-            'jobCategories' => [],
-            'employmentTypes' => [],
-            'remotePolicies' => [],
-            'workTimes' => [],
-        ];
-
-        foreach ($offers as $offer) {
-            foreach ($offer->getSkills() as $skill) {
-                $facetKey = $skill->getId();
-                $facets['skills'][$facetKey] ??= ['id' => $facetKey, 'label' => $skill->getName(), 'count' => 0];
-                $facets['skills'][$facetKey]['count']++;
-            }
-
-            foreach ($offer->getLanguages() as $language) {
-                $facetKey = $language->getId();
-                $facets['languages'][$facetKey] ??= ['id' => $facetKey, 'label' => $language->getCode(), 'count' => 0];
-                $facets['languages'][$facetKey]['count']++;
-            }
-
-            if ($offer->getCity() !== null) {
-                $facetKey = $offer->getCity()->getId();
-                $facets['cities'][$facetKey] ??= ['id' => $facetKey, 'label' => $offer->getCity()->getName(), 'count' => 0];
-                $facets['cities'][$facetKey]['count']++;
-            }
-
-            if ($offer->getRegion() !== null) {
-                $facetKey = $offer->getRegion()->getId();
-                $facets['regions'][$facetKey] ??= ['id' => $facetKey, 'label' => $offer->getRegion()->getName(), 'count' => 0];
-                $facets['regions'][$facetKey]['count']++;
-            }
-
-            if ($offer->getJobCategory() !== null) {
-                $facetKey = $offer->getJobCategory()->getId();
-                $facets['jobCategories'][$facetKey] ??= ['id' => $facetKey, 'label' => $offer->getJobCategory()->getName(), 'count' => 0];
-                $facets['jobCategories'][$facetKey]['count']++;
-            }
-
-            $employmentType = $offer->getEmploymentType();
-            $facets['employmentTypes'][$employmentType] ??= ['id' => $employmentType, 'label' => $employmentType, 'count' => 0];
-            $facets['employmentTypes'][$employmentType]['count']++;
-
-            if ($offer->getRemotePolicy() !== null) {
-                $remotePolicy = $offer->getRemotePolicy();
-                $facets['remotePolicies'][$remotePolicy] ??= ['id' => $remotePolicy, 'label' => $remotePolicy, 'count' => 0];
-                $facets['remotePolicies'][$remotePolicy]['count']++;
-            }
-
-            if ($offer->getWorkTime() !== null) {
-                $workTime = $offer->getWorkTime();
-                $facets['workTimes'][$workTime] ??= ['id' => $workTime, 'label' => $workTime, 'count' => 0];
-                $facets['workTimes'][$workTime]['count']++;
-            }
-        }
-
-        return [
-            'skills' => array_values($facets['skills']),
-            'languages' => array_values($facets['languages']),
-            'cities' => array_values($facets['cities']),
-            'regions' => array_values($facets['regions']),
-            'jobCategories' => array_values($facets['jobCategories']),
-            'employmentTypes' => array_values($facets['employmentTypes']),
-            'remotePolicies' => array_values($facets['remotePolicies']),
-            'workTimes' => array_values($facets['workTimes']),
-        ];
-    }
-
 
     /**
      * @param array<int, string> $values
