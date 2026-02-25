@@ -23,11 +23,11 @@ class Skill implements EntityInterface
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
-    #[Groups(['Skill', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['Skill', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private UuidInterface $id;
 
     #[ORM\Column(name: 'name', type: Types::STRING, length: 100, nullable: false)]
-    #[Groups(['Skill', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['Skill', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $name = '';
 
     public function __construct()

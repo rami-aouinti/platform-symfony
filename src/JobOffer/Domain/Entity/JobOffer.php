@@ -8,6 +8,14 @@ use App\Company\Domain\Entity\Company;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
+use App\JobOffer\Domain\Enum\ApplicationType;
+use App\JobOffer\Domain\Enum\EmploymentType;
+use App\JobOffer\Domain\Enum\ExperienceLevel;
+use App\JobOffer\Domain\Enum\JobOfferStatus;
+use App\JobOffer\Domain\Enum\LanguageLevel;
+use App\JobOffer\Domain\Enum\RemoteMode;
+use App\JobOffer\Domain\Enum\SalaryCurrency;
+use App\JobOffer\Domain\Enum\WorkTime;
 use App\User\Domain\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -65,13 +73,13 @@ class JobOffer implements EntityInterface
     #[Groups(['JobOffer', 'JobOffer.location', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private string $location = '';
 
-    #[ORM\Column(name: 'employment_type', type: Types::STRING, length: 64, nullable: false)]
+    #[ORM\Column(name: 'employment_type', enumType: EmploymentType::class, type: Types::STRING, length: 64, nullable: false)]
     #[Groups(['JobOffer', 'JobOffer.employmentType', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private string $employmentType = '';
+    private EmploymentType $employmentType = EmploymentType::FULL_TIME;
 
-    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
+    #[ORM\Column(name: 'status', enumType: JobOfferStatus::class, type: Types::STRING, length: 64, nullable: false)]
     #[Groups(['JobOffer', 'JobOffer.status', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private string $status = 'draft';
+    private JobOfferStatus $status = JobOfferStatus::DRAFT;
 
     #[ORM\Column(name: 'salary_min', type: Types::INTEGER, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.salaryMin', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
@@ -81,29 +89,29 @@ class JobOffer implements EntityInterface
     #[Groups(['JobOffer', 'JobOffer.salaryMax', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?int $salaryMax = null;
 
-    #[ORM\Column(name: 'salary_currency', type: Types::STRING, length: 3, nullable: true)]
+    #[ORM\Column(name: 'salary_currency', enumType: SalaryCurrency::class, type: Types::STRING, length: 3, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.salaryCurrency', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private ?string $salaryCurrency = null;
+    private ?SalaryCurrency $salaryCurrency = null;
 
     #[ORM\Column(name: 'salary_period', type: Types::STRING, length: 32, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.salaryPeriod', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?string $salaryPeriod = null;
 
-    #[ORM\Column(name: 'remote_mode', type: Types::STRING, length: 32, nullable: true)]
+    #[ORM\Column(name: 'remote_mode', enumType: RemoteMode::class, type: Types::STRING, length: 32, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.remoteMode', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private ?string $remoteMode = null;
+    private ?RemoteMode $remoteMode = null;
 
-    #[ORM\Column(name: 'experience_level', type: Types::STRING, length: 32, nullable: true)]
+    #[ORM\Column(name: 'experience_level', enumType: ExperienceLevel::class, type: Types::STRING, length: 32, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.experienceLevel', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private ?string $experienceLevel = null;
+    private ?ExperienceLevel $experienceLevel = null;
 
-    #[ORM\Column(name: 'work_time', type: Types::STRING, length: 32, nullable: true)]
+    #[ORM\Column(name: 'work_time', enumType: WorkTime::class, type: Types::STRING, length: 32, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.workTime', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private ?string $workTime = null;
+    private ?WorkTime $workTime = null;
 
-    #[ORM\Column(name: 'application_type', type: Types::STRING, length: 32, nullable: true)]
+    #[ORM\Column(name: 'application_type', enumType: ApplicationType::class, type: Types::STRING, length: 32, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.applicationType', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private ?string $applicationType = null;
+    private ?ApplicationType $applicationType = null;
 
     #[ORM\Column(name: 'published_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.publishedAt', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
@@ -128,9 +136,9 @@ class JobOffer implements EntityInterface
     #[Groups(['JobOffer', 'JobOffer.country', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?string $country = null;
 
-    #[ORM\Column(name: 'language_level', type: Types::STRING, length: 32, nullable: true)]
+    #[ORM\Column(name: 'language_level', enumType: LanguageLevel::class, type: Types::STRING, length: 32, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.languageLevel', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private ?string $languageLevel = null;
+    private ?LanguageLevel $languageLevel = null;
 
     /**
      * @var Collection<int, Skill>
@@ -226,24 +234,28 @@ class JobOffer implements EntityInterface
 
     public function getEmploymentType(): string
     {
-        return $this->employmentType;
+        return $this->employmentType->value;
     }
 
-    public function setEmploymentType(string $employmentType): self
+    public function setEmploymentType(EmploymentType|string $employmentType): self
     {
-        $this->employmentType = $employmentType;
+        $this->employmentType = $employmentType instanceof EmploymentType
+            ? $employmentType
+            : EmploymentType::from($employmentType);
 
         return $this;
     }
 
     public function getStatus(): string
     {
-        return $this->status;
+        return $this->status->value;
     }
 
-    public function setStatus(string $status): self
+    public function setStatus(JobOfferStatus|string $status): self
     {
-        $this->status = $status;
+        $this->status = $status instanceof JobOfferStatus
+            ? $status
+            : JobOfferStatus::from($status);
 
         return $this;
     }
@@ -274,12 +286,14 @@ class JobOffer implements EntityInterface
 
     public function getSalaryCurrency(): ?string
     {
-        return $this->salaryCurrency;
+        return $this->salaryCurrency?->value;
     }
 
-    public function setSalaryCurrency(?string $salaryCurrency): self
+    public function setSalaryCurrency(SalaryCurrency|string|null $salaryCurrency): self
     {
-        $this->salaryCurrency = $salaryCurrency;
+        $this->salaryCurrency = $salaryCurrency instanceof SalaryCurrency
+            ? $salaryCurrency
+            : ($salaryCurrency !== null ? SalaryCurrency::from($salaryCurrency) : null);
 
         return $this;
     }
@@ -298,12 +312,14 @@ class JobOffer implements EntityInterface
 
     public function getRemoteMode(): ?string
     {
-        return $this->remoteMode;
+        return $this->remoteMode?->value;
     }
 
-    public function setRemoteMode(?string $remoteMode): self
+    public function setRemoteMode(RemoteMode|string|null $remoteMode): self
     {
-        $this->remoteMode = $remoteMode;
+        $this->remoteMode = $remoteMode instanceof RemoteMode
+            ? $remoteMode
+            : ($remoteMode !== null ? RemoteMode::from($remoteMode) : null);
 
         return $this;
     }
@@ -313,7 +329,7 @@ class JobOffer implements EntityInterface
         return $this->getRemoteMode();
     }
 
-    public function setRemotePolicy(?string $remotePolicy): self
+    public function setRemotePolicy(RemoteMode|string|null $remotePolicy): self
     {
         $this->setRemoteMode($remotePolicy);
 
@@ -322,36 +338,42 @@ class JobOffer implements EntityInterface
 
     public function getExperienceLevel(): ?string
     {
-        return $this->experienceLevel;
+        return $this->experienceLevel?->value;
     }
 
-    public function setExperienceLevel(?string $experienceLevel): self
+    public function setExperienceLevel(ExperienceLevel|string|null $experienceLevel): self
     {
-        $this->experienceLevel = $experienceLevel;
+        $this->experienceLevel = $experienceLevel instanceof ExperienceLevel
+            ? $experienceLevel
+            : ($experienceLevel !== null ? ExperienceLevel::from($experienceLevel) : null);
 
         return $this;
     }
 
     public function getWorkTime(): ?string
     {
-        return $this->workTime;
+        return $this->workTime?->value;
     }
 
-    public function setWorkTime(?string $workTime): self
+    public function setWorkTime(WorkTime|string|null $workTime): self
     {
-        $this->workTime = $workTime;
+        $this->workTime = $workTime instanceof WorkTime
+            ? $workTime
+            : ($workTime !== null ? WorkTime::from($workTime) : null);
 
         return $this;
     }
 
     public function getApplicationType(): ?string
     {
-        return $this->applicationType;
+        return $this->applicationType?->value;
     }
 
-    public function setApplicationType(?string $applicationType): self
+    public function setApplicationType(ApplicationType|string|null $applicationType): self
     {
-        $this->applicationType = $applicationType;
+        $this->applicationType = $applicationType instanceof ApplicationType
+            ? $applicationType
+            : ($applicationType !== null ? ApplicationType::from($applicationType) : null);
 
         return $this;
     }
@@ -418,12 +440,14 @@ class JobOffer implements EntityInterface
 
     public function getLanguageLevel(): ?string
     {
-        return $this->languageLevel;
+        return $this->languageLevel?->value;
     }
 
-    public function setLanguageLevel(?string $languageLevel): self
+    public function setLanguageLevel(LanguageLevel|string|null $languageLevel): self
     {
-        $this->languageLevel = $languageLevel;
+        $this->languageLevel = $languageLevel instanceof LanguageLevel
+            ? $languageLevel
+            : ($languageLevel !== null ? LanguageLevel::from($languageLevel) : null);
 
         return $this;
     }

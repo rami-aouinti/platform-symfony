@@ -23,19 +23,19 @@ class Region implements EntityInterface
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
-    #[Groups(['Region', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['Region', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private UuidInterface $id;
 
     #[ORM\Column(name: 'code', type: Types::STRING, length: 64, nullable: false)]
-    #[Groups(['Region', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['Region', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $code = '';
 
     #[ORM\Column(name: 'name', type: Types::STRING, length: 128, nullable: false)]
-    #[Groups(['Region', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['Region', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $name = '';
 
     #[ORM\Column(name: 'country_code', type: Types::STRING, length: 2, nullable: false)]
-    #[Groups(['Region', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['Region', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $countryCode = '';
 
     public function __construct()

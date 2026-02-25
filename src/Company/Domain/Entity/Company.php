@@ -28,19 +28,19 @@ class Company implements EntityInterface
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
-    #[Groups(['Company', 'Company.id', 'Company.show', 'Company.edit'])]
+    #[Groups(['Company', 'Company.id', 'Company.show', 'Company.edit', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private UuidInterface $id;
 
     #[ORM\Column(name: 'legal_name', type: Types::STRING, length: 255, nullable: false)]
-    #[Groups(['Company', 'Company.legalName', 'Company.create', 'Company.show', 'Company.edit'])]
+    #[Groups(['Company', 'Company.legalName', 'Company.create', 'Company.show', 'Company.edit', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $legalName = '';
 
     #[ORM\Column(name: 'slug', type: Types::STRING, length: 255, nullable: false)]
-    #[Groups(['Company', 'Company.slug', 'Company.create', 'Company.show', 'Company.edit'])]
+    #[Groups(['Company', 'Company.slug', 'Company.create', 'Company.show', 'Company.edit', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $slug = '';
 
     #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
-    #[Groups(['Company', 'Company.status', 'Company.create', 'Company.show', 'Company.edit'])]
+    #[Groups(['Company', 'Company.status', 'Company.create', 'Company.show', 'Company.edit', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $status = 'active';
 
     #[ORM\Column(name: 'main_address', type: Types::TEXT, nullable: true)]
