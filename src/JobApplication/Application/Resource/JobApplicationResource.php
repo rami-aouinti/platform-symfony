@@ -12,6 +12,7 @@ use App\JobApplication\Application\DTO\JobApplication\JobApplication as JobAppli
 use App\JobApplication\Application\DTO\JobApplication\OfferApplicationPayload;
 use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobApplication\Domain\Entity\JobApplication as Entity;
+use App\JobApplication\Domain\Message\JobApplicationDecidedMessage;
 use App\JobApplication\Domain\Message\JobApplicationSubmittedMessage;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
 use App\JobApplication\Domain\Exception\JobApplicationException;
@@ -115,6 +116,18 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
 
         $this->getRepository()->save($application);
 
+        $candidate = $application->getCandidate();
+        $jobOffer = $application->getJobOffer();
+
+        if ($candidate instanceof User && $jobOffer !== null) {
+            $this->messageService->sendMessage(new JobApplicationDecidedMessage(
+                applicationId: $application->getId(),
+                candidateUserId: $candidate->getId(),
+                offerId: $jobOffer->getId(),
+                status: JobApplicationStatus::WITHDRAWN->value,
+            ));
+        }
+
         return $application;
     }
 
@@ -138,6 +151,18 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
             ->setDecidedAt(new DateTimeImmutable());
 
         $this->getRepository()->save($application);
+
+        $candidate = $application->getCandidate();
+        $jobOffer = $application->getJobOffer();
+
+        if ($candidate instanceof User && $jobOffer !== null) {
+            $this->messageService->sendMessage(new JobApplicationDecidedMessage(
+                applicationId: $application->getId(),
+                candidateUserId: $candidate->getId(),
+                offerId: $jobOffer->getId(),
+                status: $status->value,
+            ));
+        }
 
         return $application;
     }

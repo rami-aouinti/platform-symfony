@@ -153,6 +153,9 @@ services:
     App\Notification\Application\Service\Interfaces\NotificationChannelServiceInterface:
         class: App\Notification\Application\Service\NotificationChannelService
 
+    App\Notification\Application\Service\Interfaces\NotificationOrchestratorInterface:
+        class: App\Notification\Application\Service\NotificationOrchestrator
+
     App\Notification\Application\Service\Channel\Interfaces\EmailNotificationInterface:
         class: App\Notification\Application\Service\Channel\EmailNotification
 
