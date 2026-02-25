@@ -23,15 +23,15 @@ class Language implements EntityInterface
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
-    #[Groups(['Language', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['Language', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private UuidInterface $id;
 
     #[ORM\Column(name: 'code', type: Types::STRING, length: 8, nullable: false)]
-    #[Groups(['Language', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['Language', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $code = '';
 
     #[ORM\Column(name: 'name', type: Types::STRING, length: 100, nullable: false)]
-    #[Groups(['Language', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['Language', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $name = '';
 
     public function __construct()

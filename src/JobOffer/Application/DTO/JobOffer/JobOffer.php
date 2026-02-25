@@ -15,6 +15,14 @@ use App\JobOffer\Domain\Entity\JobOffer as Entity;
 use App\JobOffer\Domain\Entity\Language;
 use App\JobOffer\Domain\Entity\Region;
 use App\JobOffer\Domain\Entity\Skill;
+use App\JobOffer\Domain\Enum\ApplicationType;
+use App\JobOffer\Domain\Enum\EmploymentType;
+use App\JobOffer\Domain\Enum\ExperienceLevel;
+use App\JobOffer\Domain\Enum\JobOfferStatus;
+use App\JobOffer\Domain\Enum\LanguageLevel;
+use App\JobOffer\Domain\Enum\RemoteMode;
+use App\JobOffer\Domain\Enum\SalaryCurrency;
+use App\JobOffer\Domain\Enum\WorkTime;
 use DateTimeImmutable;
 use Override;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -36,23 +44,7 @@ class JobOffer extends RestDto
         'languages' => 'updateLanguages',
     ];
 
-    private const EMPLOYMENT_TYPES = ['full-time', 'part-time', 'contract', 'internship', 'freelance'];
-
-    private const STATUSES = ['draft', 'open', 'closed'];
-
-    private const SALARY_CURRENCIES = ['EUR', 'USD', 'GBP', 'CHF', 'CAD'];
-
     private const SALARY_PERIODS = ['hourly', 'daily', 'monthly', 'yearly'];
-
-    private const REMOTE_MODES = ['on-site', 'hybrid', 'remote'];
-
-    private const EXPERIENCE_LEVELS = ['intern', 'junior', 'mid', 'senior', 'lead', 'principal'];
-
-    private const WORK_TIMES = ['full-time', 'part-time'];
-
-    private const APPLICATION_TYPES = ['internal', 'email', 'external-link'];
-
-    private const LANGUAGE_LEVELS = ['none', 'basic', 'intermediate', 'advanced', 'fluent', 'native'];
 
     #[Assert\NotBlank]
     #[Assert\NotNull]
@@ -70,13 +62,13 @@ class JobOffer extends RestDto
 
     #[Assert\NotBlank]
     #[Assert\NotNull]
-    #[Assert\Choice(choices: self::EMPLOYMENT_TYPES)]
+    #[Assert\Choice(callback: [EmploymentType::class, 'getValues'])]
     #[Assert\Length(min: 2, max: 64)]
     protected string $employmentType = '';
 
     #[Assert\NotBlank]
     #[Assert\NotNull]
-    #[Assert\Choice(choices: self::STATUSES)]
+    #[Assert\Choice(callback: [JobOfferStatus::class, 'getValues'])]
     protected string $status = 'draft';
 
     #[Assert\Range(min: 0, max: 10000000)]
@@ -85,22 +77,22 @@ class JobOffer extends RestDto
     #[Assert\Range(min: 0, max: 10000000)]
     protected ?int $salaryMax = null;
 
-    #[Assert\Choice(choices: self::SALARY_CURRENCIES)]
+    #[Assert\Choice(callback: [SalaryCurrency::class, 'getValues'])]
     protected ?string $salaryCurrency = null;
 
     #[Assert\Choice(choices: self::SALARY_PERIODS)]
     protected ?string $salaryPeriod = null;
 
-    #[Assert\Choice(choices: self::REMOTE_MODES)]
+    #[Assert\Choice(callback: [RemoteMode::class, 'getValues'])]
     protected ?string $remoteMode = null;
 
-    #[Assert\Choice(choices: self::EXPERIENCE_LEVELS)]
+    #[Assert\Choice(callback: [ExperienceLevel::class, 'getValues'])]
     protected ?string $experienceLevel = null;
 
-    #[Assert\Choice(choices: self::WORK_TIMES)]
+    #[Assert\Choice(callback: [WorkTime::class, 'getValues'])]
     protected ?string $workTime = null;
 
-    #[Assert\Choice(choices: self::APPLICATION_TYPES)]
+    #[Assert\Choice(callback: [ApplicationType::class, 'getValues'])]
     protected ?string $applicationType = null;
 
     #[Assert\Type(DateTimeImmutable::class)]
@@ -118,7 +110,7 @@ class JobOffer extends RestDto
     #[Assert\Country]
     protected ?string $country = null;
 
-    #[Assert\Choice(choices: self::LANGUAGE_LEVELS)]
+    #[Assert\Choice(callback: [LanguageLevel::class, 'getValues'])]
     protected ?string $languageLevel = null;
 
     #[Assert\NotNull]

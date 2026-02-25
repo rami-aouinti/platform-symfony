@@ -24,16 +24,16 @@ class City implements EntityInterface
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
-    #[Groups(['City', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['City', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private UuidInterface $id;
 
     #[ORM\ManyToOne(targetEntity: Region::class)]
     #[ORM\JoinColumn(name: 'region_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[Groups(['City', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['City', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private ?Region $region = null;
 
     #[ORM\Column(name: 'name', type: Types::STRING, length: 128, nullable: false)]
-    #[Groups(['City', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['City', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $name = '';
 
     public function __construct()
