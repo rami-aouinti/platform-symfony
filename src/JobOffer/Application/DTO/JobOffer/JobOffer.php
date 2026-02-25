@@ -43,7 +43,7 @@ class JobOffer extends RestDto
 
     private const SALARY_PERIODS = ['hourly', 'daily', 'monthly', 'yearly'];
 
-    private const REMOTE_POLICIES = ['on-site', 'hybrid', 'remote'];
+    private const REMOTE_MODES = ['on-site', 'hybrid', 'remote'];
 
     private const EXPERIENCE_LEVELS = ['intern', 'junior', 'mid', 'senior', 'lead', 'principal'];
 
@@ -90,8 +90,8 @@ class JobOffer extends RestDto
     #[Assert\Choice(choices: self::SALARY_PERIODS)]
     protected ?string $salaryPeriod = null;
 
-    #[Assert\Choice(choices: self::REMOTE_POLICIES)]
-    protected ?string $remotePolicy = null;
+    #[Assert\Choice(choices: self::REMOTE_MODES)]
+    protected ?string $remoteMode = null;
 
     #[Assert\Choice(choices: self::EXPERIENCE_LEVELS)]
     protected ?string $experienceLevel = null;
@@ -102,6 +102,7 @@ class JobOffer extends RestDto
     #[Assert\Choice(choices: self::APPLICATION_TYPES)]
     protected ?string $applicationType = null;
 
+    #[Assert\Type(DateTimeImmutable::class)]
     protected ?DateTimeImmutable $publishedAt = null;
 
     #[AppAssert\EntityReferenceExists(City::class)]
@@ -164,8 +165,10 @@ class JobOffer extends RestDto
     public function setSalaryCurrency(?string $salaryCurrency): self { $this->setVisited('salaryCurrency'); $this->salaryCurrency = $salaryCurrency; return $this; }
     public function getSalaryPeriod(): ?string { return $this->salaryPeriod; }
     public function setSalaryPeriod(?string $salaryPeriod): self { $this->setVisited('salaryPeriod'); $this->salaryPeriod = $salaryPeriod; return $this; }
-    public function getRemotePolicy(): ?string { return $this->remotePolicy; }
-    public function setRemotePolicy(?string $remotePolicy): self { $this->setVisited('remotePolicy'); $this->remotePolicy = $remotePolicy; return $this; }
+    public function getRemoteMode(): ?string { return $this->remoteMode; }
+    public function setRemoteMode(?string $remoteMode): self { $this->setVisited('remoteMode'); $this->remoteMode = $remoteMode; return $this; }
+    public function getRemotePolicy(): ?string { return $this->getRemoteMode(); }
+    public function setRemotePolicy(?string $remotePolicy): self { return $this->setRemoteMode($remotePolicy); }
     public function getExperienceLevel(): ?string { return $this->experienceLevel; }
     public function setExperienceLevel(?string $experienceLevel): self { $this->setVisited('experienceLevel'); $this->experienceLevel = $experienceLevel; return $this; }
     public function getWorkTime(): ?string { return $this->workTime; }
@@ -214,7 +217,7 @@ class JobOffer extends RestDto
             $this->salaryMax = $entity->getSalaryMax();
             $this->salaryCurrency = $entity->getSalaryCurrency();
             $this->salaryPeriod = $entity->getSalaryPeriod();
-            $this->remotePolicy = $entity->getRemotePolicy();
+            $this->remoteMode = $entity->getRemoteMode();
             $this->experienceLevel = $entity->getExperienceLevel();
             $this->workTime = $entity->getWorkTime();
             $this->applicationType = $entity->getApplicationType();

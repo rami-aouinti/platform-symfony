@@ -171,7 +171,7 @@ class JobOfferController extends Controller
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Parameter(name: 'salaryMin', in: 'query', schema: new OA\Schema(type: 'integer'), description: 'Minimum expected salary. Matches offers with salaryMax >= value.')]
     #[OA\Parameter(name: 'salaryMax', in: 'query', schema: new OA\Schema(type: 'integer'), description: 'Maximum expected salary. Matches offers with salaryMin <= value.')]
-    #[OA\Parameter(name: 'remotePolicy', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'remoteMode', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
     #[OA\Parameter(name: 'employmentType', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
     #[OA\Parameter(name: 'workTime', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
     #[OA\Parameter(name: 'publishedWithinDays', in: 'query', schema: new OA\Schema(type: 'integer'), description: 'Keep only offers published within the given number of days.')]
@@ -221,7 +221,7 @@ class JobOfferController extends Controller
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Parameter(name: 'salaryMin', in: 'query', schema: new OA\Schema(type: 'integer'))]
     #[OA\Parameter(name: 'salaryMax', in: 'query', schema: new OA\Schema(type: 'integer'))]
-    #[OA\Parameter(name: 'remotePolicy', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'remoteMode', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
     #[OA\Parameter(name: 'employmentType', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
     #[OA\Parameter(name: 'workTime', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
     #[OA\Parameter(name: 'publishedWithinDays', in: 'query', schema: new OA\Schema(type: 'integer'))]
@@ -402,7 +402,8 @@ class JobOfferController extends Controller
         ];
 
         $mappedInFilters = [
-            'remotePolicy' => 'remotePolicy',
+            'remoteMode' => 'remoteMode',
+            'remotePolicy' => 'remoteMode',
             'employmentType' => 'employmentType',
             'workTime' => 'workTime',
             'city' => 'city',
