@@ -67,6 +67,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     #[Groups([
         'User',
         'User.id',
+        'Company.owner',
 
         'LogLogin.user',
         'LogLoginFailure.user',
@@ -88,6 +89,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     #[Groups([
         'User',
         'User.username',
+        'Company.owner',
 
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
@@ -109,6 +111,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     #[Groups([
         'User',
         'User.firstName',
+        'Company.owner',
 
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
@@ -130,6 +133,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     #[Groups([
         'User',
         'User.lastName',
+        'Company.owner',
 
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
@@ -151,6 +155,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     #[Groups([
         'User',
         'User.email',
+        'Company.owner',
 
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,

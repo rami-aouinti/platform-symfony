@@ -26,12 +26,13 @@ final class LoadCompanyData extends Fixture implements OrderedFixtureInterface
             ->setLegalName('Acme Demo')
             ->setSlug('acme-demo')
             ->setStatus('active')
-            ->setMainAddress('1 Demo Street, 75001 Paris');
+            ->setMainAddress('1 Demo Street, 75001 Paris')
+            ->setOwner($user);
 
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000001'), $company);
 
         $membership = (new CompanyMembership($user, $company))
-            ->setRole(CompanyMembership::ROLE_MEMBER)
+            ->setRole(CompanyMembership::ROLE_OWNER)
             ->setStatus('active');
 
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000002'), $membership);

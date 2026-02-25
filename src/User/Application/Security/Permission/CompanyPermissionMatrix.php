@@ -68,6 +68,16 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
     private function matrix(): array
     {
         return [
+            CompanyMembership::ROLE_OWNER => [
+                Permission::BLOG_VIEW,
+                Permission::CRM_VIEW,
+                Permission::CRM_MANAGE,
+                Permission::SHOP_VIEW,
+                Permission::SHOP_MANAGE,
+                Permission::EDUCATION_VIEW,
+                Permission::EDUCATION_MANAGE,
+                Permission::NOTIFICATION_VIEW,
+            ],
             CompanyMembership::ROLE_MEMBER => [
                 Permission::BLOG_VIEW,
                 Permission::CRM_VIEW,
@@ -105,8 +115,11 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
         return [
             Permission::BLOG_VIEW,
             Permission::CRM_VIEW,
+            Permission::CRM_MANAGE,
             Permission::SHOP_VIEW,
+            Permission::SHOP_MANAGE,
             Permission::EDUCATION_VIEW,
+            Permission::EDUCATION_MANAGE,
             Permission::NOTIFICATION_VIEW,
         ];
     }

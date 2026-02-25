@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Company\Application\Resource\Interfaces;
 
-use App\General\Application\Rest\Interfaces\RestSmallResourceInterface;
+use App\General\Application\Rest\Interfaces\RestResourceInterface;
 
-interface CompanyResourceInterface extends RestSmallResourceInterface
+interface CompanyResourceInterface extends RestResourceInterface
 {
 }
