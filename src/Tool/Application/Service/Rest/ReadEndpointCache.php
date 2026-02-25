@@ -8,6 +8,7 @@ use App\ApiKey\Application\Security\ApiKeyUser;
 use App\User\Application\Security\SecurityUser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
@@ -25,7 +26,7 @@ class ReadEndpointCache
      * @param array<string, int> $ttls
      */
     public function __construct(
-        private readonly TagAwareCacheInterface $cache,
+        private readonly CacheInterface $cache,
         private readonly TokenStorageInterface $tokenStorage,
         private readonly int $defaultTtl,
         private readonly array $ttls = [],
@@ -41,7 +42,10 @@ class ReadEndpointCache
         $tag = $this->buildTag($scope);
 
         return $this->cache->get($key, function (ItemInterface $item) use ($resolver, $tag, $scope): mixed {
-            $item->tag($tag);
+            if ($this->cache instanceof TagAwareCacheInterface) {
+                $item->tag($tag);
+            }
+
             $item->expiresAfter($this->resolveTtl($scope));
 
             return $resolver();
@@ -50,6 +54,10 @@ class ReadEndpointCache
 
     public function invalidate(string $scope): void
     {
+        if (!$this->cache instanceof TagAwareCacheInterface) {
+            return;
+        }
+
         $this->cache->invalidateTags([$this->buildTag($scope)]);
     }
 
