@@ -147,6 +147,11 @@ services:
         arguments:
             $fromNumber: '%env(SMS_FROM_NUMBER)%'
 
+    App\Notification\Application\Service\Channel\PushNotification:
+        arguments:
+            $hub: '@?mercure.hub.default'
+
+
     App\Notification\Application\Service\Interfaces\NotificationServiceInterface:
         class: App\Notification\Application\Service\NotificationService
 
@@ -157,13 +162,13 @@ services:
         class: App\Notification\Application\Service\NotificationOrchestrator
 
     App\Notification\Application\Service\Channel\Interfaces\EmailNotificationInterface:
-        class: App\Notification\Application\Service\Channel\EmailNotification
+        alias: App\Notification\Application\Service\Channel\EmailNotification
 
     App\Notification\Application\Service\Channel\Interfaces\PushNotificationInterface:
-        class: App\Notification\Application\Service\Channel\PushNotification
+        alias: App\Notification\Application\Service\Channel\PushNotification
 
     App\Notification\Application\Service\Channel\Interfaces\SmsNotificationInterface:
-        class: App\Notification\Application\Service\Channel\SmsNotification
+        alias: App\Notification\Application\Service\Channel\SmsNotification
 
 
     App\User\Application\Security\Permission\Interfaces\CompanyPermissionMatrixInterface:
