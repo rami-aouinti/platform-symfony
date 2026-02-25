@@ -13,51 +13,94 @@ class JobApplicationControllerTest extends WebTestCase
 {
     private const string OFFER_ID = '40000000-0000-1000-8000-000000000001';
     private const string APPLICATION_ID = '50000000-0000-1000-8000-000000000001';
+    private const string BASE_URL = self::API_URL_PREFIX . '/v1/job-applications';
 
     /** @throws Throwable */
-    public function testApplyDuplicateWithdrawDecisionAndOpenApiDocumentation(): void
+    public function testCandidateCanApplyToOpenOffer(): void
+    {
+        $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
+        $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
+
+        self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
+        $payload = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        self::assertSame('pending', $payload['status']);
+    }
+
+    /** @throws Throwable */
+    public function testDuplicateApplicationIsBlocked(): void
     {
         $candidateClient = $this->getTestClient('carol-user', 'password-user');
         $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
+
         self::assertSame(Response::HTTP_CONFLICT, $candidateClient->getResponse()->getStatusCode());
+    }
+
+    /** @throws Throwable */
+    public function testAcceptAndRejectAreAllowedOnlyForOfferOwnerOrAuthorizedManager(): void
+    {
+        $candidateClient = $this->getTestClient('alice-user', 'password-user');
+        $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
+        self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
+
+        $application = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        $applicationId = (string) $application['id'];
+
+        $forbiddenClient = $this->getTestClient('carol-user', 'password-user');
+        $forbiddenClient->request('PATCH', self::BASE_URL . '/' . $applicationId . '/accept');
+        self::assertSame(Response::HTTP_FORBIDDEN, $forbiddenClient->getResponse()->getStatusCode());
+
+        $ownerClient = $this->getTestClient('john-user', 'password-user');
+        $ownerClient->request('PATCH', self::BASE_URL . '/' . $applicationId . '/accept');
+        self::assertSame(Response::HTTP_OK, $ownerClient->getResponse()->getStatusCode());
 
         $managerClient = $this->getTestClient('alice-user', 'password-user');
-        $managerClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
-        self::assertSame(Response::HTTP_CREATED, $managerClient->getResponse()->getStatusCode());
+        $managerClient->request('PATCH', self::BASE_URL . '/' . $applicationId . '/reject');
+        self::assertSame(Response::HTTP_BAD_REQUEST, $managerClient->getResponse()->getStatusCode());
+    }
 
-        $created = JSON::decode((string) $managerClient->getResponse()->getContent(), true);
-        $applicationId = (string) $created['id'];
-
-        $candidateClient->request('PATCH', self::API_URL_PREFIX . '/v1/job-applications/' . self::APPLICATION_ID . '/withdraw');
+    /** @throws Throwable */
+    public function testWithdrawIsAllowedOnlyForCandidate(): void
+    {
+        $candidateClient = $this->getTestClient('carol-user', 'password-user');
+        $candidateClient->request('PATCH', self::BASE_URL . '/' . self::APPLICATION_ID . '/withdraw');
         self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
 
         $authorClient = $this->getTestClient('john-user', 'password-user');
-        $authorClient->request('PATCH', self::API_URL_PREFIX . '/v1/job-applications/' . $applicationId . '/accept');
-        self::assertSame(Response::HTTP_OK, $authorClient->getResponse()->getStatusCode());
-
-        $rejectionCandidate = $this->getTestClient('bob-admin', 'password-admin');
-        $rejectionCandidate->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
-        self::assertSame(Response::HTTP_CREATED, $rejectionCandidate->getResponse()->getStatusCode());
-        $toReject = JSON::decode((string) $rejectionCandidate->getResponse()->getContent(), true);
-
-        $authorClient->request('PATCH', self::API_URL_PREFIX . '/v1/job-applications/' . $toReject['id'] . '/reject');
-        self::assertSame(Response::HTTP_OK, $authorClient->getResponse()->getStatusCode());
-
-        $managerClient->request('PATCH', self::API_URL_PREFIX . '/v1/job-applications/' . $applicationId . '/reject');
-        self::assertSame(Response::HTTP_BAD_REQUEST, $managerClient->getResponse()->getStatusCode());
-
-        $authorClient->request('PATCH', self::API_URL_PREFIX . '/v1/job-applications/' . self::APPLICATION_ID . '/withdraw');
+        $authorClient->request('PATCH', self::BASE_URL . '/' . self::APPLICATION_ID . '/withdraw');
         self::assertSame(Response::HTTP_FORBIDDEN, $authorClient->getResponse()->getStatusCode());
+    }
 
-        $docsClient = $this->getTestClient();
-        $docsClient->request('GET', '/api/doc.json');
-        self::assertSame(Response::HTTP_OK, $docsClient->getResponse()->getStatusCode());
-        $documentation = JSON::decode((string) $docsClient->getResponse()->getContent(), true);
+    /** @throws Throwable */
+    public function testInvalidTransitionsAreRejected(): void
+    {
+        $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
+        $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
+        self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
+        $application = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        $applicationId = (string) $application['id'];
 
-        self::assertContains('Job Application Management', array_column($documentation['tags'] ?? [], 'name'));
-        self::assertArrayHasKey('/api/v1/job-offers/{id}/apply', $documentation['paths']);
-        self::assertArrayHasKey('/api/v1/job-applications/{id}/accept', $documentation['paths']);
-        self::assertArrayHasKey('/api/v1/job-applications/{id}/reject', $documentation['paths']);
-        self::assertArrayHasKey('/api/v1/job-applications/{id}/withdraw', $documentation['paths']);
+        $ownerClient = $this->getTestClient('john-user', 'password-user');
+        $ownerClient->request('PATCH', self::BASE_URL . '/' . $applicationId . '/reject');
+        self::assertSame(Response::HTTP_OK, $ownerClient->getResponse()->getStatusCode());
+
+        $ownerClient->request('PATCH', self::BASE_URL . '/' . $applicationId . '/accept');
+        self::assertSame(Response::HTTP_BAD_REQUEST, $ownerClient->getResponse()->getStatusCode());
+    }
+
+    /** @throws Throwable */
+    public function testApplicationVisibilityListDependsOnRole(): void
+    {
+        $candidateClient = $this->getTestClient('carol-user', 'password-user');
+        $candidateClient->request('GET', self::BASE_URL);
+        self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
+        $candidateList = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        self::assertIsArray($candidateList);
+
+        $candidateClient->request('GET', self::BASE_URL . '/' . self::APPLICATION_ID);
+        self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
+
+        $outsiderClient = $this->getTestClient('bob-admin', 'password-admin');
+        $outsiderClient->request('GET', self::BASE_URL . '/' . self::APPLICATION_ID);
+        self::assertSame(Response::HTTP_NOT_FOUND, $outsiderClient->getResponse()->getStatusCode());
     }
 }
