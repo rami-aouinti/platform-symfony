@@ -80,8 +80,7 @@ class OfferApplicationPermissionVoter extends Voter
         $isOfferOwner = $offer?->getCreatedBy()?->getId() === $user->getUserIdentifier();
 
         if ($attribute === Permission::APPLICATION_WITHDRAW->value) {
-            return $application->getCandidate()?->getId() === $user->getUserIdentifier()
-                || $this->companyPermissionMatrix->isGranted($user, $attribute, $companyId);
+            return $application->getCandidate()?->getId() === $user->getUserIdentifier();
         }
 
         if ($attribute === Permission::APPLICATION_VIEW->value

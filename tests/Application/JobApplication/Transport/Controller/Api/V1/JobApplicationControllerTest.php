@@ -18,35 +18,36 @@ class JobApplicationControllerTest extends WebTestCase
     public function testApplyDuplicateWithdrawDecisionAndOpenApiDocumentation(): void
     {
         $candidateClient = $this->getTestClient('carol-user', 'password-user');
-        $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/offers/' . self::OFFER_ID . '/applications');
+        $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
         self::assertSame(Response::HTTP_CONFLICT, $candidateClient->getResponse()->getStatusCode());
 
         $managerClient = $this->getTestClient('alice-user', 'password-user');
-        $managerClient->request('POST', self::API_URL_PREFIX . '/v1/offers/' . self::OFFER_ID . '/applications');
+        $managerClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
         self::assertSame(Response::HTTP_CREATED, $managerClient->getResponse()->getStatusCode());
 
         $created = JSON::decode((string) $managerClient->getResponse()->getContent(), true);
         $applicationId = (string) $created['id'];
 
-        $candidateClient->request('PATCH', self::API_URL_PREFIX . '/v1/applications/' . self::APPLICATION_ID . '/withdraw');
+        $candidateClient->request('PATCH', self::API_URL_PREFIX . '/v1/job-applications/' . self::APPLICATION_ID . '/withdraw');
         self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
 
         $authorClient = $this->getTestClient('john-user', 'password-user');
-        $authorClient->request('PATCH', self::API_URL_PREFIX . '/v1/applications/' . $applicationId . '/accept');
+        $authorClient->request('PATCH', self::API_URL_PREFIX . '/v1/job-applications/' . $applicationId . '/accept');
         self::assertSame(Response::HTTP_OK, $authorClient->getResponse()->getStatusCode());
 
         $rejectionCandidate = $this->getTestClient('bob-admin', 'password-admin');
-        $rejectionCandidate->request('POST', self::API_URL_PREFIX . '/v1/offers/' . self::OFFER_ID . '/applications');
+        $rejectionCandidate->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
         self::assertSame(Response::HTTP_CREATED, $rejectionCandidate->getResponse()->getStatusCode());
         $toReject = JSON::decode((string) $rejectionCandidate->getResponse()->getContent(), true);
 
-        $authorClient->request('PATCH', self::API_URL_PREFIX . '/v1/applications/' . $toReject['id'] . '/reject');
+        $authorClient->request('PATCH', self::API_URL_PREFIX . '/v1/job-applications/' . $toReject['id'] . '/reject');
         self::assertSame(Response::HTTP_OK, $authorClient->getResponse()->getStatusCode());
 
-        $managerClient->request('PATCH', self::API_URL_PREFIX . '/v1/applications/' . $applicationId . '/decision', content: JSON::encode([
-            'status' => 'REJECTED',
-        ]));
-        self::assertSame(Response::HTTP_FORBIDDEN, $managerClient->getResponse()->getStatusCode());
+        $managerClient->request('PATCH', self::API_URL_PREFIX . '/v1/job-applications/' . $applicationId . '/reject');
+        self::assertSame(Response::HTTP_BAD_REQUEST, $managerClient->getResponse()->getStatusCode());
+
+        $authorClient->request('PATCH', self::API_URL_PREFIX . '/v1/job-applications/' . self::APPLICATION_ID . '/withdraw');
+        self::assertSame(Response::HTTP_FORBIDDEN, $authorClient->getResponse()->getStatusCode());
 
         $docsClient = $this->getTestClient();
         $docsClient->request('GET', '/api/doc.json');
@@ -54,8 +55,9 @@ class JobApplicationControllerTest extends WebTestCase
         $documentation = JSON::decode((string) $docsClient->getResponse()->getContent(), true);
 
         self::assertContains('Job Application Management', array_column($documentation['tags'] ?? [], 'name'));
-        self::assertArrayHasKey('/api/v1/offers/{offerId}/applications', $documentation['paths']);
-        self::assertArrayHasKey('/api/v1/applications/{id}/accept', $documentation['paths']);
-        self::assertArrayHasKey('/api/v1/applications/{id}/reject', $documentation['paths']);
+        self::assertArrayHasKey('/api/v1/job-offers/{id}/apply', $documentation['paths']);
+        self::assertArrayHasKey('/api/v1/job-applications/{id}/accept', $documentation['paths']);
+        self::assertArrayHasKey('/api/v1/job-applications/{id}/reject', $documentation['paths']);
+        self::assertArrayHasKey('/api/v1/job-applications/{id}/withdraw', $documentation['paths']);
     }
 }

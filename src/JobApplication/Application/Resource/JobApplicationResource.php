@@ -115,7 +115,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
 
         if (!$this->authorizationChecker->isGranted(Permission::APPLICATION_DECIDE->value, $application)
             && $application->getJobOffer()?->getCreatedBy()?->getId() !== $user->getId()) {
-            throw new JobApplicationException('Only the job offer owner can decide this application.', Response::HTTP_FORBIDDEN);
+            throw new JobApplicationException('Only the job offer owner or an authorized company manager can decide this application.', Response::HTTP_FORBIDDEN);
         }
 
         $this->assertTransition($application, $status);
