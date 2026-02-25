@@ -8,11 +8,13 @@ use App\General\Domain\Message\Interfaces\MessageLowInterface;
 
 readonly class CompanyCreatedMessage implements MessageLowInterface
 {
+    /**
+     * @param array<string, scalar|null> $metadata
+     */
     public function __construct(
         public string $companyId,
-        public string $companyLegalName,
-        public string $ownerId,
-        public string $ownerEmail,
+        public string $ownerUserId,
+        public array $metadata = [],
     ) {
     }
 }

@@ -1,0 +1,7 @@
+<p>Bonjour {{ owner.firstName }} {{ owner.lastName }},</p>
+
+<p>Votre société <strong>{{ company.legalName }}</strong> a bien été créée.</p>
+
+{% if metadata.slug is defined and metadata.slug is not empty %}
+<p>Slug : {{ metadata.slug }}</p>
+{% endif %}
