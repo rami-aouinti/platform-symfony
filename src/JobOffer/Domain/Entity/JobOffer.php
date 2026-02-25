@@ -10,6 +10,8 @@ use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use App\User\Domain\Entity\User;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
@@ -23,8 +25,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Index(name: 'idx_job_offer_work_time', columns: ['work_time'])]
 #[ORM\Index(name: 'idx_job_offer_employment_type', columns: ['employment_type'])]
 #[ORM\Index(name: 'idx_job_offer_remote_policy', columns: ['remote_policy'])]
-#[ORM\Index(name: 'idx_job_offer_city', columns: ['city'])]
-#[ORM\Index(name: 'idx_job_offer_region', columns: ['region'])]
+#[ORM\Index(name: 'idx_job_offer_city_id', columns: ['city_id'])]
+#[ORM\Index(name: 'idx_job_offer_region_id', columns: ['region_id'])]
 #[ORM\Index(name: 'idx_job_offer_salary_min', columns: ['salary_min'])]
 #[ORM\Index(name: 'idx_job_offer_salary_max', columns: ['salary_max'])]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
@@ -104,13 +106,15 @@ class JobOffer implements EntityInterface
     #[Groups(['JobOffer', 'JobOffer.publishedAt', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?DateTimeImmutable $publishedAt = null;
 
-    #[ORM\Column(name: 'city', type: Types::STRING, length: 128, nullable: true)]
+    #[ORM\ManyToOne(targetEntity: City::class)]
+    #[ORM\JoinColumn(name: 'city_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     #[Groups(['JobOffer', 'JobOffer.city', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private ?string $city = null;
+    private ?City $city = null;
 
-    #[ORM\Column(name: 'region', type: Types::STRING, length: 128, nullable: true)]
+    #[ORM\ManyToOne(targetEntity: Region::class)]
+    #[ORM\JoinColumn(name: 'region_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     #[Groups(['JobOffer', 'JobOffer.region', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private ?string $region = null;
+    private ?Region $region = null;
 
     #[ORM\Column(name: 'country', type: Types::STRING, length: 2, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.country', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
@@ -120,9 +124,31 @@ class JobOffer implements EntityInterface
     #[Groups(['JobOffer', 'JobOffer.languageLevel', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?string $languageLevel = null;
 
+    /**
+     * @var Collection<int, Skill>
+     */
+    #[ORM\ManyToMany(targetEntity: Skill::class)]
+    #[ORM\JoinTable(name: 'job_offer_skill')]
+    #[ORM\JoinColumn(name: 'job_offer_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'skill_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['JobOffer', 'JobOffer.skills', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
+    private Collection $skills;
+
+    /**
+     * @var Collection<int, Language>
+     */
+    #[ORM\ManyToMany(targetEntity: Language::class)]
+    #[ORM\JoinTable(name: 'job_offer_language')]
+    #[ORM\JoinColumn(name: 'job_offer_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'language_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['JobOffer', 'JobOffer.languages', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
+    private Collection $languages;
+
     public function __construct()
     {
         $this->id = $this->createUuid();
+        $this->skills = new ArrayCollection();
+        $this->languages = new ArrayCollection();
     }
 
     public function getId(): string
@@ -322,24 +348,24 @@ class JobOffer implements EntityInterface
         return $this;
     }
 
-    public function getCity(): ?string
+    public function getCity(): ?City
     {
         return $this->city;
     }
 
-    public function setCity(?string $city): self
+    public function setCity(?City $city): self
     {
         $this->city = $city;
 
         return $this;
     }
 
-    public function getRegion(): ?string
+    public function getRegion(): ?Region
     {
         return $this->region;
     }
 
-    public function setRegion(?string $region): self
+    public function setRegion(?Region $region): self
     {
         $this->region = $region;
 
@@ -366,6 +392,74 @@ class JobOffer implements EntityInterface
     public function setLanguageLevel(?string $languageLevel): self
     {
         $this->languageLevel = $languageLevel;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Skill>
+     */
+    public function getSkills(): Collection
+    {
+        return $this->skills;
+    }
+
+    /**
+     * @param array<int, Skill> $skills
+     */
+    public function setSkills(array $skills): self
+    {
+        $this->skills = new ArrayCollection($skills);
+
+        return $this;
+    }
+
+    public function addSkill(Skill $skill): self
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills->add($skill);
+        }
+
+        return $this;
+    }
+
+    public function clearSkills(): self
+    {
+        $this->skills->clear();
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Language>
+     */
+    public function getLanguages(): Collection
+    {
+        return $this->languages;
+    }
+
+    /**
+     * @param array<int, Language> $languages
+     */
+    public function setLanguages(array $languages): self
+    {
+        $this->languages = new ArrayCollection($languages);
+
+        return $this;
+    }
+
+    public function addLanguage(Language $language): self
+    {
+        if (!$this->languages->contains($language)) {
+            $this->languages->add($language);
+        }
+
+        return $this;
+    }
+
+    public function clearLanguages(): self
+    {
+        $this->languages->clear();
 
         return $this;
     }
