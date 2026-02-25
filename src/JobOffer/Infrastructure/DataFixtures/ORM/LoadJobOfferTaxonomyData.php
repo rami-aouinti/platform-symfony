@@ -119,8 +119,7 @@ final class LoadJobOfferTaxonomyData extends Fixture implements OrderedFixtureIn
             'City-amsterdam' => ['uuid' => '64000000-0000-1000-8000-000000000008', 'name' => 'Amsterdam', 'regionReference' => 'Region-north-holland'],
             'City-lisbon' => ['uuid' => '64000000-0000-1000-8000-000000000009', 'name' => 'Lisbon', 'regionReference' => 'Region-lisbon'],
             'City-montreal' => ['uuid' => '64000000-0000-1000-8000-000000000010', 'name' => 'Montreal', 'regionReference' => 'Region-quebec'],
-            'City-sao-paulo-accent' => ['uuid' => '64000000-0000-1000-8000-000000000011', 'name' => 'São Paulo', 'regionReference' => 'Region-sao-paulo'],
-            'City-sao-paulo-ascii' => ['uuid' => '64000000-0000-1000-8000-000000000012', 'name' => 'Sao Paulo', 'regionReference' => 'Region-sao-paulo'],
+            'City-sao-paulo' => ['uuid' => '64000000-0000-1000-8000-000000000011', 'name' => 'São Paulo', 'regionReference' => 'Region-sao-paulo'],
         ];
 
         foreach ($cities as $reference => $data) {
