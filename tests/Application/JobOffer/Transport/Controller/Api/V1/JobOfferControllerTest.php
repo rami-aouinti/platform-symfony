@@ -89,4 +89,95 @@ class JobOfferControllerTest extends WebTestCase
         self::assertNotContains('60000000-0000-1000-8000-000000000003', $offerIds);
         self::assertNotContains('60000000-0000-1000-8000-000000000004', $offerIds);
     }
+
+    /** @throws Throwable */
+    public function testFindActionSupportsCombinedBusinessFilters(): void
+    {
+        $client = $this->getTestClient('alice-user', 'password-user');
+        $client->request('GET', self::BASE_URL, [
+            'remotePolicy' => 'hybrid',
+            'employmentType' => 'full-time',
+            'workTime' => 'full-time',
+            'city' => '64000000-0000-1000-8000-000000000001',
+            'region' => '63000000-0000-1000-8000-000000000001',
+        ]);
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
+        self::assertCount(1, $offers);
+        self::assertSame('60000000-0000-1000-8000-000000000001', $offers[0]['id']);
+    }
+
+    /** @throws Throwable */
+    public function testFindActionSupportsMultiValueFilters(): void
+    {
+        $client = $this->getTestClient('alice-user', 'password-user');
+        $client->request('GET', self::BASE_URL, [
+            'remotePolicy' => ['hybrid', 'remote'],
+            'skills' => [
+                '61000000-0000-1000-8000-000000000001',
+                '61000000-0000-1000-8000-000000000003',
+            ],
+            'languages' => [
+                '62000000-0000-1000-8000-000000000003',
+            ],
+        ]);
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $offerIds = array_column($offers, 'id');
+
+        self::assertContains('60000000-0000-1000-8000-000000000002', $offerIds);
+        self::assertNotContains('60000000-0000-1000-8000-000000000001', $offerIds);
+    }
+
+    /** @throws Throwable */
+    public function testFindActionSupportsSalaryBoundsFilters(): void
+    {
+        $client = $this->getTestClient('alice-user', 'password-user');
+        $client->request('GET', self::BASE_URL, [
+            'salaryMin' => '68000',
+            'salaryMax' => '90000',
+        ]);
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $offerIds = array_column($offers, 'id');
+
+        self::assertContains('60000000-0000-1000-8000-000000000001', $offerIds);
+        self::assertContains('60000000-0000-1000-8000-000000000002', $offerIds);
+        self::assertNotContains('60000000-0000-1000-8000-000000000003', $offerIds);
+    }
+
+    /** @throws Throwable */
+    public function testFacetsActionReturnsCountsCoherentWithCurrentFilters(): void
+    {
+        $client = $this->getTestClient('alice-user', 'password-user');
+        $client->request('GET', self::BASE_URL . '/facets', [
+            'remotePolicy' => ['hybrid', 'remote'],
+            'employmentType' => 'full-time',
+        ]);
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $facets = JSON::decode((string) $client->getResponse()->getContent(), true);
+
+        $skillCounts = [];
+        foreach ($facets['skills'] as $facet) {
+            $skillCounts[$facet['id']] = $facet['count'];
+        }
+
+        $languageCounts = [];
+        foreach ($facets['languages'] as $facet) {
+            $languageCounts[$facet['id']] = $facet['count'];
+        }
+
+        self::assertSame(1, $skillCounts['61000000-0000-1000-8000-000000000001'] ?? null);
+        self::assertSame(1, $skillCounts['61000000-0000-1000-8000-000000000003'] ?? null);
+        self::assertSame(2, $languageCounts['62000000-0000-1000-8000-000000000002'] ?? null);
+        self::assertSame(1, $languageCounts['62000000-0000-1000-8000-000000000003'] ?? null);
+    }
 }

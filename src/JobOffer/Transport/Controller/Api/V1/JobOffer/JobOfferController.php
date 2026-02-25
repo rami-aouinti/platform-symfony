@@ -17,6 +17,8 @@ use App\JobOffer\Application\DTO\JobOffer\JobOfferUpdate;
 use App\JobOffer\Application\Resource\Interfaces\JobOfferResourceInterface;
 use App\JobOffer\Application\Resource\JobOfferResource;
 use App\Tool\Application\Service\Rest\ReadEndpointCache;
+use DateInterval;
+use DateTimeImmutable;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +29,15 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Throwable;
+
+use function array_filter;
+use function array_map;
+use function array_values;
+use function explode;
+use function is_array;
+use function is_numeric;
+use function sprintf;
+use function trim;
 
 /**
  * @method JobOfferResource getResource()
@@ -158,6 +169,16 @@ class JobOfferController extends Controller
      */
     #[Route(path: '', methods: [Request::METHOD_GET])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[OA\Parameter(name: 'salaryMin', in: 'query', schema: new OA\Schema(type: 'integer'), description: 'Minimum expected salary. Matches offers with salaryMax >= value.')]
+    #[OA\Parameter(name: 'salaryMax', in: 'query', schema: new OA\Schema(type: 'integer'), description: 'Maximum expected salary. Matches offers with salaryMin <= value.')]
+    #[OA\Parameter(name: 'remotePolicy', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'employmentType', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'workTime', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'publishedWithinDays', in: 'query', schema: new OA\Schema(type: 'integer'), description: 'Keep only offers published within the given number of days.')]
+    #[OA\Parameter(name: 'skills', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'languages', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'city', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'region', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
     public function findAction(Request $request): Response
     {
         $this->validateRestMethod($request, [Request::METHOD_GET]);
@@ -171,6 +192,8 @@ class JobOfferController extends Controller
 
         $this->processCriteria($criteria, $request, __METHOD__);
 
+        [$criteria, $postFilters] = $this->normalizeBusinessQueryParams($request, $criteria);
+
         $data = $this->readEndpointCache->remember(
             self::CACHE_SCOPE,
             $request,
@@ -182,10 +205,51 @@ class JobOfferController extends Controller
                 'search' => $search,
                 'tenant' => $entityManagerName,
             ],
-            fn (): array => $this->getResource()->find($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+            fn (): array => $this->applyPostFilters(
+                $this->getResource()->find($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+                $postFilters,
+            ),
         );
 
         return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '/facets', methods: [Request::METHOD_GET])]
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[OA\Parameter(name: 'salaryMin', in: 'query', schema: new OA\Schema(type: 'integer'))]
+    #[OA\Parameter(name: 'salaryMax', in: 'query', schema: new OA\Schema(type: 'integer'))]
+    #[OA\Parameter(name: 'remotePolicy', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'employmentType', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'workTime', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'publishedWithinDays', in: 'query', schema: new OA\Schema(type: 'integer'))]
+    #[OA\Parameter(name: 'skills', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'languages', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'city', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
+    #[OA\Parameter(name: 'region', in: 'query', schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'string', format: 'uuid')), style: 'form', explode: true)]
+    public function facetsAction(Request $request): Response
+    {
+        $this->validateRestMethod($request, [Request::METHOD_GET]);
+
+        $criteria = RequestHandler::getCriteria($request);
+        $search = RequestHandler::getSearchTerms($request);
+        $entityManagerName = RequestHandler::getTenant($request);
+
+        $this->processCriteria($criteria, $request, __METHOD__);
+        [$criteria, $postFilters] = $this->normalizeBusinessQueryParams($request, $criteria);
+
+        $offers = $this->applyPostFilters(
+            $this->getResource()->find($criteria, ['publishedAt' => 'DESC'], null, null, $search, $entityManagerName),
+            $postFilters,
+        );
+
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            $this->buildFacets($offers),
+            null,
+        );
     }
 
     /**
@@ -293,6 +357,7 @@ class JobOfferController extends Controller
             $criteria = RequestHandler::getCriteria($request);
             $entityManagerName = RequestHandler::getTenant($request);
             $this->processCriteria($criteria, $request, __METHOD__);
+            [$criteria, $postFilters] = $this->normalizeBusinessQueryParams($request, $criteria);
 
             $data = $this->readEndpointCache->remember(
                 self::CACHE_SCOPE,
@@ -305,7 +370,10 @@ class JobOfferController extends Controller
                     'search' => $search,
                     'tenant' => $entityManagerName,
                 ],
-                fn (): array => $resolver($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+                fn (): array => $this->applyPostFilters(
+                    $resolver($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+                    $postFilters,
+                ),
             );
 
             return $this->getResponseHandler()->createResponse(
@@ -319,5 +387,177 @@ class JobOfferController extends Controller
                 entityManagerName: $entityManagerName ?? null,
             );
         }
+    }
+
+    /**
+     * @param array<int|string, mixed> $criteria
+     *
+     * @return array{0: array<int|string, mixed>, 1: array{skills: array<int, string>, languages: array<int, string>}}
+     */
+    private function normalizeBusinessQueryParams(Request $request, array $criteria): array
+    {
+        $postFilters = [
+            'skills' => $this->getQueryList($request, 'skills'),
+            'languages' => $this->getQueryList($request, 'languages'),
+        ];
+
+        $mappedInFilters = [
+            'remotePolicy' => 'remotePolicy',
+            'employmentType' => 'employmentType',
+            'workTime' => 'workTime',
+            'city' => 'city',
+            'region' => 'region',
+        ];
+
+        foreach ($mappedInFilters as $queryKey => $criteriaField) {
+            $values = $this->getQueryList($request, $queryKey);
+
+            if ($values === []) {
+                continue;
+            }
+
+            $criteria[$criteriaField] = $values;
+        }
+
+        $salaryMin = $request->query->get('salaryMin');
+
+        if ($salaryMin !== null && is_numeric((string) $salaryMin)) {
+            $criteria[] = ['entity.salaryMax', 'gte', (int) $salaryMin];
+        }
+
+        $salaryMax = $request->query->get('salaryMax');
+
+        if ($salaryMax !== null && is_numeric((string) $salaryMax)) {
+            $criteria[] = ['entity.salaryMin', 'lte', (int) $salaryMax];
+        }
+
+        $publishedWithinDays = $request->query->get('publishedWithinDays');
+
+        if ($publishedWithinDays !== null && is_numeric((string) $publishedWithinDays) && (int) $publishedWithinDays >= 0) {
+            $criteria[] = [
+                'entity.publishedAt',
+                'gte',
+                (new DateTimeImmutable())->sub(new DateInterval(sprintf('P%dD', (int) $publishedWithinDays))),
+            ];
+        }
+
+        return [$criteria, $postFilters];
+    }
+
+    /**
+     * @param array<int, object> $offers
+     * @param array{skills: array<int, string>, languages: array<int, string>} $postFilters
+     *
+     * @return array<int, object>
+     */
+    private function applyPostFilters(array $offers, array $postFilters): array
+    {
+        return array_values(array_filter($offers, function (object $offer) use ($postFilters): bool {
+            if ($postFilters['skills'] !== []) {
+                $skillIds = array_map(static fn ($skill): string => $skill->getId(), $offer->getSkills()->toArray());
+
+                if (array_values(array_intersect($postFilters['skills'], $skillIds)) === []) {
+                    return false;
+                }
+            }
+
+            if ($postFilters['languages'] !== []) {
+                $languageIds = array_map(static fn ($language): string => $language->getId(), $offer->getLanguages()->toArray());
+
+                if (array_values(array_intersect($postFilters['languages'], $languageIds)) === []) {
+                    return false;
+                }
+            }
+
+            return true;
+        }));
+    }
+
+    /**
+     * @param array<int, object> $offers
+     *
+     * @return array<string, array<int, array<string, int|string>>>
+     */
+    private function buildFacets(array $offers): array
+    {
+        $facets = [
+            'skills' => [],
+            'languages' => [],
+            'cities' => [],
+            'regions' => [],
+            'employmentTypes' => [],
+            'remotePolicies' => [],
+            'workTimes' => [],
+        ];
+
+        foreach ($offers as $offer) {
+            foreach ($offer->getSkills() as $skill) {
+                $facetKey = $skill->getId();
+                $facets['skills'][$facetKey] ??= ['id' => $facetKey, 'label' => $skill->getName(), 'count' => 0];
+                $facets['skills'][$facetKey]['count']++;
+            }
+
+            foreach ($offer->getLanguages() as $language) {
+                $facetKey = $language->getId();
+                $facets['languages'][$facetKey] ??= ['id' => $facetKey, 'label' => $language->getCode(), 'count' => 0];
+                $facets['languages'][$facetKey]['count']++;
+            }
+
+            if ($offer->getCity() !== null) {
+                $facetKey = $offer->getCity()->getId();
+                $facets['cities'][$facetKey] ??= ['id' => $facetKey, 'label' => $offer->getCity()->getName(), 'count' => 0];
+                $facets['cities'][$facetKey]['count']++;
+            }
+
+            if ($offer->getRegion() !== null) {
+                $facetKey = $offer->getRegion()->getId();
+                $facets['regions'][$facetKey] ??= ['id' => $facetKey, 'label' => $offer->getRegion()->getName(), 'count' => 0];
+                $facets['regions'][$facetKey]['count']++;
+            }
+
+            $employmentType = $offer->getEmploymentType();
+            $facets['employmentTypes'][$employmentType] ??= ['id' => $employmentType, 'label' => $employmentType, 'count' => 0];
+            $facets['employmentTypes'][$employmentType]['count']++;
+
+            if ($offer->getRemotePolicy() !== null) {
+                $remotePolicy = $offer->getRemotePolicy();
+                $facets['remotePolicies'][$remotePolicy] ??= ['id' => $remotePolicy, 'label' => $remotePolicy, 'count' => 0];
+                $facets['remotePolicies'][$remotePolicy]['count']++;
+            }
+
+            if ($offer->getWorkTime() !== null) {
+                $workTime = $offer->getWorkTime();
+                $facets['workTimes'][$workTime] ??= ['id' => $workTime, 'label' => $workTime, 'count' => 0];
+                $facets['workTimes'][$workTime]['count']++;
+            }
+        }
+
+        return [
+            'skills' => array_values($facets['skills']),
+            'languages' => array_values($facets['languages']),
+            'cities' => array_values($facets['cities']),
+            'regions' => array_values($facets['regions']),
+            'employmentTypes' => array_values($facets['employmentTypes']),
+            'remotePolicies' => array_values($facets['remotePolicies']),
+            'workTimes' => array_values($facets['workTimes']),
+        ];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function getQueryList(Request $request, string $name): array
+    {
+        $rawValue = $request->query->all()[$name] ?? $request->query->get($name);
+
+        if ($rawValue === null || $rawValue === '') {
+            return [];
+        }
+
+        if (is_array($rawValue)) {
+            return array_values(array_filter(array_map(static fn (mixed $value): string => trim((string) $value), $rawValue)));
+        }
+
+        return array_values(array_filter(array_map(static fn (string $value): string => trim($value), explode(',', (string) $rawValue))));
     }
 }
