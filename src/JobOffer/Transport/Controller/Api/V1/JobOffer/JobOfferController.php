@@ -16,6 +16,7 @@ use App\JobOffer\Application\DTO\JobOffer\JobOfferPatch;
 use App\JobOffer\Application\DTO\JobOffer\JobOfferUpdate;
 use App\JobOffer\Application\Resource\Interfaces\JobOfferResourceInterface;
 use App\JobOffer\Application\Resource\JobOfferResource;
+use App\Tool\Application\Service\Rest\ReadEndpointCache;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,10 +54,14 @@ class JobOfferController extends Controller
         Controller::METHOD_PATCH => JobOfferPatch::class,
     ];
 
-    public function __construct(JobOfferResourceInterface $resource)
-    {
+    public function __construct(
+        JobOfferResourceInterface $resource,
+        private readonly ReadEndpointCache $readEndpointCache,
+    ) {
         parent::__construct($resource);
     }
+
+    private const string CACHE_SCOPE = "job_offer";
 
     /**
      * @throws Throwable
@@ -90,7 +95,10 @@ class JobOfferController extends Controller
     ))]
     public function createAction(Request $request, RestDtoInterface $restDto): Response
     {
-        return $this->createMethod($request, $restDto);
+        $response = $this->createMethod($request, $restDto);
+        $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
+
+        return $response;
     }
 
     /**
@@ -113,7 +121,10 @@ class JobOfferController extends Controller
     #[OA\Response(response: 200, description: 'Job offer updated', content: new JsonContent(type: 'object'))]
     public function updateAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
-        return $this->updateMethod($request, $restDto, $id);
+        $response = $this->updateMethod($request, $restDto, $id);
+        $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
+
+        return $response;
     }
 
     /**
@@ -136,7 +147,84 @@ class JobOfferController extends Controller
     #[OA\Response(response: 200, description: 'Job offer patched', content: new JsonContent(type: 'object'))]
     public function patchAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
-        return $this->patchMethod($request, $restDto, $id);
+        $response = $this->patchMethod($request, $restDto, $id);
+        $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
+
+        return $response;
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '', methods: [Request::METHOD_GET])]
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    public function findAction(Request $request): Response
+    {
+        $this->validateRestMethod($request, [Request::METHOD_GET]);
+
+        $orderBy = RequestHandler::getOrderBy($request);
+        $limit = RequestHandler::getLimit($request);
+        $offset = RequestHandler::getOffset($request);
+        $search = RequestHandler::getSearchTerms($request);
+        $criteria = RequestHandler::getCriteria($request);
+        $entityManagerName = RequestHandler::getTenant($request);
+
+        $this->processCriteria($criteria, $request, __METHOD__);
+
+        $data = $this->readEndpointCache->remember(
+            self::CACHE_SCOPE,
+            $request,
+            [
+                'criteria' => $criteria,
+                'orderBy' => $orderBy,
+                'limit' => $limit,
+                'offset' => $offset,
+                'search' => $search,
+                'tenant' => $entityManagerName,
+            ],
+            fn (): array => $this->getResource()->find($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+        );
+
+        return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    public function findOneAction(Request $request, string $id): Response
+    {
+        $entityManagerName = RequestHandler::getTenant($request);
+
+        $data = $this->readEndpointCache->remember(
+            self::CACHE_SCOPE,
+            $request,
+            [
+                'criteria' => ['id' => $id],
+                'orderBy' => [],
+                'limit' => null,
+                'offset' => null,
+                'search' => [],
+                'tenant' => $entityManagerName,
+            ],
+            fn (): object|null => $this->getResource()->findOne($id, true, $entityManagerName),
+        );
+
+        return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_DELETE])]
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    public function deleteAction(Request $request, string $id): Response
+    {
+        $response = $this->deleteMethod($request, $id);
+        $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
+
+        return $response;
     }
 
     /**
@@ -206,9 +294,23 @@ class JobOfferController extends Controller
             $entityManagerName = RequestHandler::getTenant($request);
             $this->processCriteria($criteria, $request, __METHOD__);
 
+            $data = $this->readEndpointCache->remember(
+                self::CACHE_SCOPE,
+                $request,
+                [
+                    'criteria' => $criteria,
+                    'orderBy' => $orderBy,
+                    'limit' => $limit,
+                    'offset' => $offset,
+                    'search' => $search,
+                    'tenant' => $entityManagerName,
+                ],
+                fn (): array => $resolver($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+            );
+
             return $this->getResponseHandler()->createResponse(
                 $request,
-                $resolver($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+                $data,
                 $this->getResource(),
             );
         } catch (Throwable $exception) {

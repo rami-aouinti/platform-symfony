@@ -5,6 +5,10 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     locale: 'en'
+    read_endpoint_cache.default_ttl: '%env(int:REST_READ_CACHE_DEFAULT_TTL)%'
+    read_endpoint_cache.ttls:
+        job_offer: '%env(int:REST_READ_CACHE_JOB_OFFER_TTL)%'
+        job_application: '%env(int:REST_READ_CACHE_JOB_APPLICATION_TTL)%'
 
 services:
     # default configuration for services in *this* file
@@ -54,6 +58,13 @@ services:
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
+
+    App\Tool\Application\Service\Rest\ReadEndpointCache:
+        arguments:
+            $cache: '@app.rest_read_cache'
+            $defaultTtl: '%read_endpoint_cache.default_ttl%'
+            $ttls: '%read_endpoint_cache.ttls%'
+
     App\General\Transport\ValueResolver\EntityValueResolver:
         tags:
             - { name: controller.argument_value_resolver, priority: 150 }
