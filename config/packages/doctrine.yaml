@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
 doctrine:
     dbal:
         # configure these for your database server
@@ -88,6 +89,24 @@ doctrine:
                         dir: '%kernel.project_dir%/src/Company/Domain/Entity'
                         prefix: 'App\Company\Domain\Entity'
                         alias: Company
+                    Offer:
+                        type: attribute
+                        is_bundle: false
+                        dir: '%kernel.project_dir%/src/Offer/Domain/Entity'
+                        prefix: 'App\Offer\Domain\Entity'
+                        alias: Offer
+                    JobApplication:
+                        type: attribute
+                        is_bundle: false
+                        dir: '%kernel.project_dir%/src/JobApplication/Domain/Entity'
+                        prefix: 'App\JobApplication\Domain\Entity'
+                        alias: JobApplication
+                    JobOffer:
+                        type: attribute
+                        is_bundle: false
+                        dir: '%kernel.project_dir%/src/JobOffer/Domain/Entity'
+                        prefix: 'App\JobOffer\Domain\Entity'
+                        alias: JobOffer
                     Notification:
                         type: attribute
                         is_bundle: false
