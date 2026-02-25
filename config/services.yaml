@@ -236,6 +236,21 @@ when@test:
         App\User\Infrastructure\DataFixtures\:
             resource: '../src/User/Infrastructure/DataFixtures/*'
 
+        App\Candidate\Infrastructure\DataFixtures\:
+            resource: '../src/Candidate/Infrastructure/DataFixtures/*'
+
+        App\Company\Infrastructure\DataFixtures\:
+            resource: '../src/Company/Infrastructure/DataFixtures/*'
+
+        App\JobApplication\Infrastructure\DataFixtures\:
+            resource: '../src/JobApplication/Infrastructure/DataFixtures/*'
+
+        App\JobOffer\Infrastructure\DataFixtures\:
+            resource: '../src/JobOffer/Infrastructure/DataFixtures/*'
+
+        App\Offer\Infrastructure\DataFixtures\:
+            resource: '../src/Offer/Infrastructure/DataFixtures/*'
+
         App\Tests\TestCase\:
             resource: '../tests/TestCase/*'
 
