@@ -7,10 +7,12 @@ namespace App\JobApplication\Application\Resource;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\General\Domain\Service\Interfaces\MessageServiceInterface;
 use App\JobApplication\Application\DTO\JobApplication\JobApplication as JobApplicationDto;
 use App\JobApplication\Application\DTO\JobApplication\OfferApplicationPayload;
 use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobApplication\Domain\Entity\JobApplication as Entity;
+use App\JobApplication\Domain\Message\JobApplicationSubmittedMessage;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
 use App\JobApplication\Domain\Exception\JobApplicationException;
 use App\JobApplication\Domain\Repository\Interfaces\JobApplicationRepositoryInterface as RepositoryInterface;
@@ -36,6 +38,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
         private readonly JobOfferRepository $jobOfferRepository,
         private readonly UserTypeIdentification $userTypeIdentification,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly MessageServiceInterface $messageService,
     ) {
         parent::__construct($repository);
     }
@@ -84,6 +87,16 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
             ->setStatus(JobApplicationStatus::PENDING);
 
         $this->getRepository()->save($application);
+
+        $this->messageService->sendMessage(new JobApplicationSubmittedMessage(
+            jobApplicationId: $application->getId(),
+            jobOfferId: $jobOffer->getId(),
+            jobOfferTitle: $jobOffer->getTitle(),
+            candidateId: $candidate->getId(),
+            candidateEmail: $candidate->getEmail(),
+            reviewerId: $jobOffer->getCreatedBy()?->getId(),
+            reviewerEmail: $jobOffer->getCreatedBy()?->getEmail(),
+        ));
 
         return $application;
     }
