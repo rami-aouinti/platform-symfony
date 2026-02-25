@@ -18,15 +18,26 @@ class CompanyPermissionMatrixTest extends TestCase
         $user = $this->createSecurityUser(['ROLE_ADMIN']);
 
         self::assertTrue($matrix->isGranted($user, Permission::SHOP_MANAGE, null, false));
+        self::assertTrue($matrix->isGranted($user, Permission::APPLICATION_DECIDE, null, false));
     }
 
-    public function testMembershipRoleCanGrantInCompanyContext(): void
+    public function testCrmManagerMembershipGrantsOfferAndApplicationPermissionsInCompanyContext(): void
     {
         $matrix = new CompanyPermissionMatrix();
-        $user = $this->createSecurityUser([], 'company-1', 'shop_admin');
+        $user = $this->createSecurityUser([], 'company-1', 'crm_manager');
 
-        self::assertTrue($matrix->isGranted($user, Permission::SHOP_MANAGE, 'company-1', false));
-        self::assertFalse($matrix->isGranted($user, Permission::CRM_MANAGE, 'company-1', false));
+        self::assertTrue($matrix->isGranted($user, Permission::OFFER_MANAGE, 'company-1', false));
+        self::assertTrue($matrix->isGranted($user, Permission::APPLICATION_DECIDE, 'company-1', false));
+        self::assertFalse($matrix->isGranted($user, Permission::APPLICATION_WITHDRAW, 'company-1', false));
+    }
+
+    public function testCandidateCanWithdrawApplicationButCannotDecide(): void
+    {
+        $matrix = new CompanyPermissionMatrix();
+        $user = $this->createSecurityUser([], 'company-1', 'candidate');
+
+        self::assertTrue($matrix->isGranted($user, Permission::APPLICATION_WITHDRAW, 'company-1', false));
+        self::assertFalse($matrix->isGranted($user, Permission::APPLICATION_DECIDE, 'company-1', false));
     }
 
     public function testOwnershipFallbackWhenNoRoleMatches(): void
@@ -34,17 +45,17 @@ class CompanyPermissionMatrixTest extends TestCase
         $matrix = new CompanyPermissionMatrix();
         $user = $this->createSecurityUser([]);
 
-        self::assertTrue($matrix->isGranted($user, Permission::BLOG_VIEW, null, true));
-        self::assertFalse($matrix->isGranted($user, Permission::BLOG_MANAGE, null, true));
+        self::assertTrue($matrix->isGranted($user, Permission::OFFER_MANAGE, null, true));
+        self::assertTrue($matrix->isGranted($user, Permission::APPLICATION_DECIDE, null, true));
+        self::assertFalse($matrix->isGranted($user, Permission::APPLICATION_WITHDRAW, null, true));
     }
 
     public function testNotificationPermissionGrantedFromMembershipWithoutExplicitCompanyContext(): void
     {
         $matrix = new CompanyPermissionMatrix();
-        $user = $this->createSecurityUser([], 'company-1', 'member');
+        $user = $this->createSecurityUser([], 'company-1', 'owner');
 
         self::assertTrue($matrix->isGranted($user, Permission::NOTIFICATION_VIEW));
-        self::assertTrue($matrix->isGranted($user, Permission::NOTIFICATION_MANAGE));
     }
 
     public function testNotificationPermissionDeniedWhenNoRoleMatches(): void

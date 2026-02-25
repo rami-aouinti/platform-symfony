@@ -6,6 +6,14 @@ namespace App\User\Application\Security;
 
 enum Permission: string
 {
+    case OFFER_VIEW = 'offer.view';
+    case OFFER_MANAGE = 'offer.manage';
+
+    case APPLICATION_VIEW = 'application.view';
+    case APPLICATION_MANAGE = 'application.manage';
+    case APPLICATION_DECIDE = 'application.decide';
+    case APPLICATION_WITHDRAW = 'application.withdraw';
+
     case BLOG_VIEW = 'blog.view';
     case BLOG_MANAGE = 'blog.manage';
 
