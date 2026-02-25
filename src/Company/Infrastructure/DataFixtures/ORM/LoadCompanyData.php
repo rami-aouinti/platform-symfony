@@ -9,6 +9,7 @@ use App\Company\Domain\Entity\CompanyMembership;
 use App\General\Domain\Rest\UuidHelper;
 use App\Tests\Utils\PhpUnitUtil;
 use App\User\Domain\Entity\User;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -25,27 +26,35 @@ final class LoadCompanyData extends Fixture implements OrderedFixtureInterface
         $managerUser = $this->getReference('User-alice-user', User::class);
         /** @var User $externalUser */
         $externalUser = $this->getReference('User-carol-user', User::class);
+        /** @var User $candidateUser */
+        $candidateUser = $this->getReference('User-hugo-user', User::class);
 
-        $company = (new Company())
+        $acme = (new Company())
             ->setLegalName('Acme Demo')
             ->setSlug('acme-demo')
             ->setStatus('active')
             ->setMainAddress('1 Demo Street, 75001 Paris')
             ->setOwner($owner);
 
-        PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000001'), $company);
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000001'), $acme);
 
-        $ownerMembership = (new CompanyMembership($owner, $company))
+        $acmeOwnerMembership = (new CompanyMembership($owner, $acme))
             ->setRole(CompanyMembership::ROLE_OWNER)
-            ->setStatus('active');
+            ->setStatus('active')
+            ->setJoinedAt(new DateTimeImmutable('2026-01-05 09:00:00'));
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000002'), $acmeOwnerMembership);
 
-        PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000002'), $ownerMembership);
-
-        $managerMembership = (new CompanyMembership($managerUser, $company))
+        $acmeManagerMembership = (new CompanyMembership($managerUser, $acme))
             ->setRole(CompanyMembership::ROLE_CRM_MANAGER)
-            ->setStatus('active');
+            ->setStatus('active')
+            ->setJoinedAt(new DateTimeImmutable('2026-01-12 10:30:00'));
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000004'), $acmeManagerMembership);
 
-        PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000004'), $managerMembership);
+        $acmeCandidateMembership = (new CompanyMembership($candidateUser, $acme))
+            ->setRole(CompanyMembership::ROLE_CANDIDATE)
+            ->setStatus('invited')
+            ->setInvitedAt(new DateTimeImmutable('2026-02-01 14:00:00'));
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000007'), $acmeCandidateMembership);
 
         $externalCompany = (new Company())
             ->setLegalName('External Corp')
@@ -53,24 +62,57 @@ final class LoadCompanyData extends Fixture implements OrderedFixtureInterface
             ->setStatus('active')
             ->setMainAddress('2 External Street, 69000 Lyon')
             ->setOwner($externalUser);
-
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000005'), $externalCompany);
 
-        $externalMembership = (new CompanyMembership($externalUser, $externalCompany))
+        $externalOwnerMembership = (new CompanyMembership($externalUser, $externalCompany))
             ->setRole(CompanyMembership::ROLE_OWNER)
-            ->setStatus('active');
+            ->setStatus('active')
+            ->setJoinedAt(new DateTimeImmutable('2026-01-15 11:00:00'));
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000006'), $externalOwnerMembership);
 
-        PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000006'), $externalMembership);
+        $betaCompany = (new Company())
+            ->setLegalName('Beta Labs')
+            ->setSlug('beta-labs')
+            ->setStatus('suspended')
+            ->setMainAddress('77 Innovation Avenue, 31000 Toulouse')
+            ->setOwner($managerUser);
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000008'), $betaCompany);
 
-        $manager->persist($company);
-        $manager->persist($ownerMembership);
-        $manager->persist($managerMembership);
+        $betaOwnerMembership = (new CompanyMembership($managerUser, $betaCompany))
+            ->setRole(CompanyMembership::ROLE_OWNER)
+            ->setStatus('active')
+            ->setJoinedAt(new DateTimeImmutable('2026-01-20 08:00:00'));
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000009'), $betaOwnerMembership);
+
+        $betaTeacherMembership = (new CompanyMembership($owner, $betaCompany))
+            ->setRole(CompanyMembership::ROLE_TEACHER)
+            ->setStatus('invited')
+            ->setInvitedAt(new DateTimeImmutable('2026-02-10 16:15:00'));
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000010'), $betaTeacherMembership);
+
+        $manager->persist($acme);
+        $manager->persist($acmeOwnerMembership);
+        $manager->persist($acmeManagerMembership);
+        $manager->persist($acmeCandidateMembership);
+
         $manager->persist($externalCompany);
-        $manager->persist($externalMembership);
+        $manager->persist($externalOwnerMembership);
+
+        $manager->persist($betaCompany);
+        $manager->persist($betaOwnerMembership);
+        $manager->persist($betaTeacherMembership);
         $manager->flush();
 
-        $this->addReference('Company-acme-demo', $company);
+        $this->addReference('Company-acme-demo', $acme);
         $this->addReference('Company-external-corp', $externalCompany);
+        $this->addReference('Company-beta-labs', $betaCompany);
+
+        $this->addReference('CompanyMembership-acme-owner-john', $acmeOwnerMembership);
+        $this->addReference('CompanyMembership-acme-manager-alice', $acmeManagerMembership);
+        $this->addReference('CompanyMembership-acme-candidate-hugo', $acmeCandidateMembership);
+        $this->addReference('CompanyMembership-external-owner-carol', $externalOwnerMembership);
+        $this->addReference('CompanyMembership-beta-owner-alice', $betaOwnerMembership);
+        $this->addReference('CompanyMembership-beta-teacher-john', $betaTeacherMembership);
     }
 
     #[Override]

@@ -37,14 +37,30 @@ class OfferApplicationController extends Controller
     #[OA\RequestBody(
         required: false,
         content: new JsonContent(
-            ref: '#/components/schemas/JobApplicationActionPayload',
+            properties: [
+                new OA\Property(property: 'note', type: 'string', nullable: true, example: 'Status changed by recruiter workflow.'),
+            ],
+            type: 'object',
             example: ['note' => 'Application submitted from candidate dashboard.'],
         ),
     )]
     #[OA\Response(
         response: 201,
         description: 'Application submitted for this offer',
-        content: new JsonContent(ref: '#/components/schemas/JobApplicationResponse'),
+        content: new JsonContent(
+            properties: [
+                new OA\Property(property: 'id', type: 'string', format: 'uuid', example: '0195f8d4-5209-77a5-93ae-9f11dfce290f'),
+                new OA\Property(property: 'jobOffer', type: 'string', format: 'uuid', example: '0195f7ac-199f-7188-bc2c-fe59f1161b08'),
+                new OA\Property(property: 'candidate', type: 'string', format: 'uuid', example: '0195f798-7a12-7303-8db6-ece0cabf335d'),
+                new OA\Property(property: 'coverLetter', type: 'string', nullable: true, example: 'I built high-scale Symfony APIs for 5 years.'),
+                new OA\Property(property: 'cvUrl', type: 'string', format: 'uri', nullable: true, example: 'https://cdn.example.com/cv/jane-doe.pdf'),
+                new OA\Property(property: 'attachments', type: 'array', nullable: true, items: new OA\Items(type: 'string', format: 'uri')),
+                new OA\Property(property: 'status', type: 'string', enum: ['pending', 'accepted', 'rejected', 'withdrawn'], example: 'pending'),
+                new OA\Property(property: 'decidedBy', type: 'string', format: 'uuid', nullable: true, example: '0195f7a1-8e09-7f40-93f0-c3bcf2b42744'),
+                new OA\Property(property: 'decidedAt', type: 'string', format: 'date-time', nullable: true, example: '2026-02-25T12:45:00+00:00'),
+            ],
+            type: 'object',
+        ),
     )]
     public function createForOfferAction(Request $request, string $id): Response
     {
