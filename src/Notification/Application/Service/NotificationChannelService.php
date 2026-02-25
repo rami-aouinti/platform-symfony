@@ -27,9 +27,9 @@ readonly class NotificationChannelService implements NotificationChannelServiceI
         $this->emailNotification->send($to, $subject, $content);
     }
 
-    public function sendPushNotification(string $recipient, string $subject, string $content): void
+    public function sendPushNotification(string $userId, string $subject, string $content): void
     {
-        $this->pushNotification->send($recipient, $subject, $content);
+        $this->pushNotification->send($userId, $subject, $content);
     }
 
     public function sendSmsNotification(string $phoneNumber, string $content): void

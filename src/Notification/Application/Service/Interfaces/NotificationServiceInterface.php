@@ -24,5 +24,8 @@ interface NotificationServiceInterface
 
     public function markAsRead(string $id, User $user): ?Notification;
 
+
+    public function create(User $user, string $type, string $title, string $message): Notification;
+
     public function markAllAsRead(User $user): int;
 }

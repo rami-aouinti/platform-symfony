@@ -11,7 +11,9 @@ use App\Company\Domain\Repository\Interfaces\CompanyMembershipRepositoryInterfac
 use App\Company\Domain\Repository\Interfaces\CompanyRepositoryInterface as RepositoryInterface;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
+use App\General\Domain\Service\Interfaces\MessageServiceInterface;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\Company\Domain\Message\CompanyCreatedMessage;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use DateTimeImmutable;
@@ -33,6 +35,7 @@ class CompanyResource extends RestResource implements CompanyResourceInterface
         RepositoryInterface $repository,
         private readonly UserTypeIdentification $userTypeIdentification,
         private readonly CompanyMembershipRepositoryInterface $companyMembershipRepository,
+        private readonly MessageServiceInterface $messageService,
     ) {
         parent::__construct($repository);
     }
@@ -93,6 +96,15 @@ class CompanyResource extends RestResource implements CompanyResourceInterface
                 ->setStatus('active')
                 ->setJoinedAt(new DateTimeImmutable())
         );
+
+        $this->messageService->sendMessage(new CompanyCreatedMessage(
+            companyId: $entity->getId(),
+            ownerUserId: $currentUser->getId(),
+            metadata: [
+                'legalName' => $entity->getLegalName(),
+                'slug' => $entity->getSlug(),
+            ],
+        ));
     }
 
     private function assertOwner(Entity $company): void

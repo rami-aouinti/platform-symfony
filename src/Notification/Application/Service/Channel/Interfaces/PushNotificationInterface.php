@@ -10,5 +10,5 @@ namespace App\Notification\Application\Service\Channel\Interfaces;
  */
 interface PushNotificationInterface
 {
-    public function send(string $recipient, string $subject, string $content): void;
+    public function send(string $userId, string $subject, string $content): void;
 }

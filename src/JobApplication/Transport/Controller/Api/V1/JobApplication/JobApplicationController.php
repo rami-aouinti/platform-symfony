@@ -6,6 +6,7 @@ namespace App\JobApplication\Transport\Controller\Api\V1\JobApplication;
 
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Transport\Rest\Controller;
+use App\General\Transport\Rest\RequestHandler;
 use App\General\Transport\Rest\ResponseHandler;
 use App\General\Transport\Rest\Traits\Methods\CreateMethod;
 use App\General\Transport\Rest\Traits\Methods\PatchMethod;
@@ -16,6 +17,7 @@ use App\JobApplication\Application\DTO\JobApplication\JobApplicationUpdate;
 use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobApplication\Application\Resource\JobApplicationResource;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
+use App\Tool\Application\Service\Rest\ReadEndpointCache;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,10 +53,14 @@ class JobApplicationController extends Controller
         Controller::METHOD_PATCH => JobApplicationPatch::class,
     ];
 
-    public function __construct(JobApplicationResourceInterface $resource)
-    {
+    public function __construct(
+        JobApplicationResourceInterface $resource,
+        private readonly ReadEndpointCache $readEndpointCache,
+    ) {
         parent::__construct($resource);
     }
+
+    private const string CACHE_SCOPE = "job_application";
 
     /**
      * @throws Throwable
@@ -89,7 +95,10 @@ class JobApplicationController extends Controller
     ))]
     public function createAction(Request $request, RestDtoInterface $restDto): Response
     {
-        return $this->createMethod($request, $restDto);
+        $response = $this->createMethod($request, $restDto);
+        $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
+
+        return $response;
     }
 
     /**
@@ -112,7 +121,10 @@ class JobApplicationController extends Controller
     #[OA\Response(response: 200, description: 'Job application updated', content: new JsonContent(type: 'object'))]
     public function updateAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
-        return $this->updateMethod($request, $restDto, $id);
+        $response = $this->updateMethod($request, $restDto, $id);
+        $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
+
+        return $response;
     }
 
     /**
@@ -135,7 +147,10 @@ class JobApplicationController extends Controller
     #[OA\Response(response: 200, description: 'Job application patched', content: new JsonContent(type: 'object'))]
     public function patchAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
-        return $this->patchMethod($request, $restDto, $id);
+        $response = $this->patchMethod($request, $restDto, $id);
+        $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
+
+        return $response;
     }
 
     /**
@@ -145,9 +160,24 @@ class JobApplicationController extends Controller
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     public function findAction(Request $request): Response
     {
+        $entityManagerName = RequestHandler::getTenant($request);
+        $data = $this->readEndpointCache->remember(
+            self::CACHE_SCOPE,
+            $request,
+            [
+                'criteria' => [],
+                'orderBy' => [],
+                'limit' => null,
+                'offset' => null,
+                'search' => [],
+                'tenant' => $entityManagerName,
+            ],
+            fn (): array => $this->getResource()->findAllowedForCurrentUser(),
+        );
+
         return $this->getResponseHandler()->createResponse(
             $request,
-            $this->getResource()->findAllowedForCurrentUser(),
+            $data,
             $this->getResource(),
         );
     }
@@ -159,11 +189,39 @@ class JobApplicationController extends Controller
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     public function findOneAction(Request $request, string $id): Response
     {
+        $entityManagerName = RequestHandler::getTenant($request);
+        $data = $this->readEndpointCache->remember(
+            self::CACHE_SCOPE,
+            $request,
+            [
+                'criteria' => ['id' => $id],
+                'orderBy' => [],
+                'limit' => null,
+                'offset' => null,
+                'search' => [],
+                'tenant' => $entityManagerName,
+            ],
+            fn (): object => $this->getResource()->getAllowedForCurrentUser($id),
+        );
+
         return $this->getResponseHandler()->createResponse(
             $request,
-            $this->getResource()->getAllowedForCurrentUser($id),
+            $data,
             $this->getResource(),
         );
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_DELETE])]
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    public function deleteAction(Request $request, string $id): Response
+    {
+        $response = $this->deleteMethod($request, $id);
+        $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
+
+        return $response;
     }
 
     #[Route(path: '/{id}/accept', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
@@ -171,9 +229,12 @@ class JobApplicationController extends Controller
     #[OA\Response(response: 200, description: 'Application accepted', content: new JsonContent(type: 'object'))]
     public function acceptAction(Request $request, string $id): Response
     {
+        $data = $this->getResource()->decide($id, JobApplicationStatus::ACCEPTED);
+        $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
+
         return $this->getResponseHandler()->createResponse(
             $request,
-            $this->getResource()->decide($id, JobApplicationStatus::ACCEPTED),
+            $data,
             $this->getResource(),
         );
     }
@@ -183,9 +244,12 @@ class JobApplicationController extends Controller
     #[OA\Response(response: 200, description: 'Application rejected', content: new JsonContent(type: 'object'))]
     public function rejectAction(Request $request, string $id): Response
     {
+        $data = $this->getResource()->decide($id, JobApplicationStatus::REJECTED);
+        $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
+
         return $this->getResponseHandler()->createResponse(
             $request,
-            $this->getResource()->decide($id, JobApplicationStatus::REJECTED),
+            $data,
             $this->getResource(),
         );
     }
@@ -195,9 +259,12 @@ class JobApplicationController extends Controller
     #[OA\Response(response: 200, description: 'Application withdrawn', content: new JsonContent(type: 'object'))]
     public function withdrawAction(Request $request, string $id): Response
     {
+        $data = $this->getResource()->withdraw($id);
+        $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
+
         return $this->getResponseHandler()->createResponse(
             $request,
-            $this->getResource()->withdraw($id),
+            $data,
             $this->getResource(),
         );
     }

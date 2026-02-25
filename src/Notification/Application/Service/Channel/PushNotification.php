@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Notification\Application\Service\Channel;
 
 use App\Notification\Application\Service\Channel\Interfaces\PushNotificationInterface;
-use Symfony\Component\Notifier\Message\ChatMessage;
-use Symfony\Component\Notifier\NotifierInterface;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
+
+use function json_encode;
+use function sprintf;
 
 /**
  * @package
@@ -15,12 +18,25 @@ use Symfony\Component\Notifier\NotifierInterface;
 readonly class PushNotification implements PushNotificationInterface
 {
     public function __construct(
-        private NotifierInterface $notifier,
+        private HubInterface $hub,
     ) {
     }
 
-    public function send(string $recipient, string $subject, string $content): void
+    public function send(string $userId, string $subject, string $content): void
     {
-        $this->notifier->send(new ChatMessage(sprintf('[%s] %s (%s)', $subject, $content, $recipient)));
+        $payload = json_encode([
+            'type' => 'notification',
+            'subject' => $subject,
+            'content' => $content,
+        ]);
+
+        if ($payload === false) {
+            return;
+        }
+
+        $this->hub->publish(new Update(
+            sprintf('/users/%s/notifications', $userId),
+            $payload,
+        ));
     }
 }

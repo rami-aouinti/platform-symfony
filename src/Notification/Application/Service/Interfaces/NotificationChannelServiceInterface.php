@@ -12,7 +12,7 @@ interface NotificationChannelServiceInterface
 {
     public function sendEmailNotification(string $to, string $subject, string $content): void;
 
-    public function sendPushNotification(string $recipient, string $subject, string $content): void;
+    public function sendPushNotification(string $userId, string $subject, string $content): void;
 
     public function sendSmsNotification(string $phoneNumber, string $content): void;
 }

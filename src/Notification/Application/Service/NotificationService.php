@@ -23,6 +23,18 @@ readonly class NotificationService implements NotificationServiceInterface
     ) {
     }
 
+    public function create(User $user, string $type, string $title, string $message): Notification
+    {
+        $notification = (new Notification($user))
+            ->setType($type)
+            ->setTitle($title)
+            ->setMessage($message);
+
+        $this->notificationRepository->save($notification);
+
+        return $notification;
+    }
+
     public function findByUser(User $user): array
     {
         return $this->notificationRepository->findBy(
