@@ -7,6 +7,7 @@ namespace App\JobOffer\Infrastructure\DataFixtures\ORM;
 use App\Company\Domain\Entity\Company;
 use App\General\Domain\Rest\UuidHelper;
 use App\JobOffer\Domain\Entity\City;
+use App\JobOffer\Domain\Entity\JobCategory;
 use App\JobOffer\Domain\Entity\JobOffer;
 use App\JobOffer\Domain\Entity\Language;
 use App\JobOffer\Domain\Entity\Region;
@@ -76,6 +77,15 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
         /** @var Language $de */
         $de = $this->getReference('Language-de', Language::class);
 
+        /** @var JobCategory $backend */
+        $backend = $this->getReference('JobCategory-backend', JobCategory::class);
+        /** @var JobCategory $platform */
+        $platform = $this->getReference('JobCategory-platform', JobCategory::class);
+        /** @var JobCategory $dataCategory */
+        $dataCategory = $this->getReference('JobCategory-data', JobCategory::class);
+        /** @var JobCategory $frontend */
+        $frontend = $this->getReference('JobCategory-frontend', JobCategory::class);
+
         $jobs = [
             [
                 'reference' => 'JobOffer-php-backend-engineer',
@@ -98,6 +108,7 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'publishedAt' => new DateTimeImmutable('2026-06-01 09:00:00'),
                 'city' => $paris,
                 'region' => $idf,
+                'jobCategory' => $backend,
                 'skills' => [$php, $symfony],
                 'languages' => [$fr, $en],
                 'country' => 'FR',
@@ -124,6 +135,7 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'publishedAt' => new DateTimeImmutable('2026-05-15 10:30:00'),
                 'city' => $berlin,
                 'region' => $berlinRegion,
+                'jobCategory' => $platform,
                 'skills' => [$devops, $aws],
                 'languages' => [$en, $de],
                 'country' => 'DE',
@@ -150,6 +162,7 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'publishedAt' => new DateTimeImmutable('2026-03-20 08:15:00'),
                 'city' => $lyon,
                 'region' => $ara,
+                'jobCategory' => $dataCategory,
                 'skills' => [$sql, $php],
                 'languages' => [$fr],
                 'country' => 'FR',
@@ -176,6 +189,7 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'publishedAt' => null,
                 'city' => $toulouse,
                 'region' => $occitanie,
+                'jobCategory' => $frontend,
                 'skills' => [$react],
                 'languages' => [$fr],
                 'country' => 'FR',
@@ -203,6 +217,7 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 ->setPublishedAt($data['publishedAt'])
                 ->setCity($data['city'])
                 ->setRegion($data['region'])
+                ->setJobCategory($data['jobCategory'])
                 ->setCountry($data['country'])
                 ->setLanguageLevel($data['languageLevel'])
                 ->setSkills($data['skills'])

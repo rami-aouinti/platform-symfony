@@ -29,6 +29,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Index(name: 'idx_job_offer_experience_level', columns: ['experience_level'])]
 #[ORM\Index(name: 'idx_job_offer_city_id', columns: ['city_id'])]
 #[ORM\Index(name: 'idx_job_offer_region_id', columns: ['region_id'])]
+#[ORM\Index(name: 'idx_job_offer_job_category_id', columns: ['job_category_id'])]
 #[ORM\Index(name: 'idx_job_offer_salary_min', columns: ['salary_min'])]
 #[ORM\Index(name: 'idx_job_offer_salary_max', columns: ['salary_max'])]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
@@ -117,6 +118,11 @@ class JobOffer implements EntityInterface
     #[ORM\JoinColumn(name: 'region_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     #[Groups(['JobOffer', 'JobOffer.region', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?Region $region = null;
+
+    #[ORM\ManyToOne(targetEntity: JobCategory::class)]
+    #[ORM\JoinColumn(name: 'job_category_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[Groups(['JobOffer', 'JobOffer.jobCategory', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
+    private ?JobCategory $jobCategory = null;
 
     #[ORM\Column(name: 'country', type: Types::STRING, length: 2, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.country', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
@@ -382,6 +388,18 @@ class JobOffer implements EntityInterface
     public function setRegion(?Region $region): self
     {
         $this->region = $region;
+
+        return $this;
+    }
+
+    public function getJobCategory(): ?JobCategory
+    {
+        return $this->jobCategory;
+    }
+
+    public function setJobCategory(?JobCategory $jobCategory): self
+    {
+        $this->jobCategory = $jobCategory;
 
         return $this;
     }

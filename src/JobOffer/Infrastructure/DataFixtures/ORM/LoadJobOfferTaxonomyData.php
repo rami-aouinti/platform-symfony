@@ -6,6 +6,7 @@ namespace App\JobOffer\Infrastructure\DataFixtures\ORM;
 
 use App\General\Domain\Rest\UuidHelper;
 use App\JobOffer\Domain\Entity\City;
+use App\JobOffer\Domain\Entity\JobCategory;
 use App\JobOffer\Domain\Entity\Language;
 use App\JobOffer\Domain\Entity\Region;
 use App\JobOffer\Domain\Entity\Skill;
@@ -49,6 +50,22 @@ final class LoadJobOfferTaxonomyData extends Fixture implements OrderedFixtureIn
             PhpUnitUtil::setProperty('id', UuidHelper::fromString($data['uuid']), $language);
             $manager->persist($language);
             $this->addReference($reference, $language);
+        }
+
+        $jobCategories = [
+            'JobCategory-backend' => ['uuid' => '65000000-0000-1000-8000-000000000001', 'code' => 'backend', 'name' => 'Backend Engineering'],
+            'JobCategory-platform' => ['uuid' => '65000000-0000-1000-8000-000000000002', 'code' => 'platform', 'name' => 'Platform & SRE'],
+            'JobCategory-data' => ['uuid' => '65000000-0000-1000-8000-000000000003', 'code' => 'data', 'name' => 'Data Engineering'],
+            'JobCategory-frontend' => ['uuid' => '65000000-0000-1000-8000-000000000004', 'code' => 'frontend', 'name' => 'Frontend Engineering'],
+        ];
+
+        foreach ($jobCategories as $reference => $data) {
+            $jobCategory = (new JobCategory())
+                ->setCode($data['code'])
+                ->setName($data['name']);
+            PhpUnitUtil::setProperty('id', UuidHelper::fromString($data['uuid']), $jobCategory);
+            $manager->persist($jobCategory);
+            $this->addReference($reference, $jobCategory);
         }
 
         $regions = [

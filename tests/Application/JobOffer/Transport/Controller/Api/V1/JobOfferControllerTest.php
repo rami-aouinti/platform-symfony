@@ -143,6 +143,7 @@ class JobOfferControllerTest extends WebTestCase
             'workTime' => 'full-time',
             'city' => '64000000-0000-1000-8000-000000000001',
             'region' => '63000000-0000-1000-8000-000000000001',
+            'jobCategory' => '65000000-0000-1000-8000-000000000001',
         ]);
 
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
@@ -218,9 +219,16 @@ class JobOfferControllerTest extends WebTestCase
             $languageCounts[$facet['id']] = $facet['count'];
         }
 
+        $jobCategoryCounts = [];
+        foreach ($facets['jobCategories'] as $facet) {
+            $jobCategoryCounts[$facet['id']] = $facet['count'];
+        }
+
         self::assertSame(1, $skillCounts['61000000-0000-1000-8000-000000000001'] ?? null);
         self::assertSame(1, $skillCounts['61000000-0000-1000-8000-000000000003'] ?? null);
         self::assertSame(2, $languageCounts['62000000-0000-1000-8000-000000000002'] ?? null);
         self::assertSame(1, $languageCounts['62000000-0000-1000-8000-000000000003'] ?? null);
+        self::assertSame(1, $jobCategoryCounts['65000000-0000-1000-8000-000000000001'] ?? null);
+        self::assertSame(1, $jobCategoryCounts['65000000-0000-1000-8000-000000000002'] ?? null);
     }
 }

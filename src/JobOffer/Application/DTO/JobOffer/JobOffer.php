@@ -10,6 +10,7 @@ use App\General\Application\DTO\RestDto;
 use App\General\Application\Validator\Constraints as AppAssert;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\JobOffer\Domain\Entity\City;
+use App\JobOffer\Domain\Entity\JobCategory;
 use App\JobOffer\Domain\Entity\JobOffer as Entity;
 use App\JobOffer\Domain\Entity\Language;
 use App\JobOffer\Domain\Entity\Region;
@@ -111,6 +112,9 @@ class JobOffer extends RestDto
     #[AppAssert\EntityReferenceExists(Region::class)]
     protected ?Region $region = null;
 
+    #[AppAssert\EntityReferenceExists(JobCategory::class)]
+    protected ?JobCategory $jobCategory = null;
+
     #[Assert\Country]
     protected ?string $country = null;
 
@@ -181,6 +185,8 @@ class JobOffer extends RestDto
     public function setCity(?City $city): self { $this->setVisited('city'); $this->city = $city; return $this; }
     public function getRegion(): ?Region { return $this->region; }
     public function setRegion(?Region $region): self { $this->setVisited('region'); $this->region = $region; return $this; }
+    public function getJobCategory(): ?JobCategory { return $this->jobCategory; }
+    public function setJobCategory(?JobCategory $jobCategory): self { $this->setVisited('jobCategory'); $this->jobCategory = $jobCategory; return $this; }
     public function getCountry(): ?string { return $this->country; }
     public function setCountry(?string $country): self { $this->setVisited('country'); $this->country = $country; return $this; }
     public function getLanguageLevel(): ?string { return $this->languageLevel; }
@@ -224,6 +230,7 @@ class JobOffer extends RestDto
             $this->publishedAt = $entity->getPublishedAt();
             $this->city = $entity->getCity();
             $this->region = $entity->getRegion();
+            $this->jobCategory = $entity->getJobCategory();
             $this->country = $entity->getCountry();
             $this->languageLevel = $entity->getLanguageLevel();
             $this->company = $entity->getCompany();
