@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\JobApplication\Application\Resource\Interfaces;
 
+use App\General\Application\Rest\Interfaces\RestResourceInterface;
 use App\JobApplication\Domain\Entity\JobApplication;
-use App\JobApplication\Domain\Enum\ApplicationStatus;
+use App\JobApplication\Domain\Enum\JobApplicationStatus;
 
-interface JobApplicationResourceInterface
+interface JobApplicationResourceInterface extends RestResourceInterface
 {
-    public function apply(string $offerId): JobApplication;
+    public function apply(string $jobOfferId): JobApplication;
 
     public function withdraw(string $applicationId): JobApplication;
 
-    public function decide(string $applicationId, ApplicationStatus $status): JobApplication;
+    public function decide(string $applicationId, JobApplicationStatus $status): JobApplication;
 
     /**
      * @return JobApplication[]

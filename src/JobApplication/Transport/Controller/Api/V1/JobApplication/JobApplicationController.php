@@ -6,9 +6,13 @@ namespace App\JobApplication\Transport\Controller\Api\V1\JobApplication;
 
 use App\General\Transport\Rest\Controller;
 use App\General\Transport\Rest\ResponseHandler;
+use App\General\Transport\Rest\Traits\Actions;
+use App\JobApplication\Application\DTO\JobApplication\JobApplicationCreate;
+use App\JobApplication\Application\DTO\JobApplication\JobApplicationPatch;
+use App\JobApplication\Application\DTO\JobApplication\JobApplicationUpdate;
 use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobApplication\Application\Resource\JobApplicationResource;
-use App\JobApplication\Domain\Enum\ApplicationStatus;
+use App\JobApplication\Domain\Enum\JobApplicationStatus;
 use App\JobApplication\Domain\Exception\JobApplicationException;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,34 +28,30 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @method ResponseHandler getResponseHandler()
  */
 #[AsController]
-#[Route(path: '/v1/applications')]
+#[Route(path: '/v1/job-applications')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'Job Application Management')]
 class JobApplicationController extends Controller
 {
+    use Actions\Authenticated\CreateAction;
+    use Actions\Authenticated\DeleteAction;
+    use Actions\Authenticated\FindAction;
+    use Actions\Authenticated\FindOneAction;
+    use Actions\Authenticated\PatchAction;
+    use Actions\Authenticated\UpdateAction;
+
+    /**
+     * @var array<string, string>
+     */
+    protected static array $dtoClasses = [
+        Controller::METHOD_CREATE => JobApplicationCreate::class,
+        Controller::METHOD_UPDATE => JobApplicationUpdate::class,
+        Controller::METHOD_PATCH => JobApplicationPatch::class,
+    ];
+
     public function __construct(JobApplicationResourceInterface $resource)
     {
         parent::__construct($resource);
-    }
-
-    #[Route(path: '', methods: [Request::METHOD_GET])]
-    public function listAction(Request $request): Response
-    {
-        return $this->getResponseHandler()->createResponse(
-            $request,
-            $this->getResource()->findAllowedForCurrentUser(),
-            $this->getResource(),
-        );
-    }
-
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
-    public function getAction(Request $request, string $id): Response
-    {
-        return $this->getResponseHandler()->createResponse(
-            $request,
-            $this->getResource()->getAllowedForCurrentUser($id),
-            $this->getResource(),
-        );
     }
 
     #[Route(path: '/{id}/withdraw', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
@@ -68,35 +68,18 @@ class JobApplicationController extends Controller
     public function decisionAction(Request $request, string $id): Response
     {
         $payload = (array) json_decode($request->getContent(), true);
-        $status = ApplicationStatus::tryFrom((string) ($payload['status'] ?? ''));
+        $status = JobApplicationStatus::tryFrom((string) ($payload['status'] ?? ''));
 
-        if (!$status instanceof ApplicationStatus) {
-            throw new JobApplicationException('Field "status" is required and must be a valid status.', Response::HTTP_BAD_REQUEST);
+        if (!$status instanceof JobApplicationStatus) {
+            throw new JobApplicationException(
+                'Field "status" is required and must be one of: pending, accepted, rejected, withdrawn.',
+                Response::HTTP_BAD_REQUEST,
+            );
         }
 
         return $this->getResponseHandler()->createResponse(
             $request,
             $this->getResource()->decide($id, $status),
-            $this->getResource(),
-        );
-    }
-
-    #[Route(path: '/{id}/accept', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
-    public function acceptAction(Request $request, string $id): Response
-    {
-        return $this->getResponseHandler()->createResponse(
-            $request,
-            $this->getResource()->decide($id, ApplicationStatus::ACCEPTED),
-            $this->getResource(),
-        );
-    }
-
-    #[Route(path: '/{id}/reject', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
-    public function rejectAction(Request $request, string $id): Response
-    {
-        return $this->getResponseHandler()->createResponse(
-            $request,
-            $this->getResource()->decide($id, ApplicationStatus::REJECTED),
             $this->getResource(),
         );
     }
