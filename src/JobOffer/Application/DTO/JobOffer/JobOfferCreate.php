@@ -1,0 +1,9 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\JobOffer\Application\DTO\JobOffer;
+
+class JobOfferCreate extends JobOffer
+{
+}

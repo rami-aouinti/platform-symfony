@@ -6,8 +6,8 @@ namespace App\JobApplication\Infrastructure\DataFixtures\ORM;
 
 use App\General\Domain\Rest\UuidHelper;
 use App\JobApplication\Domain\Entity\JobApplication;
-use App\JobApplication\Domain\Enum\ApplicationStatus;
-use App\Offer\Domain\Entity\Offer;
+use App\JobApplication\Domain\Enum\JobApplicationStatus;
+use App\JobOffer\Domain\Entity\JobOffer;
 use App\Tests\Utils\PhpUnitUtil;
 use App\User\Domain\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -20,13 +20,15 @@ final class LoadJobApplicationData extends Fixture implements OrderedFixtureInte
     #[Override]
     public function load(ObjectManager $manager): void
     {
-        /** @var Offer $offer */
-        $offer = $this->getReference('Offer-php-backend-engineer', Offer::class);
+        /** @var JobOffer $jobOffer */
+        $jobOffer = $this->getReference('JobOffer-php-backend-engineer', JobOffer::class);
         /** @var User $candidate */
         $candidate = $this->getReference('User-carol-user', User::class);
 
-        $application = (new JobApplication($offer, $candidate))
-            ->setStatus(ApplicationStatus::PENDING);
+        $application = (new JobApplication())
+            ->setJobOffer($jobOffer)
+            ->setCandidate($candidate)
+            ->setStatus(JobApplicationStatus::PENDING);
 
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('50000000-0000-1000-8000-000000000001'), $application);
 

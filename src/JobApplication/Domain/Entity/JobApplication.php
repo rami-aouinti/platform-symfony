@@ -7,9 +7,11 @@ namespace App\JobApplication\Domain\Entity;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
-use App\JobApplication\Domain\Enum\ApplicationStatus;
-use App\Offer\Domain\Entity\Offer;
+use App\JobApplication\Domain\Enum\JobApplicationStatus;
+use App\JobOffer\Domain\Entity\JobOffer;
 use App\User\Domain\Entity\User;
+use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
@@ -17,9 +19,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'job_application')]
-#[ORM\UniqueConstraint(name: 'uq_job_application_user_offer', columns: ['user_id', 'offer_id'])]
-#[ORM\Index(name: 'idx_job_application_offer_status', columns: ['offer_id', 'status'])]
-#[ORM\Index(name: 'idx_job_application_user_status', columns: ['user_id', 'status'])]
+#[ORM\UniqueConstraint(name: 'uq_job_application_job_offer_candidate', columns: ['job_offer_id', 'candidate_id'])]
+#[ORM\Index(name: 'idx_job_application_job_offer_status', columns: ['job_offer_id', 'status'])]
+#[ORM\Index(name: 'idx_job_application_candidate_status', columns: ['candidate_id', 'status'])]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class JobApplication implements EntityInterface
 {
@@ -31,25 +33,44 @@ class JobApplication implements EntityInterface
     #[Groups(['JobApplication', 'JobApplication.id', 'JobApplication.show'])]
     private UuidInterface $id;
 
-    #[ORM\ManyToOne(targetEntity: Offer::class)]
-    #[ORM\JoinColumn(name: 'offer_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[Groups(['JobApplication', 'JobApplication.offer', 'JobApplication.show'])]
-    private Offer $offer;
+    #[ORM\ManyToOne(targetEntity: JobOffer::class)]
+    #[ORM\JoinColumn(name: 'job_offer_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['JobApplication', 'JobApplication.jobOffer', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit'])]
+    private ?JobOffer $jobOffer = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[Groups(['JobApplication', 'JobApplication.user', 'JobApplication.show'])]
-    private User $user;
+    #[ORM\JoinColumn(name: 'candidate_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['JobApplication', 'JobApplication.candidate', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit'])]
+    private ?User $candidate = null;
 
-    #[ORM\Column(name: 'status', type: 'string', enumType: ApplicationStatus::class, length: 32, nullable: false)]
-    #[Groups(['JobApplication', 'JobApplication.status', 'JobApplication.show'])]
-    private ApplicationStatus $status = ApplicationStatus::PENDING;
+    #[ORM\Column(name: 'cover_letter', type: Types::TEXT, nullable: true)]
+    #[Groups(['JobApplication', 'JobApplication.coverLetter', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit'])]
+    private ?string $coverLetter = null;
 
-    public function __construct(Offer $offer, User $user)
+    #[ORM\Column(name: 'cv_url', type: Types::STRING, length: 2048, nullable: true)]
+    #[Groups(['JobApplication', 'JobApplication.cvUrl', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit'])]
+    private ?string $cvUrl = null;
+
+    #[ORM\Column(name: 'attachments', type: Types::JSON, nullable: true)]
+    #[Groups(['JobApplication', 'JobApplication.attachments', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit'])]
+    private ?array $attachments = null;
+
+    #[ORM\Column(name: 'status', enumType: JobApplicationStatus::class, type: Types::STRING, length: 32, nullable: false)]
+    #[Groups(['JobApplication', 'JobApplication.status', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit'])]
+    private JobApplicationStatus $status = JobApplicationStatus::PENDING;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'decided_by_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[Groups(['JobApplication', 'JobApplication.decidedBy', 'JobApplication.show', 'JobApplication.edit'])]
+    private ?User $decidedBy = null;
+
+    #[ORM\Column(name: 'decided_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    #[Groups(['JobApplication', 'JobApplication.decidedAt', 'JobApplication.show', 'JobApplication.edit'])]
+    private ?DateTimeImmutable $decidedAt = null;
+
+    public function __construct()
     {
         $this->id = $this->createUuid();
-        $this->offer = $offer;
-        $this->user = $user;
     }
 
     public function getId(): string
@@ -57,24 +78,104 @@ class JobApplication implements EntityInterface
         return $this->id->toString();
     }
 
-    public function getOffer(): Offer
+    public function getJobOffer(): ?JobOffer
     {
-        return $this->offer;
+        return $this->jobOffer;
     }
 
-    public function getUser(): User
+    public function setJobOffer(?JobOffer $jobOffer): self
     {
-        return $this->user;
+        $this->jobOffer = $jobOffer;
+
+        return $this;
     }
 
-    public function getStatus(): ApplicationStatus
+    public function getCandidate(): ?User
+    {
+        return $this->candidate;
+    }
+
+    public function setCandidate(?User $candidate): self
+    {
+        $this->candidate = $candidate;
+
+        return $this;
+    }
+
+    public function getCoverLetter(): ?string
+    {
+        return $this->coverLetter;
+    }
+
+    public function setCoverLetter(?string $coverLetter): self
+    {
+        $this->coverLetter = $coverLetter;
+
+        return $this;
+    }
+
+    public function getCvUrl(): ?string
+    {
+        return $this->cvUrl;
+    }
+
+    public function setCvUrl(?string $cvUrl): self
+    {
+        $this->cvUrl = $cvUrl;
+
+        return $this;
+    }
+
+    /**
+     * @return array<mixed>|null
+     */
+    public function getAttachments(): ?array
+    {
+        return $this->attachments;
+    }
+
+    /**
+     * @param array<mixed>|null $attachments
+     */
+    public function setAttachments(?array $attachments): self
+    {
+        $this->attachments = $attachments;
+
+        return $this;
+    }
+
+    public function getStatus(): JobApplicationStatus
     {
         return $this->status;
     }
 
-    public function setStatus(ApplicationStatus $status): self
+    public function setStatus(JobApplicationStatus|string $status): self
     {
-        $this->status = $status;
+        $this->status = $status instanceof JobApplicationStatus ? $status : JobApplicationStatus::from($status);
+
+        return $this;
+    }
+
+    public function getDecidedBy(): ?User
+    {
+        return $this->decidedBy;
+    }
+
+    public function setDecidedBy(?User $decidedBy): self
+    {
+        $this->decidedBy = $decidedBy;
+
+        return $this;
+    }
+
+    public function getDecidedAt(): ?DateTimeImmutable
+    {
+        return $this->decidedAt;
+    }
+
+    public function setDecidedAt(?DateTimeImmutable $decidedAt): self
+    {
+        $this->decidedAt = $decidedAt;
 
         return $this;
     }

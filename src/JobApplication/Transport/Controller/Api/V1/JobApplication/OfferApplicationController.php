@@ -22,7 +22,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @method ResponseHandler getResponseHandler()
  */
 #[AsController]
-#[Route(path: '/v1/offers')]
+#[Route(path: '/v1/job-offers')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'Job Application Management')]
 class OfferApplicationController extends Controller
@@ -32,14 +32,12 @@ class OfferApplicationController extends Controller
         parent::__construct($resource);
     }
 
-    #[Route(path: '/{offerId}/applications', requirements: [
-        'offerId' => Requirement::UUID_V1,
-    ], methods: [Request::METHOD_POST])]
-    public function createForOfferAction(Request $request, string $offerId): Response
+    #[Route(path: '/{jobOfferId}/applications', requirements: ['jobOfferId' => Requirement::UUID_V1], methods: [Request::METHOD_POST])]
+    public function createForOfferAction(Request $request, string $jobOfferId): Response
     {
         return $this->getResponseHandler()->createResponse(
             $request,
-            $this->getResource()->apply($offerId),
+            $this->getResource()->apply($jobOfferId),
             $this->getResource(),
             Response::HTTP_CREATED,
         );
