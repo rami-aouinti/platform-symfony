@@ -7,6 +7,7 @@ namespace App\Company\Application\Resource;
 use App\Company\Application\Resource\Interfaces\CompanyResourceInterface;
 use App\Company\Domain\Entity\Company as Entity;
 use App\Company\Domain\Entity\CompanyMembership;
+use App\Company\Domain\Repository\Interfaces\CompanyMembershipRepositoryInterface;
 use App\Company\Domain\Repository\Interfaces\CompanyRepositoryInterface as RepositoryInterface;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
@@ -17,20 +18,31 @@ use DateTimeImmutable;
 use RuntimeException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
+use function in_array;
+
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
+ * @method Entity create(RestDtoInterface $dto, ?bool $flush = null, ?bool $skipValidation = null, ?string $entityManagerName = null)
+ * @method Entity update(string $id, RestDtoInterface $dto, ?bool $flush = null, ?bool $skipValidation = null, ?string $entityManagerName = null)
+ * @method Entity patch(string $id, RestDtoInterface $dto, ?bool $flush = null, ?bool $skipValidation = null, ?string $entityManagerName = null)
+ * @method Entity delete(string $id, ?bool $flush = null, ?string $entityManagerName = null)
  */
 class CompanyResource extends RestResource implements CompanyResourceInterface
 {
     public function __construct(
         RepositoryInterface $repository,
         private readonly UserTypeIdentification $userTypeIdentification,
+        private readonly CompanyMembershipRepositoryInterface $companyMembershipRepository,
     ) {
         parent::__construct($repository);
     }
 
     public function beforeFind(array &$criteria, array &$orderBy, ?int &$limit, ?int &$offset, array &$search): void
     {
+        if ($this->isAdminLike($this->getCurrentUser())) {
+            return;
+        }
+
         $criteria['owner'] = $this->getCurrentUser();
     }
 
@@ -85,9 +97,22 @@ class CompanyResource extends RestResource implements CompanyResourceInterface
 
     private function assertOwner(Entity $company): void
     {
-        if ($company->getOwner()?->getId() !== $this->getCurrentUser()->getId()) {
-            throw new AccessDeniedHttpException('You are not allowed to access this company.');
+        $currentUser = $this->getCurrentUser();
+
+        if ($this->isAdminLike($currentUser) || $company->getOwner()?->getId() === $currentUser->getId()) {
+            return;
         }
+
+        $membership = $this->companyMembershipRepository->findOneBy([
+            'user' => $currentUser,
+            'company' => $company,
+        ]);
+
+        if ($membership instanceof CompanyMembership && $membership->getRole() === CompanyMembership::ROLE_OWNER) {
+            return;
+        }
+
+        throw new AccessDeniedHttpException('You are not allowed to access this company.');
     }
 
     private function getCurrentUser(): User
@@ -99,5 +124,10 @@ class CompanyResource extends RestResource implements CompanyResourceInterface
         }
 
         return $user;
+    }
+
+    private function isAdminLike(User $user): bool
+    {
+        return in_array('ROLE_ROOT', $user->getRoles(), true) || in_array('ROLE_ADMIN', $user->getRoles(), true);
     }
 }
