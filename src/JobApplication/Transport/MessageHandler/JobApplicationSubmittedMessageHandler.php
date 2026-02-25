@@ -6,12 +6,9 @@ namespace App\JobApplication\Transport\MessageHandler;
 
 use App\JobApplication\Domain\Message\JobApplicationSubmittedMessage;
 use App\Notification\Application\Service\Interfaces\NotificationChannelServiceInterface;
-use App\Notification\Domain\Entity\Notification;
-use App\Notification\Domain\Repository\Interfaces\NotificationRepositoryInterface;
+use App\Notification\Application\Service\Interfaces\NotificationServiceInterface;
 use App\User\Infrastructure\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
 
 use function sprintf;
 
@@ -20,44 +17,49 @@ readonly class JobApplicationSubmittedMessageHandler
 {
     public function __construct(
         private NotificationChannelServiceInterface $notificationChannelService,
-        private NotificationRepositoryInterface $notificationRepository,
+        private NotificationServiceInterface $notificationService,
         private UserRepository $userRepository,
-        private HubInterface $hub,
     ) {
     }
 
     public function __invoke(JobApplicationSubmittedMessage $message): void
     {
-        if ($message->reviewerId === null || $message->reviewerEmail === null) {
+        $candidate = $this->userRepository->find($message->candidateUserId);
+
+        if ($candidate === null) {
             return;
         }
 
-        $reviewer = $this->userRepository->find($message->reviewerId);
+        $candidateSubject = 'Confirmation de candidature';
+        $candidateContent = sprintf(
+            'Votre candidature %s pour l\'offre %s a bien été enregistrée.',
+            $message->applicationId,
+            $message->offerId,
+        );
 
-        if ($reviewer === null) {
+        $this->notificationChannelService->sendEmailNotification($candidate->getEmail(), $candidateSubject, $candidateContent);
+        $this->notificationChannelService->sendPushNotification($candidate->getId(), $candidateSubject, $candidateContent);
+        $this->notificationService->create($candidate, 'job_application_submitted', $candidateSubject, $candidateContent);
+
+        if ($message->offerOwnerOrCreatorUserId === null || $message->offerOwnerOrCreatorUserId === $candidate->getId()) {
             return;
         }
 
-        $subject = sprintf('Nouvelle candidature pour "%s"', $message->jobOfferTitle);
-        $content = sprintf('Une nouvelle candidature a été soumise pour l\'offre "%s".', $message->jobOfferTitle);
+        $ownerOrCreator = $this->userRepository->find($message->offerOwnerOrCreatorUserId);
 
-        $this->notificationChannelService->sendEmailNotification($message->reviewerEmail, $subject, $content);
-        $this->notificationChannelService->sendPushNotification($message->reviewerEmail, $subject, $content);
+        if ($ownerOrCreator === null) {
+            return;
+        }
 
-        $notification = (new Notification($reviewer))
-            ->setType('job_application_submitted')
-            ->setTitle($subject)
-            ->setMessage($content);
+        $ownerSubject = 'Nouvelle candidature reçue';
+        $ownerContent = sprintf(
+            'Une nouvelle candidature %s a été soumise sur l\'offre %s.',
+            $message->applicationId,
+            $message->offerId,
+        );
 
-        $this->notificationRepository->save($notification);
-
-        $this->hub->publish(new Update(
-            sprintf('/users/%s/notifications', $message->reviewerId),
-            sprintf(
-                '{"type":"job_application_submitted","jobApplicationId":"%s","jobOfferId":"%s"}',
-                $message->jobApplicationId,
-                $message->jobOfferId,
-            ),
-        ));
+        $this->notificationChannelService->sendEmailNotification($ownerOrCreator->getEmail(), $ownerSubject, $ownerContent);
+        $this->notificationChannelService->sendPushNotification($ownerOrCreator->getId(), $ownerSubject, $ownerContent);
+        $this->notificationService->create($ownerOrCreator, 'job_application_submitted', $ownerSubject, $ownerContent);
     }
 }
