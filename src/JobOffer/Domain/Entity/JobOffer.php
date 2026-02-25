@@ -36,7 +36,7 @@ class JobOffer implements EntityInterface
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'created_by_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[Groups(['JobOffer', 'JobOffer.createdBy', 'JobOffer.show'])]
+    #[Groups(['JobOffer.createdBy', 'JobOffer.show'])]
     private ?User $createdBy = null;
 
     #[ORM\Column(name: 'title', type: Types::STRING, length: 255, nullable: false)]

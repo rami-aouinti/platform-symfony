@@ -9,6 +9,7 @@ use App\General\Transport\Rest\ResponseHandler;
 use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobApplication\Application\Resource\JobApplicationResource;
 use OpenApi\Attributes as OA;
+use OpenApi\Attributes\JsonContent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -33,6 +34,18 @@ class OfferApplicationController extends Controller
     }
 
     #[Route(path: '/{id}/apply', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_POST])]
+    #[OA\RequestBody(
+        required: false,
+        content: new JsonContent(
+            ref: '#/components/schemas/JobApplicationActionPayload',
+            example: ['note' => 'Application submitted from candidate dashboard.'],
+        ),
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Application submitted for this offer',
+        content: new JsonContent(ref: '#/components/schemas/JobApplicationResponse'),
+    )]
     public function createForOfferAction(Request $request, string $id): Response
     {
         return $this->getResponseHandler()->createResponse(
