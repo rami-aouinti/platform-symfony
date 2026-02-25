@@ -10,6 +10,7 @@ use App\General\Application\DTO\RestDto;
 use App\General\Application\Validator\Constraints as AppAssert;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\JobOffer\Domain\Entity\JobOffer as Entity;
+use DateTimeImmutable;
 use Override;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -20,6 +21,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class JobOffer extends RestDto
 {
+    private const EMPLOYMENT_TYPES = ['full-time', 'part-time', 'contract', 'internship', 'freelance'];
+
+    private const STATUSES = ['draft', 'open', 'closed'];
+
+    private const SALARY_CURRENCIES = ['EUR', 'USD', 'GBP', 'CHF', 'CAD'];
+
+    private const SALARY_PERIODS = ['hourly', 'daily', 'monthly', 'yearly'];
+
+    private const REMOTE_POLICIES = ['on-site', 'hybrid', 'remote'];
+
+    private const EXPERIENCE_LEVELS = ['intern', 'junior', 'mid', 'senior', 'lead', 'principal'];
+
+    private const WORK_TIMES = ['full-time', 'part-time'];
+
+    private const APPLICATION_TYPES = ['internal', 'email', 'external-link'];
+
+    private const LANGUAGE_LEVELS = ['none', 'basic', 'intermediate', 'advanced', 'fluent', 'native'];
+
     #[Assert\NotBlank]
     #[Assert\NotNull]
     #[Assert\Length(min: 2, max: 255)]
@@ -36,17 +55,70 @@ class JobOffer extends RestDto
 
     #[Assert\NotBlank]
     #[Assert\NotNull]
+    #[Assert\Choice(choices: self::EMPLOYMENT_TYPES)]
     #[Assert\Length(min: 2, max: 64)]
     protected string $employmentType = '';
 
     #[Assert\NotBlank]
     #[Assert\NotNull]
-    #[Assert\Choice(choices: ['draft', 'open', 'closed'])]
+    #[Assert\Choice(choices: self::STATUSES)]
     protected string $status = 'draft';
+
+    #[Assert\Range(min: 0, max: 10000000)]
+    protected ?int $salaryMin = null;
+
+    #[Assert\Range(min: 0, max: 10000000)]
+    protected ?int $salaryMax = null;
+
+    #[Assert\Choice(choices: self::SALARY_CURRENCIES)]
+    protected ?string $salaryCurrency = null;
+
+    #[Assert\Choice(choices: self::SALARY_PERIODS)]
+    protected ?string $salaryPeriod = null;
+
+    #[Assert\Choice(choices: self::REMOTE_POLICIES)]
+    protected ?string $remotePolicy = null;
+
+    #[Assert\Choice(choices: self::EXPERIENCE_LEVELS)]
+    protected ?string $experienceLevel = null;
+
+    #[Assert\Choice(choices: self::WORK_TIMES)]
+    protected ?string $workTime = null;
+
+    #[Assert\Choice(choices: self::APPLICATION_TYPES)]
+    protected ?string $applicationType = null;
+
+    protected ?DateTimeImmutable $publishedAt = null;
+
+    #[Assert\Length(min: 2, max: 128)]
+    protected ?string $city = null;
+
+    #[Assert\Length(min: 2, max: 128)]
+    protected ?string $region = null;
+
+    #[Assert\Country]
+    protected ?string $country = null;
+
+    #[Assert\Choice(choices: self::LANGUAGE_LEVELS)]
+    protected ?string $languageLevel = null;
 
     #[Assert\NotNull]
     #[AppAssert\EntityReferenceExists(Company::class)]
     protected ?Company $company = null;
+
+    #[Assert\Expression(
+        'this.getSalaryMin() === null or this.getSalaryMax() === null or this.getSalaryMax() >= this.getSalaryMin()',
+        message: 'salaryMax must be greater than or equal to salaryMin.'
+    )]
+    #[Assert\Expression(
+        '(this.getSalaryMin() === null and this.getSalaryMax() === null) or (this.getSalaryCurrency() !== null and this.getSalaryPeriod() !== null)',
+        message: 'salaryCurrency and salaryPeriod are required when salaryMin or salaryMax is provided.'
+    )]
+    #[Assert\Expression(
+        'this.getPublishedAt() === null or this.getStatus() !== "draft"',
+        message: 'Draft job offers cannot define publishedAt.'
+    )]
+    private bool $consistency = true;
 
     public function getTitle(): string
     {
@@ -113,6 +185,175 @@ class JobOffer extends RestDto
         return $this;
     }
 
+    public function getSalaryMin(): ?int
+    {
+        return $this->salaryMin;
+    }
+
+    public function setSalaryMin(?int $salaryMin): self
+    {
+        $this->setVisited('salaryMin');
+        $this->salaryMin = $salaryMin;
+
+        return $this;
+    }
+
+    public function getSalaryMax(): ?int
+    {
+        return $this->salaryMax;
+    }
+
+    public function setSalaryMax(?int $salaryMax): self
+    {
+        $this->setVisited('salaryMax');
+        $this->salaryMax = $salaryMax;
+
+        return $this;
+    }
+
+    public function getSalaryCurrency(): ?string
+    {
+        return $this->salaryCurrency;
+    }
+
+    public function setSalaryCurrency(?string $salaryCurrency): self
+    {
+        $this->setVisited('salaryCurrency');
+        $this->salaryCurrency = $salaryCurrency;
+
+        return $this;
+    }
+
+    public function getSalaryPeriod(): ?string
+    {
+        return $this->salaryPeriod;
+    }
+
+    public function setSalaryPeriod(?string $salaryPeriod): self
+    {
+        $this->setVisited('salaryPeriod');
+        $this->salaryPeriod = $salaryPeriod;
+
+        return $this;
+    }
+
+    public function getRemotePolicy(): ?string
+    {
+        return $this->remotePolicy;
+    }
+
+    public function setRemotePolicy(?string $remotePolicy): self
+    {
+        $this->setVisited('remotePolicy');
+        $this->remotePolicy = $remotePolicy;
+
+        return $this;
+    }
+
+    public function getExperienceLevel(): ?string
+    {
+        return $this->experienceLevel;
+    }
+
+    public function setExperienceLevel(?string $experienceLevel): self
+    {
+        $this->setVisited('experienceLevel');
+        $this->experienceLevel = $experienceLevel;
+
+        return $this;
+    }
+
+    public function getWorkTime(): ?string
+    {
+        return $this->workTime;
+    }
+
+    public function setWorkTime(?string $workTime): self
+    {
+        $this->setVisited('workTime');
+        $this->workTime = $workTime;
+
+        return $this;
+    }
+
+    public function getApplicationType(): ?string
+    {
+        return $this->applicationType;
+    }
+
+    public function setApplicationType(?string $applicationType): self
+    {
+        $this->setVisited('applicationType');
+        $this->applicationType = $applicationType;
+
+        return $this;
+    }
+
+    public function getPublishedAt(): ?DateTimeImmutable
+    {
+        return $this->publishedAt;
+    }
+
+    public function setPublishedAt(?DateTimeImmutable $publishedAt): self
+    {
+        $this->setVisited('publishedAt');
+        $this->publishedAt = $publishedAt;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(?string $city): self
+    {
+        $this->setVisited('city');
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getRegion(): ?string
+    {
+        return $this->region;
+    }
+
+    public function setRegion(?string $region): self
+    {
+        $this->setVisited('region');
+        $this->region = $region;
+
+        return $this;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setCountry(?string $country): self
+    {
+        $this->setVisited('country');
+        $this->country = $country;
+
+        return $this;
+    }
+
+    public function getLanguageLevel(): ?string
+    {
+        return $this->languageLevel;
+    }
+
+    public function setLanguageLevel(?string $languageLevel): self
+    {
+        $this->setVisited('languageLevel');
+        $this->languageLevel = $languageLevel;
+
+        return $this;
+    }
+
     public function getCompany(): ?Company
     {
         return $this->company;
@@ -139,6 +380,19 @@ class JobOffer extends RestDto
             $this->location = $entity->getLocation();
             $this->employmentType = $entity->getEmploymentType();
             $this->status = $entity->getStatus();
+            $this->salaryMin = $entity->getSalaryMin();
+            $this->salaryMax = $entity->getSalaryMax();
+            $this->salaryCurrency = $entity->getSalaryCurrency();
+            $this->salaryPeriod = $entity->getSalaryPeriod();
+            $this->remotePolicy = $entity->getRemotePolicy();
+            $this->experienceLevel = $entity->getExperienceLevel();
+            $this->workTime = $entity->getWorkTime();
+            $this->applicationType = $entity->getApplicationType();
+            $this->publishedAt = $entity->getPublishedAt();
+            $this->city = $entity->getCity();
+            $this->region = $entity->getRegion();
+            $this->country = $entity->getCountry();
+            $this->languageLevel = $entity->getLanguageLevel();
             $this->company = $entity->getCompany();
         }
 
