@@ -254,6 +254,6 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
     #[Override]
     public function getOrder(): int
     {
-        return 7;
+        return 6;
     }
 }
