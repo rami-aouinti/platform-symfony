@@ -7,13 +7,12 @@ namespace App\Recruit\Application\DTO\JobOffer;
 use App\Company\Domain\Entity\Company;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\DTO\RestDto;
+use App\General\Application\DTO\Address;
 use App\General\Application\Validator\Constraints as AppAssert;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
-use App\Recruit\Domain\Entity\City;
 use App\Recruit\Domain\Entity\JobCategory;
 use App\Recruit\Domain\Entity\JobOffer as Entity;
 use App\Recruit\Domain\Entity\Language;
-use App\Recruit\Domain\Entity\Region;
 use App\Recruit\Domain\Entity\Skill;
 use App\Recruit\Domain\Enum\ApplicationType;
 use App\Recruit\Domain\Enum\EmploymentType;
@@ -45,6 +44,7 @@ class JobOffer extends RestDto
     protected static array $mappings = [
         'skills' => 'updateSkills',
         'languages' => 'updateLanguages',
+        'address' => 'updateAddress',
     ];
 
     #[Assert\NotBlank]
@@ -99,17 +99,11 @@ class JobOffer extends RestDto
     #[Assert\Type(DateTimeImmutable::class)]
     protected ?DateTimeImmutable $publishedAt = null;
 
-    #[AppAssert\EntityReferenceExists(City::class)]
-    protected ?City $city = null;
-
-    #[AppAssert\EntityReferenceExists(Region::class)]
-    protected ?Region $region = null;
-
     #[AppAssert\EntityReferenceExists(JobCategory::class)]
     protected ?JobCategory $jobCategory = null;
 
-    #[Assert\Country]
-    protected ?string $country = null;
+    #[Assert\Valid]
+    protected ?Address $address = null;
 
     #[Assert\Choice(callback: [LanguageLevel::class, 'getValues'])]
     protected ?string $languageLevel = null;
@@ -306,25 +300,14 @@ class JobOffer extends RestDto
 
         return $this;
     }
-    public function getCity(): ?City
+    public function getAddress(): ?Address
     {
-        return $this->city;
+        return $this->address;
     }
-    public function setCity(?City $city): self
+    public function setAddress(?Address $address): self
     {
-        $this->setVisited('city');
-        $this->city = $city;
-
-        return $this;
-    }
-    public function getRegion(): ?Region
-    {
-        return $this->region;
-    }
-    public function setRegion(?Region $region): self
-    {
-        $this->setVisited('region');
-        $this->region = $region;
+        $this->setVisited('address');
+        $this->address = $address;
 
         return $this;
     }
@@ -336,17 +319,6 @@ class JobOffer extends RestDto
     {
         $this->setVisited('jobCategory');
         $this->jobCategory = $jobCategory;
-
-        return $this;
-    }
-    public function getCountry(): ?string
-    {
-        return $this->country;
-    }
-    public function setCountry(?string $country): self
-    {
-        $this->setVisited('country');
-        $this->country = $country;
 
         return $this;
     }
@@ -433,14 +405,21 @@ class JobOffer extends RestDto
             $this->workTime = $entity->getWorkTime();
             $this->applicationType = $entity->getApplicationType();
             $this->publishedAt = $entity->getPublishedAt();
-            $this->city = $entity->getCity();
-            $this->region = $entity->getRegion();
+            $this->address = Address::fromValueObject($entity->getAddress());
             $this->jobCategory = $entity->getJobCategory();
-            $this->country = $entity->getCountry();
             $this->languageLevel = $entity->getLanguageLevel();
             $this->company = $entity->getCompany();
             $this->skills = $entity->getSkills()->toArray();
             $this->languages = $entity->getLanguages()->toArray();
+        }
+
+        return $this;
+    }
+
+    protected function updateAddress(Entity $entity, ?Address $value): self
+    {
+        if ($value instanceof Address) {
+            $entity->setAddress($value->toValueObject());
         }
 
         return $this;

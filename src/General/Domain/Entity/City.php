@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Recruit\Domain\Entity;
+namespace App\General\Domain\Entity;
 
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
@@ -19,29 +19,27 @@ use Symfony\Component\Serializer\Attribute\Groups;
  */
 
 #[ORM\Entity]
-#[ORM\Table(name: 'region')]
-#[ORM\UniqueConstraint(name: 'uq_region_country_code', columns: ['country_code', 'code'])]
-class Region implements EntityInterface
+#[ORM\Table(name: 'city')]
+#[ORM\UniqueConstraint(name: 'uq_city_region_name', columns: ['region_id', 'name'])]
+#[ORM\Index(name: 'idx_city_region', columns: ['region_id'])]
+class City implements EntityInterface
 {
     use Timestampable;
     use Uuid;
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
-    #[Groups(['Region', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['City', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private UuidInterface $id;
 
-    #[ORM\Column(name: 'code', type: Types::STRING, length: 64, nullable: false)]
-    #[Groups(['Region', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
-    private string $code = '';
+    #[ORM\ManyToOne(targetEntity: Region::class)]
+    #[ORM\JoinColumn(name: 'region_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['City', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
+    private ?Region $region = null;
 
     #[ORM\Column(name: 'name', type: Types::STRING, length: 128, nullable: false)]
-    #[Groups(['Region', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
+    #[Groups(['City', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $name = '';
-
-    #[ORM\Column(name: 'country_code', type: Types::STRING, length: 2, nullable: false)]
-    #[Groups(['Region', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
-    private string $countryCode = '';
 
     public function __construct()
     {
@@ -53,14 +51,14 @@ class Region implements EntityInterface
         return $this->id->toString();
     }
 
-    public function getCode(): string
+    public function getRegion(): ?Region
     {
-        return $this->code;
+        return $this->region;
     }
 
-    public function setCode(string $code): self
+    public function setRegion(?Region $region): self
     {
-        $this->code = $code;
+        $this->region = $region;
 
         return $this;
     }
@@ -73,18 +71,6 @@ class Region implements EntityInterface
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getCountryCode(): string
-    {
-        return $this->countryCode;
-    }
-
-    public function setCountryCode(string $countryCode): self
-    {
-        $this->countryCode = $countryCode;
 
         return $this;
     }

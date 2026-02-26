@@ -7,6 +7,7 @@ namespace App\Company\Application\DTO\Company;
 use App\Company\Domain\Entity\Company as Entity;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\DTO\RestDto;
+use App\General\Application\DTO\Address;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use Override;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -20,6 +21,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Company extends RestDto
 {
+
+    protected static array $mappings = [
+        'mainAddress' => 'updateMainAddress',
+    ];
     #[Assert\NotBlank]
     #[Assert\NotNull]
     #[Assert\Length(min: 2, max: 255)]
@@ -35,7 +40,8 @@ class Company extends RestDto
     #[Assert\Length(min: 2, max: 64)]
     protected string $status = 'active';
 
-    protected ?string $mainAddress = null;
+    #[Assert\Valid]
+    protected ?Address $mainAddress = null;
 
     public function getLegalName(): string
     {
@@ -76,12 +82,12 @@ class Company extends RestDto
         return $this;
     }
 
-    public function getMainAddress(): ?string
+    public function getMainAddress(): ?Address
     {
         return $this->mainAddress;
     }
 
-    public function setMainAddress(?string $mainAddress): self
+    public function setMainAddress(?Address $mainAddress): self
     {
         $this->setVisited('mainAddress');
         $this->mainAddress = $mainAddress;
@@ -100,9 +106,18 @@ class Company extends RestDto
             $this->legalName = $entity->getLegalName();
             $this->slug = $entity->getSlug();
             $this->status = $entity->getStatus();
-            $this->mainAddress = $entity->getMainAddress();
+            $this->mainAddress = Address::fromValueObject($entity->getMainAddress());
         }
 
         return $this;
     }
+    protected function updateMainAddress(Entity $entity, ?Address $value): self
+    {
+        if ($value instanceof Address) {
+            $entity->setMainAddress($value->toValueObject());
+        }
+
+        return $this;
+    }
+
 }
