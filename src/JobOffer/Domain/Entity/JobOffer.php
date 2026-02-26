@@ -8,6 +8,7 @@ use App\Company\Domain\Entity\Company;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
+use App\JobApplication\Domain\Entity\JobApplication;
 use App\JobOffer\Domain\Enum\ApplicationType;
 use App\JobOffer\Domain\Enum\EmploymentType;
 use App\JobOffer\Domain\Enum\ExperienceLevel;
@@ -160,11 +161,39 @@ class JobOffer implements EntityInterface
     #[Groups(['JobOffer', 'JobOffer.languages', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private Collection $languages;
 
+
+    /**
+     * @var Collection<int, JobApplication>|null
+     */
+    #[ORM\OneToMany(targetEntity: JobApplication::class, mappedBy: 'jobOffer')]
+    #[Groups(['JobOffer.jobApplications', 'JobOffer.show'])]
+    private ?Collection $jobApplications = null;
+
     public function __construct()
     {
         $this->id = $this->createUuid();
         $this->skills = new ArrayCollection();
         $this->languages = new ArrayCollection();
+        $this->jobApplications = new ArrayCollection();
+    }
+
+
+    /**
+     * @return Collection<int, JobApplication>|null
+     */
+    public function getJobApplications(): ?Collection
+    {
+        return $this->jobApplications;
+    }
+
+    /**
+     * @param Collection<int, JobApplication>|null $jobApplications
+     */
+    public function setJobApplications(?Collection $jobApplications): self
+    {
+        $this->jobApplications = $jobApplications;
+
+        return $this;
     }
 
     public function getId(): string
