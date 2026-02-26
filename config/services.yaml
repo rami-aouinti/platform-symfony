@@ -222,6 +222,9 @@ when@dev:
         App\Recruit\Infrastructure\DataFixtures\:
             resource: '../src/Recruit/Infrastructure/DataFixtures/*'
 
+        App\Task\Infrastructure\DataFixtures\:
+            resource: '../src/Task/Infrastructure/DataFixtures/*'
+
         App\Tests\TestCase\:
             resource: '../tests/TestCase/*'
 
