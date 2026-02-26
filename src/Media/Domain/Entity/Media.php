@@ -45,7 +45,7 @@ class Media implements EntityInterface
     #[Groups(['Media', 'Media.name', 'Media.create', 'Media.show', 'Media.edit'])]
     private string $name = '';
 
-    #[ORM\Column(name: 'path', type: Types::STRING, length: 1024, nullable: false)]
+    #[ORM\Column(name: 'path', type: Types::STRING, length: 512, nullable: false)]
     #[Groups(['Media', 'Media.path', 'Media.create', 'Media.show', 'Media.edit'])]
     private string $path = '';
 
