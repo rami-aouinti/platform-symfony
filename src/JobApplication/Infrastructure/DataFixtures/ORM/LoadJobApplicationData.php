@@ -88,6 +88,6 @@ final class LoadJobApplicationData extends Fixture implements OrderedFixtureInte
     #[Override]
     public function getOrder(): int
     {
-        return 7;
+        return 8;
     }
 }
