@@ -16,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TaskRequestRepository extends BaseRepository implements TaskRequestRepositoryInterface
 {
-    protected static array $searchColumns = ['status', 'type', 'note'];
+    protected static array $searchColumns = ['type', 'requestedStatus', 'note'];
     protected static string $entityName = Entity::class;
 
     public function __construct(
