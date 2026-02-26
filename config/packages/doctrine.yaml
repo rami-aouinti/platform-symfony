@@ -107,6 +107,13 @@ doctrine:
                         dir: '%kernel.project_dir%/src/Chat/Domain/Entity'
                         prefix: 'App\Chat\Domain\Entity'
                         alias: Chat
+
+                    Task:
+                        type: attribute
+                        is_bundle: false
+                        dir: '%kernel.project_dir%/src/Task/Domain/Entity'
+                        prefix: 'App\Task\Domain\Entity'
+                        alias: Task
                 dql:
                     datetime_functions:
                         datesub: DoctrineExtensions\Query\Mysql\DateSub

@@ -6,7 +6,9 @@ namespace App\Task\Application\DTO\Task;
 
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\DTO\RestDto;
+use App\General\Application\Validator\Constraints as AppAssert;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\Task\Domain\Entity\Project;
 use App\Task\Domain\Entity\Task as Entity;
 use App\Task\Domain\Enum\TaskPriority;
 use App\Task\Domain\Enum\TaskStatus;
@@ -35,6 +37,9 @@ class Task extends RestDto
     #[Assert\NotBlank]
     #[Assert\Choice(callback: [TaskStatus::class, 'getValues'])]
     protected string $status = TaskStatus::TODO->value;
+
+    #[AppAssert\EntityReferenceExists(Project::class)]
+    protected ?Project $project = null;
 
     protected ?DateTimeImmutable $dueDate = null;
 
@@ -92,6 +97,19 @@ class Task extends RestDto
         return $this;
     }
 
+    public function getProject(): ?Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(?Project $project): self
+    {
+        $this->setVisited('project');
+        $this->project = $project;
+
+        return $this;
+    }
+
     public function getDueDate(): ?DateTimeImmutable
     {
         return $this->dueDate;
@@ -127,6 +145,7 @@ class Task extends RestDto
             $this->description = $entity->getDescription();
             $this->priority = $entity->getPriority()->value;
             $this->status = $entity->getStatus()->value;
+            $this->project = $entity->getProject();
             $this->dueDate = $entity->getDueDate();
             $this->completedAt = $entity->getCompletedAt();
         }

@@ -7,10 +7,10 @@ namespace App\Task\Application\Resource;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
-use App\Task\Application\Resource\Interfaces\TaskResourceInterface;
+use App\Task\Application\Resource\Interfaces\ProjectResourceInterface;
 use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
-use App\Task\Domain\Entity\Task as Entity;
-use App\Task\Domain\Repository\Interfaces\TaskRepositoryInterface as RepositoryInterface;
+use App\Task\Domain\Entity\Project as Entity;
+use App\Task\Domain\Repository\Interfaces\ProjectRepositoryInterface as RepositoryInterface;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
  */
-class TaskResource extends RestResource implements TaskResourceInterface
+class ProjectResource extends RestResource implements ProjectResourceInterface
 {
     public function __construct(
         RepositoryInterface $repository,
@@ -42,7 +42,7 @@ class TaskResource extends RestResource implements TaskResourceInterface
     public function afterFindOne(string &$id, ?EntityInterface $entity = null): void
     {
         if ($entity instanceof Entity) {
-            $this->assertCanManageTask($entity);
+            $this->assertCanManageProject($entity);
         }
     }
 
@@ -56,33 +56,33 @@ class TaskResource extends RestResource implements TaskResourceInterface
     public function beforeUpdate(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $this->assertCanManageTask($entity);
+            $this->assertCanManageProject($entity);
         }
     }
 
     public function beforePatch(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $this->assertCanManageTask($entity);
+            $this->assertCanManageProject($entity);
         }
     }
 
     public function beforeDelete(string &$id, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $this->assertCanManageTask($entity);
+            $this->assertCanManageProject($entity);
         }
     }
 
-    private function assertCanManageTask(Entity $task): void
+    private function assertCanManageProject(Entity $project): void
     {
         $currentUser = $this->getCurrentUser();
 
-        if ($this->taskAccessService->canManageTask($currentUser, $task)) {
+        if ($this->taskAccessService->canManageProject($currentUser, $project)) {
             return;
         }
 
-        throw new AccessDeniedHttpException('Only task owner can manage this task.');
+        throw new AccessDeniedHttpException('Only project owner can manage this project.');
     }
 
     private function getCurrentUser(): User

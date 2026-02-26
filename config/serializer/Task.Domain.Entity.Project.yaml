@@ -1,0 +1,6 @@
+App\Task\Domain\Entity\Project:
+    attributes:
+        createdAt:
+            groups: [ 'Project.createdAt' ]
+        updatedAt:
+            groups: [ 'Project.updatedAt' ]

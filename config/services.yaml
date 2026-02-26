@@ -189,6 +189,9 @@ services:
     App\User\Application\Security\Permission\Interfaces\CompanyPermissionMatrixInterface:
         class: App\User\Application\Security\Permission\CompanyPermissionMatrix
 
+    App\Task\Application\Service\Interfaces\TaskAccessServiceInterface:
+        class: App\Task\Application\Service\TaskAccessService
+
 when@dev:
     services:
         _defaults:

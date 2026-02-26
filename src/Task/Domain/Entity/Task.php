@@ -20,6 +20,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity]
 #[ORM\Table(name: 'task')]
 #[ORM\Index(name: 'idx_task_owner_id', columns: ['owner_id'])]
+#[ORM\Index(name: 'idx_task_project_id', columns: ['project_id'])]
 #[ORM\Index(name: 'idx_task_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_task_priority', columns: ['priority'])]
 #[ORM\Index(name: 'idx_task_due_date', columns: ['due_date'])]
@@ -38,6 +39,11 @@ class Task implements EntityInterface
     #[ORM\JoinColumn(name: 'owner_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     #[Groups(['Task', 'Task.owner', 'Task.show', 'Task.edit'])]
     private ?User $owner = null;
+
+    #[ORM\ManyToOne(targetEntity: Project::class)]
+    #[ORM\JoinColumn(name: 'project_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[Groups(['Task', 'Task.project', 'Task.create', 'Task.show', 'Task.edit'])]
+    private ?Project $project = null;
 
     #[ORM\Column(name: 'title', type: Types::STRING, length: 255, nullable: false)]
     #[Groups(['Task', 'Task.title', 'Task.create', 'Task.show', 'Task.edit'])]
@@ -81,6 +87,18 @@ class Task implements EntityInterface
     public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
+
+        return $this;
+    }
+
+    public function getProject(): ?Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(?Project $project): self
+    {
+        $this->project = $project;
 
         return $this;
     }
