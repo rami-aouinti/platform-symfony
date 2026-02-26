@@ -16,10 +16,6 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
-/**
- * @package App\Resume
- * @author  Rami Aouinti <rami.aouinti@gmail.com>
- */
 #[ORM\Entity]
 #[ORM\Table(name: 'resume')]
 #[ORM\Index(name: 'idx_resume_owner_created_at', columns: ['owner_id', 'created_at'])]
@@ -47,34 +43,6 @@ class Resume implements EntityInterface
     #[Groups(['Resume', 'Resume.summary', 'Resume.create', 'Resume.show', 'Resume.edit'])]
     private string $summary = '';
 
-    /**
-     * @var array<int, array<string, mixed>>
-     */
-    #[ORM\Column(name: 'experiences', type: Types::JSON, nullable: false)]
-    #[Groups(['Resume', 'Resume.experiences', 'Resume.create', 'Resume.show', 'Resume.edit'])]
-    private array $experiences = [];
-
-    /**
-     * @var array<int, array<string, mixed>>
-     */
-    #[ORM\Column(name: 'education', type: Types::JSON, nullable: false)]
-    #[Groups(['Resume', 'Resume.education', 'Resume.create', 'Resume.show', 'Resume.edit'])]
-    private array $education = [];
-
-    /**
-     * @var array<int, string>
-     */
-    #[ORM\Column(name: 'skills', type: Types::JSON, nullable: false)]
-    #[Groups(['Resume', 'Resume.skills', 'Resume.create', 'Resume.show', 'Resume.edit'])]
-    private array $skills = [];
-
-    /**
-     * @var array<int, array<string, string>>
-     */
-    #[ORM\Column(name: 'links', type: Types::JSON, nullable: false)]
-    #[Groups(['Resume', 'Resume.links', 'Resume.create', 'Resume.show', 'Resume.edit'])]
-    private array $links = [];
-
     #[ORM\Column(name: 'is_public', type: Types::BOOLEAN, options: [
         'default' => false,
     ])]
@@ -99,12 +67,33 @@ class Resume implements EntityInterface
     #[ORM\OneToMany(targetEntity: ResumeSkill::class, mappedBy: 'resume', orphanRemoval: true)]
     private Collection $resumeSkills;
 
+    /**
+     * @var Collection<int, ResumeReference>
+     */
+    #[ORM\OneToMany(targetEntity: ResumeReference::class, mappedBy: 'resume', orphanRemoval: true)]
+    private Collection $resumeReferences;
+
+    /**
+     * @var Collection<int, ResumeProject>
+     */
+    #[ORM\OneToMany(targetEntity: ResumeProject::class, mappedBy: 'resume', orphanRemoval: true)]
+    private Collection $resumeProjects;
+
+    /**
+     * @var Collection<int, ResumeLanguage>
+     */
+    #[ORM\OneToMany(targetEntity: ResumeLanguage::class, mappedBy: 'resume', orphanRemoval: true)]
+    private Collection $languages;
+
     public function __construct()
     {
         $this->id = $this->createUuid();
         $this->resumeExperiences = new ArrayCollection();
         $this->resumeEducation = new ArrayCollection();
         $this->resumeSkills = new ArrayCollection();
+        $this->resumeReferences = new ArrayCollection();
+        $this->resumeProjects = new ArrayCollection();
+        $this->languages = new ArrayCollection();
     }
 
     public function getId(): string
@@ -148,78 +137,6 @@ class Resume implements EntityInterface
         return $this;
     }
 
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function getExperiences(): array
-    {
-        return $this->experiences;
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $experiences
-     */
-    public function setExperiences(array $experiences): self
-    {
-        $this->experiences = $experiences;
-
-        return $this;
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function getEducation(): array
-    {
-        return $this->education;
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $education
-     */
-    public function setEducation(array $education): self
-    {
-        $this->education = $education;
-
-        return $this;
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    public function getSkills(): array
-    {
-        return $this->skills;
-    }
-
-    /**
-     * @param array<int, string> $skills
-     */
-    public function setSkills(array $skills): self
-    {
-        $this->skills = $skills;
-
-        return $this;
-    }
-
-    /**
-     * @return array<int, array<string, string>>
-     */
-    public function getLinks(): array
-    {
-        return $this->links;
-    }
-
-    /**
-     * @param array<int, array<string, string>> $links
-     */
-    public function setLinks(array $links): self
-    {
-        $this->links = $links;
-
-        return $this;
-    }
-
     public function isPublic(): bool
     {
         return $this->isPublic;
@@ -254,5 +171,29 @@ class Resume implements EntityInterface
     public function getResumeSkills(): Collection
     {
         return $this->resumeSkills;
+    }
+
+    /**
+     * @return Collection<int, ResumeReference>
+     */
+    public function getResumeReferences(): Collection
+    {
+        return $this->resumeReferences;
+    }
+
+    /**
+     * @return Collection<int, ResumeProject>
+     */
+    public function getResumeProjects(): Collection
+    {
+        return $this->resumeProjects;
+    }
+
+    /**
+     * @return Collection<int, ResumeLanguage>
+     */
+    public function getLanguages(): Collection
+    {
+        return $this->languages;
     }
 }
