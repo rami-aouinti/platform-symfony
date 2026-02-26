@@ -7,6 +7,7 @@ namespace App\Company\Infrastructure\DataFixtures\ORM;
 use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Entity\CompanyMembership;
 use App\General\Domain\Rest\UuidHelper;
+use App\General\Domain\ValueObject\Address as AddressValueObject;
 use App\Tests\Utils\PhpUnitUtil;
 use App\User\Domain\Entity\User;
 use DateTimeImmutable;
@@ -38,7 +39,7 @@ final class LoadCompanyData extends Fixture implements OrderedFixtureInterface
             ->setLegalName('Acme Demo')
             ->setSlug('acme-demo')
             ->setStatus('active')
-            ->setMainAddress('1 Demo Street, 75001 Paris')
+            ->setMainAddress((new AddressValueObject())->setStreetLine1('1 Demo Street')->setPostalCode('75001')->setCity('Paris')->setRegion('Île-de-France')->setCountryCode('FR'))
             ->setOwner($owner);
 
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000001'), $acme);
@@ -65,7 +66,7 @@ final class LoadCompanyData extends Fixture implements OrderedFixtureInterface
             ->setLegalName('External Corp')
             ->setSlug('external-corp')
             ->setStatus('active')
-            ->setMainAddress('2 External Street, 69000 Lyon')
+            ->setMainAddress((new AddressValueObject())->setStreetLine1('2 External Street')->setPostalCode('69000')->setCity('Lyon')->setRegion('Auvergne-Rhône-Alpes')->setCountryCode('FR'))
             ->setOwner($externalUser);
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000005'), $externalCompany);
 
@@ -79,7 +80,7 @@ final class LoadCompanyData extends Fixture implements OrderedFixtureInterface
             ->setLegalName('Beta Labs')
             ->setSlug('beta-labs')
             ->setStatus('suspended')
-            ->setMainAddress('77 Innovation Avenue, 31000 Toulouse')
+            ->setMainAddress((new AddressValueObject())->setStreetLine1('77 Innovation Avenue')->setPostalCode('31000')->setCity('Toulouse')->setRegion('Occitanie')->setCountryCode('FR'))
             ->setOwner($managerUser);
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000008'), $betaCompany);
 

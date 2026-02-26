@@ -8,6 +8,7 @@ use App\Company\Domain\Entity\Company;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
+use App\General\Domain\ValueObject\Address as AddressValueObject;
 use App\Recruit\Domain\Enum\ApplicationType;
 use App\Recruit\Domain\Enum\EmploymentType;
 use App\Recruit\Domain\Enum\ExperienceLevel;
@@ -40,8 +41,6 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Index(name: 'idx_job_offer_employment_type', columns: ['employment_type'])]
 #[ORM\Index(name: 'idx_job_offer_remote_mode', columns: ['remote_mode'])]
 #[ORM\Index(name: 'idx_job_offer_experience_level', columns: ['experience_level'])]
-#[ORM\Index(name: 'idx_job_offer_city_id', columns: ['city_id'])]
-#[ORM\Index(name: 'idx_job_offer_region_id', columns: ['region_id'])]
 #[ORM\Index(name: 'idx_job_offer_job_category_id', columns: ['job_category_id'])]
 #[ORM\Index(name: 'idx_job_offer_salary_min', columns: ['salary_min'])]
 #[ORM\Index(name: 'idx_job_offer_salary_max', columns: ['salary_max'])]
@@ -122,24 +121,22 @@ class JobOffer implements EntityInterface
     #[Groups(['JobOffer', 'JobOffer.publishedAt', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?DateTimeImmutable $publishedAt = null;
 
-    #[ORM\ManyToOne(targetEntity: City::class)]
-    #[ORM\JoinColumn(name: 'city_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[Groups(['JobOffer', 'JobOffer.city', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private ?City $city = null;
-
-    #[ORM\ManyToOne(targetEntity: Region::class)]
-    #[ORM\JoinColumn(name: 'region_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[Groups(['JobOffer', 'JobOffer.region', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private ?Region $region = null;
+    #[ORM\Embedded(class: AddressValueObject::class, columnPrefix: false)]
+    #[ORM\AttributeOverrides([
+        new ORM\AttributeOverride(name: 'streetLine1', column: new ORM\Column(name: 'address_street_line_1', type: Types::STRING, length: 255, nullable: true)),
+        new ORM\AttributeOverride(name: 'streetLine2', column: new ORM\Column(name: 'address_street_line_2', type: Types::STRING, length: 255, nullable: true)),
+        new ORM\AttributeOverride(name: 'postalCode', column: new ORM\Column(name: 'address_postal_code', type: Types::STRING, length: 32, nullable: true)),
+        new ORM\AttributeOverride(name: 'city', column: new ORM\Column(name: 'address_city', type: Types::STRING, length: 255, nullable: false)),
+        new ORM\AttributeOverride(name: 'region', column: new ORM\Column(name: 'address_region', type: Types::STRING, length: 255, nullable: true)),
+        new ORM\AttributeOverride(name: 'countryCode', column: new ORM\Column(name: 'address_country_code', type: Types::STRING, length: 2, nullable: false)),
+    ])]
+    #[Groups(['JobOffer', 'JobOffer.address', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
+    private AddressValueObject $address;
 
     #[ORM\ManyToOne(targetEntity: JobCategory::class)]
     #[ORM\JoinColumn(name: 'job_category_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     #[Groups(['JobOffer', 'JobOffer.jobCategory', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?JobCategory $jobCategory = null;
-
-    #[ORM\Column(name: 'country', type: Types::STRING, length: 2, nullable: true)]
-    #[Groups(['JobOffer', 'JobOffer.country', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
-    private ?string $country = null;
 
     #[ORM\Column(name: 'language_level', enumType: LanguageLevel::class, type: Types::STRING, length: 32, nullable: true)]
     #[Groups(['JobOffer', 'JobOffer.languageLevel', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
@@ -178,6 +175,7 @@ class JobOffer implements EntityInterface
         $this->skills = new ArrayCollection();
         $this->languages = new ArrayCollection();
         $this->jobApplications = new ArrayCollection();
+        $this->address = new AddressValueObject();
     }
 
     /**
@@ -421,26 +419,14 @@ class JobOffer implements EntityInterface
         return $this;
     }
 
-    public function getCity(): ?City
+    public function getAddress(): AddressValueObject
     {
-        return $this->city;
+        return $this->address;
     }
 
-    public function setCity(?City $city): self
+    public function setAddress(AddressValueObject $address): self
     {
-        $this->city = $city;
-
-        return $this;
-    }
-
-    public function getRegion(): ?Region
-    {
-        return $this->region;
-    }
-
-    public function setRegion(?Region $region): self
-    {
-        $this->region = $region;
+        $this->address = $address;
 
         return $this;
     }
@@ -453,18 +439,6 @@ class JobOffer implements EntityInterface
     public function setJobCategory(?JobCategory $jobCategory): self
     {
         $this->jobCategory = $jobCategory;
-
-        return $this;
-    }
-
-    public function getCountry(): ?string
-    {
-        return $this->country;
-    }
-
-    public function setCountry(?string $country): self
-    {
-        $this->country = $country;
 
         return $this;
     }

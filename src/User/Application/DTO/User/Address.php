@@ -34,7 +34,7 @@ class Address
     protected string $city = '';
 
     #[Assert\Length(max: 255)]
-    protected ?string $state = null;
+    protected ?string $region = null;
 
     #[Assert\NotBlank]
     #[Assert\Country]
@@ -100,16 +100,26 @@ class Address
         return $this;
     }
 
+    public function getRegion(): ?string
+    {
+        return $this->region;
+    }
+
+    public function setRegion(?string $region): self
+    {
+        $this->region = $region;
+
+        return $this;
+    }
+
     public function getState(): ?string
     {
-        return $this->state;
+        return $this->getRegion();
     }
 
     public function setState(?string $state): self
     {
-        $this->state = $state;
-
-        return $this;
+        return $this->setRegion($state);
     }
 
     public function getCountryCode(): string
@@ -132,7 +142,7 @@ class Address
             ->setStreetLine2($entity->getStreetLine2())
             ->setPostalCode($entity->getPostalCode())
             ->setCity($entity->getCity())
-            ->setState($entity->getState())
+            ->setRegion($entity->getRegion())
             ->setCountryCode($entity->getCountryCode());
     }
 }

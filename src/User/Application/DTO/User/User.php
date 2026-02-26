@@ -324,7 +324,7 @@ class User extends RestDto
                     ->setStreetLine2($address->getStreetLine2())
                     ->setPostalCode($address->getPostalCode())
                     ->setCity($address->getCity())
-                    ->setState($address->getState())
+                    ->setRegion($address->getRegion())
                     ->setCountryCode($address->getCountryCode());
             },
             $value->getAddresses(),
