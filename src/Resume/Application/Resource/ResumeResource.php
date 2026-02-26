@@ -10,9 +10,11 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Resume\Application\Resource\Interfaces\ResumeResourceInterface;
 use App\Resume\Domain\Entity\Resume as Entity;
 use App\Resume\Domain\Repository\Interfaces\ResumeRepositoryInterface as RepositoryInterface;
+use App\User\Application\Security\Permission;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
@@ -22,6 +24,7 @@ class ResumeResource extends RestResource implements ResumeResourceInterface
     public function __construct(
         RepositoryInterface $repository,
         private readonly UserTypeIdentification $userTypeIdentification,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
         parent::__construct($repository);
     }
@@ -30,34 +33,35 @@ class ResumeResource extends RestResource implements ResumeResourceInterface
     {
         if ($entity instanceof Entity) {
             $entity->setOwner($this->getCurrentUser());
+            $this->assertGranted(Permission::RESUME_CREATE->value, $entity, 'Only authenticated users can create a resume.');
         }
     }
 
     public function beforeUpdate(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $this->assertOwnedByCurrentUser($entity);
+            $this->assertGranted(Permission::RESUME_EDIT->value, $entity, 'Only resume owner can edit this resume.');
         }
     }
 
     public function beforePatch(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $this->assertOwnedByCurrentUser($entity);
+            $this->assertGranted(Permission::RESUME_EDIT->value, $entity, 'Only resume owner can edit this resume.');
         }
     }
 
     public function beforeDelete(string &$id, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $this->assertOwnedByCurrentUser($entity);
+            $this->assertGranted(Permission::RESUME_DELETE->value, $entity, 'Only resume owner can delete this resume.');
         }
     }
 
     public function afterFindOne(string &$id, ?EntityInterface $entity = null): void
     {
         if ($entity instanceof Entity) {
-            $this->assertOwnedByCurrentUser($entity);
+            $this->assertGranted(Permission::RESUME_VIEW->value, $entity, 'Resume not found.');
         }
     }
 
@@ -78,10 +82,10 @@ class ResumeResource extends RestResource implements ResumeResourceInterface
         );
     }
 
-    private function assertOwnedByCurrentUser(Entity $resume): void
+    private function assertGranted(string $permission, Entity $resume, string $message): void
     {
-        if ($resume->getOwner()?->getId() !== $this->getCurrentUser()->getId()) {
-            throw new AccessDeniedHttpException('Only resume owner can manage this resume.');
+        if (!$this->authorizationChecker->isGranted($permission, $resume)) {
+            throw new AccessDeniedHttpException($message);
         }
     }
 
