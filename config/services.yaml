@@ -210,6 +210,9 @@ when@dev:
         App\Company\Infrastructure\DataFixtures\:
             resource: '../src/Company/Infrastructure/DataFixtures/*'
 
+        App\Resume\Infrastructure\DataFixtures\:
+            resource: '../src/Resume/Infrastructure/DataFixtures/*'
+
         App\JobApplication\Infrastructure\DataFixtures\:
             resource: '../src/JobApplication/Infrastructure/DataFixtures/*'
 
@@ -261,6 +264,9 @@ when@test:
 
         App\Company\Infrastructure\DataFixtures\:
             resource: '../src/Company/Infrastructure/DataFixtures/*'
+
+        App\Resume\Infrastructure\DataFixtures\:
+            resource: '../src/Resume/Infrastructure/DataFixtures/*'
 
         App\JobApplication\Infrastructure\DataFixtures\:
             resource: '../src/JobApplication/Infrastructure/DataFixtures/*'

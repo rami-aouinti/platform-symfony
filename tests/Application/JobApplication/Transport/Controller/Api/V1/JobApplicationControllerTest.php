@@ -235,4 +235,90 @@ class JobApplicationControllerTest extends WebTestCase
         $outsiderClient->request('GET', self::BASE_URL . '/' . self::APPLICATION_ID);
         self::assertSame(Response::HTTP_NOT_FOUND, $outsiderClient->getResponse()->getStatusCode());
     }
+
+    /** @throws Throwable */
+    public function testCandidateCanApplyToOpenOfferWithResumeId(): void
+    {
+        $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
+        $requestPayload = [
+            'coverLetter' => 'Application using internal resume reference.',
+            'cvUrl' => 'https://cdn.example.com/cv/legacy-should-be-ignored.pdf',
+            'resumeId' => '60000000-0000-1000-8000-000000000001',
+            'attachments' => ['https://cdn.example.com/portfolio/bob-admin.pdf'],
+        ];
+
+        $candidateClient->request(
+            'POST',
+            self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply',
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: JSON::encode($requestPayload),
+        );
+
+        self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
+        $createdPayload = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+
+        self::assertSame($requestPayload['resumeId'], $createdPayload['resume']);
+        self::assertNull($createdPayload['cvUrl']);
+
+        $applicationId = (string) $createdPayload['id'];
+
+        $candidateClient->request('GET', self::BASE_URL . '/' . $applicationId);
+        self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
+
+        $persistedPayload = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        self::assertSame($requestPayload['resumeId'], $persistedPayload['resume']);
+        self::assertNull($persistedPayload['cvUrl']);
+    }
+
+    /** @throws Throwable */
+    public function testApplyWithUnknownResumeIdReturnsNotFound(): void
+    {
+        $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
+
+        $candidateClient->request(
+            'POST',
+            self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply',
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: JSON::encode([
+                'resumeId' => '60000000-0000-1000-8000-000000000099',
+            ]),
+        );
+
+        self::assertSame(Response::HTTP_NOT_FOUND, $candidateClient->getResponse()->getStatusCode());
+    }
+
+    /** @throws Throwable */
+    public function testApplyWithResumeOwnedByAnotherUserReturnsNotFound(): void
+    {
+        $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
+
+        $candidateClient->request(
+            'POST',
+            self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply',
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: JSON::encode([
+                'resumeId' => '60000000-0000-1000-8000-000000000003',
+            ]),
+        );
+
+        self::assertSame(Response::HTTP_NOT_FOUND, $candidateClient->getResponse()->getStatusCode());
+    }
+
+    /** @throws Throwable */
+    public function testApplyWithPrivateResumeNotAccessibleReturnsNotFound(): void
+    {
+        $candidateClient = $this->getTestClient('john-user', 'password-user');
+
+        $candidateClient->request(
+            'POST',
+            self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply',
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: JSON::encode([
+                'resumeId' => '60000000-0000-1000-8000-000000000002',
+            ]),
+        );
+
+        self::assertSame(Response::HTTP_NOT_FOUND, $candidateClient->getResponse()->getStatusCode());
+    }
+
 }
