@@ -13,6 +13,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 
+/**
+ * @package App\Chat
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[ORM\Entity]
 #[ORM\Table(name: 'chat_message')]
 #[ORM\Index(name: 'idx_chat_message_conversation_id', columns: ['conversation_id'])]

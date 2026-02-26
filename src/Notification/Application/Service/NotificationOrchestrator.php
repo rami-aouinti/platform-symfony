@@ -14,6 +14,11 @@ use App\User\Domain\Entity\User;
 
 use function sprintf;
 
+/**
+ * @package App\Notification
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 readonly class NotificationOrchestrator implements NotificationOrchestratorInterface
 {
     public function __construct(

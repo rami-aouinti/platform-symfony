@@ -32,6 +32,8 @@ use Throwable;
 /**
  * @method JobApplicationResource getResource()
  * @method ResponseHandler getResponseHandler()
+ * @package App\JobApplication
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
 #[Route(path: '/v1/job-applications')]

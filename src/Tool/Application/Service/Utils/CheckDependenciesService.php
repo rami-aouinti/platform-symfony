@@ -17,6 +17,7 @@ use const DIRECTORY_SEPARATOR;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class CheckDependenciesService implements CheckDependenciesServiceInterface
 {

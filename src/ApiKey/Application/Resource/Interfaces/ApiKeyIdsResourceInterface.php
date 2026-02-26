@@ -8,6 +8,7 @@ use App\General\Application\Rest\Interfaces\RestIdsResourceInterface;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ApiKeyIdsResourceInterface extends RestIdsResourceInterface
 {

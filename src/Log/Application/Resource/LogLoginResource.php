@@ -28,6 +28,7 @@ use App\Log\Domain\Repository\Interfaces\LogLoginRepositoryInterface as Reposito
  * @method Entity save(EntityInterface $entity, ?bool $flush = null, ?bool $skipValidation = null, ?string $entityManagerName = null)
  *
  * @codingStandardsIgnoreEnd
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class LogLoginResource extends RestResource
 {

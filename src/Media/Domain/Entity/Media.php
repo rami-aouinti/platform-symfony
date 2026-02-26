@@ -14,6 +14,11 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * @package App\Media
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[ORM\Entity]
 #[ORM\Table(name: 'media')]
 #[ORM\Index(name: 'idx_media_owner_id', columns: ['owner_id'])]

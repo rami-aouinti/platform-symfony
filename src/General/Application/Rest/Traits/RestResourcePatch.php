@@ -11,6 +11,7 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
  * @SuppressWarnings("unused")
  *
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait RestResourcePatch
 {

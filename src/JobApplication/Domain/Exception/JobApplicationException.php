@@ -7,6 +7,11 @@ namespace App\JobApplication\Domain\Exception;
 use App\General\Application\Exception\Interfaces\ClientErrorInterface;
 use RuntimeException;
 
+/**
+ * @package App\JobApplication
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class JobApplicationException extends RuntimeException implements ClientErrorInterface
 {
     public function __construct(string $message, int $statusCode)

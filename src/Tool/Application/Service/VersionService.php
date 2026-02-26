@@ -19,6 +19,7 @@ use function is_string;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class VersionService implements VersionServiceInterface
 {

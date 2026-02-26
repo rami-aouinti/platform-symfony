@@ -12,6 +12,8 @@ use App\General\Application\Rest\Traits\Methods\ResourceFindMethod;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
+ * @package App\Company
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class CompanyMembershipResource extends RestSmallResource implements CompanyMembershipResourceInterface
 {

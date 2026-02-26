@@ -25,6 +25,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 /**
  * @method ResumeResource getResource()
  * @method ResponseHandler getResponseHandler()
+ * @package App\Resume
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
 #[Route(path: '/v1/resumes')]

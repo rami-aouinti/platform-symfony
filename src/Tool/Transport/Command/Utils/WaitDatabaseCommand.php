@@ -20,6 +20,10 @@ use Throwable;
     name: 'db:wait',
     description: 'Waits for database availability.',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class WaitDatabaseCommand extends Command
 {
     use SymfonyStyleTrait;

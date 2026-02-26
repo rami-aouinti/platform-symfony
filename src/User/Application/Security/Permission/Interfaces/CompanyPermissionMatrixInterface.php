@@ -7,6 +7,11 @@ namespace App\User\Application\Security\Permission\Interfaces;
 use App\User\Application\Security\Permission;
 use App\User\Application\Security\SecurityUser;
 
+/**
+ * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 interface CompanyPermissionMatrixInterface
 {
     public function isGranted(

@@ -15,6 +15,7 @@ namespace App\General\Application\Exception\Interfaces;
  * class.
  *
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ClientErrorInterface
 {

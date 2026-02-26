@@ -16,6 +16,7 @@ use function sprintf;
 
 /**
  * @package App\Role
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class RoleTransformer implements DataTransformerInterface
 {

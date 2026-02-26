@@ -14,6 +14,11 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * @package App\Notification
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[ORM\Entity]
 #[ORM\Table(name: 'notification')]
 #[ORM\Index(name: 'idx_notification_user_read_at', columns: ['user_id', 'read_at'])]

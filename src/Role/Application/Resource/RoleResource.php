@@ -28,6 +28,7 @@ use App\Role\Domain\Repository\Interfaces\RoleRepositoryInterface as Repository;
  * @method Entity save(EntityInterface $entity, ?bool $flush = null, ?bool $skipValidation = null, ?string $entityManagerName = null)
  *
  * @codingStandardsIgnoreEnd
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class RoleResource extends RestResource
 {

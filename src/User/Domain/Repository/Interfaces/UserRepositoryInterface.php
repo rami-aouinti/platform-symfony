@@ -9,6 +9,7 @@ use Doctrine\ORM\NonUniqueResultException;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface UserRepositoryInterface
 {

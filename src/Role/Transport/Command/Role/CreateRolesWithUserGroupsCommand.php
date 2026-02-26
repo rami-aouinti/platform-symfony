@@ -25,6 +25,10 @@ use Throwable;
     name: self::NAME,
     description: 'Console command to create roles with user groups to database',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class CreateRolesWithUserGroupsCommand extends Command
 {
     use ApiKeyUserManagementHelperTrait;

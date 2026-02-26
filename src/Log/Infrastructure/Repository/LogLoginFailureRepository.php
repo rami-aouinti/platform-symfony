@@ -26,6 +26,7 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
  * @method Entity[] findAll(?string $entityManagerName = null)
  *
  * @codingStandardsIgnoreEnd
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class LogLoginFailureRepository extends BaseRepository implements LogLoginFailureRepositoryInterface
 {

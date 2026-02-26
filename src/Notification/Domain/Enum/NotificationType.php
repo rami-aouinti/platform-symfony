@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Notification\Domain\Enum;
 
+/**
+ * @package App\Notification
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 enum NotificationType: string
 {
     case COMPANY_CREATED = 'company_created';

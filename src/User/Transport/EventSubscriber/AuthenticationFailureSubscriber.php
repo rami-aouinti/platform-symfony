@@ -15,6 +15,7 @@ use Throwable;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class AuthenticationFailureSubscriber implements EventSubscriberInterface
 {

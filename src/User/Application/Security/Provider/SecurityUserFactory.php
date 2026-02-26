@@ -22,6 +22,7 @@ use function sprintf;
  * @package App\User
  *
  * @template-implements UserProviderInterface<SecurityUser>
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class SecurityUserFactory implements UserProviderInterface
 {

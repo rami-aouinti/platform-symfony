@@ -25,6 +25,10 @@ use Throwable;
     name: self::NAME,
     description: 'Command to edit existing user',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class EditUserCommand extends Command
 {
     use SymfonyStyleTrait;

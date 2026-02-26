@@ -24,6 +24,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route(
     path: '/v1/role',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'Role Management')]
 class RoleController extends Controller

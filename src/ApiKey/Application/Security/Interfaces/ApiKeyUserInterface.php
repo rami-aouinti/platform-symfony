@@ -8,6 +8,7 @@ use App\ApiKey\Domain\Entity\ApiKey;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ApiKeyUserInterface
 {

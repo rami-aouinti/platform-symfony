@@ -8,6 +8,7 @@ namespace App\Tool\Domain\Message;
  * TODO: This is external message example, you can delete it.
  *
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ExternalMessage
 {

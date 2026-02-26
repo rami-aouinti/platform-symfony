@@ -10,6 +10,11 @@ use App\Chat\Domain\Message\ChatMessageRealtimePublishMessage;
 use App\Chat\Domain\Repository\Interfaces\ChatMessageRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+/**
+ * @package App\Chat
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[AsMessageHandler]
 readonly class ChatMessageRealtimePublishMessageHandler
 {

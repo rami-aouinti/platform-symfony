@@ -13,6 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class MessageService implements MessageServiceInterface
 {

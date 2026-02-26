@@ -22,6 +22,7 @@ use Dukecity\CommandSchedulerBundle\Entity\ScheduledCommand as Entity;
  * @method Entity[] findAll()
  *
  * @codingStandardsIgnoreEnd
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ScheduledCommandRepository extends ServiceEntityRepository implements ScheduledCommandRepositoryInterface
 {

@@ -25,6 +25,10 @@ use Throwable;
     name: self::NAME,
     description: 'Command to edit existing API key',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class EditApiKeyCommand extends Command
 {
     use SymfonyStyleTrait;

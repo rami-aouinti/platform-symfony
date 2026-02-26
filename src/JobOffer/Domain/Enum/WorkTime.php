@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\JobOffer\Domain\Enum;
 
+/**
+ * @package App\JobOffer
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 enum WorkTime: string
 {
     case FULL_TIME = 'full-time';

@@ -20,6 +20,10 @@ use Throwable;
     name: self::NAME,
     description: 'Command to cleanup logs(log_login, log_request) in the database.',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class CleanupLogsCommand extends Command
 {
     use SymfonyStyleTrait;

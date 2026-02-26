@@ -14,6 +14,7 @@ use function array_map;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class HelperConfigure
 {

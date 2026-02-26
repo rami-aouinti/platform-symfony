@@ -8,6 +8,7 @@ use Exception;
 
 /**
  * @package App\Log
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface LogRequestRepositoryInterface
 {

@@ -8,6 +8,11 @@ use App\User\Domain\Entity\Address as Entity;
 use App\User\Domain\Enum\AddressType;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class Address
 {
     #[Assert\NotBlank]

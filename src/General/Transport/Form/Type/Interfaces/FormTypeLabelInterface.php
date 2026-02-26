@@ -6,6 +6,7 @@ namespace App\General\Transport\Form\Type\Interfaces;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface FormTypeLabelInterface
 {

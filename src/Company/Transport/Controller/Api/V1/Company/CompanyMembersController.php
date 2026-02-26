@@ -20,6 +20,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 /**
  * @method CompanyMembershipResource getResource()
  * @method ResponseHandler getResponseHandler()
+ * @package App\Company
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
 #[Route(path: '/v1/companies')]

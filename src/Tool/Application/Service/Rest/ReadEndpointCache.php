@@ -20,6 +20,11 @@ use function is_scalar;
 use function json_encode;
 use function ksort;
 
+/**
+ * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ReadEndpointCache
 {
     /**

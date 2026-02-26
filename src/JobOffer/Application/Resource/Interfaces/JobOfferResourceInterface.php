@@ -6,6 +6,11 @@ namespace App\JobOffer\Application\Resource\Interfaces;
 
 use App\General\Application\Rest\Interfaces\RestResourceInterface;
 
+/**
+ * @package App\JobOffer
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 interface JobOfferResourceInterface extends RestResourceInterface
 {
     /**

@@ -36,6 +36,10 @@ use function is_array;
     name: 'date',
     columns: ['date'],
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[ORM\HasLifecycleCallbacks]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class LogLogin implements EntityInterface

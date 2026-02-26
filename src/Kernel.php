@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 
 /**
  * @package App
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class Kernel extends BaseKernel
 {

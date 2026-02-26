@@ -22,6 +22,10 @@ use Throwable;
     name: self::NAME,
     description: 'Console command to remove existing user group',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class RemoveUserGroupCommand extends Command
 {
     use SymfonyStyleTrait;

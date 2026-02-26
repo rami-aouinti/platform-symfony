@@ -15,6 +15,11 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * @package App\Offer
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[ORM\Entity]
 #[ORM\Table(name: 'offer')]
 #[ORM\Index(name: 'idx_offer_company_status', columns: ['company_id', 'status'])]

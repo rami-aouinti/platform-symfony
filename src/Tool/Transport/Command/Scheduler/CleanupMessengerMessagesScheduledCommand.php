@@ -21,6 +21,10 @@ use Throwable;
     name: self::NAME,
     description: 'Command to create a cron job for cleanup messenger_messages table by schedule.',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class CleanupMessengerMessagesScheduledCommand extends Command
 {
     use SymfonyStyleTrait;

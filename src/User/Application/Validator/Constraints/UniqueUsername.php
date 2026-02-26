@@ -18,6 +18,7 @@ use Symfony\Component\Validator\Constraint;
  * @Target({"CLASS"})
  *
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 class UniqueUsername extends Constraint

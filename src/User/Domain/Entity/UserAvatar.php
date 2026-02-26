@@ -13,6 +13,11 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[ORM\Entity]
 #[ORM\Table(name: 'user_avatar')]
 #[ORM\UniqueConstraint(name: 'uq_user_avatar_user_profile_id', columns: ['user_profile_id'])]

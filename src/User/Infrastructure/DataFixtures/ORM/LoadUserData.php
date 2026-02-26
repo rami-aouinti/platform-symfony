@@ -29,6 +29,7 @@ use function str_replace;
  * @package App\User
  *
  * @psalm-suppress PropertyNotSetInConstructor
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 final class LoadUserData extends Fixture implements OrderedFixtureInterface
 {

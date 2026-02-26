@@ -8,6 +8,11 @@ use App\Notification\Application\Service\Interfaces\NotificationChannelServiceIn
 use App\Notification\Domain\Message\NotificationRealtimePublishMessage;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+/**
+ * @package App\Notification
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[AsMessageHandler]
 readonly class NotificationRealtimePublishMessageHandler
 {

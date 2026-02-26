@@ -40,6 +40,10 @@ use function strlen;
     name: 'check-dependencies',
     description: 'Console command to check which vendor dependencies has updates.',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class CheckDependencies extends Command
 {
     use SymfonyStyleTrait;

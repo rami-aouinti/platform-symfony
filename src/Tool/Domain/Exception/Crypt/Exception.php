@@ -8,6 +8,7 @@ use App\General\Domain\Exception\BaseTranslatableException;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class Exception extends BaseTranslatableException
 {

@@ -9,6 +9,7 @@ use App\Tool\Domain\Exception\Crypt\Exception;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface OpenSslCryptApiKeyServiceInterface
 {

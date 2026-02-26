@@ -6,6 +6,7 @@ namespace App\ApiKey\Application\DTO\ApiKey;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyUpdate extends ApiKey
 {

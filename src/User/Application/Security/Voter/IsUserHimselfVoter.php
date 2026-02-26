@@ -24,6 +24,7 @@ use function is_string;
  * @template TSubject of mixed
  *
  * @extends Voter<TAttribute, TSubject>
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class IsUserHimselfVoter extends Voter
 {

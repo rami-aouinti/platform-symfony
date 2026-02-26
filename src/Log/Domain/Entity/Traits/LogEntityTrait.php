@@ -17,6 +17,7 @@ use Throwable;
  * @package App\Log
  *
  * @property User|null $user
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait LogEntityTrait
 {

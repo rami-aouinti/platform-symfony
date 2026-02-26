@@ -34,6 +34,8 @@ use function in_array;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
+ * @package App\JobApplication
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class JobApplicationResource extends RestResource implements JobApplicationResourceInterface
 {

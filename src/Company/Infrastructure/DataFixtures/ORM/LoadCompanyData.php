@@ -15,6 +15,11 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Override;
 
+/**
+ * @package App\Company
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 final class LoadCompanyData extends Fixture implements OrderedFixtureInterface
 {
     #[Override]

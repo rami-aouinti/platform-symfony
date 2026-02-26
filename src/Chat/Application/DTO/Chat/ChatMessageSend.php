@@ -6,6 +6,11 @@ namespace App\Chat\Application\DTO\Chat;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @package App\Chat
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ChatMessageSend
 {
     #[Assert\NotBlank]

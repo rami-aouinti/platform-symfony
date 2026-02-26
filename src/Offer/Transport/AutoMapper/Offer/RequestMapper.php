@@ -9,6 +9,11 @@ use App\Company\Domain\Entity\Company;
 use App\General\Transport\AutoMapper\RestRequestMapper;
 use Throwable;
 
+/**
+ * @package App\Offer
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class RequestMapper extends RestRequestMapper
 {
     /**

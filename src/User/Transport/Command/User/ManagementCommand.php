@@ -16,6 +16,10 @@ use Symfony\Component\Console\Exception\LogicException;
     name: 'user:management',
     description: 'Console command to manage users and user groups',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ManagementCommand extends Command
 {
     use ExecuteMultipleCommandTrait;

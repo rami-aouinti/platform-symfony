@@ -8,6 +8,7 @@ use App\Tool\Domain\Exception\Crypt\Exception;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface CryptServiceInterface
 {

@@ -28,6 +28,7 @@ use function str_contains;
  * @package App\Log
  *
  * @method array<int, string> getSensitiveProperties();
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait LogRequestProcessRequestTrait
 {

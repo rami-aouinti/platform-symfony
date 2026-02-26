@@ -17,6 +17,7 @@ use function array_values;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
 {

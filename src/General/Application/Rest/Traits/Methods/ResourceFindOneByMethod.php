@@ -9,6 +9,7 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait ResourceFindOneByMethod
 {

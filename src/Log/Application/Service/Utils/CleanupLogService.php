@@ -10,6 +10,7 @@ use App\Log\Domain\Repository\Interfaces\LogRequestRepositoryInterface;
 
 /**
  * @package App\Log
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class CleanupLogService implements CleanupLogServiceInterface
 {

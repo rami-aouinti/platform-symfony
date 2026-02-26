@@ -31,6 +31,10 @@ use function sprintf;
     name: 'utils:create-date-dimension-entities',
     description: 'Console command to create `DateDimension` entities.',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class CreateDateDimensionEntitiesCommand extends Command
 {
     private const int YEAR_MIN = 1970;

@@ -26,6 +26,7 @@ use function is_string;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class LockedUserSubscriber implements EventSubscriberInterface
 {

@@ -9,6 +9,7 @@ use Throwable;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface HealthServiceInterface
 {

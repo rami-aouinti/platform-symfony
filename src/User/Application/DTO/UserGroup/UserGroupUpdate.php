@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserGroupUpdate extends UserGroup
 {

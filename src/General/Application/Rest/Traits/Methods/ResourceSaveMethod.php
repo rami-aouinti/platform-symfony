@@ -11,6 +11,7 @@ use Throwable;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait ResourceSaveMethod
 {

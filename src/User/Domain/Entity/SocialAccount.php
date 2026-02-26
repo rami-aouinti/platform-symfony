@@ -13,6 +13,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 
+/**
+ * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[ORM\Entity]
 #[ORM\Table(name: 'user_social_account')]
 #[ORM\UniqueConstraint(name: 'uq_social_provider_user', columns: ['provider', 'provider_user_id'])]

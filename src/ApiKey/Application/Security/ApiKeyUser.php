@@ -15,6 +15,7 @@ use function array_unique;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyUser implements ApiKeyUserInterface, UserInterface
 {

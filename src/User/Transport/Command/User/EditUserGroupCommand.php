@@ -25,6 +25,10 @@ use Throwable;
     name: self::NAME,
     description: 'Command to edit existing user group',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class EditUserGroupCommand extends Command
 {
     use SymfonyStyleTrait;

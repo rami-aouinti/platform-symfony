@@ -19,6 +19,11 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * @package App\JobApplication
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[ORM\Entity]
 #[ORM\Table(name: 'job_application')]
 #[ORM\UniqueConstraint(name: 'uq_job_application_job_offer_candidate', columns: ['job_offer_id', 'candidate_id'])]

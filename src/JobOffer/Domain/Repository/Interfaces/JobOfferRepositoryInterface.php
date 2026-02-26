@@ -7,6 +7,11 @@ namespace App\JobOffer\Domain\Repository\Interfaces;
 use App\JobOffer\Domain\Entity\JobOffer;
 use App\User\Domain\Entity\User;
 
+/**
+ * @package App\JobOffer
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 interface JobOfferRepositoryInterface
 {
     /**

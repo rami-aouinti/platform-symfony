@@ -12,6 +12,7 @@ use UnexpectedValueException;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface BaseRestResourceInterface
 {

@@ -15,6 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
  *
  * @method SocialAccount|null find(string $id, \Doctrine\DBAL\LockMode|int|null $lockMode = null, ?int $lockVersion = null, ?string $entityManagerName = null)
  * @method SocialAccount|null findOneBy(array $criteria, ?array $orderBy = null, ?string $entityManagerName = null)
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class SocialAccountRepository extends BaseRepository implements SocialAccountRepositoryInterface
 {

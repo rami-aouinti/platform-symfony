@@ -8,6 +8,7 @@ use Throwable;
 
 /**
  * @package App\Role
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface SyncRolesServiceInterface
 {

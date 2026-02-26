@@ -28,6 +28,7 @@ use App\Tool\Domain\Repository\Interfaces\HealthRepositoryInterface as Repositor
  * @method Entity save(EntityInterface $entity, ?bool $flush = null, ?bool $skipValidation = null, ?string $entityManagerName = null)
  *
  * @codingStandardsIgnoreEnd
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class HealthResource extends RestResource
 {

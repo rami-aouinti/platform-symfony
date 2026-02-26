@@ -15,6 +15,11 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Override;
 
+/**
+ * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 final class LoadRecruitmentUserData extends Fixture implements OrderedFixtureInterface
 {
     #[Override]

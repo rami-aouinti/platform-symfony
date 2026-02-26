@@ -12,6 +12,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait Timestampable
 {

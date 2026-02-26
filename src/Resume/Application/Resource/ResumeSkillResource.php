@@ -13,6 +13,11 @@ use App\User\Application\Security\Permission;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * @package App\Resume
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ResumeSkillResource extends RestResource implements ResumeSkillResourceInterface
 {
     public function __construct(

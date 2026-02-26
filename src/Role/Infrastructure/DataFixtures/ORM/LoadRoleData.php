@@ -18,6 +18,7 @@ use function array_map;
  * @package App\Role
  *
  * @psalm-suppress PropertyNotSetInConstructor
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 final class LoadRoleData extends Fixture implements OrderedFixtureInterface
 {

@@ -24,6 +24,8 @@ use Throwable;
 /**
  * @method ChatResourceInterface getResource()
  * @method ResponseHandler getResponseHandler()
+ * @package App\Chat
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
 #[Route(path: '/v1/chat/conversations')]

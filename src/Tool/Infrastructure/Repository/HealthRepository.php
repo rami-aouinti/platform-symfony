@@ -31,6 +31,7 @@ use Throwable;
  * @method Entity[] findAll(?string $entityManagerName = null)
  *
  * @codingStandardsIgnoreEnd
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class HealthRepository extends BaseRepository implements HealthRepositoryInterface
 {

@@ -8,6 +8,7 @@ use App\Log\Domain\Enum\LogLogin;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class EnumLogLoginType extends EnumType
 {

@@ -28,6 +28,10 @@ use function sprintf;
     name: self::NAME,
     description: 'Console command to list user groups',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ListUserGroupsCommand extends Command
 {
     use SymfonyStyleTrait;

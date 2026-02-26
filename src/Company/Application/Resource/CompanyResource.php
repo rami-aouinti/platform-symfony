@@ -28,6 +28,8 @@ use function in_array;
  * @method Entity update(string $id, RestDtoInterface $dto, ?bool $flush = null, ?bool $skipValidation = null, ?string $entityManagerName = null)
  * @method Entity patch(string $id, RestDtoInterface $dto, ?bool $flush = null, ?bool $skipValidation = null, ?string $entityManagerName = null)
  * @method Entity delete(string $id, ?bool $flush = null, ?string $entityManagerName = null)
+ * @package App\Company
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class CompanyResource extends RestResource implements CompanyResourceInterface
 {

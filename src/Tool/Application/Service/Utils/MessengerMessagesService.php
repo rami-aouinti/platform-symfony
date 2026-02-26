@@ -9,6 +9,7 @@ use App\Tool\Domain\Repository\Interfaces\MessengerMessagesRepositoryInterface;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class MessengerMessagesService implements MessengerMessagesServiceInterface
 {

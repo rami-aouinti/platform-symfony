@@ -6,6 +6,11 @@ namespace App\Chat\Domain\Repository\Interfaces;
 
 use App\Chat\Domain\Entity\ConversationParticipant;
 
+/**
+ * @package App\Chat
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 interface ConversationParticipantRepositoryInterface
 {
     /**

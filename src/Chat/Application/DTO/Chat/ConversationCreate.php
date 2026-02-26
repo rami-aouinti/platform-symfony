@@ -8,6 +8,11 @@ use App\General\Application\Validator\Constraints as AppAssert;
 use App\JobApplication\Domain\Entity\JobApplication;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @package App\Chat
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ConversationCreate
 {
     #[Assert\NotNull]

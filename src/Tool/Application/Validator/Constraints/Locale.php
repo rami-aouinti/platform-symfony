@@ -17,6 +17,7 @@ use Symfony\Component\Validator\Constraint;
  * @Target({"PROPERTY"})
  *
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::IS_REPEATABLE)]
 class Locale extends Constraint

@@ -14,6 +14,7 @@ use function array_map;
  * @package App\User
  *
  * @property UserGroupResource $userGroupResource
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait UserGroupChoices
 {

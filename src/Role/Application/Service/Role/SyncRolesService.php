@@ -15,6 +15,7 @@ use function array_sum;
 
 /**
  * @package App\Role
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class SyncRolesService implements SyncRolesServiceInterface
 {

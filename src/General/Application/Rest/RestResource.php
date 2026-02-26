@@ -10,6 +10,7 @@ use App\General\Domain\Repository\Interfaces\BaseRepositoryInterface;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 abstract class RestResource implements RestResourceInterface
 {

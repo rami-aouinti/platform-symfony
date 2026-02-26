@@ -20,6 +20,10 @@ use Throwable;
     name: 'elastic:wait',
     description: 'Waits for elastic availability.',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class WaitElasticCommand extends Command
 {
     use SymfonyStyleTrait;

@@ -13,6 +13,11 @@ use function json_encode;
 use function method_exists;
 use function sprintf;
 
+/**
+ * @package App\Chat
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 readonly class ChatRealtimePublisher implements ChatRealtimePublisherInterface
 {
     public function __construct(

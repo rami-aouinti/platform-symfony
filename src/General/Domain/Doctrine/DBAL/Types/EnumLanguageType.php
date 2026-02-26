@@ -8,6 +8,7 @@ use App\General\Domain\Enum\Language;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class EnumLanguageType extends EnumType
 {

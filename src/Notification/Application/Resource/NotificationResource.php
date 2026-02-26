@@ -13,6 +13,8 @@ use App\Notification\Domain\Repository\Interfaces\NotificationRepositoryInterfac
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
+ * @package App\Notification
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class NotificationResource extends RestSmallResource implements NotificationResourceInterface
 {

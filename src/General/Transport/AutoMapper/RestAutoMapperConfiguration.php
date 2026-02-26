@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 abstract class RestAutoMapperConfiguration implements AutoMapperConfiguratorInterface
 {

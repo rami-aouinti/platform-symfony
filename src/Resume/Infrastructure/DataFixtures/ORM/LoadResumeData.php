@@ -13,6 +13,11 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Override;
 
+/**
+ * @package App\Resume
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 final class LoadResumeData extends Fixture implements OrderedFixtureInterface
 {
     #[Override]

@@ -19,6 +19,7 @@ use UnexpectedValueException;
  * @package App\General
  *
  * @property RestResourceInterface|RestSmallResourceInterface|null $resource
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 abstract class Controller implements ControllerInterface
 {

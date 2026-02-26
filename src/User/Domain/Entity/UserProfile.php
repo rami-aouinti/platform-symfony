@@ -25,6 +25,10 @@ use Symfony\Component\Serializer\Attribute\Groups;
     name: 'uq_user_profile_user_id',
     columns: ['user_id'],
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class UserProfile implements EntityInterface
 {

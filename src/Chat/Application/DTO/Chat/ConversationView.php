@@ -6,6 +6,11 @@ namespace App\Chat\Application\DTO\Chat;
 
 use App\Chat\Domain\Entity\Conversation;
 
+/**
+ * @package App\Chat
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ConversationView
 {
     private string $id;

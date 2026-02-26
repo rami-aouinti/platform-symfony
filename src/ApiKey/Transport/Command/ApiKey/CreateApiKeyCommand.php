@@ -31,6 +31,10 @@ use Throwable;
     name: self::NAME,
     description: 'Command to create new API key',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class CreateApiKeyCommand extends Command
 {
     use ApiKeyUserManagementHelperTrait;

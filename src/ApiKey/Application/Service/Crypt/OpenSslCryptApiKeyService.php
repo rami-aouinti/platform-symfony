@@ -12,6 +12,7 @@ use function strlen;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class OpenSslCryptApiKeyService implements OpenSslCryptApiKeyServiceInterface
 {

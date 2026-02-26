@@ -10,6 +10,7 @@ use Throwable;
 
 /**
  * @package App
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class FailedRetry implements RetryStrategyInterface
 {
