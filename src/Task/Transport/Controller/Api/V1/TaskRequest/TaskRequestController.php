@@ -23,6 +23,10 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use ValueError;
 
+use function implode;
+use function strtolower;
+use function sprintf;
+
 /**
  * @method TaskRequestResource getResource()
  * @method ResponseHandler getResponseHandler()
@@ -58,13 +62,7 @@ class TaskRequestController extends Controller
     #[Route(path: '/{id}/requested-status/{status}', methods: [Request::METHOD_PATCH])]
     public function changeRequestedStatusAction(Request $request, string $id, string $status): Response
     {
-        try {
-            $requestedStatus = TaskStatus::from($status);
-        } catch (ValueError) {
-            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Invalid requested status value.');
-        }
-
-        $data = $this->getResource()->changeRequestedStatus($id, $requestedStatus);
+        $data = $this->getResource()->changeRequestedStatus($id, $this->resolveRequestedStatus($status));
 
         return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
     }
@@ -92,4 +90,23 @@ class TaskRequestController extends Controller
 
         return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
     }
+
+    private function resolveRequestedStatus(string $status): TaskStatus
+    {
+        $normalized = strtolower($status);
+
+        if ($normalized === 'pending') {
+            return TaskStatus::TODO;
+        }
+
+        try {
+            return TaskStatus::from($normalized);
+        } catch (ValueError) {
+            throw new HttpException(
+                Response::HTTP_BAD_REQUEST,
+                sprintf('Invalid requested status value. Allowed values: %s.', implode(', ', TaskStatus::getValues())),
+            );
+        }
+    }
 }
+
