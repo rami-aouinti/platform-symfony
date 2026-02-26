@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Company\Domain\Entity;
 
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\General\Domain\Entity\Traits\SlugTrait;
+use App\General\Domain\Entity\Traits\StatusTrait;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use App\General\Domain\ValueObject\Address as AddressValueObject;
@@ -29,6 +31,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class Company implements EntityInterface
 {
+    use SlugTrait;
+    use StatusTrait;
     use Timestampable;
     use Uuid;
 
@@ -40,14 +44,6 @@ class Company implements EntityInterface
     #[ORM\Column(name: 'legal_name', type: Types::STRING, length: 255, nullable: false)]
     #[Groups(['Company', 'Company.legalName', 'Company.create', 'Company.show', 'Company.edit', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $legalName = '';
-
-    #[ORM\Column(name: 'slug', type: Types::STRING, length: 255, nullable: false)]
-    #[Groups(['Company', 'Company.slug', 'Company.create', 'Company.show', 'Company.edit', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
-    private string $slug = '';
-
-    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
-    #[Groups(['Company', 'Company.status', 'Company.create', 'Company.show', 'Company.edit', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
-    private string $status = 'active';
 
     #[ORM\Embedded(class: AddressValueObject::class, columnPrefix: false)]
     #[ORM\AttributeOverrides([
@@ -84,6 +80,7 @@ class Company implements EntityInterface
         $this->memberships = new ArrayCollection();
         $this->candidateProfiles = new ArrayCollection();
         $this->mainAddress = new AddressValueObject();
+        $this->status = 'active';
     }
 
     public function getId(): string
@@ -99,30 +96,6 @@ class Company implements EntityInterface
     public function setLegalName(string $legalName): self
     {
         $this->legalName = $legalName;
-
-        return $this;
-    }
-
-    public function getSlug(): string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): self
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): self
-    {
-        $this->status = $status;
 
         return $this;
     }
