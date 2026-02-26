@@ -7,6 +7,7 @@ namespace App\Recruit\Infrastructure\DataFixtures\ORM;
 use App\Company\Domain\Entity\Company;
 use App\General\Domain\Rest\UuidHelper;
 use App\Recruit\Domain\Entity\Offer;
+use App\Recruit\Domain\Enum\OfferStatus;
 use App\Tests\Utils\PhpUnitUtil;
 use App\User\Domain\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -46,7 +47,7 @@ final class LoadOfferData extends Fixture implements OrderedFixtureInterface
             $offer = (new Offer())
                 ->setTitle($title)
                 ->setDescription($description)
-                ->setStatus($status)
+                ->setStatus(OfferStatus::from($status))
                 ->setCompany($company)
                 ->setCreatedBy($author);
 

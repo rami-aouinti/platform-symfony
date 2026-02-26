@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Company\Infrastructure\DataFixtures\ORM;
 
 use App\Company\Domain\Entity\Company;
+use App\Company\Domain\Enum\CompanyMembershipStatus;
+use App\Company\Domain\Enum\CompanyStatus;
 use App\Company\Domain\Entity\CompanyMembership;
 use App\General\Domain\Rest\UuidHelper;
 use App\General\Domain\ValueObject\Address as AddressValueObject;
@@ -38,7 +40,7 @@ final class LoadCompanyData extends Fixture implements OrderedFixtureInterface
         $acme = (new Company())
             ->setLegalName('Acme Demo')
             ->setSlug('acme-demo')
-            ->setStatus('active')
+            ->setStatus(CompanyStatus::ACTIVE)
             ->setMainAddress((new AddressValueObject())->setStreetLine1('1 Demo Street')->setPostalCode('75001')->setCity('Paris')->setRegion('Île-de-France')->setCountryCode('FR'))
             ->setOwner($owner);
 
@@ -46,53 +48,53 @@ final class LoadCompanyData extends Fixture implements OrderedFixtureInterface
 
         $acmeOwnerMembership = (new CompanyMembership($owner, $acme))
             ->setRole(CompanyMembership::ROLE_OWNER)
-            ->setStatus('active')
+            ->setStatus(CompanyMembershipStatus::ACTIVE)
             ->setJoinedAt(new DateTimeImmutable('2026-01-05 09:00:00'));
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000002'), $acmeOwnerMembership);
 
         $acmeManagerMembership = (new CompanyMembership($managerUser, $acme))
             ->setRole(CompanyMembership::ROLE_CRM_MANAGER)
-            ->setStatus('active')
+            ->setStatus(CompanyMembershipStatus::ACTIVE)
             ->setJoinedAt(new DateTimeImmutable('2026-01-12 10:30:00'));
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000004'), $acmeManagerMembership);
 
         $acmeCandidateMembership = (new CompanyMembership($candidateUser, $acme))
             ->setRole(CompanyMembership::ROLE_CANDIDATE)
-            ->setStatus('invited')
+            ->setStatus(CompanyMembershipStatus::INVITED)
             ->setInvitedAt(new DateTimeImmutable('2026-02-01 14:00:00'));
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000007'), $acmeCandidateMembership);
 
         $externalCompany = (new Company())
             ->setLegalName('External Corp')
             ->setSlug('external-corp')
-            ->setStatus('active')
+            ->setStatus(CompanyStatus::ACTIVE)
             ->setMainAddress((new AddressValueObject())->setStreetLine1('2 External Street')->setPostalCode('69000')->setCity('Lyon')->setRegion('Auvergne-Rhône-Alpes')->setCountryCode('FR'))
             ->setOwner($externalUser);
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000005'), $externalCompany);
 
         $externalOwnerMembership = (new CompanyMembership($externalUser, $externalCompany))
             ->setRole(CompanyMembership::ROLE_OWNER)
-            ->setStatus('active')
+            ->setStatus(CompanyMembershipStatus::ACTIVE)
             ->setJoinedAt(new DateTimeImmutable('2026-01-15 11:00:00'));
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000006'), $externalOwnerMembership);
 
         $betaCompany = (new Company())
             ->setLegalName('Beta Labs')
             ->setSlug('beta-labs')
-            ->setStatus('suspended')
+            ->setStatus(CompanyStatus::SUSPENDED)
             ->setMainAddress((new AddressValueObject())->setStreetLine1('77 Innovation Avenue')->setPostalCode('31000')->setCity('Toulouse')->setRegion('Occitanie')->setCountryCode('FR'))
             ->setOwner($managerUser);
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000008'), $betaCompany);
 
         $betaOwnerMembership = (new CompanyMembership($managerUser, $betaCompany))
             ->setRole(CompanyMembership::ROLE_OWNER)
-            ->setStatus('active')
+            ->setStatus(CompanyMembershipStatus::ACTIVE)
             ->setJoinedAt(new DateTimeImmutable('2026-01-20 08:00:00'));
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000009'), $betaOwnerMembership);
 
         $betaTeacherMembership = (new CompanyMembership($owner, $betaCompany))
             ->setRole(CompanyMembership::ROLE_TEACHER)
-            ->setStatus('invited')
+            ->setStatus(CompanyMembershipStatus::INVITED)
             ->setInvitedAt(new DateTimeImmutable('2026-02-10 16:15:00'));
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000010'), $betaTeacherMembership);
 

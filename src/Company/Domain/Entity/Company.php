@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Company\Domain\Entity;
 
+use App\Company\Domain\Enum\CompanyStatus;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\SlugTrait;
-use App\General\Domain\Entity\Traits\StatusTrait;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use App\General\Domain\ValueObject\Address as AddressValueObject;
@@ -32,7 +32,6 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class Company implements EntityInterface
 {
     use SlugTrait;
-    use StatusTrait;
     use Timestampable;
     use Uuid;
 
@@ -74,13 +73,16 @@ class Company implements EntityInterface
     #[ORM\OneToMany(targetEntity: CandidateProfile::class, mappedBy: 'company')]
     private Collection $candidateProfiles;
 
+    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, enumType: CompanyStatus::class)]
+    #[Groups(['Company', 'Company.status', 'Company.create', 'Company.show', 'Company.edit'])]
+    private CompanyStatus $status = CompanyStatus::ACTIVE;
+
     public function __construct()
     {
         $this->id = $this->createUuid();
         $this->memberships = new ArrayCollection();
         $this->candidateProfiles = new ArrayCollection();
         $this->mainAddress = new AddressValueObject();
-        $this->status = 'active';
     }
 
     public function getId(): string
@@ -140,4 +142,23 @@ class Company implements EntityInterface
 
         return $this;
     }
+
+    public function getStatus(): CompanyStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(CompanyStatus|string $status): self
+    {
+        $nextStatus = $status instanceof CompanyStatus ? $status : CompanyStatus::from($status);
+
+        if (!$this->status->canTransitionTo($nextStatus) && $this->status !== $nextStatus) {
+            return $this;
+        }
+
+        $this->status = $nextStatus;
+
+        return $this;
+    }
 }
+

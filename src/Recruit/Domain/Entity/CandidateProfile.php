@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Recruit\Domain\Entity;
 
 use App\Company\Domain\Entity\Company;
+use App\Recruit\Domain\Enum\CandidateProfileStatus;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
@@ -43,9 +44,9 @@ class CandidateProfile implements EntityInterface
     #[Groups(['CandidateProfile', 'CandidateProfile.company'])]
     private ?Company $company = null;
 
-    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
+    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, enumType: CandidateProfileStatus::class)]
     #[Groups(['CandidateProfile', 'CandidateProfile.status'])]
-    private string $status = 'new';
+    private CandidateProfileStatus $status = CandidateProfileStatus::NEW;
 
     public function __construct(User $user)
     {
@@ -75,14 +76,20 @@ class CandidateProfile implements EntityInterface
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): CandidateProfileStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): self
+    public function setStatus(CandidateProfileStatus|string $status): self
     {
-        $this->status = $status;
+        $nextStatus = $status instanceof CandidateProfileStatus ? $status : CandidateProfileStatus::from($status);
+
+        if (!$this->status->canTransitionTo($nextStatus) && $this->status !== $nextStatus) {
+            return $this;
+        }
+
+        $this->status = $nextStatus;
 
         return $this;
     }

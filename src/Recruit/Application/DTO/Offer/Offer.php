@@ -102,7 +102,7 @@ class Offer extends RestDto
             $this->id = $entity->getId();
             $this->title = $entity->getTitle();
             $this->description = $entity->getDescription();
-            $this->status = $entity->getStatus();
+            $this->status = $entity->getStatus()->value;
             $this->company = $entity->getCompany();
         }
 

@@ -105,7 +105,7 @@ class Company extends RestDto
             $this->id = $entity->getId();
             $this->legalName = $entity->getLegalName();
             $this->slug = $entity->getSlug();
-            $this->status = $entity->getStatus();
+            $this->status = $entity->getStatus()->value;
             $this->mainAddress = Address::fromValueObject($entity->getMainAddress());
         }
 
