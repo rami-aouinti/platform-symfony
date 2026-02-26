@@ -53,7 +53,7 @@ class ConversationParticipantRepository extends BaseRepository implements Conver
             ->getArrayResult();
 
         return array_map(
-            static fn (array $row): string => (string) ($row['id'] ?? ''),
+            static fn (array $row): string => (string)($row['id'] ?? ''),
             $rows,
         );
     }

@@ -15,7 +15,9 @@ class OfferControllerTest extends WebTestCase
     private const string COMPANY_ID = '30000000-0000-1000-8000-000000000001';
     private const string OFFER_ID = '40000000-0000-1000-8000-000000000001';
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testAuthorCanCreateShowEditAndDeleteOffer(): void
     {
         $client = $this->getTestClient('john-user', 'password-user');
@@ -30,8 +32,8 @@ class OfferControllerTest extends WebTestCase
         $client->request('POST', self::BASE_URL, content: JSON::encode($payload));
         self::assertSame(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
 
-        $created = JSON::decode((string) $client->getResponse()->getContent(), true);
-        $offerId = (string) $created['id'];
+        $created = JSON::decode((string)$client->getResponse()->getContent(), true);
+        $offerId = (string)$created['id'];
 
         $client->request('GET', self::BASE_URL . '/' . $offerId);
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
@@ -45,7 +47,9 @@ class OfferControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testManagerCanCreateShowEditAndDeleteOffer(): void
     {
         $client = $this->getTestClient('alice-user', 'password-user');
@@ -59,8 +63,8 @@ class OfferControllerTest extends WebTestCase
 
         $client->request('POST', self::BASE_URL, content: JSON::encode($payload));
         self::assertSame(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
-        $created = JSON::decode((string) $client->getResponse()->getContent(), true);
-        $offerId = (string) $created['id'];
+        $created = JSON::decode((string)$client->getResponse()->getContent(), true);
+        $offerId = (string)$created['id'];
 
         $client->request('GET', self::BASE_URL . '/' . self::OFFER_ID);
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
@@ -74,7 +78,9 @@ class OfferControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testExternalUserCannotManageOffers(): void
     {
         $client = $this->getTestClient('carol-user', 'password-user');

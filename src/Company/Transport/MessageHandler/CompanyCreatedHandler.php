@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Company\Transport\MessageHandler;
 
-use App\Company\Infrastructure\Repository\CompanyRepository;
 use App\Company\Domain\Message\CompanyCreatedMessage;
+use App\Company\Infrastructure\Repository\CompanyRepository;
 use App\Notification\Application\Service\Interfaces\NotificationOrchestratorInterface;
 use App\User\Infrastructure\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

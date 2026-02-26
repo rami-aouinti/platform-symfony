@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\JobOffer\Infrastructure\Repository;
 
-use ArrayIterator;
 use App\Company\Domain\Entity\CompanyMembership;
-use App\General\Infrastructure\Rest\RepositoryHelper;
 use App\General\Infrastructure\Repository\BaseRepository;
+use App\General\Infrastructure\Rest\RepositoryHelper;
 use App\JobOffer\Domain\Entity\JobOffer as Entity;
 use App\JobOffer\Domain\Repository\Interfaces\JobOfferRepositoryInterface;
 use App\User\Domain\Entity\User;
+use ArrayIterator;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -90,7 +90,10 @@ class JobOfferRepository extends BaseRepository implements JobOfferRepositoryInt
         $baseQueryBuilder = $this->createFacetBaseQueryBuilder(
             $criteria,
             $search,
-            $postFilters ?? ['skills' => [], 'languages' => []],
+            $postFilters ?? [
+                'skills' => [],
+                'languages' => [],
+            ],
             $entityManagerName,
         );
 
@@ -171,7 +174,6 @@ class JobOfferRepository extends BaseRepository implements JobOfferRepositoryInt
     /**
      * @param array<int|string, mixed>|null $criteria
      * @param array<string, array<int, string>>|null $search
-     * @param array<string, string>|null $orderBy
      */
     private function createFilteredQueryBuilder(
         ?array $criteria,
@@ -281,7 +283,6 @@ class JobOfferRepository extends BaseRepository implements JobOfferRepositoryInt
         $queryBuilder
             ->setMaxResults($limit)
             ->setFirstResult($offset ?? 0);
-
     }
 
     /**
@@ -391,9 +392,9 @@ class JobOfferRepository extends BaseRepository implements JobOfferRepositoryInt
 
         foreach ($result as $row) {
             $rows[] = [
-                'id' => (string) $row['id'],
-                'label' => (string) $row['label'],
-                'count' => (int) $row['count'],
+                'id' => (string)$row['id'],
+                'label' => (string)$row['label'],
+                'count' => (int)$row['count'],
             ];
         }
 

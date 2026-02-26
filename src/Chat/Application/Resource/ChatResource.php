@@ -58,7 +58,9 @@ class ChatResource implements ChatResourceInterface
             throw new HttpException(Response::HTTP_BAD_REQUEST, 'Conversation is available only for accepted applications.');
         }
 
-        $existing = $this->conversationRepository->findOneBy(['jobApplication' => $jobApplication]);
+        $existing = $this->conversationRepository->findOneBy([
+            'jobApplication' => $jobApplication,
+        ]);
         if ($existing instanceof Conversation) {
             return $this->toView($existing);
         }

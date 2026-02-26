@@ -20,9 +20,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+use function array_map;
 use function hash;
 use function implode;
-use function array_map;
 use function sprintf;
 
 /**

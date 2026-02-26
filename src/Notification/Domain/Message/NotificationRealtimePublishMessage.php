@@ -20,4 +20,3 @@ readonly class NotificationRealtimePublishMessage implements MessageHighInterfac
     ) {
     }
 }
-

@@ -14,9 +14,9 @@ use App\General\Transport\Rest\Traits\Actions\Authenticated\FindOneAction;
 use App\General\Transport\Rest\Traits\Methods\CreateMethod;
 use App\General\Transport\Rest\Traits\Methods\PatchMethod;
 use App\General\Transport\Rest\Traits\Methods\UpdateMethod;
+use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobOffer\Application\DTO\JobOffer\JobOfferCreate;
 use App\JobOffer\Application\DTO\JobOffer\JobOfferPatch;
-use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobOffer\Application\DTO\JobOffer\JobOfferUpdate;
 use App\JobOffer\Application\Resource\Interfaces\JobOfferResourceInterface;
 use App\JobOffer\Application\Resource\JobOfferResource;
@@ -64,6 +64,18 @@ class JobOfferController extends Controller
     use FindAction;
     use FindOneAction;
 
+    private const string CACHE_SCOPE = 'job_offer';
+    private const int DEFAULT_LIMIT = 20;
+    private const int DEFAULT_OFFSET = 0;
+
+    /**
+     * @var array<string, string>
+     */
+    private const array DEFAULT_ORDER_BY = [
+        'publishedAt' => 'DESC',
+    ];
+    private const string DEFAULT_CANDIDATE_STATUS = 'open';
+
     /**
      * @var array<string, string>
      */
@@ -80,16 +92,6 @@ class JobOfferController extends Controller
     ) {
         parent::__construct($resource);
     }
-
-    private const string CACHE_SCOPE = "job_offer";
-    private const int DEFAULT_LIMIT = 20;
-    private const int DEFAULT_OFFSET = 0;
-
-    /**
-     * @var array<string, string>
-     */
-    private const array DEFAULT_ORDER_BY = ['publishedAt' => 'DESC'];
-    private const string DEFAULT_CANDIDATE_STATUS = 'open';
 
     /**
      * @throws Throwable
@@ -138,7 +140,9 @@ class JobOfferController extends Controller
     /**
      * @throws Throwable
      */
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PUT])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_PUT])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\RequestBody(required: true, content: new JsonContent(
         required: ['title', 'description', 'location', 'employmentType', 'status', 'company'],
@@ -164,7 +168,9 @@ class JobOfferController extends Controller
     /**
      * @throws Throwable
      */
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_PATCH])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\RequestBody(required: true, content: new JsonContent(
         required: ['title', 'description', 'location', 'employmentType', 'status', 'company'],
@@ -303,7 +309,9 @@ class JobOfferController extends Controller
     /**
      * @throws Throwable
      */
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_GET])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     public function findOneAction(Request $request, string $id): Response
     {
@@ -313,7 +321,9 @@ class JobOfferController extends Controller
             self::CACHE_SCOPE,
             $request,
             [
-                'criteria' => ['id' => $id],
+                'criteria' => [
+                    'id' => $id,
+                ],
                 'orderBy' => [],
                 'limit' => null,
                 'offset' => null,
@@ -329,7 +339,9 @@ class JobOfferController extends Controller
     /**
      * @throws Throwable
      */
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_DELETE])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_DELETE])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     public function deleteAction(Request $request, string $id): Response
     {
@@ -366,34 +378,6 @@ class JobOfferController extends Controller
     /**
      * @throws Throwable
      */
-    private function findMyApplicationsAction(Request $request): Response
-    {
-        $entityManagerName = RequestHandler::getTenant($request);
-
-        $data = $this->readEndpointCache->remember(
-            self::CACHE_SCOPE,
-            $request,
-            [
-                'criteria' => ['scope' => 'my-offers-applications'],
-                'orderBy' => ['createdAt' => 'DESC'],
-                'limit' => null,
-                'offset' => null,
-                'search' => [],
-                'tenant' => $entityManagerName,
-            ],
-            fn (): array => $this->jobApplicationResource->findForMyOffers(),
-        );
-
-        return $this->getResponseHandler()->createResponse(
-            $request,
-            $data,
-            $this->jobApplicationResource,
-        );
-    }
-
-    /**
-     * @throws Throwable
-     */
     #[Route(path: '/available', methods: [Request::METHOD_GET])]
     #[OA\Response(
         response: 200,
@@ -412,6 +396,38 @@ class JobOfferController extends Controller
                 array $search,
                 ?string $entityManagerName,
             ): array => $this->getResource()->findAvailableOffers($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+        );
+    }
+
+    /**
+     * @throws Throwable
+     */
+    private function findMyApplicationsAction(Request $request): Response
+    {
+        $entityManagerName = RequestHandler::getTenant($request);
+
+        $data = $this->readEndpointCache->remember(
+            self::CACHE_SCOPE,
+            $request,
+            [
+                'criteria' => [
+                    'scope' => 'my-offers-applications',
+                ],
+                'orderBy' => [
+                    'createdAt' => 'DESC',
+                ],
+                'limit' => null,
+                'offset' => null,
+                'search' => [],
+                'tenant' => $entityManagerName,
+            ],
+            fn (): array => $this->jobApplicationResource->findForMyOffers(),
+        );
+
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            $data,
+            $this->jobApplicationResource,
         );
     }
 
@@ -508,23 +524,23 @@ class JobOfferController extends Controller
 
         $salaryMin = $request->query->get('salaryMin');
 
-        if ($salaryMin !== null && is_numeric((string) $salaryMin)) {
-            $criteria[] = ['entity.salaryMax', 'gte', (int) $salaryMin];
+        if ($salaryMin !== null && is_numeric((string)$salaryMin)) {
+            $criteria[] = ['entity.salaryMax', 'gte', (int)$salaryMin];
         }
 
         $salaryMax = $request->query->get('salaryMax');
 
-        if ($salaryMax !== null && is_numeric((string) $salaryMax)) {
-            $criteria[] = ['entity.salaryMin', 'lte', (int) $salaryMax];
+        if ($salaryMax !== null && is_numeric((string)$salaryMax)) {
+            $criteria[] = ['entity.salaryMin', 'lte', (int)$salaryMax];
         }
 
         $publishedWithinDays = $request->query->get('publishedWithinDays');
 
-        if ($publishedWithinDays !== null && is_numeric((string) $publishedWithinDays) && (int) $publishedWithinDays >= 0) {
+        if ($publishedWithinDays !== null && is_numeric((string)$publishedWithinDays) && (int)$publishedWithinDays >= 0) {
             $criteria[] = [
                 'entity.publishedAt',
                 'gte',
-                (new DateTimeImmutable())->sub(new DateInterval(sprintf('P%dD', (int) $publishedWithinDays))),
+                (new DateTimeImmutable())->sub(new DateInterval(sprintf('P%dD', (int)$publishedWithinDays))),
             ];
         }
 
@@ -596,9 +612,9 @@ class JobOfferController extends Controller
         }
 
         if (is_array($rawValue)) {
-            return array_values(array_filter(array_map(static fn (mixed $value): string => trim((string) $value), $rawValue)));
+            return array_values(array_filter(array_map(static fn (mixed $value): string => trim((string)$value), $rawValue)));
         }
 
-        return array_values(array_filter(array_map(static fn (string $value): string => trim($value), explode(',', (string) $rawValue))));
+        return array_values(array_filter(array_map(static fn (string $value): string => trim($value), explode(',', (string)$rawValue))));
     }
 }

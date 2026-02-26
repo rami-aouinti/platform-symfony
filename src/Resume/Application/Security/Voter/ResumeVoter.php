@@ -22,12 +22,14 @@ class ResumeVoter extends Voter
 {
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [
-            Permission::RESUME_VIEW->value,
-            Permission::RESUME_EDIT->value,
-            Permission::RESUME_DELETE->value,
-            Permission::RESUME_USE_FOR_APPLICATION->value,
-        ], true)) {
+        if (
+            !in_array($attribute, [
+                Permission::RESUME_VIEW->value,
+                Permission::RESUME_EDIT->value,
+                Permission::RESUME_DELETE->value,
+                Permission::RESUME_USE_FOR_APPLICATION->value,
+            ], true)
+        ) {
             return false;
         }
 

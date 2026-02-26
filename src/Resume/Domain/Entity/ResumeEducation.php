@@ -63,7 +63,9 @@ class ResumeEducation implements EntityInterface
     #[Groups(['ResumeEducation', 'ResumeEducation.endDate', 'ResumeEducation.create', 'ResumeEducation.show', 'ResumeEducation.edit'])]
     private ?DateTimeImmutable $endDate = null;
 
-    #[ORM\Column(name: 'is_current', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ORM\Column(name: 'is_current', type: Types::BOOLEAN, options: [
+        'default' => false,
+    ])]
     #[Groups(['ResumeEducation', 'ResumeEducation.isCurrent', 'ResumeEducation.create', 'ResumeEducation.show', 'ResumeEducation.edit'])]
     private bool $isCurrent = false;
 
@@ -71,7 +73,9 @@ class ResumeEducation implements EntityInterface
     #[Groups(['ResumeEducation', 'ResumeEducation.description', 'ResumeEducation.create', 'ResumeEducation.show', 'ResumeEducation.edit'])]
     private ?string $description = null;
 
-    #[ORM\Column(name: 'sort_order', type: Types::INTEGER, options: ['default' => 0])]
+    #[ORM\Column(name: 'sort_order', type: Types::INTEGER, options: [
+        'default' => 0,
+    ])]
     #[Groups(['ResumeEducation', 'ResumeEducation.sortOrder', 'ResumeEducation.create', 'ResumeEducation.show', 'ResumeEducation.edit'])]
     private int $sortOrder = 0;
 
@@ -80,25 +84,108 @@ class ResumeEducation implements EntityInterface
         $this->id = $this->createUuid();
     }
 
-    public function getId(): string { return $this->id->toString(); }
-    public function getResume(): ?Resume { return $this->resume; }
-    public function setResume(?Resume $resume): self { $this->resume = $resume; return $this; }
-    public function getSchoolName(): string { return $this->schoolName; }
-    public function setSchoolName(string $schoolName): self { $this->schoolName = $schoolName; return $this; }
-    public function getDegree(): string { return $this->degree; }
-    public function setDegree(string $degree): self { $this->degree = $degree; return $this; }
-    public function getFieldOfStudy(): ?string { return $this->fieldOfStudy; }
-    public function setFieldOfStudy(?string $fieldOfStudy): self { $this->fieldOfStudy = $fieldOfStudy; return $this; }
-    public function getLevel(): ResumeEducationLevel { return $this->level; }
-    public function setLevel(ResumeEducationLevel|string $level): self { $this->level = $level instanceof ResumeEducationLevel ? $level : ResumeEducationLevel::from($level); return $this; }
-    public function getStartDate(): ?DateTimeImmutable { return $this->startDate; }
-    public function setStartDate(?DateTimeImmutable $startDate): self { $this->startDate = $startDate; return $this; }
-    public function getEndDate(): ?DateTimeImmutable { return $this->endDate; }
-    public function setEndDate(?DateTimeImmutable $endDate): self { $this->endDate = $endDate; return $this; }
-    public function isCurrent(): bool { return $this->isCurrent; }
-    public function setIsCurrent(bool $isCurrent): self { $this->isCurrent = $isCurrent; return $this; }
-    public function getDescription(): ?string { return $this->description; }
-    public function setDescription(?string $description): self { $this->description = $description; return $this; }
-    public function getSortOrder(): int { return $this->sortOrder; }
-    public function setSortOrder(int $sortOrder): self { $this->sortOrder = $sortOrder; return $this; }
+    public function getId(): string
+    {
+        return $this->id->toString();
+    }
+    public function getResume(): ?Resume
+    {
+        return $this->resume;
+    }
+    public function setResume(?Resume $resume): self
+    {
+        $this->resume = $resume;
+
+        return $this;
+    }
+    public function getSchoolName(): string
+    {
+        return $this->schoolName;
+    }
+    public function setSchoolName(string $schoolName): self
+    {
+        $this->schoolName = $schoolName;
+
+        return $this;
+    }
+    public function getDegree(): string
+    {
+        return $this->degree;
+    }
+    public function setDegree(string $degree): self
+    {
+        $this->degree = $degree;
+
+        return $this;
+    }
+    public function getFieldOfStudy(): ?string
+    {
+        return $this->fieldOfStudy;
+    }
+    public function setFieldOfStudy(?string $fieldOfStudy): self
+    {
+        $this->fieldOfStudy = $fieldOfStudy;
+
+        return $this;
+    }
+    public function getLevel(): ResumeEducationLevel
+    {
+        return $this->level;
+    }
+    public function setLevel(ResumeEducationLevel|string $level): self
+    {
+        $this->level = $level instanceof ResumeEducationLevel ? $level : ResumeEducationLevel::from($level);
+
+        return $this;
+    }
+    public function getStartDate(): ?DateTimeImmutable
+    {
+        return $this->startDate;
+    }
+    public function setStartDate(?DateTimeImmutable $startDate): self
+    {
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+    public function getEndDate(): ?DateTimeImmutable
+    {
+        return $this->endDate;
+    }
+    public function setEndDate(?DateTimeImmutable $endDate): self
+    {
+        $this->endDate = $endDate;
+
+        return $this;
+    }
+    public function isCurrent(): bool
+    {
+        return $this->isCurrent;
+    }
+    public function setIsCurrent(bool $isCurrent): self
+    {
+        $this->isCurrent = $isCurrent;
+
+        return $this;
+    }
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+    public function getSortOrder(): int
+    {
+        return $this->sortOrder;
+    }
+    public function setSortOrder(int $sortOrder): self
+    {
+        $this->sortOrder = $sortOrder;
+
+        return $this;
+    }
 }

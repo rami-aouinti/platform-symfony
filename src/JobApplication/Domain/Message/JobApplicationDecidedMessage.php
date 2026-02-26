@@ -21,4 +21,3 @@ readonly class JobApplicationDecidedMessage implements MessageHighInterface
     ) {
     }
 }
-

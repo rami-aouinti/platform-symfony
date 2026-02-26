@@ -20,7 +20,6 @@ use Symfony\Component\Serializer\Attribute\Groups;
  * @package App\Resume
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
-
 #[ORM\Entity]
 #[ORM\Table(name: 'resume')]
 #[ORM\Index(name: 'idx_resume_owner_created_at', columns: ['owner_id', 'created_at'])]
@@ -76,7 +75,9 @@ class Resume implements EntityInterface
     #[Groups(['Resume', 'Resume.links', 'Resume.create', 'Resume.show', 'Resume.edit'])]
     private array $links = [];
 
-    #[ORM\Column(name: 'is_public', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ORM\Column(name: 'is_public', type: Types::BOOLEAN, options: [
+        'default' => false,
+    ])]
     #[Groups(['Resume', 'Resume.isPublic', 'Resume.create', 'Resume.show', 'Resume.edit'])]
     private bool $isPublic = false;
 

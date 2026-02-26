@@ -33,7 +33,7 @@ final readonly class MediaStorageService implements MediaStorageServiceInterface
         $this->filesystem->mkdir($directory);
 
         $extension = $file->guessExtension() ?: $file->getClientOriginalExtension() ?: 'bin';
-        $baseName = $this->slug((string) pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+        $baseName = $this->slug((string)pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
         $name = sprintf('%s-%s.%s', $baseName, Uuid::v7()->toRfc4122(), strtolower($extension));
 
         $file->move($directory, $name);

@@ -75,7 +75,9 @@ class ResumeResource extends RestResource implements ResumeResourceInterface
         ?string $entityManagerName = null,
     ): array {
         return $this->find(
-            ['owner' => $this->getCurrentUser()],
+            [
+                'owner' => $this->getCurrentUser(),
+            ],
             $orderBy,
             $limit,
             $offset,

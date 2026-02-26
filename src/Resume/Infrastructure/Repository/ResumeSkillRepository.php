@@ -21,7 +21,8 @@ class ResumeSkillRepository extends BaseRepository implements ResumeSkillReposit
     protected static array $searchColumns = ['name'];
     protected static string $entityName = Entity::class;
 
-    public function __construct(protected ManagerRegistry $managerRegistry)
-    {
+    public function __construct(
+        protected ManagerRegistry $managerRegistry
+    ) {
     }
 }

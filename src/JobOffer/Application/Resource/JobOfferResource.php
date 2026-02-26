@@ -122,7 +122,6 @@ class JobOfferResource extends RestResource implements JobOfferResourceInterface
         );
     }
 
-
     public function computeFacets(
         ?array $criteria = null,
         ?array $search = null,

@@ -21,7 +21,8 @@ class ResumeExperienceRepository extends BaseRepository implements ResumeExperie
     protected static array $searchColumns = ['title', 'companyName', 'description'];
     protected static string $entityName = Entity::class;
 
-    public function __construct(protected ManagerRegistry $managerRegistry)
-    {
+    public function __construct(
+        protected ManagerRegistry $managerRegistry
+    ) {
     }
 }

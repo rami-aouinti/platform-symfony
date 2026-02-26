@@ -12,11 +12,11 @@ use App\JobApplication\Application\DTO\JobApplication\JobApplication as JobAppli
 use App\JobApplication\Application\DTO\JobApplication\OfferApplicationPayload;
 use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobApplication\Domain\Entity\JobApplication as Entity;
-use App\JobApplication\Domain\Message\JobApplicationDecidedMessage;
-use App\JobApplication\Domain\Message\ConversationEnsureForAcceptedApplicationMessage;
-use App\JobApplication\Domain\Message\JobApplicationSubmittedMessage;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
 use App\JobApplication\Domain\Exception\JobApplicationException;
+use App\JobApplication\Domain\Message\ConversationEnsureForAcceptedApplicationMessage;
+use App\JobApplication\Domain\Message\JobApplicationDecidedMessage;
+use App\JobApplication\Domain\Message\JobApplicationSubmittedMessage;
 use App\JobApplication\Domain\Repository\Interfaces\JobApplicationRepositoryInterface as RepositoryInterface;
 use App\JobOffer\Infrastructure\Repository\JobOfferRepository;
 use App\Resume\Domain\Entity\Resume;
@@ -186,7 +186,9 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
     public function findAllowedForCurrentUser(): array
     {
         return array_values(array_filter(
-            $this->find(orderBy: ['createdAt' => 'DESC']),
+            $this->find(orderBy: [
+                'createdAt' => 'DESC',
+            ]),
             fn (Entity $application): bool => $this->authorizationChecker->isGranted(Permission::JOB_APPLICATION_VIEW->value, $application),
         ));
     }
@@ -228,7 +230,6 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
 
         return $user;
     }
-
 
     private function resolveResume(?string $resumeId): ?Resume
     {

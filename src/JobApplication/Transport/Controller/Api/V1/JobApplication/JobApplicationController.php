@@ -46,6 +46,8 @@ class JobApplicationController extends Controller
     use PatchMethod;
     use \App\General\Transport\Rest\Traits\Actions\Authenticated\DeleteAction;
 
+    private const string CACHE_SCOPE = 'job_application';
+
     /**
      * @var array<string, string>
      */
@@ -61,8 +63,6 @@ class JobApplicationController extends Controller
     ) {
         parent::__construct($resource);
     }
-
-    private const string CACHE_SCOPE = "job_application";
 
     /**
      * @throws Throwable
@@ -106,7 +106,9 @@ class JobApplicationController extends Controller
     /**
      * @throws Throwable
      */
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PUT])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_PUT])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\RequestBody(required: true, content: new JsonContent(
         required: ['jobOffer', 'candidate', 'status'],
@@ -132,7 +134,9 @@ class JobApplicationController extends Controller
     /**
      * @throws Throwable
      */
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_PATCH])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\RequestBody(required: true, content: new JsonContent(
         required: ['jobOffer', 'candidate', 'status'],
@@ -184,7 +188,6 @@ class JobApplicationController extends Controller
         );
     }
 
-
     /**
      * @throws Throwable
      */
@@ -202,7 +205,9 @@ class JobApplicationController extends Controller
             self::CACHE_SCOPE,
             $request,
             [
-                'criteria' => ['scope' => 'my-offers'],
+                'criteria' => [
+                    'scope' => 'my-offers',
+                ],
                 'orderBy' => [],
                 'limit' => null,
                 'offset' => null,
@@ -222,7 +227,9 @@ class JobApplicationController extends Controller
     /**
      * @throws Throwable
      */
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_GET])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     public function findOneAction(Request $request, string $id): Response
     {
@@ -231,7 +238,9 @@ class JobApplicationController extends Controller
             self::CACHE_SCOPE,
             $request,
             [
-                'criteria' => ['id' => $id],
+                'criteria' => [
+                    'id' => $id,
+                ],
                 'orderBy' => [],
                 'limit' => null,
                 'offset' => null,
@@ -251,7 +260,9 @@ class JobApplicationController extends Controller
     /**
      * @throws Throwable
      */
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_DELETE])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_DELETE])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     public function deleteAction(Request $request, string $id): Response
     {
@@ -261,8 +272,12 @@ class JobApplicationController extends Controller
         return $response;
     }
 
-    #[Route(path: '/{id}/accept', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
-    #[OA\RequestBody(required: false, content: new JsonContent(properties: [new OA\Property(property: 'note', type: 'string', nullable: true, example: 'Status changed by recruiter workflow.')], type: 'object', example: ['note' => 'Candidate accepted after final interview.']))]
+    #[Route(path: '/{id}/accept', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_PATCH])]
+    #[OA\RequestBody(required: false, content: new JsonContent(properties: [new OA\Property(property: 'note', type: 'string', nullable: true, example: 'Status changed by recruiter workflow.')], type: 'object', example: [
+        'note' => 'Candidate accepted after final interview.',
+    ]))]
     #[OA\Response(response: 200, description: 'Application accepted', content: new JsonContent(type: 'object'))]
     public function acceptAction(Request $request, string $id): Response
     {
@@ -276,8 +291,12 @@ class JobApplicationController extends Controller
         );
     }
 
-    #[Route(path: '/{id}/reject', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
-    #[OA\RequestBody(required: false, content: new JsonContent(properties: [new OA\Property(property: 'note', type: 'string', nullable: true, example: 'Status changed by recruiter workflow.')], type: 'object', example: ['note' => 'Profile does not match required seniority.']))]
+    #[Route(path: '/{id}/reject', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_PATCH])]
+    #[OA\RequestBody(required: false, content: new JsonContent(properties: [new OA\Property(property: 'note', type: 'string', nullable: true, example: 'Status changed by recruiter workflow.')], type: 'object', example: [
+        'note' => 'Profile does not match required seniority.',
+    ]))]
     #[OA\Response(response: 200, description: 'Application rejected', content: new JsonContent(type: 'object'))]
     public function rejectAction(Request $request, string $id): Response
     {
@@ -291,8 +310,12 @@ class JobApplicationController extends Controller
         );
     }
 
-    #[Route(path: '/{id}/withdraw', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
-    #[OA\RequestBody(required: false, content: new JsonContent(properties: [new OA\Property(property: 'note', type: 'string', nullable: true, example: 'Status changed by recruiter workflow.')], type: 'object', example: ['note' => 'Candidate accepted another offer.']))]
+    #[Route(path: '/{id}/withdraw', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_PATCH])]
+    #[OA\RequestBody(required: false, content: new JsonContent(properties: [new OA\Property(property: 'note', type: 'string', nullable: true, example: 'Status changed by recruiter workflow.')], type: 'object', example: [
+        'note' => 'Candidate accepted another offer.',
+    ]))]
     #[OA\Response(response: 200, description: 'Application withdrawn', content: new JsonContent(type: 'object'))]
     public function withdrawAction(Request $request, string $id): Response
     {

@@ -36,7 +36,9 @@ class OfferApplicationController extends Controller
         parent::__construct($resource);
     }
 
-    #[Route(path: '/{id}/apply', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_POST])]
+    #[Route(path: '/{id}/apply', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_POST])]
     #[OA\RequestBody(
         required: false,
         content: new JsonContent(

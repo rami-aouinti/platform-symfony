@@ -45,7 +45,9 @@ class OfferResource extends RestResource implements OfferResourceInterface
 
         $membershipCompanyIds = array_map(
             static fn (CompanyMembership $membership): string => $membership->getCompany()->getId(),
-            $this->companyMembershipRepository->findBy(['user' => $currentUser]),
+            $this->companyMembershipRepository->findBy([
+                'user' => $currentUser,
+            ]),
         );
 
         $criteria = [
@@ -85,7 +87,8 @@ class OfferResource extends RestResource implements OfferResourceInterface
             'company' => $company,
         ]);
 
-        if (!$membership instanceof CompanyMembership
+        if (
+            !$membership instanceof CompanyMembership
             || !in_array($membership->getRole(), [CompanyMembership::ROLE_OWNER, CompanyMembership::ROLE_CRM_MANAGER], true)
         ) {
             throw new AccessDeniedHttpException('Only offer author, company owner or manager can manage offers.');
@@ -128,7 +131,8 @@ class OfferResource extends RestResource implements OfferResourceInterface
             'company' => $offer->getCompany(),
         ]);
 
-        if ($membership instanceof CompanyMembership
+        if (
+            $membership instanceof CompanyMembership
             && in_array($membership->getRole(), [CompanyMembership::ROLE_OWNER, CompanyMembership::ROLE_CRM_MANAGER], true)
         ) {
             return;

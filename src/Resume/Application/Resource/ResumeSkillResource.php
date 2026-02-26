@@ -27,10 +27,22 @@ class ResumeSkillResource extends RestResource implements ResumeSkillResourceInt
         parent::__construct($repository);
     }
 
-    public function beforeCreate($restDto, EntityInterface $entity): void { $this->assertCanEdit($entity); }
-    public function beforeUpdate(string &$id, $restDto, EntityInterface $entity): void { $this->assertCanEdit($entity); }
-    public function beforePatch(string &$id, $restDto, EntityInterface $entity): void { $this->assertCanEdit($entity); }
-    public function beforeDelete(string &$id, EntityInterface $entity): void { $this->assertCanEdit($entity); }
+    public function beforeCreate($restDto, EntityInterface $entity): void
+    {
+        $this->assertCanEdit($entity);
+    }
+    public function beforeUpdate(string &$id, $restDto, EntityInterface $entity): void
+    {
+        $this->assertCanEdit($entity);
+    }
+    public function beforePatch(string &$id, $restDto, EntityInterface $entity): void
+    {
+        $this->assertCanEdit($entity);
+    }
+    public function beforeDelete(string &$id, EntityInterface $entity): void
+    {
+        $this->assertCanEdit($entity);
+    }
 
     private function assertCanEdit(EntityInterface $entity): void
     {

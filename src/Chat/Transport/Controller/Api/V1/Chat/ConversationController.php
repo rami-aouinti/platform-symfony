@@ -40,7 +40,9 @@ class ConversationController extends Controller
         parent::__construct($resource);
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     #[Route(path: '', methods: [Request::METHOD_GET])]
     #[OA\Get(summary: 'List current user conversations')]
     #[OA\Response(response: 200, description: 'Conversation list', content: new JsonContent(type: 'array', items: new OA\Items(type: 'object')))]
@@ -53,8 +55,12 @@ class ConversationController extends Controller
         );
     }
 
-    /** @throws Throwable */
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_GET])]
     #[OA\Get(summary: 'Get conversation detail')]
     #[OA\Response(response: 200, description: 'Conversation detail', content: new JsonContent(type: 'object'))]
     #[OA\Response(response: 403, description: 'Forbidden: current user is not a participant or conversation is not eligible for chat.')]
@@ -68,8 +74,12 @@ class ConversationController extends Controller
         );
     }
 
-    /** @throws Throwable */
-    #[Route(path: '/{id}/messages', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_POST])]
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '/{id}/messages', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_POST])]
     #[OA\Post(summary: 'Send message in conversation')]
     #[OA\RequestBody(required: true, content: new JsonContent(
         required: ['content'],
@@ -84,7 +94,7 @@ class ConversationController extends Controller
         /** @var array<string, mixed> $payload */
         $payload = JSON::decode($request->getContent() ?: '{}', true);
 
-        $dto = (new ChatMessageSend())->setContent((string) ($payload['content'] ?? ''));
+        $dto = (new ChatMessageSend())->setContent((string)($payload['content'] ?? ''));
         $violations = $this->validator->validate($dto);
 
         if ($violations->count() > 0) {

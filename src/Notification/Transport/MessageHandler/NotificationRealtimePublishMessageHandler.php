@@ -26,4 +26,3 @@ readonly class NotificationRealtimePublishMessageHandler
         $this->notificationChannelService->sendPushNotification($message->userId, $message->title, $message->message);
     }
 }
-

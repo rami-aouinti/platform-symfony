@@ -32,11 +32,13 @@ class JobApplicationVoter extends Voter
             return $subject instanceof JobOffer;
         }
 
-        if (!in_array($attribute, [
-            Permission::JOB_APPLICATION_VIEW->value,
-            Permission::JOB_APPLICATION_DECIDE->value,
-            Permission::JOB_APPLICATION_WITHDRAW->value,
-        ], true)) {
+        if (
+            !in_array($attribute, [
+                Permission::JOB_APPLICATION_VIEW->value,
+                Permission::JOB_APPLICATION_DECIDE->value,
+                Permission::JOB_APPLICATION_WITHDRAW->value,
+            ], true)
+        ) {
             return false;
         }
 
@@ -71,8 +73,10 @@ class JobApplicationVoter extends Voter
             return $subject->getCandidate()?->getId() === $user->getUserIdentifier();
         }
 
-        if ($attribute === Permission::JOB_APPLICATION_VIEW->value
-            && $subject->getCandidate()?->getId() === $user->getUserIdentifier()) {
+        if (
+            $attribute === Permission::JOB_APPLICATION_VIEW->value
+            && $subject->getCandidate()?->getId() === $user->getUserIdentifier()
+        ) {
             return true;
         }
 

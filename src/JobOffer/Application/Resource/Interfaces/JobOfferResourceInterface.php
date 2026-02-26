@@ -50,6 +50,4 @@ interface JobOfferResourceInterface extends RestResourceInterface
         ?array $postFilters = null,
         ?string $entityManagerName = null,
     ): array;
-
 }
-

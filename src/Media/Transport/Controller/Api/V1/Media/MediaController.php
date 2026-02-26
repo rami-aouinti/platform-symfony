@@ -77,7 +77,7 @@ class MediaController extends Controller
         ]);
 
         if ($violations->count() > 0) {
-            return $this->createValidationError((string) $violations->get(0)->getMessage());
+            return $this->createValidationError((string)$violations->get(0)->getMessage());
         }
 
         $media = $this->getResource()->createFromUploadedFile($file);

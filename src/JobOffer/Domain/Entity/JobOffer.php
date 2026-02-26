@@ -166,7 +166,6 @@ class JobOffer implements EntityInterface
     #[Groups(['JobOffer', 'JobOffer.languages', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private Collection $languages;
 
-
     /**
      * @var Collection<int, JobApplication>|null
      */
@@ -181,7 +180,6 @@ class JobOffer implements EntityInterface
         $this->languages = new ArrayCollection();
         $this->jobApplications = new ArrayCollection();
     }
-
 
     /**
      * @return Collection<int, JobApplication>|null

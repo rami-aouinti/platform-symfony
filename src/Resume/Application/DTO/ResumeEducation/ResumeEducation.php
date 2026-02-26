@@ -39,16 +39,76 @@ class ResumeEducation extends RestDto
     protected ?string $description = null;
     protected int $sortOrder = 0;
 
-    public function setResume(?Resume $resume): self { $this->setVisited('resume'); $this->resume = $resume; return $this; }
-    public function setSchoolName(string $schoolName): self { $this->setVisited('schoolName'); $this->schoolName = $schoolName; return $this; }
-    public function setDegree(string $degree): self { $this->setVisited('degree'); $this->degree = $degree; return $this; }
-    public function setFieldOfStudy(?string $fieldOfStudy): self { $this->setVisited('fieldOfStudy'); $this->fieldOfStudy = $fieldOfStudy; return $this; }
-    public function setLevel(string $level): self { $this->setVisited('level'); $this->level = $level; return $this; }
-    public function setStartDate(?DateTimeImmutable $startDate): self { $this->setVisited('startDate'); $this->startDate = $startDate; return $this; }
-    public function setEndDate(?DateTimeImmutable $endDate): self { $this->setVisited('endDate'); $this->endDate = $endDate; return $this; }
-    public function setIsCurrent(bool $isCurrent): self { $this->setVisited('isCurrent'); $this->isCurrent = $isCurrent; return $this; }
-    public function setDescription(?string $description): self { $this->setVisited('description'); $this->description = $description; return $this; }
-    public function setSortOrder(int $sortOrder): self { $this->setVisited('sortOrder'); $this->sortOrder = $sortOrder; return $this; }
+    public function setResume(?Resume $resume): self
+    {
+        $this->setVisited('resume');
+        $this->resume = $resume;
+
+        return $this;
+    }
+    public function setSchoolName(string $schoolName): self
+    {
+        $this->setVisited('schoolName');
+        $this->schoolName = $schoolName;
+
+        return $this;
+    }
+    public function setDegree(string $degree): self
+    {
+        $this->setVisited('degree');
+        $this->degree = $degree;
+
+        return $this;
+    }
+    public function setFieldOfStudy(?string $fieldOfStudy): self
+    {
+        $this->setVisited('fieldOfStudy');
+        $this->fieldOfStudy = $fieldOfStudy;
+
+        return $this;
+    }
+    public function setLevel(string $level): self
+    {
+        $this->setVisited('level');
+        $this->level = $level;
+
+        return $this;
+    }
+    public function setStartDate(?DateTimeImmutable $startDate): self
+    {
+        $this->setVisited('startDate');
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+    public function setEndDate(?DateTimeImmutable $endDate): self
+    {
+        $this->setVisited('endDate');
+        $this->endDate = $endDate;
+
+        return $this;
+    }
+    public function setIsCurrent(bool $isCurrent): self
+    {
+        $this->setVisited('isCurrent');
+        $this->isCurrent = $isCurrent;
+
+        return $this;
+    }
+    public function setDescription(?string $description): self
+    {
+        $this->setVisited('description');
+        $this->description = $description;
+
+        return $this;
+    }
+    public function setSortOrder(int $sortOrder): self
+    {
+        $this->setVisited('sortOrder');
+        $this->sortOrder = $sortOrder;
+
+        return $this;
+    }
 
     #[Override]
     public function load(EntityInterface $entity): self

@@ -31,11 +31,41 @@ class ResumeSkill extends RestDto
     protected ?int $yearsExperience = null;
     protected int $sortOrder = 0;
 
-    public function setResume(?Resume $resume): self { $this->setVisited('resume'); $this->resume = $resume; return $this; }
-    public function setName(string $name): self { $this->setVisited('name'); $this->name = $name; return $this; }
-    public function setLevel(string $level): self { $this->setVisited('level'); $this->level = $level; return $this; }
-    public function setYearsExperience(?int $yearsExperience): self { $this->setVisited('yearsExperience'); $this->yearsExperience = $yearsExperience; return $this; }
-    public function setSortOrder(int $sortOrder): self { $this->setVisited('sortOrder'); $this->sortOrder = $sortOrder; return $this; }
+    public function setResume(?Resume $resume): self
+    {
+        $this->setVisited('resume');
+        $this->resume = $resume;
+
+        return $this;
+    }
+    public function setName(string $name): self
+    {
+        $this->setVisited('name');
+        $this->name = $name;
+
+        return $this;
+    }
+    public function setLevel(string $level): self
+    {
+        $this->setVisited('level');
+        $this->level = $level;
+
+        return $this;
+    }
+    public function setYearsExperience(?int $yearsExperience): self
+    {
+        $this->setVisited('yearsExperience');
+        $this->yearsExperience = $yearsExperience;
+
+        return $this;
+    }
+    public function setSortOrder(int $sortOrder): self
+    {
+        $this->setVisited('sortOrder');
+        $this->sortOrder = $sortOrder;
+
+        return $this;
+    }
 
     #[Override]
     public function load(EntityInterface $entity): self

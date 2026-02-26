@@ -50,7 +50,9 @@ class ResumeSkill implements EntityInterface
     #[Groups(['ResumeSkill', 'ResumeSkill.yearsExperience', 'ResumeSkill.create', 'ResumeSkill.show', 'ResumeSkill.edit'])]
     private ?int $yearsExperience = null;
 
-    #[ORM\Column(name: 'sort_order', type: Types::INTEGER, options: ['default' => 0])]
+    #[ORM\Column(name: 'sort_order', type: Types::INTEGER, options: [
+        'default' => 0,
+    ])]
     #[Groups(['ResumeSkill', 'ResumeSkill.sortOrder', 'ResumeSkill.create', 'ResumeSkill.show', 'ResumeSkill.edit'])]
     private int $sortOrder = 0;
 
@@ -59,15 +61,58 @@ class ResumeSkill implements EntityInterface
         $this->id = $this->createUuid();
     }
 
-    public function getId(): string { return $this->id->toString(); }
-    public function getResume(): ?Resume { return $this->resume; }
-    public function setResume(?Resume $resume): self { $this->resume = $resume; return $this; }
-    public function getName(): string { return $this->name; }
-    public function setName(string $name): self { $this->name = $name; return $this; }
-    public function getLevel(): ResumeSkillLevel { return $this->level; }
-    public function setLevel(ResumeSkillLevel|string $level): self { $this->level = $level instanceof ResumeSkillLevel ? $level : ResumeSkillLevel::from($level); return $this; }
-    public function getYearsExperience(): ?int { return $this->yearsExperience; }
-    public function setYearsExperience(?int $yearsExperience): self { $this->yearsExperience = $yearsExperience; return $this; }
-    public function getSortOrder(): int { return $this->sortOrder; }
-    public function setSortOrder(int $sortOrder): self { $this->sortOrder = $sortOrder; return $this; }
+    public function getId(): string
+    {
+        return $this->id->toString();
+    }
+    public function getResume(): ?Resume
+    {
+        return $this->resume;
+    }
+    public function setResume(?Resume $resume): self
+    {
+        $this->resume = $resume;
+
+        return $this;
+    }
+    public function getName(): string
+    {
+        return $this->name;
+    }
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+    public function getLevel(): ResumeSkillLevel
+    {
+        return $this->level;
+    }
+    public function setLevel(ResumeSkillLevel|string $level): self
+    {
+        $this->level = $level instanceof ResumeSkillLevel ? $level : ResumeSkillLevel::from($level);
+
+        return $this;
+    }
+    public function getYearsExperience(): ?int
+    {
+        return $this->yearsExperience;
+    }
+    public function setYearsExperience(?int $yearsExperience): self
+    {
+        $this->yearsExperience = $yearsExperience;
+
+        return $this;
+    }
+    public function getSortOrder(): int
+    {
+        return $this->sortOrder;
+    }
+    public function setSortOrder(int $sortOrder): self
+    {
+        $this->sortOrder = $sortOrder;
+
+        return $this;
+    }
 }

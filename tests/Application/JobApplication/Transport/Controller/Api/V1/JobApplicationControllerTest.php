@@ -7,8 +7,8 @@ namespace App\Tests\Application\JobApplication\Transport\Controller\Api\V1;
 use App\General\Domain\Utils\JSON;
 use App\JobApplication\Domain\Message\ConversationEnsureForAcceptedApplicationMessage;
 use App\Tests\TestCase\WebTestCase;
-use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Throwable;
 
 class JobApplicationControllerTest extends WebTestCase
@@ -19,18 +19,22 @@ class JobApplicationControllerTest extends WebTestCase
     private const string MY_OFFERS_EXCLUDED_APPLICATION_ID = '50000000-0000-1000-8000-000000000004';
     private const string BASE_URL = self::API_URL_PREFIX . '/v1/job-applications';
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testCandidateCanApplyToOpenOffer(): void
     {
         $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
         $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
 
         self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
-        $payload = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        $payload = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
         self::assertSame('pending', $payload['status']);
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testCandidateCanApplyToOpenOfferWithPayloadPersistence(): void
     {
         $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
@@ -43,30 +47,34 @@ class JobApplicationControllerTest extends WebTestCase
         $candidateClient->request(
             'POST',
             self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply',
-            server: ['CONTENT_TYPE' => 'application/json'],
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             content: JSON::encode($requestPayload),
         );
 
         self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
-        $createdPayload = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        $createdPayload = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
 
         self::assertSame($requestPayload['coverLetter'], $createdPayload['coverLetter']);
         self::assertSame($requestPayload['cvUrl'], $createdPayload['cvUrl']);
         self::assertSame($requestPayload['attachments'], $createdPayload['attachments']);
 
-        $applicationId = (string) $createdPayload['id'];
+        $applicationId = (string)$createdPayload['id'];
 
         $candidateClient->request('GET', self::BASE_URL . '/' . $applicationId);
         self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
 
-        $persistedPayload = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        $persistedPayload = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
 
         self::assertSame($requestPayload['coverLetter'], $persistedPayload['coverLetter']);
         self::assertSame($requestPayload['cvUrl'], $persistedPayload['cvUrl']);
         self::assertSame($requestPayload['attachments'], $persistedPayload['attachments']);
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testDuplicateApplicationIsBlocked(): void
     {
         $candidateClient = $this->getTestClient('carol-user', 'password-user');
@@ -75,15 +83,17 @@ class JobApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_CONFLICT, $candidateClient->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testAcceptAndRejectAreAllowedOnlyForOfferOwnerOrAuthorizedManager(): void
     {
         $candidateClient = $this->getTestClient('alice-user', 'password-user');
         $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
         self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
 
-        $application = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
-        $applicationId = (string) $application['id'];
+        $application = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
+        $applicationId = (string)$application['id'];
 
         $forbiddenClient = $this->getTestClient('carol-user', 'password-user');
         $forbiddenClient->request('PATCH', self::BASE_URL . '/' . $applicationId . '/accept');
@@ -98,7 +108,9 @@ class JobApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_BAD_REQUEST, $managerClient->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testWithdrawIsAllowedOnlyForCandidate(): void
     {
         $candidateClient = $this->getTestClient('carol-user', 'password-user');
@@ -110,14 +122,16 @@ class JobApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_FORBIDDEN, $authorClient->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testInvalidTransitionsAreRejected(): void
     {
         $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
         $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
         self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
-        $application = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
-        $applicationId = (string) $application['id'];
+        $application = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
+        $applicationId = (string)$application['id'];
 
         $ownerClient = $this->getTestClient('john-user', 'password-user');
         $ownerClient->request('PATCH', self::BASE_URL . '/' . $applicationId . '/reject');
@@ -127,20 +141,21 @@ class JobApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_BAD_REQUEST, $ownerClient->getResponse()->getStatusCode());
     }
 
-
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testMyOffersRouteReturnsOnlyApplicationsCurrentUserCanDecide(): void
     {
         $ownerClient = $this->getTestClient('john-user', 'password-user');
         $ownerClient->request('GET', self::BASE_URL . '/my-offers');
         self::assertSame(Response::HTTP_OK, $ownerClient->getResponse()->getStatusCode());
 
-        $ownerList = JSON::decode((string) $ownerClient->getResponse()->getContent(), true);
+        $ownerList = JSON::decode((string)$ownerClient->getResponse()->getContent(), true);
         self::assertIsArray($ownerList);
         self::assertNotEmpty($ownerList);
 
         $ownerApplicationIds = array_map(
-            static fn (array $application): string => (string) ($application['id'] ?? ''),
+            static fn (array $application): string => (string)($application['id'] ?? ''),
             $ownerList,
         );
 
@@ -156,12 +171,13 @@ class JobApplicationControllerTest extends WebTestCase
         $candidateClient->request('GET', self::BASE_URL . '/my-offers');
         self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
 
-        $candidateList = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        $candidateList = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
         self::assertSame([], $candidateList);
     }
 
-
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testConversationEnsureMessageIsDispatchedOnlyOnAccept(): void
     {
         $transport = static::getContainer()->get('messenger.transport.async_priority_high');
@@ -172,8 +188,8 @@ class JobApplicationControllerTest extends WebTestCase
         $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
         self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
 
-        $application = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
-        $applicationId = (string) $application['id'];
+        $application = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
+        $applicationId = (string)$application['id'];
 
         $ownerClient = $this->getTestClient('john-user', 'password-user');
         $ownerClient->request('PATCH', self::BASE_URL . '/' . $applicationId . '/reject');
@@ -195,8 +211,8 @@ class JobApplicationControllerTest extends WebTestCase
         $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
         self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
 
-        $application = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
-        $applicationId = (string) $application['id'];
+        $application = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
+        $applicationId = (string)$application['id'];
 
         $ownerClient->request('PATCH', self::BASE_URL . '/' . $applicationId . '/accept');
         self::assertSame(Response::HTTP_OK, $ownerClient->getResponse()->getStatusCode());
@@ -211,13 +227,15 @@ class JobApplicationControllerTest extends WebTestCase
             static fn (object $message): bool => $message instanceof ConversationEnsureForAcceptedApplicationMessage,
         ));
     }
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testApplicationVisibilityListDependsOnRole(): void
     {
         $candidateClient = $this->getTestClient('carol-user', 'password-user');
         $candidateClient->request('GET', self::BASE_URL);
         self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
-        $candidateList = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        $candidateList = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
         self::assertIsArray($candidateList);
         self::assertNotEmpty($candidateList);
 
@@ -236,7 +254,9 @@ class JobApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_NOT_FOUND, $outsiderClient->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testCandidateCanApplyToOpenOfferWithResumeId(): void
     {
         $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
@@ -250,27 +270,31 @@ class JobApplicationControllerTest extends WebTestCase
         $candidateClient->request(
             'POST',
             self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply',
-            server: ['CONTENT_TYPE' => 'application/json'],
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             content: JSON::encode($requestPayload),
         );
 
         self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
-        $createdPayload = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        $createdPayload = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
 
         self::assertSame($requestPayload['resumeId'], $createdPayload['resume']);
         self::assertNull($createdPayload['cvUrl']);
 
-        $applicationId = (string) $createdPayload['id'];
+        $applicationId = (string)$createdPayload['id'];
 
         $candidateClient->request('GET', self::BASE_URL . '/' . $applicationId);
         self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
 
-        $persistedPayload = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        $persistedPayload = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
         self::assertSame($requestPayload['resumeId'], $persistedPayload['resume']);
         self::assertNull($persistedPayload['cvUrl']);
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testApplyWithUnknownResumeIdReturnsNotFound(): void
     {
         $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
@@ -278,7 +302,9 @@ class JobApplicationControllerTest extends WebTestCase
         $candidateClient->request(
             'POST',
             self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply',
-            server: ['CONTENT_TYPE' => 'application/json'],
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             content: JSON::encode([
                 'resumeId' => '60000000-0000-1000-8000-000000000099',
             ]),
@@ -287,7 +313,9 @@ class JobApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_NOT_FOUND, $candidateClient->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testApplyWithResumeOwnedByAnotherUserReturnsNotFound(): void
     {
         $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
@@ -295,7 +323,9 @@ class JobApplicationControllerTest extends WebTestCase
         $candidateClient->request(
             'POST',
             self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply',
-            server: ['CONTENT_TYPE' => 'application/json'],
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             content: JSON::encode([
                 'resumeId' => '60000000-0000-1000-8000-000000000003',
             ]),
@@ -304,7 +334,9 @@ class JobApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_NOT_FOUND, $candidateClient->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testApplyWithPrivateResumeNotAccessibleReturnsNotFound(): void
     {
         $candidateClient = $this->getTestClient('john-user', 'password-user');
@@ -312,7 +344,9 @@ class JobApplicationControllerTest extends WebTestCase
         $candidateClient->request(
             'POST',
             self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply',
-            server: ['CONTENT_TYPE' => 'application/json'],
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
             content: JSON::encode([
                 'resumeId' => '60000000-0000-1000-8000-000000000002',
             ]),
@@ -320,5 +354,4 @@ class JobApplicationControllerTest extends WebTestCase
 
         self::assertSame(Response::HTTP_NOT_FOUND, $candidateClient->getResponse()->getStatusCode());
     }
-
 }

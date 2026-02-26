@@ -38,6 +38,7 @@ use function array_map;
  */
 class JobOffer extends RestDto
 {
+    private const SALARY_PERIODS = ['hourly', 'daily', 'monthly', 'yearly'];
     /**
      * @var array<string, string>
      */
@@ -45,8 +46,6 @@ class JobOffer extends RestDto
         'skills' => 'updateSkills',
         'languages' => 'updateLanguages',
     ];
-
-    private const SALARY_PERIODS = ['hourly', 'daily', 'monthly', 'yearly'];
 
     #[Assert\NotBlank]
     #[Assert\NotNull]
@@ -145,60 +144,272 @@ class JobOffer extends RestDto
     )]
     private bool $consistency = true;
 
-    public function getTitle(): string { return $this->title; }
-    public function setTitle(string $title): self { $this->setVisited('title'); $this->title = $title; return $this; }
-    public function getDescription(): string { return $this->description; }
-    public function setDescription(string $description): self { $this->setVisited('description'); $this->description = $description; return $this; }
-    public function getLocation(): string { return $this->location; }
-    public function setLocation(string $location): self { $this->setVisited('location'); $this->location = $location; return $this; }
-    public function getEmploymentType(): string { return $this->employmentType; }
-    public function setEmploymentType(string $employmentType): self { $this->setVisited('employmentType'); $this->employmentType = $employmentType; return $this; }
-    public function getStatus(): string { return $this->status; }
-    public function setStatus(string $status): self { $this->setVisited('status'); $this->status = $status; return $this; }
-    public function getSalaryMin(): ?int { return $this->salaryMin; }
-    public function setSalaryMin(?int $salaryMin): self { $this->setVisited('salaryMin'); $this->salaryMin = $salaryMin; return $this; }
-    public function getSalaryMax(): ?int { return $this->salaryMax; }
-    public function setSalaryMax(?int $salaryMax): self { $this->setVisited('salaryMax'); $this->salaryMax = $salaryMax; return $this; }
-    public function getSalaryCurrency(): ?string { return $this->salaryCurrency; }
-    public function setSalaryCurrency(?string $salaryCurrency): self { $this->setVisited('salaryCurrency'); $this->salaryCurrency = $salaryCurrency; return $this; }
-    public function getSalaryPeriod(): ?string { return $this->salaryPeriod; }
-    public function setSalaryPeriod(?string $salaryPeriod): self { $this->setVisited('salaryPeriod'); $this->salaryPeriod = $salaryPeriod; return $this; }
-    public function getRemoteMode(): ?string { return $this->remoteMode; }
-    public function setRemoteMode(?string $remoteMode): self { $this->setVisited('remoteMode'); $this->remoteMode = $remoteMode; return $this; }
-    public function getRemotePolicy(): ?string { return $this->getRemoteMode(); }
-    public function setRemotePolicy(?string $remotePolicy): self { return $this->setRemoteMode($remotePolicy); }
-    public function getExperienceLevel(): ?string { return $this->experienceLevel; }
-    public function setExperienceLevel(?string $experienceLevel): self { $this->setVisited('experienceLevel'); $this->experienceLevel = $experienceLevel; return $this; }
-    public function getWorkTime(): ?string { return $this->workTime; }
-    public function setWorkTime(?string $workTime): self { $this->setVisited('workTime'); $this->workTime = $workTime; return $this; }
-    public function getApplicationType(): ?string { return $this->applicationType; }
-    public function setApplicationType(?string $applicationType): self { $this->setVisited('applicationType'); $this->applicationType = $applicationType; return $this; }
-    public function getPublishedAt(): ?DateTimeImmutable { return $this->publishedAt; }
-    public function setPublishedAt(?DateTimeImmutable $publishedAt): self { $this->setVisited('publishedAt'); $this->publishedAt = $publishedAt; return $this; }
-    public function getCity(): ?City { return $this->city; }
-    public function setCity(?City $city): self { $this->setVisited('city'); $this->city = $city; return $this; }
-    public function getRegion(): ?Region { return $this->region; }
-    public function setRegion(?Region $region): self { $this->setVisited('region'); $this->region = $region; return $this; }
-    public function getJobCategory(): ?JobCategory { return $this->jobCategory; }
-    public function setJobCategory(?JobCategory $jobCategory): self { $this->setVisited('jobCategory'); $this->jobCategory = $jobCategory; return $this; }
-    public function getCountry(): ?string { return $this->country; }
-    public function setCountry(?string $country): self { $this->setVisited('country'); $this->country = $country; return $this; }
-    public function getLanguageLevel(): ?string { return $this->languageLevel; }
-    public function setLanguageLevel(?string $languageLevel): self { $this->setVisited('languageLevel'); $this->languageLevel = $languageLevel; return $this; }
-    public function getCompany(): ?Company { return $this->company; }
-    public function setCompany(?Company $company): self { $this->setVisited('company'); $this->company = $company; return $this; }
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+    public function setTitle(string $title): self
+    {
+        $this->setVisited('title');
+        $this->title = $title;
 
-    /** @return array<int, Skill> */
-    public function getSkills(): array { return $this->skills; }
+        return $this;
+    }
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+    public function setDescription(string $description): self
+    {
+        $this->setVisited('description');
+        $this->description = $description;
 
-    /** @param array<int, Skill> $skills */
-    public function setSkills(array $skills): self { $this->setVisited('skills'); $this->skills = $skills; return $this; }
+        return $this;
+    }
+    public function getLocation(): string
+    {
+        return $this->location;
+    }
+    public function setLocation(string $location): self
+    {
+        $this->setVisited('location');
+        $this->location = $location;
 
-    /** @return array<int, Language> */
-    public function getLanguages(): array { return $this->languages; }
+        return $this;
+    }
+    public function getEmploymentType(): string
+    {
+        return $this->employmentType;
+    }
+    public function setEmploymentType(string $employmentType): self
+    {
+        $this->setVisited('employmentType');
+        $this->employmentType = $employmentType;
 
-    /** @param array<int, Language> $languages */
-    public function setLanguages(array $languages): self { $this->setVisited('languages'); $this->languages = $languages; return $this; }
+        return $this;
+    }
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+    public function setStatus(string $status): self
+    {
+        $this->setVisited('status');
+        $this->status = $status;
+
+        return $this;
+    }
+    public function getSalaryMin(): ?int
+    {
+        return $this->salaryMin;
+    }
+    public function setSalaryMin(?int $salaryMin): self
+    {
+        $this->setVisited('salaryMin');
+        $this->salaryMin = $salaryMin;
+
+        return $this;
+    }
+    public function getSalaryMax(): ?int
+    {
+        return $this->salaryMax;
+    }
+    public function setSalaryMax(?int $salaryMax): self
+    {
+        $this->setVisited('salaryMax');
+        $this->salaryMax = $salaryMax;
+
+        return $this;
+    }
+    public function getSalaryCurrency(): ?string
+    {
+        return $this->salaryCurrency;
+    }
+    public function setSalaryCurrency(?string $salaryCurrency): self
+    {
+        $this->setVisited('salaryCurrency');
+        $this->salaryCurrency = $salaryCurrency;
+
+        return $this;
+    }
+    public function getSalaryPeriod(): ?string
+    {
+        return $this->salaryPeriod;
+    }
+    public function setSalaryPeriod(?string $salaryPeriod): self
+    {
+        $this->setVisited('salaryPeriod');
+        $this->salaryPeriod = $salaryPeriod;
+
+        return $this;
+    }
+    public function getRemoteMode(): ?string
+    {
+        return $this->remoteMode;
+    }
+    public function setRemoteMode(?string $remoteMode): self
+    {
+        $this->setVisited('remoteMode');
+        $this->remoteMode = $remoteMode;
+
+        return $this;
+    }
+    public function getRemotePolicy(): ?string
+    {
+        return $this->getRemoteMode();
+    }
+    public function setRemotePolicy(?string $remotePolicy): self
+    {
+        return $this->setRemoteMode($remotePolicy);
+    }
+    public function getExperienceLevel(): ?string
+    {
+        return $this->experienceLevel;
+    }
+    public function setExperienceLevel(?string $experienceLevel): self
+    {
+        $this->setVisited('experienceLevel');
+        $this->experienceLevel = $experienceLevel;
+
+        return $this;
+    }
+    public function getWorkTime(): ?string
+    {
+        return $this->workTime;
+    }
+    public function setWorkTime(?string $workTime): self
+    {
+        $this->setVisited('workTime');
+        $this->workTime = $workTime;
+
+        return $this;
+    }
+    public function getApplicationType(): ?string
+    {
+        return $this->applicationType;
+    }
+    public function setApplicationType(?string $applicationType): self
+    {
+        $this->setVisited('applicationType');
+        $this->applicationType = $applicationType;
+
+        return $this;
+    }
+    public function getPublishedAt(): ?DateTimeImmutable
+    {
+        return $this->publishedAt;
+    }
+    public function setPublishedAt(?DateTimeImmutable $publishedAt): self
+    {
+        $this->setVisited('publishedAt');
+        $this->publishedAt = $publishedAt;
+
+        return $this;
+    }
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+    public function setCity(?City $city): self
+    {
+        $this->setVisited('city');
+        $this->city = $city;
+
+        return $this;
+    }
+    public function getRegion(): ?Region
+    {
+        return $this->region;
+    }
+    public function setRegion(?Region $region): self
+    {
+        $this->setVisited('region');
+        $this->region = $region;
+
+        return $this;
+    }
+    public function getJobCategory(): ?JobCategory
+    {
+        return $this->jobCategory;
+    }
+    public function setJobCategory(?JobCategory $jobCategory): self
+    {
+        $this->setVisited('jobCategory');
+        $this->jobCategory = $jobCategory;
+
+        return $this;
+    }
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+    public function setCountry(?string $country): self
+    {
+        $this->setVisited('country');
+        $this->country = $country;
+
+        return $this;
+    }
+    public function getLanguageLevel(): ?string
+    {
+        return $this->languageLevel;
+    }
+    public function setLanguageLevel(?string $languageLevel): self
+    {
+        $this->setVisited('languageLevel');
+        $this->languageLevel = $languageLevel;
+
+        return $this;
+    }
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+    public function setCompany(?Company $company): self
+    {
+        $this->setVisited('company');
+        $this->company = $company;
+
+        return $this;
+    }
+
+    /**
+     * @return array<int, Skill>
+     */
+    public function getSkills(): array
+    {
+        return $this->skills;
+    }
+
+    /**
+     * @param array<int, Skill> $skills
+     */
+    public function setSkills(array $skills): self
+    {
+        $this->setVisited('skills');
+        $this->skills = $skills;
+
+        return $this;
+    }
+
+    /**
+     * @return array<int, Language>
+     */
+    public function getLanguages(): array
+    {
+        return $this->languages;
+    }
+
+    /**
+     * @param array<int, Language> $languages
+     */
+    public function setLanguages(array $languages): self
+    {
+        $this->setVisited('languages');
+        $this->languages = $languages;
+
+        return $this;
+    }
 
     /**
      * @param EntityInterface|Entity $entity
@@ -235,7 +446,9 @@ class JobOffer extends RestDto
         return $this;
     }
 
-    /** @param array<int, Skill> $value */
+    /**
+     * @param array<int, Skill> $value
+     */
     protected function updateSkills(Entity $entity, array $value): self
     {
         $entity->clearSkills();
@@ -244,7 +457,9 @@ class JobOffer extends RestDto
         return $this;
     }
 
-    /** @param array<int, Language> $value */
+    /**
+     * @param array<int, Language> $value
+     */
     protected function updateLanguages(Entity $entity, array $value): self
     {
         $entity->clearLanguages();

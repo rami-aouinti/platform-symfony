@@ -32,10 +32,19 @@ final class LoadResumeData extends Fixture implements OrderedFixtureInterface
             ->setOwner($bob)
             ->setTitle('Bob - Public Resume')
             ->setSummary('Public profile for Bob.')
-            ->setExperiences([['company' => 'Acme', 'role' => 'Backend Engineer']])
-            ->setEducation([['school' => 'Tech University', 'degree' => 'MSc Computer Science']])
+            ->setExperiences([[
+                'company' => 'Acme',
+                'role' => 'Backend Engineer',
+            ]])
+            ->setEducation([[
+                'school' => 'Tech University',
+                'degree' => 'MSc Computer Science',
+            ]])
             ->setSkills(['PHP', 'Symfony'])
-            ->setLinks([['label' => 'LinkedIn', 'url' => 'https://example.test/bob-linkedin']])
+            ->setLinks([[
+                'label' => 'LinkedIn',
+                'url' => 'https://example.test/bob-linkedin',
+            ]])
             ->setIsPublic(true);
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('60000000-0000-1000-8000-000000000001'), $bobPublicResume);
 
@@ -43,10 +52,19 @@ final class LoadResumeData extends Fixture implements OrderedFixtureInterface
             ->setOwner($bob)
             ->setTitle('Bob - Private Resume')
             ->setSummary('Private profile for Bob.')
-            ->setExperiences([['company' => 'Globex', 'role' => 'Staff Engineer']])
-            ->setEducation([['school' => 'Engineering School', 'degree' => 'BSc Software Engineering']])
+            ->setExperiences([[
+                'company' => 'Globex',
+                'role' => 'Staff Engineer',
+            ]])
+            ->setEducation([[
+                'school' => 'Engineering School',
+                'degree' => 'BSc Software Engineering',
+            ]])
             ->setSkills(['Architecture', 'DDD'])
-            ->setLinks([['label' => 'Portfolio', 'url' => 'https://example.test/bob-portfolio']])
+            ->setLinks([[
+                'label' => 'Portfolio',
+                'url' => 'https://example.test/bob-portfolio',
+            ]])
             ->setIsPublic(false);
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('60000000-0000-1000-8000-000000000002'), $bobPrivateResume);
 
@@ -54,10 +72,19 @@ final class LoadResumeData extends Fixture implements OrderedFixtureInterface
             ->setOwner($carol)
             ->setTitle('Carol - Private Resume')
             ->setSummary('Private profile for Carol.')
-            ->setExperiences([['company' => 'Initech', 'role' => 'SRE']])
-            ->setEducation([['school' => 'State University', 'degree' => 'BSc Information Systems']])
+            ->setExperiences([[
+                'company' => 'Initech',
+                'role' => 'SRE',
+            ]])
+            ->setEducation([[
+                'school' => 'State University',
+                'degree' => 'BSc Information Systems',
+            ]])
             ->setSkills(['Kubernetes', 'Observability'])
-            ->setLinks([['label' => 'GitHub', 'url' => 'https://example.test/carol-github']])
+            ->setLinks([[
+                'label' => 'GitHub',
+                'url' => 'https://example.test/carol-github',
+            ]])
             ->setIsPublic(false);
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('60000000-0000-1000-8000-000000000003'), $carolPrivateResume);
 

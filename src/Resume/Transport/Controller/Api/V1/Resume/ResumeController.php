@@ -70,7 +70,9 @@ class ResumeController extends Controller
         return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
     }
 
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_GET])]
     public function findOneAction(Request $request, string $id): Response
     {
         return $this->findOneMethod($request, $id);

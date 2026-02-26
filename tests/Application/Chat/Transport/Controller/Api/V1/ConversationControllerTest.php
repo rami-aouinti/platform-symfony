@@ -43,7 +43,9 @@ class ConversationControllerTest extends WebTestCase
         );
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testParticipantCanListAndAccessConversation(): void
     {
         $client = $this->getTestClient('hugo-user', 'password-user');
@@ -51,10 +53,10 @@ class ConversationControllerTest extends WebTestCase
         $client->request('GET', self::BASE_URL);
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
-        $list = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $list = JSON::decode((string)$client->getResponse()->getContent(), true);
         self::assertIsArray($list);
 
-        $conversationIds = array_map(static fn (array $row): string => (string) ($row['id'] ?? ''), $list);
+        $conversationIds = array_map(static fn (array $row): string => (string)($row['id'] ?? ''), $list);
 
         self::assertContains($this->acceptedConversationId, $conversationIds);
         self::assertNotContains($this->withdrawnConversationId, $conversationIds);
@@ -63,7 +65,9 @@ class ConversationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testNonParticipantIsForbiddenOnConversationEndpoints(): void
     {
         $client = $this->getTestClient('bob-admin', 'password-admin');
@@ -74,13 +78,19 @@ class ConversationControllerTest extends WebTestCase
         $client->request(
             'POST',
             self::BASE_URL . '/' . $this->acceptedConversationId . '/messages',
-            server: ['CONTENT_TYPE' => 'application/json'],
-            content: JSON::encode(['content' => 'Message refusé']),
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: JSON::encode([
+                'content' => 'Message refusé',
+            ]),
         );
         self::assertSame(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testPostingMessageRequiresAcceptedApplicationConversation(): void
     {
         $client = $this->getTestClient('hugo-user', 'password-user');
@@ -88,16 +98,24 @@ class ConversationControllerTest extends WebTestCase
         $client->request(
             'POST',
             self::BASE_URL . '/' . $this->acceptedConversationId . '/messages',
-            server: ['CONTENT_TYPE' => 'application/json'],
-            content: JSON::encode(['content' => 'Bonjour, je suis disponible pour un échange.']),
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: JSON::encode([
+                'content' => 'Bonjour, je suis disponible pour un échange.',
+            ]),
         );
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
         $client->request(
             'POST',
             self::BASE_URL . '/' . $this->withdrawnConversationId . '/messages',
-            server: ['CONTENT_TYPE' => 'application/json'],
-            content: JSON::encode(['content' => 'Ce message doit être refusé.']),
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: JSON::encode([
+                'content' => 'Ce message doit être refusé.',
+            ]),
         );
         self::assertSame(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
@@ -107,7 +125,9 @@ class ConversationControllerTest extends WebTestCase
         $application = $entityManager->getRepository(JobApplication::class)->find($applicationId);
         self::assertInstanceOf(JobApplication::class, $application);
 
-        $existing = $entityManager->getRepository(Conversation::class)->findOneBy(['jobApplication' => $application]);
+        $existing = $entityManager->getRepository(Conversation::class)->findOneBy([
+            'jobApplication' => $application,
+        ]);
         if ($existing instanceof Conversation) {
             return $existing->getId();
         }
@@ -116,7 +136,9 @@ class ConversationControllerTest extends WebTestCase
         $entityManager->persist($conversation);
 
         foreach ($participantUsernames as $username) {
-            $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+            $user = $entityManager->getRepository(User::class)->findOneBy([
+                'username' => $username,
+            ]);
             self::assertInstanceOf(User::class, $user);
 
             $participant = (new ConversationParticipant())

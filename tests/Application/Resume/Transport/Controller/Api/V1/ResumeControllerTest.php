@@ -15,7 +15,9 @@ class ResumeControllerTest extends WebTestCase
     private const string BOB_PUBLIC_RESUME_ID = '60000000-0000-1000-8000-000000000001';
     private const string BOB_PRIVATE_RESUME_ID = '60000000-0000-1000-8000-000000000002';
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testOwnerCanCreateShowEditAndDeleteResume(): void
     {
         $ownerClient = $this->getTestClient('bob-admin', 'password-admin');
@@ -23,18 +25,27 @@ class ResumeControllerTest extends WebTestCase
         $payload = [
             'title' => 'Bob Application Resume',
             'summary' => 'Resume generated in integration test.',
-            'experiences' => [['company' => 'ACME', 'role' => 'Backend Engineer']],
-            'education' => [['school' => 'Tech University', 'degree' => 'MSc']],
+            'experiences' => [[
+                'company' => 'ACME',
+                'role' => 'Backend Engineer',
+            ]],
+            'education' => [[
+                'school' => 'Tech University',
+                'degree' => 'MSc',
+            ]],
             'skills' => ['PHP', 'Symfony'],
-            'links' => [['label' => 'GitHub', 'url' => 'https://example.test/bob-github']],
+            'links' => [[
+                'label' => 'GitHub',
+                'url' => 'https://example.test/bob-github',
+            ]],
             'isPublic' => false,
         ];
 
         $ownerClient->request('POST', self::BASE_URL, content: JSON::encode($payload));
         self::assertSame(Response::HTTP_CREATED, $ownerClient->getResponse()->getStatusCode());
 
-        $createdPayload = JSON::decode((string) $ownerClient->getResponse()->getContent(), true);
-        $resumeId = (string) $createdPayload['id'];
+        $createdPayload = JSON::decode((string)$ownerClient->getResponse()->getContent(), true);
+        $resumeId = (string)$createdPayload['id'];
         self::assertSame($payload['title'], $createdPayload['title']);
 
         $ownerClient->request('GET', self::BASE_URL . '/' . $resumeId);
@@ -46,7 +57,7 @@ class ResumeControllerTest extends WebTestCase
         ]));
         self::assertSame(Response::HTTP_OK, $ownerClient->getResponse()->getStatusCode());
 
-        $patchedPayload = JSON::decode((string) $ownerClient->getResponse()->getContent(), true);
+        $patchedPayload = JSON::decode((string)$ownerClient->getResponse()->getContent(), true);
         self::assertSame('Bob Application Resume Updated', $patchedPayload['title']);
         self::assertTrue($patchedPayload['isPublic']);
 
@@ -54,7 +65,9 @@ class ResumeControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_OK, $ownerClient->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testOtherUserCannotEditOrDeleteResume(): void
     {
         $forbiddenClient = $this->getTestClient('carol-user', 'password-user');
@@ -68,7 +81,9 @@ class ResumeControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_FORBIDDEN, $forbiddenClient->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testNotFoundForMissingOrInaccessibleResume(): void
     {
         $ownerClient = $this->getTestClient('bob-admin', 'password-admin');
@@ -80,14 +95,16 @@ class ResumeControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_NOT_FOUND, $outsiderClient->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testPublicResumeIsReadableByAnotherUser(): void
     {
         $outsiderClient = $this->getTestClient('john-user', 'password-user');
         $outsiderClient->request('GET', self::BASE_URL . '/' . self::BOB_PUBLIC_RESUME_ID);
 
         self::assertSame(Response::HTTP_OK, $outsiderClient->getResponse()->getStatusCode());
-        $payload = JSON::decode((string) $outsiderClient->getResponse()->getContent(), true);
+        $payload = JSON::decode((string)$outsiderClient->getResponse()->getContent(), true);
         self::assertSame(self::BOB_PUBLIC_RESUME_ID, $payload['id']);
     }
 }

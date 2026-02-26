@@ -24,13 +24,21 @@ class ReadEndpointCacheTest extends TestCase
         $request->attributes->set('_route', 'api_v1_job_offer_find');
 
         $result = $readEndpointCache->remember('job_offer', $request, [
-            'criteria' => ['status' => 'open'],
-            'orderBy' => ['publishedAt' => 'DESC'],
+            'criteria' => [
+                'status' => 'open',
+            ],
+            'orderBy' => [
+                'publishedAt' => 'DESC',
+            ],
             'limit' => 20,
             'offset' => 0,
             'search' => [],
-        ], static fn (): array => ['ok' => true]);
+        ], static fn (): array => [
+            'ok' => true,
+        ]);
 
-        self::assertSame(['ok' => true], $result);
+        self::assertSame([
+            'ok' => true,
+        ], $result);
     }
 }

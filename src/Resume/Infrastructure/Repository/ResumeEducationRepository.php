@@ -21,7 +21,8 @@ class ResumeEducationRepository extends BaseRepository implements ResumeEducatio
     protected static array $searchColumns = ['schoolName', 'degree', 'fieldOfStudy', 'description'];
     protected static string $entityName = Entity::class;
 
-    public function __construct(protected ManagerRegistry $managerRegistry)
-    {
+    public function __construct(
+        protected ManagerRegistry $managerRegistry
+    ) {
     }
 }

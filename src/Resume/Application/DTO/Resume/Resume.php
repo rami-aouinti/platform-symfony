@@ -94,38 +94,117 @@ class Resume extends RestDto
     #[Assert\Type('bool')]
     protected bool $isPublic = false;
 
-    public function getTitle(): string { return $this->title; }
-    public function setTitle(string $title): self { $this->setVisited('title'); $this->title = $title; return $this; }
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+    public function setTitle(string $title): self
+    {
+        $this->setVisited('title');
+        $this->title = $title;
 
-    public function getSummary(): string { return $this->summary; }
-    public function setSummary(string $summary): self { $this->setVisited('summary'); $this->summary = $summary; return $this; }
+        return $this;
+    }
 
-    /** @return array<int, array<string, mixed>> */
-    public function getExperiences(): array { return $this->experiences; }
+    public function getSummary(): string
+    {
+        return $this->summary;
+    }
+    public function setSummary(string $summary): self
+    {
+        $this->setVisited('summary');
+        $this->summary = $summary;
 
-    /** @param array<int, array<string, mixed>> $experiences */
-    public function setExperiences(array $experiences): self { $this->setVisited('experiences'); $this->experiences = $experiences; return $this; }
+        return $this;
+    }
 
-    /** @return array<int, array<string, mixed>> */
-    public function getEducation(): array { return $this->education; }
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function getExperiences(): array
+    {
+        return $this->experiences;
+    }
 
-    /** @param array<int, array<string, mixed>> $education */
-    public function setEducation(array $education): self { $this->setVisited('education'); $this->education = $education; return $this; }
+    /**
+     * @param array<int, array<string, mixed>> $experiences
+     */
+    public function setExperiences(array $experiences): self
+    {
+        $this->setVisited('experiences');
+        $this->experiences = $experiences;
 
-    /** @return array<int, string> */
-    public function getSkills(): array { return $this->skills; }
+        return $this;
+    }
 
-    /** @param array<int, string> $skills */
-    public function setSkills(array $skills): self { $this->setVisited('skills'); $this->skills = $skills; return $this; }
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function getEducation(): array
+    {
+        return $this->education;
+    }
 
-    /** @return array<int, array<string, string>> */
-    public function getLinks(): array { return $this->links; }
+    /**
+     * @param array<int, array<string, mixed>> $education
+     */
+    public function setEducation(array $education): self
+    {
+        $this->setVisited('education');
+        $this->education = $education;
 
-    /** @param array<int, array<string, string>> $links */
-    public function setLinks(array $links): self { $this->setVisited('links'); $this->links = $links; return $this; }
+        return $this;
+    }
 
-    public function isPublic(): bool { return $this->isPublic; }
-    public function setIsPublic(bool $isPublic): self { $this->setVisited('isPublic'); $this->isPublic = $isPublic; return $this; }
+    /**
+     * @return array<int, string>
+     */
+    public function getSkills(): array
+    {
+        return $this->skills;
+    }
+
+    /**
+     * @param array<int, string> $skills
+     */
+    public function setSkills(array $skills): self
+    {
+        $this->setVisited('skills');
+        $this->skills = $skills;
+
+        return $this;
+    }
+
+    /**
+     * @return array<int, array<string, string>>
+     */
+    public function getLinks(): array
+    {
+        return $this->links;
+    }
+
+    /**
+     * @param array<int, array<string, string>> $links
+     */
+    public function setLinks(array $links): self
+    {
+        $this->setVisited('links');
+        $this->links = $links;
+
+        return $this;
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->isPublic;
+    }
+    public function setIsPublic(bool $isPublic): self
+    {
+        $this->setVisited('isPublic');
+        $this->isPublic = $isPublic;
+
+        return $this;
+    }
 
     /**
      * @param EntityInterface|Entity $entity

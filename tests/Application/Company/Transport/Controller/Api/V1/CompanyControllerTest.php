@@ -20,7 +20,9 @@ class CompanyControllerTest extends WebTestCase
     private const string BASE_URL = self::API_URL_PREFIX . '/v1/companies';
     private const string COMPANY_ID = '30000000-0000-1000-8000-000000000001';
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testOwnerCanCreateShowEditAndDeleteCompany(): void
     {
         $client = $this->getTestClient('john-user', 'password-user');
@@ -43,8 +45,8 @@ class CompanyControllerTest extends WebTestCase
             $envelope->getMessage() instanceof CompanyCreatedMessage);
         self::assertCount(1, $companyCreatedMessages);
 
-        $created = JSON::decode((string) $client->getResponse()->getContent(), true);
-        $companyId = (string) $created['id'];
+        $created = JSON::decode((string)$client->getResponse()->getContent(), true);
+        $companyId = (string)$created['id'];
 
         $client->request('GET', self::BASE_URL . '/' . $companyId);
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
@@ -58,7 +60,9 @@ class CompanyControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     #[DataProvider('unauthorizedUserProvider')]
     public function testNonOwnerAccessIsRefused(string $method): void
     {

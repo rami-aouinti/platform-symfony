@@ -17,7 +17,9 @@ class JobOfferControllerTest extends WebTestCase
     private const string COMPANY_ID = '30000000-0000-1000-8000-000000000001';
     private const string OFFER_ID = '60000000-0000-1000-8000-000000000001';
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testAuthorizedAuthorCanCreateEditAndDeleteOffer(): void
     {
         $authorClient = $this->getTestClient('john-user', 'password-user');
@@ -32,8 +34,8 @@ class JobOfferControllerTest extends WebTestCase
         ]));
 
         self::assertSame(Response::HTTP_CREATED, $authorClient->getResponse()->getStatusCode());
-        $created = JSON::decode((string) $authorClient->getResponse()->getContent(), true);
-        $offerId = (string) $created['id'];
+        $created = JSON::decode((string)$authorClient->getResponse()->getContent(), true);
+        $offerId = (string)$created['id'];
 
         $authorClient->request('PATCH', self::BASE_URL . '/' . $offerId, content: JSON::encode([
             'title' => 'Offer authored by john-user (edited)',
@@ -44,7 +46,9 @@ class JobOfferControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_OK, $authorClient->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testOfferVisibilityDependsOnUserRole(): void
     {
         $internalClient = $this->getTestClient('alice-user', 'password-user');
@@ -56,7 +60,9 @@ class JobOfferControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_FORBIDDEN, $externalClient->getResponse()->getStatusCode());
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testMyRouteReturnsApplicationsForManagedOffersByDefault(): void
     {
         $client = $this->getTestClient('alice-user', 'password-user');
@@ -64,7 +70,7 @@ class JobOfferControllerTest extends WebTestCase
 
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
-        $applications = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $applications = JSON::decode((string)$client->getResponse()->getContent(), true);
         self::assertIsArray($applications);
         self::assertNotEmpty($applications);
 
@@ -74,8 +80,9 @@ class JobOfferControllerTest extends WebTestCase
         self::assertNotContains('50000000-0000-1000-8000-000000000004', $applicationIds);
     }
 
-
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testAvailableRouteReturnsOnlyOpenOffersUserCanApplyTo(): void
     {
         $client = $this->getTestClient('carol-user', 'password-user');
@@ -83,7 +90,7 @@ class JobOfferControllerTest extends WebTestCase
 
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
-        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $offers = JSON::decode((string)$client->getResponse()->getContent(), true);
         $offerIds = array_column($offers, 'id');
 
         self::assertContains('60000000-0000-1000-8000-000000000001', $offerIds);
@@ -92,19 +99,23 @@ class JobOfferControllerTest extends WebTestCase
         self::assertNotContains('60000000-0000-1000-8000-000000000004', $offerIds);
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testAvailableRoutePaginationIsAppliedAfterVisibilityConstraints(): void
     {
         $client = $this->getTestClient('carol-user', 'password-user');
         $client->request('GET', self::BASE_URL . '/available', [
-            'order' => ['title' => 'ASC'],
+            'order' => [
+                'title' => 'ASC',
+            ],
             'limit' => 1,
             'offset' => 1,
         ]);
 
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
-        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $offers = JSON::decode((string)$client->getResponse()->getContent(), true);
         $offerIds = array_column($offers, 'id');
 
         self::assertCount(1, $offers);
@@ -113,7 +124,9 @@ class JobOfferControllerTest extends WebTestCase
         ], $offerIds);
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testFindActionSupportsCombinedBusinessFilters(): void
     {
         $client = $this->getTestClient('alice-user', 'password-user');
@@ -128,12 +141,14 @@ class JobOfferControllerTest extends WebTestCase
 
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
-        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $offers = JSON::decode((string)$client->getResponse()->getContent(), true);
         self::assertCount(1, $offers);
         self::assertSame('60000000-0000-1000-8000-000000000001', $offers[0]['id']);
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testFindActionSupportsMultiValueFilters(): void
     {
         $client = $this->getTestClient('alice-user', 'password-user');
@@ -150,14 +165,16 @@ class JobOfferControllerTest extends WebTestCase
 
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
-        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $offers = JSON::decode((string)$client->getResponse()->getContent(), true);
         $offerIds = array_column($offers, 'id');
 
         self::assertContains('60000000-0000-1000-8000-000000000002', $offerIds);
         self::assertNotContains('60000000-0000-1000-8000-000000000001', $offerIds);
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testFindActionSupportsSalaryBoundsFilters(): void
     {
         $client = $this->getTestClient('alice-user', 'password-user');
@@ -168,7 +185,7 @@ class JobOfferControllerTest extends WebTestCase
 
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
-        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $offers = JSON::decode((string)$client->getResponse()->getContent(), true);
         $offerIds = array_column($offers, 'id');
 
         self::assertContains('60000000-0000-1000-8000-000000000001', $offerIds);
@@ -176,7 +193,9 @@ class JobOfferControllerTest extends WebTestCase
         self::assertNotContains('60000000-0000-1000-8000-000000000003', $offerIds);
     }
 
-    /** @throws Throwable */
+    /**
+     * @throws Throwable
+     */
     public function testFacetsActionReturnsCountsCoherentWithCurrentFilters(): void
     {
         $client = $this->getTestClient('alice-user', 'password-user');
@@ -187,7 +206,7 @@ class JobOfferControllerTest extends WebTestCase
 
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
-        $payload = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $payload = JSON::decode((string)$client->getResponse()->getContent(), true);
 
         $facetsByKey = [];
         foreach ($payload['facets'] as $facetDefinition) {

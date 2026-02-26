@@ -23,10 +23,12 @@ class ConversationVoter extends Voter
 {
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [
-            Permission::CHAT_VIEW->value,
-            Permission::CHAT_POST->value,
-        ], true)) {
+        if (
+            !in_array($attribute, [
+                Permission::CHAT_VIEW->value,
+                Permission::CHAT_POST->value,
+            ], true)
+        ) {
             return false;
         }
 

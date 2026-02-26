@@ -27,10 +27,12 @@ class JobOfferVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [
-            Permission::JOB_OFFER_VIEW->value,
-            Permission::JOB_OFFER_MANAGE->value,
-        ], true)) {
+        if (
+            !in_array($attribute, [
+                Permission::JOB_OFFER_VIEW->value,
+                Permission::JOB_OFFER_MANAGE->value,
+            ], true)
+        ) {
             return false;
         }
 
