@@ -8,6 +8,9 @@ use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Transport\Rest\Controller;
 use App\General\Transport\Rest\RequestHandler;
 use App\General\Transport\Rest\ResponseHandler;
+use App\General\Transport\Rest\Traits\Actions\Authenticated\DeleteAction;
+use App\General\Transport\Rest\Traits\Actions\Authenticated\FindAction;
+use App\General\Transport\Rest\Traits\Actions\Authenticated\FindOneAction;
 use App\General\Transport\Rest\Traits\Methods\CreateMethod;
 use App\General\Transport\Rest\Traits\Methods\PatchMethod;
 use App\General\Transport\Rest\Traits\Methods\UpdateMethod;
@@ -55,9 +58,9 @@ class JobOfferController extends Controller
     use CreateMethod;
     use UpdateMethod;
     use PatchMethod;
-    use \App\General\Transport\Rest\Traits\Actions\Authenticated\DeleteAction;
-    use \App\General\Transport\Rest\Traits\Actions\Authenticated\FindAction;
-    use \App\General\Transport\Rest\Traits\Actions\Authenticated\FindOneAction;
+    use DeleteAction;
+    use FindAction;
+    use FindOneAction;
 
     /**
      * @var array<string, string>
@@ -112,7 +115,13 @@ class JobOfferController extends Controller
             new OA\Property(property: 'employmentType', type: 'string', example: 'full-time'),
             new OA\Property(property: 'status', type: 'string', enum: ['draft', 'open', 'closed'], example: 'open'),
             new OA\Property(property: 'company', type: 'string', format: 'uuid', example: '0195f7a1-8e09-7f40-93f0-c3bcf2b42744'),
-            new OA\Property(property: 'createdBy', type: 'string', format: 'uuid', nullable: true, example: '0195f798-7a12-7303-8db6-ece0cabf335d'),
+            new OA\Property(
+                property: 'createdBy',
+                type: 'string',
+                format: 'uuid',
+                example: '0195f798-7a12-7303-8db6-ece0cabf335d',
+                nullable: true
+            ),
         ],
         type: 'object',
     ))]
