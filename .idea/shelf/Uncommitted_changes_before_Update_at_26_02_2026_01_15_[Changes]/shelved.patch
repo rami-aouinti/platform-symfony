@@ -1,0 +1,33 @@
+Index: VueBro/app/components/offers/OffersFiltersSidebar.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><script setup lang=\"ts\">\r\nexport type OfferFilterSection = {\r\n  key: string\r\n  title: string\r\n  items: { label: string; value: string; count?: number }[]\r\n}\r\n\r\nconst props = defineProps<{\r\n  title?: string\r\n  sections: OfferFilterSection[]\r\n  horizontal?: boolean\r\n}>()\r\n\r\nconst selected = defineModel<Record<string, string[]>>({ default: {} })\r\n\r\nfunction toggleItem(sectionKey: string, value: string) {\r\n  const current = selected.value[sectionKey] ?? []\r\n  const next = current.includes(value)\r\n    ? current.filter((item) => item !== value)\r\n    : [...current, value]\r\n\r\n  selected.value = {\r\n    ...selected.value,\r\n    [sectionKey]: next,\r\n  }\r\n}\r\n\r\nfunction isSelected(sectionKey: string, value: string) {\r\n  return (selected.value[sectionKey] ?? []).includes(value)\r\n}\r\n</script>\r\n\r\n<template>\r\n  <aside\r\n    class=\"offers-filters-sidebar\"\r\n    :class=\"{ 'offers-filters-sidebar--horizontal': props.horizontal }\"\r\n  >\r\n    <template v-if=\"props.horizontal\">\r\n      <div class=\"offers-filters-sidebar__horizontal-sections\">\r\n        <section\r\n          v-for=\"section in sections\"\r\n          :key=\"section.key\"\r\n          class=\"offers-filters-sidebar__horizontal-section\"\r\n        >\r\n          <p>{{ section.title }}</p>\r\n\r\n          <div class=\"offers-filters-sidebar__chips\">\r\n            <v-chip\r\n              v-for=\"item in section.items\"\r\n              :key=\"`${section.key}-${item.value}`\"\r\n              :color=\"\r\n                isSelected(section.key, item.value) ? 'primary' : undefined\r\n              \"\r\n              :variant=\"\r\n                isSelected(section.key, item.value) ? 'flat' : 'outlined'\r\n              \"\r\n              size=\"small\"\r\n              @click=\"toggleItem(section.key, item.value)\"\r\n            >\r\n              {{ item.label }}\r\n              <span\r\n                v-if=\"typeof item.count === 'number'\"\r\n                class=\"offers-filters-sidebar__count\"\r\n                >{{ item.count }}</span\r\n              >\r\n            </v-chip>\r\n          </div>\r\n        </section>\r\n      </div>\r\n    </template>\r\n\r\n    <v-card v-else class=\"offers-filters-sidebar__card\" variant=\"flat\">\r\n      <div\r\n        v-for=\"(section, index) in sections\"\r\n        :key=\"section.key\"\r\n        class=\"offers-filters-sidebar__section\"\r\n      >\r\n        <p class=\"offers-filters-sidebar__section-title\">{{ section.title }}</p>\r\n\r\n        <div class=\"offers-filters-sidebar__chips\">\r\n          <v-chip\r\n            v-for=\"item in section.items\"\r\n            :key=\"`${section.key}-${item.value}`\"\r\n            :color=\"isSelected(section.key, item.value) ? 'primary' : undefined\"\r\n            :variant=\"isSelected(section.key, item.value) ? 'flat' : 'outlined'\"\r\n            size=\"small\"\r\n            @click=\"toggleItem(section.key, item.value)\"\r\n          >\r\n            {{ item.label }}\r\n            <span\r\n              v-if=\"typeof item.count === 'number'\"\r\n              class=\"offers-filters-sidebar__count\"\r\n              >{{ item.count }}</span\r\n            >\r\n          </v-chip>\r\n        </div>\r\n\r\n        <v-divider v-if=\"index < sections.length - 1\" class=\"mt-4\" />\r\n      </div>\r\n    </v-card>\r\n  </aside>\r\n</template>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/VueBro/app/components/offers/OffersFiltersSidebar.vue b/VueBro/app/components/offers/OffersFiltersSidebar.vue
+--- a/VueBro/app/components/offers/OffersFiltersSidebar.vue	(revision 4c60da2370a8ba34d824d55d459fd94f25278286)
++++ b/VueBro/app/components/offers/OffersFiltersSidebar.vue	(date 1772064867963)
+@@ -69,11 +69,11 @@
+       </div>
+     </template>
+ 
+-    <v-card v-else class="offers-filters-sidebar__card" variant="flat">
++    <v-card v-else class="offers-filters-sidebar__card" rounded="xl" variant="flat">
+       <div
+         v-for="(section, index) in sections"
+         :key="section.key"
+-        class="offers-filters-sidebar__section"
++        class="offers-filters-sidebar__section pa-3"
+       >
+         <p class="offers-filters-sidebar__section-title">{{ section.title }}</p>
+ 
+@@ -95,7 +95,7 @@
+           </v-chip>
+         </div>
+ 
+-        <v-divider v-if="index < sections.length - 1" class="mt-4" />
++        <v-divider v-if="index < sections.length - 1" color="primary" class="mt-2" />
+       </div>
+     </v-card>
+   </aside>
