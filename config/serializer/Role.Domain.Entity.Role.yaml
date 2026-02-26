@@ -1,0 +1,6 @@
+App\Role\Domain\Entity\Role:
+    attributes:
+        createdAt:
+            groups: [ 'Role.createdAt' ]
+        updatedAt:
+            groups: [ 'Role.updatedAt' ]

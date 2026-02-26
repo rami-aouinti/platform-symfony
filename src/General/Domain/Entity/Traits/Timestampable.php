@@ -8,7 +8,6 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
  * @package App\General
@@ -24,12 +23,6 @@ trait Timestampable
     #[Gedmo\Timestampable(
         on: 'create',
     )]
-    #[Groups([
-        'ApiKey.createdAt',
-        'Role.createdAt',
-        'User.createdAt',
-        'UserGroup.createdAt',
-    ])]
     protected ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(
@@ -40,12 +33,6 @@ trait Timestampable
     #[Gedmo\Timestampable(
         on: 'update',
     )]
-    #[Groups([
-        'ApiKey.updatedAt',
-        'Role.updatedAt',
-        'User.updatedAt',
-        'UserGroup.updatedAt',
-    ])]
     protected ?DateTimeImmutable $updatedAt = null;
 
     public function setCreatedAt(DateTimeImmutable $createdAt): self

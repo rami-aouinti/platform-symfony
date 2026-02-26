@@ -1,0 +1,6 @@
+App\User\Domain\Entity\User:
+    attributes:
+        createdAt:
+            groups: [ 'User.createdAt' ]
+        updatedAt:
+            groups: [ 'User.updatedAt' ]
