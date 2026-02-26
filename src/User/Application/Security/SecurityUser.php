@@ -50,7 +50,7 @@ class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
         $this->organizations = array_values($user->getCompanyMemberships()->map(static fn (CompanyMembership $membership): array => [
             'companyId' => $membership->getCompany()->getId(),
             'role' => $membership->getRole(),
-            'status' => $membership->getStatus(),
+            'status' => $membership->getStatus()->value,
         ])->toArray());
     }
 

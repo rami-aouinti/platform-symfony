@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Company\Domain\Entity;
 
+use App\Company\Domain\Enum\CompanyStatus;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\General\Domain\Entity\Traits\SlugTrait;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
+use App\General\Domain\ValueObject\Address as AddressValueObject;
 use App\Recruit\Domain\Entity\CandidateProfile;
 use App\User\Domain\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -28,6 +31,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class Company implements EntityInterface
 {
+    use SlugTrait;
     use Timestampable;
     use Uuid;
 
@@ -40,17 +44,17 @@ class Company implements EntityInterface
     #[Groups(['Company', 'Company.legalName', 'Company.create', 'Company.show', 'Company.edit', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $legalName = '';
 
-    #[ORM\Column(name: 'slug', type: Types::STRING, length: 255, nullable: false)]
-    #[Groups(['Company', 'Company.slug', 'Company.create', 'Company.show', 'Company.edit', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
-    private string $slug = '';
-
-    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
-    #[Groups(['Company', 'Company.status', 'Company.create', 'Company.show', 'Company.edit', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
-    private string $status = 'active';
-
-    #[ORM\Column(name: 'main_address', type: Types::TEXT, nullable: true)]
+    #[ORM\Embedded(class: AddressValueObject::class, columnPrefix: false)]
+    #[ORM\AttributeOverrides([
+        new ORM\AttributeOverride(name: 'streetLine1', column: new ORM\Column(name: 'main_address_street_line_1', type: Types::STRING, length: 255, nullable: true)),
+        new ORM\AttributeOverride(name: 'streetLine2', column: new ORM\Column(name: 'main_address_street_line_2', type: Types::STRING, length: 255, nullable: true)),
+        new ORM\AttributeOverride(name: 'postalCode', column: new ORM\Column(name: 'main_address_postal_code', type: Types::STRING, length: 32, nullable: true)),
+        new ORM\AttributeOverride(name: 'city', column: new ORM\Column(name: 'main_address_city', type: Types::STRING, length: 255, nullable: false)),
+        new ORM\AttributeOverride(name: 'region', column: new ORM\Column(name: 'main_address_region', type: Types::STRING, length: 255, nullable: true)),
+        new ORM\AttributeOverride(name: 'countryCode', column: new ORM\Column(name: 'main_address_country_code', type: Types::STRING, length: 2, nullable: false)),
+    ])]
     #[Groups(['Company', 'Company.mainAddress', 'Company.create', 'Company.show', 'Company.edit'])]
-    private ?string $mainAddress = null;
+    private AddressValueObject $mainAddress;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'owner_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
@@ -69,11 +73,16 @@ class Company implements EntityInterface
     #[ORM\OneToMany(targetEntity: CandidateProfile::class, mappedBy: 'company')]
     private Collection $candidateProfiles;
 
+    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, enumType: CompanyStatus::class)]
+    #[Groups(['Company', 'Company.status', 'Company.create', 'Company.show', 'Company.edit'])]
+    private CompanyStatus $status = CompanyStatus::ACTIVE;
+
     public function __construct()
     {
         $this->id = $this->createUuid();
         $this->memberships = new ArrayCollection();
         $this->candidateProfiles = new ArrayCollection();
+        $this->mainAddress = new AddressValueObject();
     }
 
     public function getId(): string
@@ -93,36 +102,12 @@ class Company implements EntityInterface
         return $this;
     }
 
-    public function getSlug(): string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): self
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): self
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    public function getMainAddress(): ?string
+    public function getMainAddress(): AddressValueObject
     {
         return $this->mainAddress;
     }
 
-    public function setMainAddress(?string $mainAddress): self
+    public function setMainAddress(AddressValueObject $mainAddress): self
     {
         $this->mainAddress = $mainAddress;
 
@@ -157,4 +142,23 @@ class Company implements EntityInterface
 
         return $this;
     }
+
+    public function getStatus(): CompanyStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(CompanyStatus|string $status): self
+    {
+        $nextStatus = $status instanceof CompanyStatus ? $status : CompanyStatus::from($status);
+
+        if (!$this->status->canTransitionTo($nextStatus) && $this->status !== $nextStatus) {
+            return $this;
+        }
+
+        $this->status = $nextStatus;
+
+        return $this;
+    }
 }
+

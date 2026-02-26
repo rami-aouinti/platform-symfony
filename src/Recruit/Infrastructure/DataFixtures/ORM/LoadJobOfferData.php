@@ -6,6 +6,7 @@ namespace App\Recruit\Infrastructure\DataFixtures\ORM;
 
 use App\Company\Domain\Entity\Company;
 use App\General\Domain\Rest\UuidHelper;
+use App\General\Domain\ValueObject\Address as AddressValueObject;
 use App\Recruit\Domain\Entity\City;
 use App\Recruit\Domain\Entity\JobCategory;
 use App\Recruit\Domain\Entity\JobOffer;
@@ -949,8 +950,8 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'workTime' => $seed['work'],
                 'applicationType' => $seed['status'] === 'open' ? 'external-link' : 'internal',
                 'publishedAt' => $seed['published'] === null ? null : $now->modify($seed['published']),
-                'city' => $cities[$seed['city']],
-                'region' => $regions[$seed['region']],
+                'city' => $cities[$seed['city']]->getName(),
+                'region' => $regions[$seed['region']]->getName(),
                 'jobCategory' => $categories[$seed['cat']],
                 'skills' => array_map(static fn (string $skill): Skill => $skills[$skill], $seed['skills']),
                 'languages' => array_map(static fn (string $language): Language => $languages[$language], $seed['langs']),
@@ -977,10 +978,8 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 ->setWorkTime($data['workTime'])
                 ->setApplicationType($data['applicationType'])
                 ->setPublishedAt($data['publishedAt'])
-                ->setCity($data['city'])
-                ->setRegion($data['region'])
+                ->setAddress((new AddressValueObject())->setCity($data['city'])->setRegion($data['region'])->setCountryCode($data['country']))
                 ->setJobCategory($data['jobCategory'])
-                ->setCountry($data['country'])
                 ->setLanguageLevel($data['languageLevel'])
                 ->setSkills($data['skills'])
                 ->setLanguages($data['languages']);

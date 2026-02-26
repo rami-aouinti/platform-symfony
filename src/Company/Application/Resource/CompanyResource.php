@@ -6,6 +6,7 @@ namespace App\Company\Application\Resource;
 
 use App\Company\Application\Resource\Interfaces\CompanyResourceInterface;
 use App\Company\Domain\Entity\Company as Entity;
+use App\Company\Domain\Enum\CompanyMembershipStatus;
 use App\Company\Domain\Entity\CompanyMembership;
 use App\Company\Domain\Message\CompanyCreatedMessage;
 use App\Company\Domain\Repository\Interfaces\CompanyMembershipRepositoryInterface;
@@ -95,7 +96,7 @@ class CompanyResource extends RestResource implements CompanyResourceInterface
         $entity->addMembership(
             (new CompanyMembership($currentUser, $entity))
                 ->setRole(CompanyMembership::ROLE_OWNER)
-                ->setStatus('active')
+                ->setStatus(CompanyMembershipStatus::ACTIVE)
                 ->setJoinedAt(new DateTimeImmutable())
         );
 

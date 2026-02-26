@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Recruit\Domain\Entity;
+namespace App\General\Domain\Entity;
 
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\General\Domain\Entity\Traits\NameTrait;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use Doctrine\DBAL\Types\Types;
@@ -21,8 +22,13 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity]
 #[ORM\Table(name: 'region')]
 #[ORM\UniqueConstraint(name: 'uq_region_country_code', columns: ['country_code', 'code'])]
+#[ORM\AttributeOverrides([
+    new ORM\AttributeOverride(name: 'name', column: new ORM\Column(name: 'name', type: Types::STRING, length: 128, nullable: false)),
+])]
+
 class Region implements EntityInterface
 {
+    use NameTrait;
     use Timestampable;
     use Uuid;
 
@@ -34,10 +40,6 @@ class Region implements EntityInterface
     #[ORM\Column(name: 'code', type: Types::STRING, length: 64, nullable: false)]
     #[Groups(['Region', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $code = '';
-
-    #[ORM\Column(name: 'name', type: Types::STRING, length: 128, nullable: false)]
-    #[Groups(['Region', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
-    private string $name = '';
 
     #[ORM\Column(name: 'country_code', type: Types::STRING, length: 2, nullable: false)]
     #[Groups(['Region', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
@@ -61,18 +63,6 @@ class Region implements EntityInterface
     public function setCode(string $code): self
     {
         $this->code = $code;
-
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
 
         return $this;
     }

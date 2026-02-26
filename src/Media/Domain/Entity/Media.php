@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Media\Domain\Entity;
 
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\Media\Domain\Enum\MediaStatus;
+use App\General\Domain\Entity\Traits\NameTrait;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use App\User\Domain\Entity\User;
@@ -28,6 +30,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class Media implements EntityInterface
 {
+    use NameTrait;
     use Timestampable;
     use Uuid;
 
@@ -41,11 +44,7 @@ class Media implements EntityInterface
     #[Groups(['Media', 'Media.owner', 'Media.show', 'Media.edit'])]
     private ?User $owner = null;
 
-    #[ORM\Column(name: 'name', type: Types::STRING, length: 255, nullable: false)]
-    #[Groups(['Media', 'Media.name', 'Media.create', 'Media.show', 'Media.edit'])]
-    private string $name = '';
-
-    #[ORM\Column(name: 'path', type: Types::STRING, length: 1024, nullable: false)]
+    #[ORM\Column(name: 'path', type: Types::STRING, length: 512, nullable: false)]
     #[Groups(['Media', 'Media.path', 'Media.create', 'Media.show', 'Media.edit'])]
     private string $path = '';
 
@@ -57,9 +56,9 @@ class Media implements EntityInterface
     #[Groups(['Media', 'Media.size', 'Media.create', 'Media.show', 'Media.edit'])]
     private int $size = 0;
 
-    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
+    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, enumType: MediaStatus::class)]
     #[Groups(['Media', 'Media.status', 'Media.create', 'Media.show', 'Media.edit'])]
-    private string $status = 'active';
+    private MediaStatus $status = MediaStatus::ACTIVE;
 
     public function __construct()
     {
@@ -79,18 +78,6 @@ class Media implements EntityInterface
     public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
-
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
 
         return $this;
     }
@@ -131,15 +118,23 @@ class Media implements EntityInterface
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): MediaStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): self
+    public function setStatus(MediaStatus|string $status): self
     {
-        $this->status = $status;
+        $nextStatus = $status instanceof MediaStatus ? $status : MediaStatus::from($status);
+
+        if (!$this->status->canTransitionTo($nextStatus) && $this->status !== $nextStatus) {
+            return $this;
+        }
+
+        $this->status = $nextStatus;
 
         return $this;
     }
+
 }
+

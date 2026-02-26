@@ -121,7 +121,7 @@ class Media extends RestDto
             $this->path = $entity->getPath();
             $this->mimeType = $entity->getMimeType();
             $this->size = $entity->getSize();
-            $this->status = $entity->getStatus();
+            $this->status = $entity->getStatus()->value;
         }
 
         return $this;

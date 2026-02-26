@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Recruit\Domain\Entity;
 
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\General\Domain\Entity\Traits\NameTrait;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use Doctrine\DBAL\Types\Types;
@@ -21,8 +22,13 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity]
 #[ORM\Table(name: 'job_category')]
 #[ORM\UniqueConstraint(name: 'uq_job_category_code', columns: ['code'])]
+#[ORM\AttributeOverrides([
+    new ORM\AttributeOverride(name: 'name', column: new ORM\Column(name: 'name', type: Types::STRING, length: 128, nullable: false)),
+])]
+
 class JobCategory implements EntityInterface
 {
+    use NameTrait;
     use Timestampable;
     use Uuid;
 
@@ -34,10 +40,6 @@ class JobCategory implements EntityInterface
     #[ORM\Column(name: 'code', type: Types::STRING, length: 64, nullable: false)]
     #[Groups(['JobCategory', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $code = '';
-
-    #[ORM\Column(name: 'name', type: Types::STRING, length: 128, nullable: false)]
-    #[Groups(['JobCategory', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
-    private string $name = '';
 
     public function __construct()
     {
@@ -61,15 +63,4 @@ class JobCategory implements EntityInterface
         return $this;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
 }

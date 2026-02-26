@@ -162,7 +162,7 @@ class RequestMapper extends RestRequestMapper
                 ->setStreetLine2(isset($item['streetLine2']) ? (string)$item['streetLine2'] : null)
                 ->setPostalCode((string)($item['postalCode'] ?? ''))
                 ->setCity((string)($item['city'] ?? ''))
-                ->setState(isset($item['state']) ? (string)$item['state'] : null)
+                ->setRegion(isset($item['region']) ? (string)$item['region'] : (isset($item['state']) ? (string)$item['state'] : null))
                 ->setCountryCode((string)($item['countryCode'] ?? ''));
 
             return $dto;

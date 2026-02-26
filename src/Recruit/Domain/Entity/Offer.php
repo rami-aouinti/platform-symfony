@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Recruit\Domain\Entity;
 
 use App\Company\Domain\Entity\Company;
+use App\Recruit\Domain\Enum\OfferStatus;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\General\Domain\Entity\Traits\DescriptionTrait;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use App\User\Domain\Entity\User;
@@ -26,6 +28,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class Offer implements EntityInterface
 {
+    use DescriptionTrait;
     use Timestampable;
     use Uuid;
 
@@ -38,14 +41,6 @@ class Offer implements EntityInterface
     #[Groups(['Offer', 'Offer.title', 'Offer.create', 'Offer.show', 'Offer.edit'])]
     private string $title = '';
 
-    #[ORM\Column(name: 'description', type: Types::TEXT, nullable: false)]
-    #[Groups(['Offer', 'Offer.description', 'Offer.create', 'Offer.show', 'Offer.edit'])]
-    private string $description = '';
-
-    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
-    #[Groups(['Offer', 'Offer.status', 'Offer.create', 'Offer.show', 'Offer.edit'])]
-    private string $status = 'draft';
-
     #[ORM\ManyToOne(targetEntity: Company::class)]
     #[ORM\JoinColumn(name: 'company_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     #[Groups(['Offer', 'Offer.company', 'Offer.create', 'Offer.show', 'Offer.edit'])]
@@ -55,6 +50,10 @@ class Offer implements EntityInterface
     #[ORM\JoinColumn(name: 'created_by_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     #[Groups(['Offer', 'Offer.createdBy', 'Offer.show'])]
     private ?User $createdBy = null;
+
+    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, enumType: OfferStatus::class)]
+    #[Groups(['Offer', 'Offer.status', 'Offer.create', 'Offer.show', 'Offer.edit'])]
+    private OfferStatus $status = OfferStatus::DRAFT;
 
     public function __construct()
     {
@@ -74,30 +73,6 @@ class Offer implements EntityInterface
     public function setTitle(string $title): self
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(string $description): self
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): self
-    {
-        $this->status = $status;
 
         return $this;
     }
@@ -125,4 +100,23 @@ class Offer implements EntityInterface
 
         return $this;
     }
+
+    public function getStatus(): OfferStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(OfferStatus|string $status): self
+    {
+        $nextStatus = $status instanceof OfferStatus ? $status : OfferStatus::from($status);
+
+        if (!$this->status->canTransitionTo($nextStatus) && $this->status !== $nextStatus) {
+            return $this;
+        }
+
+        $this->status = $nextStatus;
+
+        return $this;
+    }
 }
+
