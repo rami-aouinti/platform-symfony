@@ -8,10 +8,12 @@ use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Media\Application\Resource\Interfaces\MediaResourceInterface;
+use App\Media\Application\Service\Interfaces\MediaStorageServiceInterface;
 use App\Media\Domain\Entity\Media as Entity;
 use App\Media\Domain\Repository\Interfaces\MediaRepositoryInterface as RepositoryInterface;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 use function in_array;
@@ -24,6 +26,7 @@ class MediaResource extends RestResource implements MediaResourceInterface
     public function __construct(
         RepositoryInterface $repository,
         private readonly UserTypeIdentification $userTypeIdentification,
+        private readonly MediaStorageServiceInterface $mediaStorageService,
     ) {
         parent::__construct($repository);
     }
@@ -71,9 +74,30 @@ class MediaResource extends RestResource implements MediaResourceInterface
 
     public function beforeDelete(string &$id, EntityInterface $entity): void
     {
-        if ($entity instanceof Entity) {
-            $this->assertCanManageMedia($entity);
+        if (!$entity instanceof Entity) {
+            return;
         }
+
+        $this->assertCanManageMedia($entity);
+        $this->mediaStorageService->delete($entity->getPath());
+    }
+
+    public function createFromUploadedFile(UploadedFile $file): Entity
+    {
+        $owner = $this->getCurrentUser();
+        $storedFile = $this->mediaStorageService->store($file, $owner->getId());
+
+        $media = (new Entity())
+            ->setOwner($owner)
+            ->setName($storedFile->getOriginalName())
+            ->setPath($storedFile->getPath())
+            ->setMimeType($storedFile->getMimeType())
+            ->setSize($storedFile->getSize())
+            ->setStatus('active');
+
+        $this->save($media);
+
+        return $media;
     }
 
     private function assertCanManageMedia(Entity $media): void

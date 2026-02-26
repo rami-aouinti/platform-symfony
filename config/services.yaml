@@ -26,6 +26,8 @@ services:
             $elasticNumberOfShards: '%env(int:ELASTICSEARCH_NUMBER_OF_SHARDS)%'
             $elasticNumberOfReplicas: '%env(int:ELASTICSEARCH_NUMBER_OF_REPLICAS)%'
             $lockUserOnLoginFailureAttempts: '%env(int:LOCK_USER_ON_LOGIN_FAILURE_ATTEMPTS)%'
+            $mediaStoragePath: '%env(resolve:MEDIA_STORAGE_PATH)%'
+            $mediaStoragePublicPrefix: '%env(resolve:MEDIA_STORAGE_PUBLIC_PREFIX)%'
     _instanceof:
         App\General\Application\Rest\Interfaces\RestResourceInterface:
             tags: [ 'app.rest.resource', 'app.stopwatch' ]
@@ -160,6 +162,10 @@ services:
         arguments:
             $hub: '@?mercure.hub.default'
 
+
+
+    App\Media\Application\Service\Interfaces\MediaStorageServiceInterface:
+        class: App\Media\Infrastructure\Service\MediaStorageService
 
     App\Notification\Application\Service\Interfaces\NotificationServiceInterface:
         class: App\Notification\Application\Service\NotificationService
