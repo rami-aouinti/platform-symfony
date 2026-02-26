@@ -20,4 +20,6 @@ interface TaskRequestResourceInterface extends RestResourceInterface
     public function assignRequester(string $id, string $requesterId): TaskRequest;
 
     public function assignReviewer(string $id, string $reviewerId): TaskRequest;
+
+    public function assignSprint(string $id, ?string $sprintId): TaskRequest;
 }

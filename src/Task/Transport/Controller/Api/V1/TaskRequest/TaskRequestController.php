@@ -83,6 +83,14 @@ class TaskRequestController extends Controller
         return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
     }
 
+    #[Route(path: '/{id}/sprint/{sprintId}', methods: [Request::METHOD_PATCH])]
+    public function assignSprintAction(Request $request, string $id, string $sprintId): Response
+    {
+        $data = $this->getResource()->assignSprint($id, $sprintId !== 'null' ? $sprintId : null);
+
+        return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
+    }
+
     #[Route(path: '/{id}/requested-status/{status}', methods: [Request::METHOD_PATCH])]
     public function changeRequestedStatusAction(Request $request, string $id, string $status): Response
     {

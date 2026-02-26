@@ -10,10 +10,12 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Task\Application\DTO\TaskRequest\TaskRequest as TaskRequestDto;
 use App\Task\Application\Resource\Interfaces\TaskRequestResourceInterface;
 use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
+use App\Task\Domain\Entity\Sprint;
 use App\Task\Domain\Entity\TaskRequest as Entity;
 use App\Task\Domain\Enum\TaskStatus;
 use App\Task\Domain\Repository\Interfaces\TaskRequestRepositoryInterface as RepositoryInterface;
 use App\User\Application\Resource\UserResource;
+use Doctrine\ORM\EntityManagerInterface;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +32,7 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
         private readonly UserTypeIdentification $userTypeIdentification,
         private readonly TaskAccessServiceInterface $taskAccessService,
         private readonly UserResource $userResource,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($repository);
     }
@@ -177,6 +180,30 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
 
         $reviewer = $this->getUserById($reviewerId);
         $request->setReviewer($reviewer);
+        $this->save($request);
+
+        return $request;
+    }
+
+    public function assignSprint(string $id, ?string $sprintId): Entity
+    {
+        $request = $this->getRequestById($id);
+        $this->assertCanReviewRequest($request);
+
+        if ($sprintId === null || $sprintId === '') {
+            $request->setSprint(null);
+            $this->save($request);
+
+            return $request;
+        }
+
+        $sprint = $this->entityManager->find(Sprint::class, $sprintId);
+
+        if (!$sprint instanceof Sprint) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, 'Sprint not found.');
+        }
+
+        $request->setSprint($sprint);
         $this->save($request);
 
         return $request;
