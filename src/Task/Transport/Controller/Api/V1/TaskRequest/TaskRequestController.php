@@ -12,13 +12,16 @@ use App\Task\Application\DTO\TaskRequest\TaskRequestPatch;
 use App\Task\Application\DTO\TaskRequest\TaskRequestUpdate;
 use App\Task\Application\Resource\Interfaces\TaskRequestResourceInterface;
 use App\Task\Application\Resource\TaskRequestResource;
+use App\Task\Domain\Enum\TaskStatus;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use ValueError;
 
 /**
  * @method TaskRequestResource getResource()
@@ -49,6 +52,21 @@ class TaskRequestController extends Controller
     public function __construct(TaskRequestResourceInterface $resource)
     {
         parent::__construct($resource);
+    }
+
+
+    #[Route(path: '/{id}/requested-status/{status}', methods: [Request::METHOD_PATCH])]
+    public function changeRequestedStatusAction(Request $request, string $id, string $status): Response
+    {
+        try {
+            $requestedStatus = TaskStatus::from($status);
+        } catch (ValueError) {
+            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Invalid requested status value.');
+        }
+
+        $data = $this->getResource()->changeRequestedStatus($id, $requestedStatus);
+
+        return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
     }
 
     #[Route(path: '/{id}/approve', methods: [Request::METHOD_PATCH])]
