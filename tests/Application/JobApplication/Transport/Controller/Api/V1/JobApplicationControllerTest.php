@@ -14,6 +14,7 @@ class JobApplicationControllerTest extends WebTestCase
     private const string OFFER_ID = '40000000-0000-1000-8000-000000000001';
     private const string APPLICATION_ID = '50000000-0000-1000-8000-000000000001';
     private const string UNAUTHORIZED_APPLICATION_ID = '50000000-0000-1000-8000-000000000004';
+    private const string MY_OFFERS_EXCLUDED_APPLICATION_ID = '50000000-0000-1000-8000-000000000004';
     private const string BASE_URL = self::API_URL_PREFIX . '/v1/job-applications';
 
     /** @throws Throwable */
@@ -122,6 +123,39 @@ class JobApplicationControllerTest extends WebTestCase
 
         $ownerClient->request('PATCH', self::BASE_URL . '/' . $applicationId . '/accept');
         self::assertSame(Response::HTTP_BAD_REQUEST, $ownerClient->getResponse()->getStatusCode());
+    }
+
+
+    /** @throws Throwable */
+    public function testMyOffersRouteReturnsOnlyApplicationsCurrentUserCanDecide(): void
+    {
+        $ownerClient = $this->getTestClient('john-user', 'password-user');
+        $ownerClient->request('GET', self::BASE_URL . '/my-offers');
+        self::assertSame(Response::HTTP_OK, $ownerClient->getResponse()->getStatusCode());
+
+        $ownerList = JSON::decode((string) $ownerClient->getResponse()->getContent(), true);
+        self::assertIsArray($ownerList);
+        self::assertNotEmpty($ownerList);
+
+        $ownerApplicationIds = array_map(
+            static fn (array $application): string => (string) ($application['id'] ?? ''),
+            $ownerList,
+        );
+
+        self::assertContains(self::APPLICATION_ID, $ownerApplicationIds);
+        self::assertNotContains(self::MY_OFFERS_EXCLUDED_APPLICATION_ID, $ownerApplicationIds);
+
+        foreach ($ownerList as $application) {
+            self::assertArrayHasKey('jobOffer', $application);
+            self::assertNotEmpty($application['jobOffer']);
+        }
+
+        $candidateClient = $this->getTestClient('carol-user', 'password-user');
+        $candidateClient->request('GET', self::BASE_URL . '/my-offers');
+        self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
+
+        $candidateList = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        self::assertSame([], $candidateList);
     }
 
     /** @throws Throwable */
