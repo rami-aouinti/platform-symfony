@@ -24,6 +24,14 @@ class ChatMessageRepository extends BaseRepository implements ChatMessageReposit
     ) {
     }
 
+    public function find(string $id): ?Entity
+    {
+        /** @var Entity|null $message */
+        $message = parent::find($id);
+
+        return $message;
+    }
+
     public function findByConversationId(string $conversationId): array
     {
         return $this->createQueryBuilder('message')
