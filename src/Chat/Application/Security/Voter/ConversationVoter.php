@@ -53,9 +53,14 @@ class ConversationVoter extends Voter
         }
 
         if ($attribute === Permission::CHAT_POST->value) {
-            return $participant->getUser() !== null;
+            return $this->isActiveParticipant($participant, $user->getUserIdentifier());
         }
 
         return true;
+    }
+
+    private function isActiveParticipant(ConversationParticipant $participant, string $userId): bool
+    {
+        return $participant->getUser()?->getId() === $userId;
     }
 }
