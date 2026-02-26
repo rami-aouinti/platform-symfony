@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\General\Domain\Entity;
 
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\General\Domain\Entity\Traits\NameTrait;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use Doctrine\DBAL\Types\Types;
@@ -22,8 +23,13 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Table(name: 'city')]
 #[ORM\UniqueConstraint(name: 'uq_city_region_name', columns: ['region_id', 'name'])]
 #[ORM\Index(name: 'idx_city_region', columns: ['region_id'])]
+#[ORM\AttributeOverrides([
+    new ORM\AttributeOverride(name: 'name', column: new ORM\Column(name: 'name', type: Types::STRING, length: 128, nullable: false)),
+])]
+
 class City implements EntityInterface
 {
+    use NameTrait;
     use Timestampable;
     use Uuid;
 
@@ -36,10 +42,6 @@ class City implements EntityInterface
     #[ORM\JoinColumn(name: 'region_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     #[Groups(['City', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private ?Region $region = null;
-
-    #[ORM\Column(name: 'name', type: Types::STRING, length: 128, nullable: false)]
-    #[Groups(['City', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
-    private string $name = '';
 
     public function __construct()
     {
@@ -63,15 +65,4 @@ class City implements EntityInterface
         return $this;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
 }

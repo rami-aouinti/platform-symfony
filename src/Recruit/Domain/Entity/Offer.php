@@ -6,6 +6,8 @@ namespace App\Recruit\Domain\Entity;
 
 use App\Company\Domain\Entity\Company;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\General\Domain\Entity\Traits\DescriptionTrait;
+use App\General\Domain\Entity\Traits\StatusTrait;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use App\User\Domain\Entity\User;
@@ -26,6 +28,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class Offer implements EntityInterface
 {
+    use DescriptionTrait;
+    use StatusTrait;
     use Timestampable;
     use Uuid;
 
@@ -37,14 +41,6 @@ class Offer implements EntityInterface
     #[ORM\Column(name: 'title', type: Types::STRING, length: 255, nullable: false)]
     #[Groups(['Offer', 'Offer.title', 'Offer.create', 'Offer.show', 'Offer.edit'])]
     private string $title = '';
-
-    #[ORM\Column(name: 'description', type: Types::TEXT, nullable: false)]
-    #[Groups(['Offer', 'Offer.description', 'Offer.create', 'Offer.show', 'Offer.edit'])]
-    private string $description = '';
-
-    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
-    #[Groups(['Offer', 'Offer.status', 'Offer.create', 'Offer.show', 'Offer.edit'])]
-    private string $status = 'draft';
 
     #[ORM\ManyToOne(targetEntity: Company::class)]
     #[ORM\JoinColumn(name: 'company_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
@@ -59,6 +55,7 @@ class Offer implements EntityInterface
     public function __construct()
     {
         $this->id = $this->createUuid();
+        $this->status = 'draft';
     }
 
     public function getId(): string
@@ -74,30 +71,6 @@ class Offer implements EntityInterface
     public function setTitle(string $title): self
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(string $description): self
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): self
-    {
-        $this->status = $status;
 
         return $this;
     }
