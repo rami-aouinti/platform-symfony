@@ -43,37 +43,10 @@ company-controllers:
     defaults:
         _format: json
 
-candidate-controllers:
+recruit-controllers:
     resource:
-        path: ../src/Candidate/Transport/Controller/Api/
-        namespace: App\Candidate\Transport\Controller\Api
-    type: attribute
-    prefix: /api
-    defaults:
-        _format: json
-
-job-controllers:
-    resource:
-        path: ../src/JobApplication/Transport/Controller/Api/
-        namespace: App\JobApplication\Transport\Controller\Api
-    type: attribute
-    prefix: /api
-    defaults:
-        _format: json
-
-job-offer-controllers:
-    resource:
-        path: ../src/JobOffer/Transport/Controller/Api/
-        namespace: App\JobOffer\Transport\Controller\Api
-    type: attribute
-    prefix: /api
-    defaults:
-        _format: json
-
-offer-controllers:
-    resource:
-        path: ../src/Offer/Transport/Controller/Api/
-        namespace: App\Offer\Transport\Controller\Api
+        path: ../src/Recruit/Transport/Controller/Api/
+        namespace: App\Recruit\Transport\Controller\Api
     type: attribute
     prefix: /api
     defaults:
@@ -101,15 +74,6 @@ chat-controllers:
     resource:
         path: ../src/Chat/Transport/Controller/Api/
         namespace: App\Chat\Transport\Controller\Api
-    type: attribute
-    prefix: /api
-    defaults:
-        _format: json
-
-resume-controllers:
-    resource:
-        path: ../src/Resume/Transport/Controller/Api/
-        namespace: App\Resume\Transport\Controller\Api
     type: attribute
     prefix: /api
     defaults:

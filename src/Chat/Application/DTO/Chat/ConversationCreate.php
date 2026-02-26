@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Chat\Application\DTO\Chat;
 
 use App\General\Application\Validator\Constraints as AppAssert;
-use App\JobApplication\Domain\Entity\JobApplication;
+use App\Recruit\Domain\Entity\JobApplication;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**

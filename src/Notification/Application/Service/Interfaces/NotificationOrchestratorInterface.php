@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Notification\Application\Service\Interfaces;
 
-use App\JobApplication\Domain\Enum\JobApplicationStatus;
+use App\Recruit\Domain\Enum\JobApplicationStatus;
 use App\User\Domain\Entity\User;
 
 /**

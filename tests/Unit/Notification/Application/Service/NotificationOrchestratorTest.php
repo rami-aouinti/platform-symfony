@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Notification\Application\Service;
 
 use App\General\Domain\Service\Interfaces\MessageServiceInterface;
-use App\JobApplication\Domain\Enum\JobApplicationStatus;
 use App\Notification\Application\Service\Interfaces\NotificationServiceInterface;
 use App\Notification\Application\Service\NotificationOrchestrator;
 use App\Notification\Domain\Message\NotificationRealtimePublishMessage;
+use App\Recruit\Domain\Enum\JobApplicationStatus;
 use App\User\Domain\Entity\User;
 use PHPUnit\Framework\TestCase;
 

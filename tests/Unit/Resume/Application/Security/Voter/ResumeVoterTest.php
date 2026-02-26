@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Resume\Application\Security\Voter;
 
-use App\Resume\Application\Security\Voter\ResumeVoter;
-use App\Resume\Domain\Entity\Resume;
+use App\Recruit\Application\Security\Voter\ResumeVoter;
+use App\Recruit\Domain\Entity\Resume;
 use App\User\Application\Security\Permission;
 use App\User\Application\Security\SecurityUser;
 use App\User\Domain\Entity\User;

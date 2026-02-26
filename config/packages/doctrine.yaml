@@ -77,36 +77,24 @@ doctrine:
                         dir: '%kernel.project_dir%/src/User/Domain/Entity'
                         prefix: 'App\User\Domain\Entity'
                         alias: User
-                    Candidate:
+                    Recruit:
                         type: attribute
                         is_bundle: false
-                        dir: '%kernel.project_dir%/src/Candidate/Domain/Entity'
-                        prefix: 'App\Candidate\Domain\Entity'
-                        alias: Candidate
+                        dir: '%kernel.project_dir%/src/Recruit/Domain/Entity'
+                        prefix: 'App\Recruit\Domain\Entity'
+                        alias: Recruit
                     Company:
                         type: attribute
                         is_bundle: false
                         dir: '%kernel.project_dir%/src/Company/Domain/Entity'
                         prefix: 'App\Company\Domain\Entity'
                         alias: Company
-                    Offer:
+                    Media:
                         type: attribute
                         is_bundle: false
-                        dir: '%kernel.project_dir%/src/Offer/Domain/Entity'
-                        prefix: 'App\Offer\Domain\Entity'
-                        alias: Offer
-                    JobApplication:
-                        type: attribute
-                        is_bundle: false
-                        dir: '%kernel.project_dir%/src/JobApplication/Domain/Entity'
-                        prefix: 'App\JobApplication\Domain\Entity'
-                        alias: JobApplication
-                    JobOffer:
-                        type: attribute
-                        is_bundle: false
-                        dir: '%kernel.project_dir%/src/JobOffer/Domain/Entity'
-                        prefix: 'App\JobOffer\Domain\Entity'
-                        alias: JobOffer
+                        dir: '%kernel.project_dir%/src/Media/Domain/Entity'
+                        prefix: 'App\Media\Domain\Entity'
+                        alias: Media
                     Notification:
                         type: attribute
                         is_bundle: false
@@ -119,12 +107,6 @@ doctrine:
                         dir: '%kernel.project_dir%/src/Chat/Domain/Entity'
                         prefix: 'App\Chat\Domain\Entity'
                         alias: Chat
-                    Resume:
-                        type: attribute
-                        is_bundle: false
-                        dir: '%kernel.project_dir%/src/Resume/Domain/Entity'
-                        prefix: 'App\Resume\Domain\Entity'
-                        alias: Resume
                 dql:
                     datetime_functions:
                         datesub: DoctrineExtensions\Query\Mysql\DateSub

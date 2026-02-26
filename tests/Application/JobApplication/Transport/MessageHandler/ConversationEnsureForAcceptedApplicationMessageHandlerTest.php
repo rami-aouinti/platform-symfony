@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Application\JobApplication\Transport\MessageHandler;
 
 use App\Chat\Infrastructure\Repository\ConversationRepository;
-use App\JobApplication\Domain\Enum\JobApplicationStatus;
-use App\JobApplication\Domain\Message\ConversationEnsureForAcceptedApplicationMessage;
-use App\JobApplication\Infrastructure\Repository\JobApplicationRepository;
-use App\JobApplication\Transport\MessageHandler\ConversationEnsureForAcceptedApplicationMessageHandler;
+use App\Recruit\Domain\Enum\JobApplicationStatus;
+use App\Recruit\Domain\Message\ConversationEnsureForAcceptedApplicationMessage;
+use App\Recruit\Infrastructure\Repository\JobApplicationRepository;
+use App\Recruit\Transport\MessageHandler\ConversationEnsureForAcceptedApplicationMessageHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

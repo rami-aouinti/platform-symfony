@@ -7,7 +7,7 @@ namespace App\Tests\Application\Chat\Transport\Controller\Api\V1;
 use App\Chat\Domain\Entity\Conversation;
 use App\Chat\Domain\Entity\ConversationParticipant;
 use App\General\Domain\Utils\JSON;
-use App\JobApplication\Domain\Entity\JobApplication;
+use App\Recruit\Domain\Entity\JobApplication;
 use App\Tests\TestCase\WebTestCase;
 use App\User\Domain\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Company\Domain\Entity;
 
-use App\Candidate\Domain\Entity\CandidateProfile;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
+use App\Recruit\Domain\Entity\CandidateProfile;
 use App\User\Domain\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

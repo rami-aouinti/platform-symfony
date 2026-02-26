@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Application\JobApplication\Transport\Controller\Api\V1;
 
 use App\General\Domain\Utils\JSON;
-use App\JobApplication\Domain\Message\ConversationEnsureForAcceptedApplicationMessage;
+use App\Recruit\Domain\Message\ConversationEnsureForAcceptedApplicationMessage;
 use App\Tests\TestCase\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;

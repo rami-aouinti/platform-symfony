@@ -7,7 +7,7 @@ namespace App\Chat\Domain\Entity;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
-use App\JobApplication\Domain\Entity\JobApplication;
+use App\Recruit\Domain\Entity\JobApplication;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

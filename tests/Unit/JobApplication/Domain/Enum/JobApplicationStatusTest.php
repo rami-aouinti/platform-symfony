@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\JobApplication\Domain\Enum;
 
-use App\JobApplication\Domain\Enum\JobApplicationStatus;
+use App\Recruit\Domain\Enum\JobApplicationStatus;
 use PHPUnit\Framework\TestCase;
 
 class JobApplicationStatusTest extends TestCase

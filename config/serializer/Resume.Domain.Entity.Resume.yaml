@@ -1,4 +1,4 @@
-App\Resume\Domain\Entity\Resume:
+App\Recruit\Domain\Entity\Resume:
     attributes:
         createdAt:
             groups: [ 'Resume', 'Resume.createdAt', 'Resume.show' ]
