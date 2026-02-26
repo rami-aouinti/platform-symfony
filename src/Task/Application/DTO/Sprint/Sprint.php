@@ -27,12 +27,10 @@ class Sprint extends RestDto
     ];
 
     #[Assert\NotBlank]
-    #[Assert\DateTime]
-    protected ?string $startDate = null;
+    protected ?DateTimeImmutable $startDate = null;
 
     #[Assert\NotBlank]
-    #[Assert\DateTime]
-    protected ?string $endDate = null;
+    protected ?DateTimeImmutable $endDate = null;
 
     /**
      * @var array<int, TaskRequest>
@@ -40,12 +38,12 @@ class Sprint extends RestDto
     #[AppAssert\EntityReferenceExists(TaskRequest::class)]
     protected array $taskRequests = [];
 
-    public function getStartDate(): ?string
+    public function getStartDate(): ?DateTimeImmutable
     {
         return $this->startDate;
     }
 
-    public function setStartDate(?string $startDate): self
+    public function setStartDate(?DateTimeImmutable $startDate): self
     {
         $this->setVisited('startDate');
         $this->startDate = $startDate;
@@ -53,12 +51,12 @@ class Sprint extends RestDto
         return $this;
     }
 
-    public function getEndDate(): ?string
+    public function getEndDate(): ?DateTimeImmutable
     {
         return $this->endDate;
     }
 
-    public function setEndDate(?string $endDate): self
+    public function setEndDate(?DateTimeImmutable $endDate): self
     {
         $this->setVisited('endDate');
         $this->endDate = $endDate;
@@ -90,8 +88,8 @@ class Sprint extends RestDto
     {
         if ($entity instanceof Entity) {
             $this->id = $entity->getId();
-            $this->startDate = $entity->getStartDate()?->format(DateTimeImmutable::ATOM);
-            $this->endDate = $entity->getEndDate()?->format(DateTimeImmutable::ATOM);
+            $this->startDate = $entity->getStartDate();
+            $this->endDate = $entity->getEndDate();
             $this->taskRequests = $entity->getTaskRequests()->toArray();
         }
 
