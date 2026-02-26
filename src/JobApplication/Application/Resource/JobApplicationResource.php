@@ -83,7 +83,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
             throw new JobApplicationException('You have already applied to this job offer.', Response::HTTP_CONFLICT);
         }
 
-        $resume = $this->resolveResume($payload?->getResumeId(), $candidate);
+        $resume = $this->resolveResume($payload?->getResumeId());
 
         $application = (new Entity())
             ->setJobOffer($jobOffer)
@@ -228,7 +228,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
     }
 
 
-    private function resolveResume(?string $resumeId, User $candidate): ?Resume
+    private function resolveResume(?string $resumeId): ?Resume
     {
         if ($resumeId === null || $resumeId === '') {
             return null;
@@ -240,7 +240,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
             throw new JobApplicationException('Resume not found.', Response::HTTP_NOT_FOUND);
         }
 
-        if ($resume->getOwner()?->getId() !== $candidate->getId()) {
+        if (!$this->authorizationChecker->isGranted(Permission::RESUME_USE_FOR_APPLICATION->value, $resume)) {
             throw new JobApplicationException('Resume not found.', Response::HTTP_NOT_FOUND);
         }
 

@@ -111,6 +111,11 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
                 Permission::NOTIFICATION_VIEW,
             ],
             CompanyMembership::ROLE_CANDIDATE => [
+                Permission::RESUME_CREATE,
+                Permission::RESUME_VIEW,
+                Permission::RESUME_EDIT,
+                Permission::RESUME_DELETE,
+                Permission::RESUME_USE_FOR_APPLICATION,
                 Permission::JOB_OFFER_VIEW,
                 Permission::JOB_APPLICATION_VIEW,
                 Permission::JOB_APPLICATION_APPLY,
@@ -127,6 +132,11 @@ readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterfa
     private function ownershipPermissions(): array
     {
         return [
+            Permission::RESUME_CREATE,
+            Permission::RESUME_VIEW,
+            Permission::RESUME_EDIT,
+            Permission::RESUME_DELETE,
+            Permission::RESUME_USE_FOR_APPLICATION,
             Permission::JOB_OFFER_VIEW,
             Permission::JOB_OFFER_MANAGE,
             Permission::JOB_APPLICATION_VIEW,

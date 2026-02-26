@@ -6,6 +6,12 @@ namespace App\User\Application\Security;
 
 enum Permission: string
 {
+    case RESUME_CREATE = 'resume.create';
+    case RESUME_VIEW = 'resume.view';
+    case RESUME_EDIT = 'resume.edit';
+    case RESUME_DELETE = 'resume.delete';
+    case RESUME_USE_FOR_APPLICATION = 'resume.use_for_application';
+
     case JOB_OFFER_VIEW = 'job_offer.view';
     case JOB_OFFER_MANAGE = 'job_offer.manage';
 

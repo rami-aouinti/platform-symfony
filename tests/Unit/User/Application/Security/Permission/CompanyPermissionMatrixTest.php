@@ -18,7 +18,7 @@ class CompanyPermissionMatrixTest extends TestCase
         $user = $this->createSecurityUser(['ROLE_ADMIN']);
 
         self::assertTrue($matrix->isGranted($user, Permission::SHOP_MANAGE, null, false));
-        self::assertTrue($matrix->isGranted($user, Permission::APPLICATION_DECIDE, null, false));
+        self::assertTrue($matrix->isGranted($user, Permission::JOB_APPLICATION_DECIDE, null, false));
     }
 
     public function testCrmManagerMembershipGrantsOfferAndApplicationPermissionsInCompanyContext(): void
@@ -26,9 +26,9 @@ class CompanyPermissionMatrixTest extends TestCase
         $matrix = new CompanyPermissionMatrix();
         $user = $this->createSecurityUser([], 'company-1', 'crm_manager');
 
-        self::assertTrue($matrix->isGranted($user, Permission::OFFER_MANAGE, 'company-1', false));
-        self::assertTrue($matrix->isGranted($user, Permission::APPLICATION_DECIDE, 'company-1', false));
-        self::assertFalse($matrix->isGranted($user, Permission::APPLICATION_WITHDRAW, 'company-1', false));
+        self::assertTrue($matrix->isGranted($user, Permission::JOB_OFFER_MANAGE, 'company-1', false));
+        self::assertTrue($matrix->isGranted($user, Permission::JOB_APPLICATION_DECIDE, 'company-1', false));
+        self::assertFalse($matrix->isGranted($user, Permission::JOB_APPLICATION_WITHDRAW, 'company-1', false));
     }
 
     public function testCandidateCanWithdrawApplicationButCannotDecide(): void
@@ -36,8 +36,18 @@ class CompanyPermissionMatrixTest extends TestCase
         $matrix = new CompanyPermissionMatrix();
         $user = $this->createSecurityUser([], 'company-1', 'candidate');
 
-        self::assertTrue($matrix->isGranted($user, Permission::APPLICATION_WITHDRAW, 'company-1', false));
-        self::assertFalse($matrix->isGranted($user, Permission::APPLICATION_DECIDE, 'company-1', false));
+        self::assertTrue($matrix->isGranted($user, Permission::JOB_APPLICATION_WITHDRAW, 'company-1', false));
+        self::assertFalse($matrix->isGranted($user, Permission::JOB_APPLICATION_DECIDE, 'company-1', false));
+    }
+
+    public function testCandidateGetsResumePermissionsFromMembership(): void
+    {
+        $matrix = new CompanyPermissionMatrix();
+        $user = $this->createSecurityUser([], 'company-1', 'candidate');
+
+        self::assertTrue($matrix->isGranted($user, Permission::RESUME_CREATE, 'company-1', false));
+        self::assertTrue($matrix->isGranted($user, Permission::RESUME_EDIT, 'company-1', false));
+        self::assertTrue($matrix->isGranted($user, Permission::RESUME_USE_FOR_APPLICATION, 'company-1', false));
     }
 
     public function testOwnershipFallbackWhenNoRoleMatches(): void
@@ -45,9 +55,18 @@ class CompanyPermissionMatrixTest extends TestCase
         $matrix = new CompanyPermissionMatrix();
         $user = $this->createSecurityUser([]);
 
-        self::assertTrue($matrix->isGranted($user, Permission::OFFER_MANAGE, null, true));
-        self::assertTrue($matrix->isGranted($user, Permission::APPLICATION_DECIDE, null, true));
-        self::assertFalse($matrix->isGranted($user, Permission::APPLICATION_WITHDRAW, null, true));
+        self::assertTrue($matrix->isGranted($user, Permission::JOB_OFFER_MANAGE, null, true));
+        self::assertTrue($matrix->isGranted($user, Permission::JOB_APPLICATION_DECIDE, null, true));
+        self::assertFalse($matrix->isGranted($user, Permission::JOB_APPLICATION_WITHDRAW, null, true));
+    }
+
+    public function testOwnershipFallbackIncludesResumePermissions(): void
+    {
+        $matrix = new CompanyPermissionMatrix();
+        $user = $this->createSecurityUser([]);
+
+        self::assertTrue($matrix->isGranted($user, Permission::RESUME_DELETE, null, true));
+        self::assertFalse($matrix->isGranted($user, Permission::RESUME_DELETE, null, false));
     }
 
     public function testNotificationPermissionGrantedFromMembershipWithoutExplicitCompanyContext(): void
