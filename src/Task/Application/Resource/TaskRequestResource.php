@@ -12,6 +12,7 @@ use App\Task\Application\Resource\Interfaces\TaskRequestResourceInterface;
 use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
 use App\Task\Domain\Entity\TaskRequest as Entity;
 use App\Task\Domain\Enum\TaskRequestStatus;
+use App\Task\Domain\Enum\TaskStatus;
 use App\Task\Domain\Repository\Interfaces\TaskRequestRepositoryInterface as RepositoryInterface;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
@@ -95,6 +96,21 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
         if ($entity instanceof Entity) {
             $this->assertCanViewRequest($entity);
         }
+    }
+
+    public function changeRequestedStatus(string $id, TaskStatus $requestedStatus): Entity
+    {
+        $request = $this->getRequestById($id);
+
+        if ($request->getStatus() !== TaskRequestStatus::PENDING) {
+            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Requested status can be changed only for pending task requests.');
+        }
+
+        $this->assertCanReviewRequest($request);
+        $request->setRequestedStatus($requestedStatus);
+        $this->save($request);
+
+        return $request;
     }
 
     public function approve(string $id): Entity
