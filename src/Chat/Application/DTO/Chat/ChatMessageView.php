@@ -7,6 +7,11 @@ namespace App\Chat\Application\DTO\Chat;
 use App\Chat\Domain\Entity\ChatMessage;
 use DateTimeImmutable;
 
+/**
+ * @package App\Chat
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ChatMessageView
 {
     private string $id;

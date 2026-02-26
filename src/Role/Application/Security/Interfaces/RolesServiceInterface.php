@@ -8,6 +8,7 @@ use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 
 /**
  * @package App\Role
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface RolesServiceInterface
 {

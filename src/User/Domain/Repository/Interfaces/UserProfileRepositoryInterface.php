@@ -9,6 +9,7 @@ use App\User\Domain\Entity\UserProfile as Entity;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface UserProfileRepositoryInterface
 {

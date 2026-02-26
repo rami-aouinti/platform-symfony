@@ -13,6 +13,7 @@ use function in_array;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class LocaleValidator extends ConstraintValidator
 {

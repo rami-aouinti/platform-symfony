@@ -10,6 +10,7 @@ use App\Tool\Domain\Repository\Interfaces\HealthRepositoryInterface;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 readonly class HealthService implements HealthServiceInterface
 {

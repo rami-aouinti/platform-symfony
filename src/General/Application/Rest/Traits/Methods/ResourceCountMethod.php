@@ -8,6 +8,7 @@ use App\General\Application\Rest\Traits\RestResourceCount as CountLifeCycle;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait ResourceCountMethod
 {

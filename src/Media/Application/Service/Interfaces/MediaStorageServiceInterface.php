@@ -7,6 +7,11 @@ namespace App\Media\Application\Service\Interfaces;
 use App\Media\Application\Service\Model\StoredMedia;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * @package App\Media
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 interface MediaStorageServiceInterface
 {
     public function store(UploadedFile $file, ?string $ownerId = null): StoredMedia;

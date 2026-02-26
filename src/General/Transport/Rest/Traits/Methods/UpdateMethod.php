@@ -17,6 +17,7 @@ use Throwable;
  * @package App\General
  *
  * @method ResponseHandler getResponseHandler()
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait UpdateMethod
 {

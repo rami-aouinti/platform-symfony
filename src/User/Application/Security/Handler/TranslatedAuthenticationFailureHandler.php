@@ -16,6 +16,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class TranslatedAuthenticationFailureHandler extends AuthenticationFailureHandler
 {

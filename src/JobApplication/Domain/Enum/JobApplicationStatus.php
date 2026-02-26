@@ -7,6 +7,11 @@ namespace App\JobApplication\Domain\Enum;
 use App\General\Domain\Enum\Interfaces\DatabaseEnumInterface;
 use App\General\Domain\Enum\Traits\GetValues;
 
+/**
+ * @package App\JobApplication
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 enum JobApplicationStatus: string implements DatabaseEnumInterface
 {
     use GetValues;

@@ -14,6 +14,7 @@ use Throwable;
  * TODO: This is handler example, you can delete it.
  *
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsMessageHandler]
 class TestHandler

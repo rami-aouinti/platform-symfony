@@ -9,6 +9,11 @@ use App\Offer\Application\DTO\Offer\OfferCreate;
 use App\Offer\Application\DTO\Offer\OfferPatch;
 use App\Offer\Application\DTO\Offer\OfferUpdate;
 
+/**
+ * @package App\Offer
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class AutoMapperConfiguration extends RestAutoMapperConfiguration
 {
     /**

@@ -29,6 +29,7 @@ use function array_key_exists;
  * @method Entity[] findAll(?string $entityManagerName = null)
  *
  * @codingStandardsIgnoreEnd
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {

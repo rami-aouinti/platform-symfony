@@ -29,6 +29,10 @@ use function sprintf;
     name: self::NAME,
     description: 'Console command to list users',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ListUsersCommand extends Command
 {
     use SymfonyStyleTrait;

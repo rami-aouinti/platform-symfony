@@ -7,6 +7,11 @@ namespace App\Resume\Application\Resource\Interfaces;
 use App\General\Application\Rest\Interfaces\RestResourceInterface;
 use App\Resume\Domain\Entity\Resume;
 
+/**
+ * @package App\Resume
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 interface ResumeResourceInterface extends RestResourceInterface
 {
     /**

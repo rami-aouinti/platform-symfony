@@ -7,6 +7,11 @@ namespace App\Notification\Application\Service\Interfaces;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
 use App\User\Domain\Entity\User;
 
+/**
+ * @package App\Notification
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 interface NotificationOrchestratorInterface
 {
     public function notifyCompanyCreated(User $owner, string $companyLegalName): void;

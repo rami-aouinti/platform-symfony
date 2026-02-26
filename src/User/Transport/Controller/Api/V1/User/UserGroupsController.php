@@ -21,6 +21,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
 #[OA\Tag(name: 'User Management')]

@@ -8,6 +8,7 @@ use App\User\Domain\Entity\User;
 
 /**
  * @package App\Log
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface LogLoginFailureRepositoryInterface
 {

@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ResponseHandlerInterface
 {

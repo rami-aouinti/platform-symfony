@@ -6,6 +6,7 @@ namespace App\ApiKey\Domain\Repository\Interfaces;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ApiKeyRepositoryInterface
 {

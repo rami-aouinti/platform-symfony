@@ -8,6 +8,7 @@ use App\General\Domain\Exception\Interfaces\TranslatableExceptionInterface;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 abstract class BaseTranslatableException extends BaseException implements TranslatableExceptionInterface
 {

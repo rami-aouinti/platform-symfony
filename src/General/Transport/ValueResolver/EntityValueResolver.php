@@ -37,6 +37,7 @@ use function Symfony\Component\String\u;
  * method argument name.
  *
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class EntityValueResolver implements ValueResolverInterface
 {

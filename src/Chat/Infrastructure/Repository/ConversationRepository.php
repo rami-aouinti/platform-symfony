@@ -14,6 +14,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Entity|null find(string $id, LockMode|int|null $lockMode = null, ?int $lockVersion = null, ?string $entityManagerName = null)
  * @method Entity|null findOneBy(array $criteria, ?array $orderBy = null, ?string $entityManagerName = null)
  * @method Entity[] findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?string $entityManagerName = null)
+ * @package App\Chat
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ConversationRepository extends BaseRepository implements ConversationRepositoryInterface
 {

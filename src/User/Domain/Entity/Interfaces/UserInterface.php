@@ -6,6 +6,7 @@ namespace App\User\Domain\Entity\Interfaces;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface UserInterface
 {

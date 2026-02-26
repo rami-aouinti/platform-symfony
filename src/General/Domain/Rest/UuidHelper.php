@@ -18,6 +18,7 @@ use function syslog;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UuidHelper
 {

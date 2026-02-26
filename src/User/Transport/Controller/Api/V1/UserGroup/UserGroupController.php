@@ -27,6 +27,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route(
     path: '/v1/user_group',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'UserGroup Management')]
 class UserGroupController extends Controller

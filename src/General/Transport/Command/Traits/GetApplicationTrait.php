@@ -9,6 +9,7 @@ use Symfony\Component\Console\Exception\RuntimeException;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait GetApplicationTrait
 {

@@ -10,6 +10,7 @@ use Dukecity\CommandSchedulerBundle\Entity\ScheduledCommand;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ScheduledCommandServiceInterface
 {

@@ -11,6 +11,7 @@ use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyEntityEventListener
 {

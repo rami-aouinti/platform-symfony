@@ -6,6 +6,7 @@ namespace App\General\Domain\Doctrine\DBAL\Types;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class Types
 {

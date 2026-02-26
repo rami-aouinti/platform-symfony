@@ -9,6 +9,11 @@ use App\JobApplication\Application\DTO\JobApplication\OfferApplicationPayload;
 use App\JobApplication\Domain\Entity\JobApplication;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
 
+/**
+ * @package App\JobApplication
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 interface JobApplicationResourceInterface extends RestResourceInterface
 {
     public function apply(string $jobOfferId, ?OfferApplicationPayload $payload = null): JobApplication;

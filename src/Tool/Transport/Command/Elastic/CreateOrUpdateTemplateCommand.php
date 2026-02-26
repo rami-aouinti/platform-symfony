@@ -20,6 +20,10 @@ use Throwable;
     name: self::NAME,
     description: 'Command to create/update index template in Elastic.',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class CreateOrUpdateTemplateCommand extends Command
 {
     use SymfonyStyleTrait;

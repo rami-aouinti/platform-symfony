@@ -8,6 +8,7 @@ use App\General\Application\Rest\Traits\RestResourceIds as IdsLifeCycle;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait ResourceIdsMethod
 {

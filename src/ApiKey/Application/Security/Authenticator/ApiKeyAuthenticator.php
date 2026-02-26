@@ -22,6 +22,7 @@ use function preg_match;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyAuthenticator extends AbstractAuthenticator
 {

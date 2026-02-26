@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\JobOffer\Domain\Enum;
 
+/**
+ * @package App\JobOffer
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 enum ExperienceLevel: string
 {
     case INTERN = 'intern';

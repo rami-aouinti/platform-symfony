@@ -29,6 +29,11 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use function array_map;
 
+/**
+ * @package App\Chat
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ChatResource implements ChatResourceInterface
 {
     public function __construct(

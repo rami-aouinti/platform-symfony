@@ -21,6 +21,7 @@ use function sprintf;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 abstract class EnumType extends Type
 {

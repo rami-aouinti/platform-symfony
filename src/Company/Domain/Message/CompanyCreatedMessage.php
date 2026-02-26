@@ -6,6 +6,11 @@ namespace App\Company\Domain\Message;
 
 use App\General\Domain\Message\Interfaces\MessageLowInterface;
 
+/**
+ * @package App\Company
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 readonly class CompanyCreatedMessage implements MessageLowInterface
 {
     /**

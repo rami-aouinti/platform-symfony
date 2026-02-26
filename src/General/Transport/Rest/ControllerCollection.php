@@ -22,6 +22,7 @@ use function sprintf;
  * @method IteratorAggregate<int, ControllerInterface> getAll()
  *
  * @template T of ControllerInterface
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ControllerCollection implements Countable
 {

@@ -11,6 +11,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 
+/**
+ * @package App\Media
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 final readonly class MediaStorageService implements MediaStorageServiceInterface
 {
     public function __construct(

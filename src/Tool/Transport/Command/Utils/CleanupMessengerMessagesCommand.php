@@ -22,6 +22,10 @@ use function sprintf;
     name: self::NAME,
     description: 'Command to cleanup messenger_messages table.',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class CleanupMessengerMessagesCommand extends Command
 {
     use SymfonyStyleTrait;

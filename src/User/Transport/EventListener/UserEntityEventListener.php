@@ -14,6 +14,7 @@ use function strlen;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserEntityEventListener
 {

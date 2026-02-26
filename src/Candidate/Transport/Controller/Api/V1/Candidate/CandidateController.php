@@ -18,6 +18,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 /**
  * @method CandidateProfileResource getResource()
  * @method ResponseHandler getResponseHandler()
+ * @package App\Candidate
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
 #[Route(path: '/v1/candidates')]

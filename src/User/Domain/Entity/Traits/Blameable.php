@@ -11,6 +11,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait Blameable
 {

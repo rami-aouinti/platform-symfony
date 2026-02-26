@@ -17,6 +17,7 @@ use function sprintf;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyHelper
 {

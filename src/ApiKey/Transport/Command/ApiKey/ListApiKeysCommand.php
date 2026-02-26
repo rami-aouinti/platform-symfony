@@ -29,6 +29,10 @@ use function sprintf;
     name: self::NAME,
     description: 'Console command to list API keys',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ListApiKeysCommand extends Command
 {
     final public const string NAME = 'api-key:list';

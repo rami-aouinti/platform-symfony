@@ -8,6 +8,7 @@ namespace App\Role\Domain\Enum;
  * Enum Role
  *
  * @package App\Role
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 enum Role: string
 {

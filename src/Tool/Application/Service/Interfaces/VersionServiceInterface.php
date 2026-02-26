@@ -6,6 +6,7 @@ namespace App\Tool\Application\Service\Interfaces;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface VersionServiceInterface
 {

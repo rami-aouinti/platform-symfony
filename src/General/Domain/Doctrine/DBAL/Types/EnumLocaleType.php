@@ -8,6 +8,7 @@ use App\General\Domain\Enum\Locale;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class EnumLocaleType extends EnumType
 {

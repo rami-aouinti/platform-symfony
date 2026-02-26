@@ -23,6 +23,7 @@ use App\General\Application\Rest\Traits\Methods\ResourceFindOneMethod;
  * @method Entity|null findOneBy(array $criteria, ?array $orderBy = null, ?bool $throwExceptionIfNotFound = null, ?string $entityManagerName = null)
  *
  * @codingStandardsIgnoreEnd
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyFindOneResource extends RestSmallResource implements ApiKeyFindOneResourceInterface
 {

@@ -22,6 +22,7 @@ use function str_pad;
  * @package App\ApiKey
  *
  * @psalm-suppress PropertyNotSetInConstructor
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 final class LoadApiKeyData extends Fixture implements OrderedFixtureInterface
 {

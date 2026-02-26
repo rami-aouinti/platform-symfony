@@ -15,6 +15,7 @@ use function str_starts_with;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class StopwatchCompilerPass implements CompilerPassInterface
 {

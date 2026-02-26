@@ -12,6 +12,7 @@ use Doctrine\ORM\Query\TokenType;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class BinToUuidOT extends FunctionNode
 {

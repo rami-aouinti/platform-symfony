@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
 #[OA\Tag(name: 'Localization')]

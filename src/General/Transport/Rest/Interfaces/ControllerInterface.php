@@ -16,6 +16,7 @@ use UnexpectedValueException;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AutoconfigureTag('app.rest.controller')]
 interface ControllerInterface

@@ -28,6 +28,7 @@ use Throwable;
  * you can use within your controller as you like.
  *
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class LoggedInUserValueResolver implements ValueResolverInterface
 {

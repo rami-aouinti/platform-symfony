@@ -27,6 +27,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route(
     path: '/v1/api_key',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'ApiKey Management v1')]
 class ApiKeyController extends Controller

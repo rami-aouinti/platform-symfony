@@ -10,6 +10,7 @@ use BackedEnum;
  * Enum StringEnumInterface
  *
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface StringEnumInterface extends BackedEnum
 {

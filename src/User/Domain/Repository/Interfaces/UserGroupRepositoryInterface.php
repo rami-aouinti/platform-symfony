@@ -6,6 +6,7 @@ namespace App\User\Domain\Repository\Interfaces;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface UserGroupRepositoryInterface
 {

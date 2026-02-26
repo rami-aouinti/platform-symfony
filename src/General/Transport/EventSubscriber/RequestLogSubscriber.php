@@ -24,6 +24,7 @@ use function substr;
  * @package App\General
  *
  * @property array<int, string> $ignoredRoutes
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class RequestLogSubscriber implements EventSubscriberInterface
 {

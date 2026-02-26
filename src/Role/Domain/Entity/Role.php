@@ -25,6 +25,10 @@ use Symfony\Component\Serializer\Attribute\Groups;
     name: 'uq_role',
     columns: ['role'],
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class Role implements EntityInterface
 {

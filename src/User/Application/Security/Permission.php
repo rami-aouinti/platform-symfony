@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\User\Application\Security;
 
+/**
+ * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 enum Permission: string
 {
     case RESUME_CREATE = 'resume.create';

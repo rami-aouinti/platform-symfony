@@ -6,6 +6,7 @@ namespace App\User\Application\DTO\User;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserUpdate extends User
 {

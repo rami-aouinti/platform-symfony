@@ -10,6 +10,7 @@ use function call_user_func_array;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait AddBasicFieldToForm
 {

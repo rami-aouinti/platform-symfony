@@ -6,6 +6,7 @@ namespace App\Role\Domain\Repository\Interfaces;
 
 /**
  * @package App\Role
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface RoleRepositoryInterface
 {

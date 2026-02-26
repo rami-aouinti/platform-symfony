@@ -21,6 +21,7 @@ use function array_map;
  * @package App\User
  *
  * @psalm-suppress PropertyNotSetInConstructor
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 final class LoadUserGroupData extends Fixture implements OrderedFixtureInterface
 {

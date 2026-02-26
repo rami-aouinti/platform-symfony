@@ -11,6 +11,7 @@ use App\General\Transport\AutoMapper\RestAutoMapperConfiguration;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration
 {

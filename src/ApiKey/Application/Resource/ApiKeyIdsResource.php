@@ -20,6 +20,7 @@ use App\General\Application\Rest\Traits\Methods\ResourceIdsMethod;
  * @method \App\ApiKey\Infrastructure\Repository\ApiKeyRepository getRepository()
  *
  * @codingStandardsIgnoreEnd
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyIdsResource extends RestSmallResource implements ApiKeyIdsResourceInterface
 {

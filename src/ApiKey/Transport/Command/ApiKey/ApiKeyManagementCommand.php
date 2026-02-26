@@ -16,6 +16,10 @@ use Symfony\Component\Console\Exception\LogicException;
     name: 'api-key:management',
     description: 'Console command to manage API keys',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ApiKeyManagementCommand extends Command
 {
     use ExecuteMultipleCommandTrait;

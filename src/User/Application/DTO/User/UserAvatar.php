@@ -7,6 +7,11 @@ namespace App\User\Application\DTO\User;
 use App\User\Domain\Entity\UserAvatar as Entity;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class UserAvatar
 {
     #[Assert\Length(max: 255)]

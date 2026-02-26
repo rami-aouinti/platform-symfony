@@ -20,6 +20,7 @@ use Throwable;
  * @package App\ApiKey
  *
  * @template-implements UserProviderInterface<ApiKeyUser>
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyUserProvider implements ApiKeyUserProviderInterface, UserProviderInterface
 {

@@ -28,6 +28,7 @@ use App\User\Domain\Repository\Interfaces\UserGroupRepositoryInterface as Reposi
  * @method Entity save(EntityInterface $entity, ?bool $flush = null, ?bool $skipValidation = null, ?string $entityManagerName = null)
  *
  * @codingStandardsIgnoreEnd
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserGroupResource extends RestResource
 {

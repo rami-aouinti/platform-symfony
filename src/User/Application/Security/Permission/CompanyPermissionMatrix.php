@@ -13,6 +13,11 @@ use Override;
 
 use function in_array;
 
+/**
+ * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 readonly class CompanyPermissionMatrix implements CompanyPermissionMatrixInterface
 {
     /**

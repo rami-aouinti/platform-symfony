@@ -6,6 +6,7 @@ namespace App\Tool\Domain\Service\Crypt\Interfaces;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface OpenSslCryptServiceInterface extends CryptServiceInterface
 {

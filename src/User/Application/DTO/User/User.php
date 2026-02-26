@@ -30,6 +30,7 @@ use function array_map;
  * @method self|RestDtoInterface get(string $id)
  * @method self|RestDtoInterface patch(RestDtoInterface $dto)
  * @method Entity|EntityInterface update(EntityInterface $entity)
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[UserAppAssert\UniqueEmail]
 #[UserAppAssert\UniqueUsername]

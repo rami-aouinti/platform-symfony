@@ -11,6 +11,7 @@ use Throwable;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ApiKeyUserProviderInterface
 {

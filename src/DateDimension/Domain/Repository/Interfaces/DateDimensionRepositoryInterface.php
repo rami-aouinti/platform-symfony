@@ -6,6 +6,7 @@ namespace App\DateDimension\Domain\Repository\Interfaces;
 
 /**
  * @package App\DateDimension
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface DateDimensionRepositoryInterface
 {

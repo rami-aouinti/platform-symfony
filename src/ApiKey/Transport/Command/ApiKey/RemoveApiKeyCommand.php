@@ -22,6 +22,10 @@ use Throwable;
     name: self::NAME,
     description: 'Console command to remove existing API key',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class RemoveApiKeyCommand extends Command
 {
     use SymfonyStyleTrait;

@@ -17,6 +17,7 @@ use Throwable;
 
 /**
  * @package App\Log
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class RequestLoggerService implements RequestLoggerServiceInterface
 {

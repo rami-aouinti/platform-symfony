@@ -26,6 +26,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * @method MediaResource getResource()
  * @method ResponseHandler getResponseHandler()
+ * @package App\Media
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
 #[Route(path: '/v1/media')]

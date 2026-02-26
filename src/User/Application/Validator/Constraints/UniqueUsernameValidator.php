@@ -14,6 +14,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UniqueUsernameValidator extends ConstraintValidator
 {

@@ -22,6 +22,10 @@ use Throwable;
     name: self::NAME,
     description: 'Command to change token for existing API key',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ChangeTokenCommand extends Command
 {
     use SymfonyStyleTrait;

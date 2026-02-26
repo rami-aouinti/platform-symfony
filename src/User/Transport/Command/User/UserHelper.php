@@ -17,6 +17,7 @@ use function sprintf;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserHelper
 {

@@ -24,6 +24,7 @@ use Throwable;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'user_group')]

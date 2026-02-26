@@ -12,6 +12,7 @@ use Throwable;
 
 /**
  * @package App\Log
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface LoginLoggerServiceInterface
 {

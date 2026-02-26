@@ -21,6 +21,10 @@ use Throwable;
     name: self::NAME,
     description: 'Command to run a cron job for cleanup logs by schedule.',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class CleanupLogsScheduledCommand extends Command
 {
     use SymfonyStyleTrait;

@@ -10,6 +10,7 @@ use Symfony\Component\Mime\Email;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class MailerService implements MailerServiceInterface
 {

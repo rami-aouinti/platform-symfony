@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface UserGroupAwareInterface extends EntityInterface
 {

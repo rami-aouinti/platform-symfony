@@ -23,6 +23,10 @@ use function sprintf;
     name: self::NAME,
     description: 'Console command to create roles to database',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class CreateRolesCommand extends Command
 {
     use SymfonyStyleTrait;

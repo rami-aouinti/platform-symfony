@@ -30,6 +30,10 @@ use Throwable;
     name: self::NAME,
     description: 'Console command to create user to database',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class CreateUserCommand extends Command
 {
     use ApiKeyUserManagementHelperTrait;

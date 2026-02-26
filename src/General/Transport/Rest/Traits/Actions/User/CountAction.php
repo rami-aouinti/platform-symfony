@@ -21,6 +21,7 @@ use Throwable;
  * @see \App\General\Transport\Rest\Traits\Methods\CountMethod for detailed documents.
  *
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait CountAction
 {

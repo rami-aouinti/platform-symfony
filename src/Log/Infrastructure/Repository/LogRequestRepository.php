@@ -24,6 +24,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Entity[] findAll(?string $entityManagerName = null)
  *
  * @codingStandardsIgnoreEnd
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class LogRequestRepository extends BaseRepository implements LogRequestRepositoryInterface
 {

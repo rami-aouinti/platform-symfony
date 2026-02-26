@@ -24,6 +24,7 @@ use function sprintf;
  * @package App\General
  *
  * @method IteratorAggregate<int, RestResourceInterface|RestSmallResourceInterface> getAll()
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ResourceCollection implements Countable
 {

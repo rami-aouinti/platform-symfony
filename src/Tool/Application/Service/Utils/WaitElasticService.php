@@ -9,6 +9,7 @@ use App\Tool\Application\Service\Utils\Interfaces\WaitElasticServiceInterface;
 
 /**
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class WaitElasticService implements WaitElasticServiceInterface
 {

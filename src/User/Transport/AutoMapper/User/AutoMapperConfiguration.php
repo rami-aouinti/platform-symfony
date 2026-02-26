@@ -11,6 +11,7 @@ use App\User\Application\DTO\User\UserUpdate;
 
 /**
  * @package App\User
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration
 {

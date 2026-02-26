@@ -48,6 +48,8 @@ use function trim;
 /**
  * @method JobOfferResource getResource()
  * @method ResponseHandler getResponseHandler()
+ * @package App\JobOffer
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
 #[Route(path: '/v1/job-offers')]

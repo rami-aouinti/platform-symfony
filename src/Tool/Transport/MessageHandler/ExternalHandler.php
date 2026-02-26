@@ -13,6 +13,7 @@ use Throwable;
  * TODO: This is external message handler example, you can delete it.
  *
  * @package App\Tool
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsMessageHandler]
 class ExternalHandler

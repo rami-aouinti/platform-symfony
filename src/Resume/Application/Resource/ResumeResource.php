@@ -18,6 +18,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
+ * @package App\Resume
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ResumeResource extends RestResource implements ResumeResourceInterface
 {

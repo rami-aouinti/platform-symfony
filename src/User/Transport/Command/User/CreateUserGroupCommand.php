@@ -30,6 +30,10 @@ use Throwable;
     name: self::NAME,
     description: 'Console command to create user groups',
 )]
+/**
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class CreateUserGroupCommand extends Command
 {
     use GetApplicationTrait;

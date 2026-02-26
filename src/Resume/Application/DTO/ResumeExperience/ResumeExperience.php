@@ -15,6 +15,11 @@ use DateTimeImmutable;
 use Override;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @package App\Resume
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ */
+
 class ResumeExperience extends RestDto
 {
     #[Assert\NotNull]

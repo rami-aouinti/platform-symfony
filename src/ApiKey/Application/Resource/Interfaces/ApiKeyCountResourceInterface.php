@@ -8,6 +8,7 @@ use App\General\Application\Rest\Interfaces\RestCountResourceInterface;
 
 /**
  * @package App\ApiKey
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ApiKeyCountResourceInterface extends RestCountResourceInterface
 {

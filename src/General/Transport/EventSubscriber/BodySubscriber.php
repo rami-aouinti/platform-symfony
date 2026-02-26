@@ -16,6 +16,7 @@ use function is_array;
 
 /**
  * @package App\General
+ * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class BodySubscriber implements EventSubscriberInterface
 {
