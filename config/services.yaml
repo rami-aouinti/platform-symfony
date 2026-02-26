@@ -189,6 +189,18 @@ services:
     App\User\Application\Security\Permission\Interfaces\CompanyPermissionMatrixInterface:
         class: App\User\Application\Security\Permission\CompanyPermissionMatrix
 
+    App\Task\Application\Service\Interfaces\TaskAccessServiceInterface:
+        class: App\Task\Application\Service\TaskAccessService
+
+    App\Task\Application\Resource\Interfaces\TaskResourceInterface:
+        class: App\Task\Application\Resource\TaskResource
+
+    App\Task\Application\Resource\Interfaces\ProjectResourceInterface:
+        class: App\Task\Application\Resource\ProjectResource
+
+    App\Task\Application\Resource\Interfaces\TaskRequestResourceInterface:
+        class: App\Task\Application\Resource\TaskRequestResource
+
 when@dev:
     services:
         _defaults:
@@ -209,6 +221,9 @@ when@dev:
 
         App\Recruit\Infrastructure\DataFixtures\:
             resource: '../src/Recruit/Infrastructure/DataFixtures/*'
+
+        App\Task\Infrastructure\DataFixtures\:
+            resource: '../src/Task/Infrastructure/DataFixtures/*'
 
         App\Tests\TestCase\:
             resource: '../tests/TestCase/*'
