@@ -204,8 +204,38 @@ services:
     App\Task\Application\Resource\Interfaces\ProjectResourceInterface:
         class: App\Task\Application\Resource\ProjectResource
 
+    App\Task\Application\Resource\Interfaces\SprintResourceInterface:
+        class: App\Task\Application\Resource\SprintResource
+
     App\Task\Application\Resource\Interfaces\TaskRequestResourceInterface:
         class: App\Task\Application\Resource\TaskRequestResource
+
+    App\Task\Domain\Repository\Interfaces\SprintRepositoryInterface:
+        class: App\Task\Infrastructure\Repository\SprintRepository
+
+    App\Blog\Application\Resource\Interfaces\BlogPostResourceInterface:
+        class: App\Blog\Application\Resource\BlogPostResource
+
+    App\Blog\Application\Resource\Interfaces\BlogTagResourceInterface:
+        class: App\Blog\Application\Resource\BlogTagResource
+
+    App\Blog\Application\Resource\Interfaces\BlogCommentResourceInterface:
+        class: App\Blog\Application\Resource\BlogCommentResource
+
+    App\Blog\Application\Resource\Interfaces\BlogPostLinkResourceInterface:
+        class: App\Blog\Application\Resource\BlogPostLinkResource
+
+    App\Blog\Domain\Repository\Interfaces\BlogPostRepositoryInterface:
+        class: App\Blog\Infrastructure\Repository\BlogPostRepository
+
+    App\Blog\Domain\Repository\Interfaces\BlogTagRepositoryInterface:
+        class: App\Blog\Infrastructure\Repository\BlogTagRepository
+
+    App\Blog\Domain\Repository\Interfaces\BlogCommentRepositoryInterface:
+        class: App\Blog\Infrastructure\Repository\BlogCommentRepository
+
+    App\Blog\Domain\Repository\Interfaces\BlogPostLinkRepositoryInterface:
+        class: App\Blog\Infrastructure\Repository\BlogPostLinkRepository
 
 when@dev:
     services:
@@ -225,12 +255,14 @@ when@dev:
         App\Company\Infrastructure\DataFixtures\:
             resource: '../src/Company/Infrastructure/DataFixtures/*'
 
+        App\Blog\Infrastructure\DataFixtures\:
+            resource: '../src/Blog/Infrastructure/DataFixtures/*'
+
         App\Recruit\Infrastructure\DataFixtures\:
             resource: '../src/Recruit/Infrastructure/DataFixtures/*'
 
         App\Task\Infrastructure\DataFixtures\:
             resource: '../src/Task/Infrastructure/DataFixtures/*'
-
         App\Tests\TestCase\:
             resource: '../tests/TestCase/*'
 
@@ -273,6 +305,9 @@ when@test:
 
         App\Company\Infrastructure\DataFixtures\:
             resource: '../src/Company/Infrastructure/DataFixtures/*'
+
+        App\Blog\Infrastructure\DataFixtures\:
+            resource: '../src/Blog/Infrastructure/DataFixtures/*'
 
         App\Tests\TestCase\:
             resource: '../tests/TestCase/*'

@@ -24,8 +24,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use ValueError;
 
 use function implode;
-use function strtolower;
 use function sprintf;
+use function strtolower;
 
 /**
  * @method TaskRequestResource getResource()
@@ -58,35 +58,43 @@ class TaskRequestController extends Controller
         parent::__construct($resource);
     }
 
+    #[Route(path: '/sprints/{sprintId}/grouped-by-task', methods: [Request::METHOD_GET])]
+    public function listBySprintGroupedByTaskAction(Request $request, string $sprintId): Response
+    {
+        $userId = $request->query->getString('user', '');
+        $data = $this->getResource()->listBySprintGroupedByTask($sprintId, $userId !== '' ? $userId : null);
+
+        return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
+    }
+
+    #[Route(path: '/{id}/requester/{requesterId}', methods: [Request::METHOD_PATCH])]
+    public function assignRequesterAction(Request $request, string $id, string $requesterId): Response
+    {
+        $data = $this->getResource()->assignRequester($id, $requesterId);
+
+        return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
+    }
+
+    #[Route(path: '/{id}/reviewer/{reviewerId}', methods: [Request::METHOD_PATCH])]
+    public function assignReviewerAction(Request $request, string $id, string $reviewerId): Response
+    {
+        $data = $this->getResource()->assignReviewer($id, $reviewerId);
+
+        return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
+    }
+
+    #[Route(path: '/{id}/sprint/{sprintId}', methods: [Request::METHOD_PATCH])]
+    public function assignSprintAction(Request $request, string $id, string $sprintId): Response
+    {
+        $data = $this->getResource()->assignSprint($id, $sprintId !== 'null' ? $sprintId : null);
+
+        return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
+    }
 
     #[Route(path: '/{id}/requested-status/{status}', methods: [Request::METHOD_PATCH])]
     public function changeRequestedStatusAction(Request $request, string $id, string $status): Response
     {
         $data = $this->getResource()->changeRequestedStatus($id, $this->resolveRequestedStatus($status));
-
-        return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
-    }
-
-    #[Route(path: '/{id}/approve', methods: [Request::METHOD_PATCH])]
-    public function approveAction(Request $request, string $id): Response
-    {
-        $data = $this->getResource()->approve($id);
-
-        return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
-    }
-
-    #[Route(path: '/{id}/reject', methods: [Request::METHOD_PATCH])]
-    public function rejectAction(Request $request, string $id): Response
-    {
-        $data = $this->getResource()->reject($id);
-
-        return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
-    }
-
-    #[Route(path: '/{id}/cancel', methods: [Request::METHOD_PATCH])]
-    public function cancelAction(Request $request, string $id): Response
-    {
-        $data = $this->getResource()->cancel($id);
 
         return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
     }

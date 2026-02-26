@@ -10,10 +10,12 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Task\Application\DTO\TaskRequest\TaskRequest as TaskRequestDto;
 use App\Task\Application\Resource\Interfaces\TaskRequestResourceInterface;
 use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
+use App\Task\Domain\Entity\Sprint;
 use App\Task\Domain\Entity\TaskRequest as Entity;
-use App\Task\Domain\Enum\TaskRequestStatus;
 use App\Task\Domain\Enum\TaskStatus;
 use App\Task\Domain\Repository\Interfaces\TaskRequestRepositoryInterface as RepositoryInterface;
+use App\User\Application\Resource\UserResource;
+use Doctrine\ORM\EntityManagerInterface;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,6 +31,8 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
         RepositoryInterface $repository,
         private readonly UserTypeIdentification $userTypeIdentification,
         private readonly TaskAccessServiceInterface $taskAccessService,
+        private readonly UserResource $userResource,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($repository);
     }
@@ -65,9 +69,7 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
             throw new HttpException(Response::HTTP_BAD_REQUEST, 'Requested status is required.');
         }
 
-        $entity
-            ->setRequester($user)
-            ->setStatus(TaskRequestStatus::PENDING);
+        $entity->setRequester($user);
     }
 
     public function beforeUpdate(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
@@ -102,10 +104,6 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
     {
         $request = $this->getRequestById($id);
 
-        if ($request->getStatus() !== TaskRequestStatus::PENDING) {
-            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Requested status can be changed only for pending task requests.');
-        }
-
         $this->assertCanReviewRequest($request);
         $request->setRequestedStatus($requestedStatus);
         $this->save($request);
@@ -113,50 +111,99 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
         return $request;
     }
 
-    public function approve(string $id): Entity
+    public function listBySprintGroupedByTask(string $sprintId, ?string $userId = null): array
     {
-        $request = $this->getRequestById($id);
-
-        $this->assertCanReviewRequest($request);
-        $request->setStatus(TaskRequestStatus::APPROVED);
-
-        if ($request->getRequestedStatus() !== null && $request->getTask() !== null) {
-            $request->getTask()->setStatus($request->getRequestedStatus());
-        }
-
-        $request->setReviewer($this->getCurrentUser());
-        $this->save($request);
-
-        return $request;
-    }
-
-    public function reject(string $id): Entity
-    {
-        $request = $this->getRequestById($id);
-
-        $this->assertCanReviewRequest($request);
-        $request
-            ->setStatus(TaskRequestStatus::REJECTED)
-            ->setReviewer($this->getCurrentUser());
-
-        $this->save($request);
-
-        return $request;
-    }
-
-    public function cancel(string $id): Entity
-    {
-        $request = $this->getRequestById($id);
         $user = $this->getCurrentUser();
+        $qb = $this->getRepository()->createQueryBuilder('tr')
+            ->leftJoin('tr.task', 't')
+            ->leftJoin('tr.sprint', 's')
+            ->andWhere('s.id = :sprintId')
+            ->setParameter('sprintId', $sprintId)
+            ->orderBy('t.title', 'ASC')
+            ->addOrderBy('tr.time', 'ASC');
 
-        if ($request->getRequester()?->getId() !== $user->getId() && !$this->taskAccessService->isAdminLike($user)) {
-            throw new AccessDeniedHttpException('Only requester can cancel this request.');
+        if ($userId !== null && $userId !== '') {
+            $qb
+                ->leftJoin('tr.requester', 'requester')
+                ->leftJoin('tr.reviewer', 'reviewer')
+                ->andWhere('requester.id = :userId OR reviewer.id = :userId')
+                ->setParameter('userId', $userId);
         }
 
-        $request
-            ->setStatus(TaskRequestStatus::CANCELLED)
-            ->setReviewer($user);
+        /** @var array<int, Entity> $requests */
+        $requests = $qb->getQuery()->getResult();
 
+        $grouped = [];
+
+        foreach ($requests as $request) {
+            $this->assertCanViewRequest($request);
+
+            $task = $request->getTask();
+            $taskId = $task?->getId() ?? 'no-task';
+
+            if (!isset($grouped[$taskId])) {
+                $grouped[$taskId] = [
+                    'task' => $task,
+                    'taskRequests' => [],
+                ];
+            }
+
+            $grouped[$taskId]['taskRequests'][] = $request;
+        }
+
+        if (!$this->taskAccessService->isAdminLike($user) && $userId !== null && $userId !== '' && $user->getId() !== $userId) {
+            throw new AccessDeniedHttpException('You cannot filter by another user.');
+        }
+
+        return [
+            'sprintId' => $sprintId,
+            'groupedByTask' => array_values($grouped),
+        ];
+    }
+
+    public function assignRequester(string $id, string $requesterId): Entity
+    {
+        $request = $this->getRequestById($id);
+        $this->assertCanReviewRequest($request);
+
+        $requester = $this->getUserById($requesterId);
+        $request->setRequester($requester);
+        $this->save($request);
+
+        return $request;
+    }
+
+    public function assignReviewer(string $id, string $reviewerId): Entity
+    {
+        $request = $this->getRequestById($id);
+        $this->assertCanReviewRequest($request);
+
+        $reviewer = $this->getUserById($reviewerId);
+        $request->setReviewer($reviewer);
+        $this->save($request);
+
+        return $request;
+    }
+
+    public function assignSprint(string $id, ?string $sprintId): Entity
+    {
+        $request = $this->getRequestById($id);
+        $this->assertCanReviewRequest($request);
+
+        if ($sprintId === null || $sprintId === '') {
+            $request->setSprint(null);
+            $this->save($request);
+
+            return $request;
+        }
+
+        $sprint = $this->entityManager->find(Sprint::class, $sprintId);
+
+        if (!$sprint instanceof Sprint) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, 'Sprint not found.');
+        }
+
+        $request->setSprint($sprint);
         $this->save($request);
 
         return $request;
@@ -172,6 +219,18 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
 
         return $entity;
     }
+
+    private function getUserById(string $id): User
+    {
+        $user = $this->userResource->findOne($id);
+
+        if (!$user instanceof User) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, 'User not found.');
+        }
+
+        return $user;
+    }
+
 
     private function assertCanViewRequest(Entity $request): void
     {

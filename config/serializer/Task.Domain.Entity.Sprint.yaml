@@ -1,0 +1,6 @@
+App\Task\Domain\Entity\Sprint:
+    attributes:
+        createdAt:
+            groups: [ 'Sprint.createdAt' ]
+        updatedAt:
+            groups: [ 'Sprint.updatedAt' ]

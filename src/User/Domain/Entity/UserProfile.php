@@ -229,9 +229,18 @@ class UserProfile implements EntityInterface
 
         'User.userProfile',
     ])]
-    public function getAvatarUrl(): ?string
+    public function getAvatarUrl(): string
     {
-        return $this->avatar?->getUrl();
+        $avatarUrl = $this->avatar?->getUrl();
+
+        if (is_string($avatarUrl) && '' !== $avatarUrl) {
+            return $avatarUrl;
+        }
+
+        return sprintf(
+            'https://ui-avatars.com/api/?name=%s&format=png',
+            rawurlencode($this->user->getUsername()),
+        );
     }
 
     #[Groups([
@@ -240,9 +249,21 @@ class UserProfile implements EntityInterface
 
         'User.userProfile',
     ])]
-    public function getPhoto(): ?string
+    public function getPhoto(): string
     {
-        return $this->avatar?->getUrl();
+        return $this->getAvatarUrl();
+    }
+
+
+    #[Groups([
+        'UserProfile',
+        'UserProfile.image',
+
+        'User.userProfile',
+    ])]
+    public function getImage(): string
+    {
+        return $this->getAvatarUrl();
     }
 
     #[Groups([

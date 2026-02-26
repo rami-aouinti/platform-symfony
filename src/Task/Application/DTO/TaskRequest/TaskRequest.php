@@ -8,9 +8,9 @@ use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\DTO\RestDto;
 use App\General\Application\Validator\Constraints as AppAssert;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\Task\Domain\Entity\Sprint;
 use App\Task\Domain\Entity\Task;
 use App\Task\Domain\Entity\TaskRequest as Entity;
-use App\Task\Domain\Enum\TaskRequestStatus;
 use App\Task\Domain\Enum\TaskRequestType;
 use App\Task\Domain\Enum\TaskStatus;
 use DateTimeImmutable;
@@ -28,6 +28,9 @@ class TaskRequest extends RestDto
     #[AppAssert\EntityReferenceExists(Task::class)]
     protected ?Task $task = null;
 
+    #[AppAssert\EntityReferenceExists(Sprint::class)]
+    protected ?Sprint $sprint = null;
+
     #[Assert\NotBlank]
     #[Assert\Choice(callback: [TaskRequestType::class, 'getValues'])]
     protected string $type = TaskRequestType::STATUS_CHANGE->value;
@@ -36,12 +39,9 @@ class TaskRequest extends RestDto
     #[Assert\Choice(callback: [TaskStatus::class, 'getValues'])]
     protected ?string $requestedStatus = null;
 
+    protected ?DateTimeImmutable $time = null;
+
     protected ?string $note = null;
-
-    #[Assert\Choice(callback: [TaskRequestStatus::class, 'getValues'])]
-    protected string $status = TaskRequestStatus::PENDING->value;
-
-    protected ?DateTimeImmutable $resolvedAt = null;
 
     public function getTask(): ?Task
     {
@@ -52,6 +52,19 @@ class TaskRequest extends RestDto
     {
         $this->setVisited('task');
         $this->task = $task;
+
+        return $this;
+    }
+
+    public function getSprint(): ?Sprint
+    {
+        return $this->sprint;
+    }
+
+    public function setSprint(?Sprint $sprint): self
+    {
+        $this->setVisited('sprint');
+        $this->sprint = $sprint;
 
         return $this;
     }
@@ -82,6 +95,19 @@ class TaskRequest extends RestDto
         return $this;
     }
 
+    public function getTime(): ?DateTimeImmutable
+    {
+        return $this->time;
+    }
+
+    public function setTime(?DateTimeImmutable $time): self
+    {
+        $this->setVisited('time');
+        $this->time = $time;
+
+        return $this;
+    }
+
     public function getNote(): ?string
     {
         return $this->note;
@@ -95,43 +121,17 @@ class TaskRequest extends RestDto
         return $this;
     }
 
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): self
-    {
-        $this->setVisited('status');
-        $this->status = $status;
-
-        return $this;
-    }
-
-    public function getResolvedAt(): ?DateTimeImmutable
-    {
-        return $this->resolvedAt;
-    }
-
-    public function setResolvedAt(?DateTimeImmutable $resolvedAt): self
-    {
-        $this->setVisited('resolvedAt');
-        $this->resolvedAt = $resolvedAt;
-
-        return $this;
-    }
-
     #[Override]
     public function load(EntityInterface $entity): self
     {
         if ($entity instanceof Entity) {
             $this->id = $entity->getId();
             $this->task = $entity->getTask();
+            $this->sprint = $entity->getSprint();
             $this->type = $entity->getType()->value;
             $this->requestedStatus = $entity->getRequestedStatus()?->value;
+            $this->time = $entity->getTime();
             $this->note = $entity->getNote();
-            $this->status = $entity->getStatus()->value;
-            $this->resolvedAt = $entity->getResolvedAt();
         }
 
         return $this;
