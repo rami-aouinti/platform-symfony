@@ -334,25 +334,39 @@ class JobOfferController extends Controller
     #[Route(path: '/my', methods: [Request::METHOD_GET])]
     #[OA\Response(
         response: 200,
-        description: 'Job offers created by the current user or manageable with current permissions.',
+        description: 'Job applications linked to offers managed by the current user, so they can accept or reject them.',
         content: new JsonContent(type: 'array', items: new OA\Items(type: 'object')),
     )]
     public function findMyAction(Request $request): Response
     {
-        if ($request->query->getBoolean('applications', false)) {
-            return $this->findMyApplicationsAction($request);
-        }
+        return $this->findMyApplicationsAction($request);
+    }
 
-        return $this->findWithCustomResourceMethod(
+    /**
+     * @throws Throwable
+     */
+    private function findMyApplicationsAction(Request $request): Response
+    {
+        $entityManagerName = RequestHandler::getTenant($request);
+
+        $data = $this->readEndpointCache->remember(
+            self::CACHE_SCOPE,
             $request,
-            fn (
-                array $criteria,
-                array $orderBy,
-                ?int $limit,
-                ?int $offset,
-                array $search,
-                ?string $entityManagerName,
-            ): array => $this->getResource()->findMyOffers($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+            [
+                'criteria' => ['scope' => 'my-offers-applications'],
+                'orderBy' => ['createdAt' => 'DESC'],
+                'limit' => null,
+                'offset' => null,
+                'search' => [],
+                'tenant' => $entityManagerName,
+            ],
+            fn (): array => $this->jobApplicationResource->findForMyOffers(),
+        );
+
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            $data,
+            $this->jobApplicationResource,
         );
     }
 

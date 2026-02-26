@@ -57,30 +57,10 @@ class JobOfferControllerTest extends WebTestCase
     }
 
     /** @throws Throwable */
-    public function testMyRouteReturnsOwnedAndManageableOffers(): void
+    public function testMyRouteReturnsApplicationsForManagedOffersByDefault(): void
     {
         $client = $this->getTestClient('alice-user', 'password-user');
         $client->request('GET', self::BASE_URL . '/my');
-
-        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-
-        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
-        $offerIds = array_column($offers, 'id');
-
-        self::assertContains('60000000-0000-1000-8000-000000000001', $offerIds);
-        self::assertContains('60000000-0000-1000-8000-000000000002', $offerIds);
-        self::assertContains('60000000-0000-1000-8000-000000000004', $offerIds);
-        self::assertNotContains('60000000-0000-1000-8000-000000000003', $offerIds);
-    }
-
-
-    /** @throws Throwable */
-    public function testMyRouteCanReturnApplicationsForManagedOffers(): void
-    {
-        $client = $this->getTestClient('alice-user', 'password-user');
-        $client->request('GET', self::BASE_URL . '/my', [
-            'applications' => '1',
-        ]);
 
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
@@ -93,6 +73,7 @@ class JobOfferControllerTest extends WebTestCase
         self::assertContains('50000000-0000-1000-8000-000000000003', $applicationIds);
         self::assertNotContains('50000000-0000-1000-8000-000000000004', $applicationIds);
     }
+
 
     /** @throws Throwable */
     public function testAvailableRouteReturnsOnlyOpenOffersUserCanApplyTo(): void
@@ -109,28 +90,6 @@ class JobOfferControllerTest extends WebTestCase
         self::assertContains('60000000-0000-1000-8000-000000000002', $offerIds);
         self::assertNotContains('60000000-0000-1000-8000-000000000003', $offerIds);
         self::assertNotContains('60000000-0000-1000-8000-000000000004', $offerIds);
-    }
-
-    /** @throws Throwable */
-    public function testMyRoutePaginationIsAppliedAfterVisibilityConstraints(): void
-    {
-        $client = $this->getTestClient('alice-user', 'password-user');
-        $client->request('GET', self::BASE_URL . '/my', [
-            'order' => ['title' => 'ASC'],
-            'limit' => 2,
-            'offset' => 1,
-        ]);
-
-        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-
-        $offers = JSON::decode((string) $client->getResponse()->getContent(), true);
-        $offerIds = array_column($offers, 'id');
-
-        self::assertCount(2, $offers);
-        self::assertSame([
-            '60000000-0000-1000-8000-000000000002',
-            '60000000-0000-1000-8000-000000000001',
-        ], $offerIds);
     }
 
     /** @throws Throwable */
