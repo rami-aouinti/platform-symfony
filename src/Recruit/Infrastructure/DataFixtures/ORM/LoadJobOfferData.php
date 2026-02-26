@@ -7,11 +7,11 @@ namespace App\Recruit\Infrastructure\DataFixtures\ORM;
 use App\Company\Domain\Entity\Company;
 use App\General\Domain\Entity\Address as AddressValueObject;
 use App\General\Domain\Rest\UuidHelper;
-use App\Recruit\Domain\Entity\City;
+use App\General\Domain\Entity\City;
 use App\Recruit\Domain\Entity\JobCategory;
 use App\Recruit\Domain\Entity\JobOffer;
 use App\Recruit\Domain\Entity\Language;
-use App\Recruit\Domain\Entity\Region;
+use App\General\Domain\Entity\Region;
 use App\Recruit\Domain\Entity\Skill;
 use App\Tests\Utils\PhpUnitUtil;
 use App\User\Domain\Entity\User;
@@ -131,8 +131,8 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'workTime' => 'full-time',
                 'applicationType' => 'internal',
                 'publishedAt' => $now->modify('-20 hours'),
-                'city' => $cities['paris'],
-                'region' => $regions['idf'],
+                'city' => $cities['paris']->getName(),
+                'region' => $regions['idf']->getName(),
                 'jobCategory' => $categories['backend'],
                 'skills' => [$skills['php'], $skills['symfony'], $skills['sql'], $skills['git']],
                 'languages' => [$languages['fr'], $languages['en']],
@@ -158,8 +158,8 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'workTime' => 'full-time',
                 'applicationType' => 'external-link',
                 'publishedAt' => $now->modify('-2 days'),
-                'city' => $cities['berlin'],
-                'region' => $regions['berlin'],
+                'city' => $cities['berlin']->getName(),
+                'region' => $regions['berlin']->getName(),
                 'jobCategory' => $categories['platform'],
                 'skills' => [$skills['devops'], $skills['aws'], $skills['kubernetes'], $skills['terraform']],
                 'languages' => [$languages['en'], $languages['de']],
@@ -185,8 +185,8 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'workTime' => 'full-time',
                 'applicationType' => 'email',
                 'publishedAt' => $now->modify('-31 days'),
-                'city' => $cities['lyon'],
-                'region' => $regions['ara'],
+                'city' => $cities['lyon']->getName(),
+                'region' => $regions['ara']->getName(),
                 'jobCategory' => $categories['data'],
                 'skills' => [$skills['sql'], $skills['python'], $skills['git']],
                 'languages' => [$languages['fr']],
@@ -212,8 +212,8 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
                 'workTime' => 'part-time',
                 'applicationType' => 'internal',
                 'publishedAt' => null,
-                'city' => $cities['toulouse'],
-                'region' => $regions['occitanie'],
+                'city' => $cities['toulouse']->getName(),
+                'region' => $regions['occitanie']->getName(),
                 'jobCategory' => $categories['frontend'],
                 'skills' => [$skills['react'], $skills['typescript']],
                 'languages' => [$languages['fr']],

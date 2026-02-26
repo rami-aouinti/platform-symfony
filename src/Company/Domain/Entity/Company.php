@@ -44,15 +44,7 @@ class Company implements EntityInterface
     #[Groups(['Company', 'Company.legalName', 'Company.create', 'Company.show', 'Company.edit', 'JobOffer', 'JobOffer.show', 'JobOffer.edit'])]
     private string $legalName = '';
 
-    #[ORM\Embedded(class: AddressValueObject::class, columnPrefix: false)]
-    #[ORM\AttributeOverrides([
-        new ORM\AttributeOverride(name: 'streetLine1', column: new ORM\Column(name: 'main_address_street_line_1', type: Types::STRING, length: 255, nullable: true)),
-        new ORM\AttributeOverride(name: 'streetLine2', column: new ORM\Column(name: 'main_address_street_line_2', type: Types::STRING, length: 255, nullable: true)),
-        new ORM\AttributeOverride(name: 'postalCode', column: new ORM\Column(name: 'main_address_postal_code', type: Types::STRING, length: 32, nullable: true)),
-        new ORM\AttributeOverride(name: 'city', column: new ORM\Column(name: 'main_address_city', type: Types::STRING, length: 255, nullable: false)),
-        new ORM\AttributeOverride(name: 'region', column: new ORM\Column(name: 'main_address_region', type: Types::STRING, length: 255, nullable: true)),
-        new ORM\AttributeOverride(name: 'countryCode', column: new ORM\Column(name: 'main_address_country_code', type: Types::STRING, length: 2, nullable: false)),
-    ])]
+    #[ORM\Embedded(class: AddressValueObject::class, columnPrefix: 'main_address_')]
     #[Groups(['Company', 'Company.mainAddress', 'Company.create', 'Company.show', 'Company.edit'])]
     private AddressValueObject $mainAddress;
 
@@ -161,4 +153,3 @@ class Company implements EntityInterface
         return $this;
     }
 }
-

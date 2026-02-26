@@ -121,15 +121,7 @@ class JobOffer implements EntityInterface
     #[Groups(['JobOffer', 'JobOffer.publishedAt', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?DateTimeImmutable $publishedAt = null;
 
-    #[ORM\Embedded(class: AddressValueObject::class, columnPrefix: false)]
-    #[ORM\AttributeOverrides([
-        new ORM\AttributeOverride(name: 'streetLine1', column: new ORM\Column(name: 'address_street_line_1', type: Types::STRING, length: 255, nullable: true)),
-        new ORM\AttributeOverride(name: 'streetLine2', column: new ORM\Column(name: 'address_street_line_2', type: Types::STRING, length: 255, nullable: true)),
-        new ORM\AttributeOverride(name: 'postalCode', column: new ORM\Column(name: 'address_postal_code', type: Types::STRING, length: 32, nullable: true)),
-        new ORM\AttributeOverride(name: 'city', column: new ORM\Column(name: 'address_city', type: Types::STRING, length: 255, nullable: false)),
-        new ORM\AttributeOverride(name: 'region', column: new ORM\Column(name: 'address_region', type: Types::STRING, length: 255, nullable: true)),
-        new ORM\AttributeOverride(name: 'countryCode', column: new ORM\Column(name: 'address_country_code', type: Types::STRING, length: 2, nullable: false)),
-    ])]
+    #[ORM\Embedded(class: AddressValueObject::class, columnPrefix: 'address_')]
     #[Groups(['JobOffer', 'JobOffer.address', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private AddressValueObject $address;
 
