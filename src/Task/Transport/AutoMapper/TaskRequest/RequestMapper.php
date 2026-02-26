@@ -6,23 +6,27 @@ namespace App\Task\Transport\AutoMapper\TaskRequest;
 
 use App\General\Transport\AutoMapper\RestRequestMapper;
 use App\Task\Application\Resource\TaskResource;
+use App\Task\Domain\Entity\Sprint;
 use App\Task\Domain\Entity\Task;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use Throwable;
 
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [
         'task',
+        'sprint',
         'type',
         'requestedStatus',
+        'time',
         'note',
-        'status',
-        'resolvedAt',
     ];
 
-    public function __construct(private readonly TaskResource $taskResource)
-    {
+    public function __construct(
+        private readonly TaskResource $taskResource,
+        private readonly EntityManagerInterface $entityManager,
+    ) {
     }
 
     protected function transformTask(?string $task): ?Task
@@ -38,8 +42,24 @@ class RequestMapper extends RestRequestMapper
         }
     }
 
-    protected function transformResolvedAt(?string $resolvedAt): ?DateTimeImmutable
+    protected function transformSprint(?string $sprint): ?Sprint
     {
-        return $resolvedAt !== null && $resolvedAt !== '' ? new DateTimeImmutable($resolvedAt) : null;
+        if ($sprint === null || $sprint === '') {
+            return null;
+        }
+
+        try {
+            /** @var Sprint $reference */
+            $reference = $this->entityManager->getReference(Sprint::class, $sprint);
+
+            return $reference;
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    protected function transformTime(?string $time): ?DateTimeImmutable
+    {
+        return $time !== null && $time !== '' ? new DateTimeImmutable($time) : null;
     }
 }
