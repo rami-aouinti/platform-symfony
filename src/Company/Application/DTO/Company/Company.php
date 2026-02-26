@@ -43,6 +43,10 @@ class Company extends RestDto
     #[Assert\Valid]
     protected ?Address $mainAddress = null;
 
+    protected ?string $photoUrl = null;
+
+    protected ?string $photoMediaId = null;
+
     public function getLegalName(): string
     {
         return $this->legalName;
@@ -95,6 +99,33 @@ class Company extends RestDto
         return $this;
     }
 
+
+    public function getPhotoUrl(): ?string
+    {
+        return $this->photoUrl;
+    }
+
+    public function setPhotoUrl(?string $photoUrl): self
+    {
+        $this->setVisited('photoUrl');
+        $this->photoUrl = $photoUrl;
+
+        return $this;
+    }
+
+    public function getPhotoMediaId(): ?string
+    {
+        return $this->photoMediaId;
+    }
+
+    public function setPhotoMediaId(?string $photoMediaId): self
+    {
+        $this->setVisited('photoMediaId');
+        $this->photoMediaId = $photoMediaId;
+
+        return $this;
+    }
+
     /**
      * @param EntityInterface|Entity $entity
      */
@@ -107,6 +138,8 @@ class Company extends RestDto
             $this->slug = $entity->getSlug();
             $this->status = $entity->getStatus()->value;
             $this->mainAddress = Address::fromValueObject($entity->getMainAddress());
+            $this->photoUrl = $entity->getPhotoUrl();
+            $this->photoMediaId = $entity->getPhotoMediaId();
         }
 
         return $this;

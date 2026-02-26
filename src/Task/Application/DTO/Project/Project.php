@@ -29,6 +29,10 @@ class Project extends RestDto
     #[Assert\Choice(callback: [ProjectStatus::class, 'getValues'])]
     protected string $status = ProjectStatus::ACTIVE->value;
 
+    protected ?string $photoUrl = null;
+
+    protected ?string $photoMediaId = null;
+
     public function getName(): string
     {
         return $this->name;
@@ -68,6 +72,33 @@ class Project extends RestDto
         return $this;
     }
 
+
+    public function getPhotoUrl(): ?string
+    {
+        return $this->photoUrl;
+    }
+
+    public function setPhotoUrl(?string $photoUrl): self
+    {
+        $this->setVisited('photoUrl');
+        $this->photoUrl = $photoUrl;
+
+        return $this;
+    }
+
+    public function getPhotoMediaId(): ?string
+    {
+        return $this->photoMediaId;
+    }
+
+    public function setPhotoMediaId(?string $photoMediaId): self
+    {
+        $this->setVisited('photoMediaId');
+        $this->photoMediaId = $photoMediaId;
+
+        return $this;
+    }
+
     #[Override]
     public function load(EntityInterface $entity): self
     {
@@ -76,6 +107,8 @@ class Project extends RestDto
             $this->name = $entity->getName();
             $this->description = $entity->getDescription();
             $this->status = $entity->getStatus()->value;
+            $this->photoUrl = $entity->getPhotoUrl();
+            $this->photoMediaId = $entity->getPhotoMediaId();
         }
 
         return $this;
