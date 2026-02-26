@@ -339,34 +339,16 @@ class JobOfferController extends Controller
     )]
     public function findMyAction(Request $request): Response
     {
-        return $this->findMyApplicationsAction($request);
-    }
-
-    /**
-     * @throws Throwable
-     */
-    private function findMyApplicationsAction(Request $request): Response
-    {
-        $entityManagerName = RequestHandler::getTenant($request);
-
-        $data = $this->readEndpointCache->remember(
-            self::CACHE_SCOPE,
+        return $this->findWithCustomResourceMethod(
             $request,
-            [
-                'criteria' => ['scope' => 'my-offers-applications'],
-                'orderBy' => ['createdAt' => 'DESC'],
-                'limit' => null,
-                'offset' => null,
-                'search' => [],
-                'tenant' => $entityManagerName,
-            ],
-            fn (): array => $this->jobApplicationResource->findForMyOffers(),
-        );
-
-        return $this->getResponseHandler()->createResponse(
-            $request,
-            $data,
-            $this->jobApplicationResource,
+            fn (
+                array $criteria,
+                array $orderBy,
+                ?int $limit,
+                ?int $offset,
+                array $search,
+                ?string $entityManagerName,
+            ): array => $this->getResource()->findMyOffers($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
         );
     }
 
