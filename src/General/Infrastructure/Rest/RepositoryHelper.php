@@ -19,6 +19,7 @@ use function array_map;
 use function array_walk;
 use function call_user_func_array;
 use function is_array;
+use function is_object;
 use function is_numeric;
 use function str_contains;
 use function strcmp;
@@ -272,11 +273,11 @@ class RepositoryHelper
     /**
      * Lambda function to create condition array for 'getExpression' method.
      *
-     * @param string|array<int, string> $value
+     * @param mixed $value
      *
-     * @return array{0: string, 1: string, 2: string|array<int, string>}
+     * @return array{0: string, 1: string, 2: mixed}
      */
-    private static function createCriteria(string $column, string | array $value): array
+    private static function createCriteria(string $column, mixed $value): array
     {
         if (!str_contains($column, '.')) {
             $column = 'entity.' . $column;
@@ -358,7 +359,7 @@ class RepositoryHelper
      */
     private static function getIterator(array &$condition): Closure
     {
-        return static function (string | array $value, string $column) use (&$condition): void {
+        return static function (mixed $value, string $column) use (&$condition): void {
             // If criteria contains 'and' OR 'or' key(s) assume that array in only in the right format
             if (strcmp($column, 'and') === 0 || strcmp($column, 'or') === 0) {
                 $condition[$column] = $value;
@@ -385,11 +386,16 @@ class RepositoryHelper
             $parameters = self::getParameters($queryBuilder, $lowercaseOperator, $parameters, $value);
         } else {
             $parameters[] = '?' . self::$parameterCount;
-            $queryBuilder->setParameter(
-                self::$parameterCount,
-                $comparison->value,
-                UuidHelper::getType((string)$comparison->value)
-            );
+
+            if (is_object($comparison->value)) {
+                $queryBuilder->setParameter(self::$parameterCount, $comparison->value);
+            } else {
+                $queryBuilder->setParameter(
+                    self::$parameterCount,
+                    $comparison->value,
+                    UuidHelper::getType((string)$comparison->value)
+                );
+            }
         }
 
         return $parameters;
