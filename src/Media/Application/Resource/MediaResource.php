@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Media\Application\Resource;
 
+use App\Configuration\Domain\Entity\Configuration;
+use App\Configuration\Domain\Repository\Interfaces\ConfigurationRepositoryInterface;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
@@ -16,8 +18,11 @@ use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use function in_array;
+use function is_array;
+use function is_string;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
@@ -26,10 +31,16 @@ use function in_array;
  */
 class MediaResource extends RestResource implements MediaResourceInterface
 {
+    /**
+     * @var string[]
+     */
+    private const ALLOWED_EXPORT_COLUMNS = ['id', 'name', 'path', 'mimeType', 'size', 'status', 'ownerId', 'createdAt'];
+
     public function __construct(
         RepositoryInterface $repository,
         private readonly UserTypeIdentification $userTypeIdentification,
         private readonly MediaStorageServiceInterface $mediaStorageService,
+        private readonly ConfigurationRepositoryInterface $configurationRepository,
     ) {
         parent::__construct($repository);
     }
@@ -101,6 +112,66 @@ class MediaResource extends RestResource implements MediaResourceInterface
         $this->save($media);
 
         return $media;
+    }
+
+    public function findForExport(?string $status = null): array
+    {
+        $criteria = [];
+
+        if (null !== $status && '' !== $status) {
+            $criteria['status'] = MediaStatus::from($status);
+        }
+
+        return $this->find(
+            criteria: $criteria,
+            orderBy: ['createdAt' => 'DESC'],
+        );
+    }
+
+    public function resolveExportConfiguration(string $configurationId): array
+    {
+        $configuration = $this->configurationRepository->find($configurationId);
+
+        if (!$configuration instanceof Configuration) {
+            throw new NotFoundHttpException('Export configuration not found.');
+        }
+
+        $decoded = json_decode($configuration->getValue(), true);
+
+        if (!is_array($decoded)) {
+            return [
+                'columns' => ['id', 'name', 'mimeType', 'size', 'status', 'createdAt'],
+                'status' => null,
+                'title' => 'Media export',
+            ];
+        }
+
+        $columns = array_values(array_filter(
+            $decoded['columns'] ?? [],
+            static fn (mixed $column): bool => is_string($column) && in_array($column, self::ALLOWED_EXPORT_COLUMNS, true),
+        ));
+
+        if ([] === $columns) {
+            $columns = ['id', 'name', 'mimeType', 'size', 'status', 'createdAt'];
+        }
+
+        $status = $decoded['status'] ?? null;
+
+        if (!is_string($status) || '' === $status) {
+            $status = null;
+        }
+
+        $title = $decoded['title'] ?? 'Media export';
+
+        if (!is_string($title) || '' === $title) {
+            $title = 'Media export';
+        }
+
+        return [
+            'columns' => $columns,
+            'status' => $status,
+            'title' => $title,
+        ];
     }
 
     private function assertCanManageMedia(Entity $media): void
