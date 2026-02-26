@@ -124,6 +124,31 @@ class JobApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_BAD_REQUEST, $ownerClient->getResponse()->getStatusCode());
     }
 
+
+    /** @throws Throwable */
+    public function testMyOffersRouteReturnsOnlyApplicationsCurrentUserCanDecide(): void
+    {
+        $ownerClient = $this->getTestClient('john-user', 'password-user');
+        $ownerClient->request('GET', self::BASE_URL . '/my-offers');
+        self::assertSame(Response::HTTP_OK, $ownerClient->getResponse()->getStatusCode());
+
+        $ownerList = JSON::decode((string) $ownerClient->getResponse()->getContent(), true);
+        self::assertIsArray($ownerList);
+        self::assertNotEmpty($ownerList);
+
+        foreach ($ownerList as $application) {
+            self::assertArrayHasKey('jobOffer', $application);
+            self::assertNotEmpty($application['jobOffer']);
+        }
+
+        $candidateClient = $this->getTestClient('carol-user', 'password-user');
+        $candidateClient->request('GET', self::BASE_URL . '/my-offers');
+        self::assertSame(Response::HTTP_OK, $candidateClient->getResponse()->getStatusCode());
+
+        $candidateList = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        self::assertSame([], $candidateList);
+    }
+
     /** @throws Throwable */
     public function testApplicationVisibilityListDependsOnRole(): void
     {
