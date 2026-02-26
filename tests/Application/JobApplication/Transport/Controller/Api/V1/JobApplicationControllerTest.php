@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Application\JobApplication\Transport\Controller\Api\V1;
 
 use App\General\Domain\Utils\JSON;
+use App\JobApplication\Domain\Message\ConversationEnsureForAcceptedApplicationMessage;
 use App\Tests\TestCase\WebTestCase;
+use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -158,6 +160,57 @@ class JobApplicationControllerTest extends WebTestCase
         self::assertSame([], $candidateList);
     }
 
+
+    /** @throws Throwable */
+    public function testConversationEnsureMessageIsDispatchedOnlyOnAccept(): void
+    {
+        $transport = static::getContainer()->get('messenger.transport.async_priority_high');
+        self::assertInstanceOf(InMemoryTransport::class, $transport);
+        $transport->reset();
+
+        $candidateClient = $this->getTestClient('alice-user', 'password-user');
+        $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
+        self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
+
+        $application = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        $applicationId = (string) $application['id'];
+
+        $ownerClient = $this->getTestClient('john-user', 'password-user');
+        $ownerClient->request('PATCH', self::BASE_URL . '/' . $applicationId . '/reject');
+        self::assertSame(Response::HTTP_OK, $ownerClient->getResponse()->getStatusCode());
+
+        $rejectMessages = array_map(
+            static fn ($envelope): object => $envelope->getMessage(),
+            $transport->getSent(),
+        );
+
+        self::assertCount(0, array_filter(
+            $rejectMessages,
+            static fn (object $message): bool => $message instanceof ConversationEnsureForAcceptedApplicationMessage,
+        ));
+
+        $transport->reset();
+
+        $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
+        $candidateClient->request('POST', self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply');
+        self::assertSame(Response::HTTP_CREATED, $candidateClient->getResponse()->getStatusCode());
+
+        $application = JSON::decode((string) $candidateClient->getResponse()->getContent(), true);
+        $applicationId = (string) $application['id'];
+
+        $ownerClient->request('PATCH', self::BASE_URL . '/' . $applicationId . '/accept');
+        self::assertSame(Response::HTTP_OK, $ownerClient->getResponse()->getStatusCode());
+
+        $acceptMessages = array_map(
+            static fn ($envelope): object => $envelope->getMessage(),
+            $transport->getSent(),
+        );
+
+        self::assertNotEmpty(array_filter(
+            $acceptMessages,
+            static fn (object $message): bool => $message instanceof ConversationEnsureForAcceptedApplicationMessage,
+        ));
+    }
     /** @throws Throwable */
     public function testApplicationVisibilityListDependsOnRole(): void
     {
