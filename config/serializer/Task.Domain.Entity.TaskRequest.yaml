@@ -1,0 +1,6 @@
+App\Task\Domain\Entity\TaskRequest:
+    attributes:
+        createdAt:
+            groups: [ 'TaskRequest.createdAt' ]
+        updatedAt:
+            groups: [ 'TaskRequest.updatedAt' ]
