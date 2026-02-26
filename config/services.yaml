@@ -192,6 +192,15 @@ services:
     App\Task\Application\Service\Interfaces\TaskAccessServiceInterface:
         class: App\Task\Application\Service\TaskAccessService
 
+    App\Task\Application\Resource\Interfaces\TaskResourceInterface:
+        class: App\Task\Application\Resource\TaskResource
+
+    App\Task\Application\Resource\Interfaces\ProjectResourceInterface:
+        class: App\Task\Application\Resource\ProjectResource
+
+    App\Task\Application\Resource\Interfaces\TaskRequestResourceInterface:
+        class: App\Task\Application\Resource\TaskRequestResource
+
 when@dev:
     services:
         _defaults:

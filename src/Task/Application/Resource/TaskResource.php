@@ -10,10 +10,13 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Task\Application\Resource\Interfaces\TaskResourceInterface;
 use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
 use App\Task\Domain\Entity\Task as Entity;
+use App\Task\Domain\Enum\TaskStatus;
 use App\Task\Domain\Repository\Interfaces\TaskRepositoryInterface as RepositoryInterface;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
@@ -72,6 +75,21 @@ class TaskResource extends RestResource implements TaskResourceInterface
         if ($entity instanceof Entity) {
             $this->assertCanManageTask($entity);
         }
+    }
+
+    public function changeStatus(string $id, TaskStatus $status): Entity
+    {
+        $task = $this->getRepository()->find($id);
+
+        if (!$task instanceof Entity) {
+            throw new HttpException(Response::HTTP_NOT_FOUND, 'Task not found.');
+        }
+
+        $this->assertCanManageTask($task);
+        $task->setStatus($status);
+        $this->save($task);
+
+        return $task;
     }
 
     private function assertCanManageTask(Entity $task): void
