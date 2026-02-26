@@ -182,6 +182,41 @@ class JobApplicationController extends Controller
         );
     }
 
+
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '/my-offers', methods: [Request::METHOD_GET])]
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[OA\Response(
+        response: 200,
+        description: 'Job applications linked to offers managed by the current user, so they can accept or reject them.',
+        content: new JsonContent(type: 'array', items: new OA\Items(type: 'object')),
+    )]
+    public function findForMyOffersAction(Request $request): Response
+    {
+        $entityManagerName = RequestHandler::getTenant($request);
+        $data = $this->readEndpointCache->remember(
+            self::CACHE_SCOPE,
+            $request,
+            [
+                'criteria' => ['scope' => 'my-offers'],
+                'orderBy' => [],
+                'limit' => null,
+                'offset' => null,
+                'search' => [],
+                'tenant' => $entityManagerName,
+            ],
+            fn (): array => $this->getResource()->findForMyOffers(),
+        );
+
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            $data,
+            $this->getResource(),
+        );
+    }
+
     /**
      * @throws Throwable
      */

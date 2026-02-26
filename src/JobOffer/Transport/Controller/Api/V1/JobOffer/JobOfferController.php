@@ -13,6 +13,7 @@ use App\General\Transport\Rest\Traits\Methods\PatchMethod;
 use App\General\Transport\Rest\Traits\Methods\UpdateMethod;
 use App\JobOffer\Application\DTO\JobOffer\JobOfferCreate;
 use App\JobOffer\Application\DTO\JobOffer\JobOfferPatch;
+use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobOffer\Application\DTO\JobOffer\JobOfferUpdate;
 use App\JobOffer\Application\Resource\Interfaces\JobOfferResourceInterface;
 use App\JobOffer\Application\Resource\JobOfferResource;
@@ -70,6 +71,7 @@ class JobOfferController extends Controller
     public function __construct(
         JobOfferResourceInterface $resource,
         private readonly ReadEndpointCache $readEndpointCache,
+        private readonly JobApplicationResourceInterface $jobApplicationResource,
     ) {
         parent::__construct($resource);
     }
@@ -332,21 +334,39 @@ class JobOfferController extends Controller
     #[Route(path: '/my', methods: [Request::METHOD_GET])]
     #[OA\Response(
         response: 200,
-        description: 'Job offers created by the current user or manageable with current permissions.',
+        description: 'Job applications linked to offers managed by the current user, so they can accept or reject them.',
         content: new JsonContent(type: 'array', items: new OA\Items(type: 'object')),
     )]
     public function findMyAction(Request $request): Response
     {
-        return $this->findWithCustomResourceMethod(
+        return $this->findMyApplicationsAction($request);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    private function findMyApplicationsAction(Request $request): Response
+    {
+        $entityManagerName = RequestHandler::getTenant($request);
+
+        $data = $this->readEndpointCache->remember(
+            self::CACHE_SCOPE,
             $request,
-            fn (
-                array $criteria,
-                array $orderBy,
-                ?int $limit,
-                ?int $offset,
-                array $search,
-                ?string $entityManagerName,
-            ): array => $this->getResource()->findMyOffers($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
+            [
+                'criteria' => ['scope' => 'my-offers-applications'],
+                'orderBy' => ['createdAt' => 'DESC'],
+                'limit' => null,
+                'offset' => null,
+                'search' => [],
+                'tenant' => $entityManagerName,
+            ],
+            fn (): array => $this->jobApplicationResource->findForMyOffers(),
+        );
+
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            $data,
+            $this->jobApplicationResource,
         );
     }
 

@@ -175,6 +175,11 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
         ));
     }
 
+    public function findForMyOffers(): array
+    {
+        return $this->getRepository()->findForMyOffers($this->getCurrentUser());
+    }
+
     public function getAllowedForCurrentUser(string $applicationId): Entity
     {
         $application = $this->getByIdOrFail($applicationId);
