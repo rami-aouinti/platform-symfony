@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Recruit\Infrastructure\DataFixtures\ORM;
 
 use App\General\Domain\Rest\UuidHelper;
-use App\Recruit\Domain\Entity\City;
+use App\General\Domain\Entity\City;
 use App\Recruit\Domain\Entity\JobCategory;
 use App\Recruit\Domain\Entity\Language;
-use App\Recruit\Domain\Entity\Region;
+use App\General\Domain\Entity\Region;
 use App\Recruit\Domain\Entity\Skill;
 use App\Tests\Utils\PhpUnitUtil;
 use Doctrine\Bundle\FixturesBundle\Fixture;
