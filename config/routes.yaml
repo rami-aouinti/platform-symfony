@@ -79,6 +79,15 @@ chat-controllers:
     defaults:
         _format: json
 
+blog-controllers:
+    resource:
+        path: ../src/Blog/Transport/Controller/Api/
+        namespace: App\Blog\Transport\Controller\Api
+    type: attribute
+    prefix: /api
+    defaults:
+        _format: json
+
 task-controllers:
     resource:
         path: ../src/Task/Transport/Controller/Api/
