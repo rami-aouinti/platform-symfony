@@ -12,6 +12,7 @@ final class OfferApplicationPayload
     public function __construct(
         private readonly ?string $coverLetter,
         private readonly ?string $cvUrl,
+        private readonly ?string $resumeId,
         private readonly ?array $attachments,
     ) {
     }
@@ -26,6 +27,7 @@ final class OfferApplicationPayload
         return new self(
             isset($payload['coverLetter']) ? (string) $payload['coverLetter'] : null,
             isset($payload['cvUrl']) ? (string) $payload['cvUrl'] : null,
+            isset($payload['resumeId']) ? (string) $payload['resumeId'] : null,
             is_array($attachments) ? array_values(array_map(static fn (mixed $item): string => (string) $item, $attachments)) : null,
         );
     }
@@ -38,6 +40,11 @@ final class OfferApplicationPayload
     public function getCvUrl(): ?string
     {
         return $this->cvUrl;
+    }
+
+    public function getResumeId(): ?string
+    {
+        return $this->resumeId;
     }
 
     /**

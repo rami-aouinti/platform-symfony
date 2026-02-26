@@ -19,6 +19,8 @@ use App\JobApplication\Domain\Enum\JobApplicationStatus;
 use App\JobApplication\Domain\Exception\JobApplicationException;
 use App\JobApplication\Domain\Repository\Interfaces\JobApplicationRepositoryInterface as RepositoryInterface;
 use App\JobOffer\Infrastructure\Repository\JobOfferRepository;
+use App\Resume\Domain\Entity\Resume;
+use App\Resume\Infrastructure\Repository\ResumeRepository;
 use App\User\Application\Security\Permission;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
@@ -38,6 +40,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
     public function __construct(
         RepositoryInterface $repository,
         private readonly JobOfferRepository $jobOfferRepository,
+        private readonly ResumeRepository $resumeRepository,
         private readonly UserTypeIdentification $userTypeIdentification,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
         private readonly MessageServiceInterface $messageService,
@@ -80,11 +83,15 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
             throw new JobApplicationException('You have already applied to this job offer.', Response::HTTP_CONFLICT);
         }
 
+        $resume = $this->resolveResume($payload?->getResumeId(), $candidate);
+
         $application = (new Entity())
             ->setJobOffer($jobOffer)
             ->setCandidate($candidate)
             ->setCoverLetter($payload?->getCoverLetter())
-            ->setCvUrl($payload?->getCvUrl())
+            ->setResume($resume)
+            // resumeId has priority over legacy cvUrl when both are provided.
+            ->setCvUrl($resume instanceof Resume ? null : $payload?->getCvUrl())
             ->setAttachments($payload?->getAttachments())
             ->setStatus(JobApplicationStatus::PENDING);
 
@@ -218,6 +225,26 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
         }
 
         return $user;
+    }
+
+
+    private function resolveResume(?string $resumeId, User $candidate): ?Resume
+    {
+        if ($resumeId === null || $resumeId === '') {
+            return null;
+        }
+
+        $resume = $this->resumeRepository->find($resumeId);
+
+        if (!$resume instanceof Resume) {
+            throw new JobApplicationException('Resume not found.', Response::HTTP_NOT_FOUND);
+        }
+
+        if ($resume->getOwner()?->getId() !== $candidate->getId()) {
+            throw new JobApplicationException('Resume not found.', Response::HTTP_NOT_FOUND);
+        }
+
+        return $resume;
     }
 
     private function assertTransition(Entity $application, JobApplicationStatus $target): void

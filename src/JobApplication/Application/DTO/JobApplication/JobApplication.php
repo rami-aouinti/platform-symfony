@@ -11,6 +11,7 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\JobApplication\Domain\Entity\JobApplication as Entity;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
 use App\JobOffer\Domain\Entity\JobOffer;
+use App\Resume\Domain\Entity\Resume;
 use App\User\Domain\Entity\User;
 use DateTimeImmutable;
 use Override;
@@ -36,6 +37,9 @@ class JobApplication extends RestDto
     #[Assert\Length(max: 2048)]
     #[Assert\Url]
     protected ?string $cvUrl = null;
+
+    #[AppAssert\EntityReferenceExists(Resume::class)]
+    protected ?Resume $resume = null;
 
     /**
      * @var array<mixed>|null
@@ -93,6 +97,19 @@ class JobApplication extends RestDto
     public function getCvUrl(): ?string
     {
         return $this->cvUrl;
+    }
+
+    public function getResume(): ?Resume
+    {
+        return $this->resume;
+    }
+
+    public function setResume(?Resume $resume): self
+    {
+        $this->setVisited('resume');
+        $this->resume = $resume;
+
+        return $this;
     }
 
     public function setCvUrl(?string $cvUrl): self
@@ -173,6 +190,7 @@ class JobApplication extends RestDto
             $this->candidate = $entity->getCandidate();
             $this->coverLetter = $entity->getCoverLetter();
             $this->cvUrl = $entity->getCvUrl();
+            $this->resume = $entity->getResume();
             $this->attachments = $entity->getAttachments();
             $this->status = $entity->getStatus()->value;
             $this->decidedBy = $entity->getDecidedBy();

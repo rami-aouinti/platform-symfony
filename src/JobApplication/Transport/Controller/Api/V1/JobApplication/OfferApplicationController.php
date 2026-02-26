@@ -40,13 +40,15 @@ class OfferApplicationController extends Controller
         content: new JsonContent(
             properties: [
                 new OA\Property(property: 'coverLetter', type: 'string', nullable: true, example: 'I built high-scale Symfony APIs for 5 years.'),
-                new OA\Property(property: 'cvUrl', type: 'string', format: 'uri', nullable: true, example: 'https://cdn.example.com/cv/jane-doe.pdf'),
+                new OA\Property(property: 'cvUrl', type: 'string', format: 'uri', nullable: true, example: 'https://cdn.example.com/cv/jane-doe.pdf', description: 'Legacy external CV URL. Used only when resumeId is absent.'),
+                new OA\Property(property: 'resumeId', type: 'string', format: 'uuid', nullable: true, example: '0195f798-7a12-7303-8db6-ece0cabf335d', description: 'Internal resume identifier. Has priority over cvUrl when both are provided.'),
                 new OA\Property(property: 'attachments', type: 'array', nullable: true, items: new OA\Items(type: 'string', format: 'uri'), example: ['https://cdn.example.com/portfolio.pdf']),
             ],
             type: 'object',
             example: [
                 'coverLetter' => 'I built high-scale Symfony APIs for 5 years.',
                 'cvUrl' => 'https://cdn.example.com/cv/jane-doe.pdf',
+                'resumeId' => '0195f798-7a12-7303-8db6-ece0cabf335d',
                 'attachments' => ['https://cdn.example.com/portfolio.pdf'],
             ],
         ),
@@ -61,6 +63,8 @@ class OfferApplicationController extends Controller
                 new OA\Property(property: 'candidate', type: 'string', format: 'uuid', example: '0195f798-7a12-7303-8db6-ece0cabf335d'),
                 new OA\Property(property: 'coverLetter', type: 'string', nullable: true, example: 'I built high-scale Symfony APIs for 5 years.'),
                 new OA\Property(property: 'cvUrl', type: 'string', format: 'uri', nullable: true, example: 'https://cdn.example.com/cv/jane-doe.pdf'),
+                new OA\Property(property: 'resume', type: 'string', format: 'uuid', nullable: true, example: '0195f798-7a12-7303-8db6-ece0cabf335d'),
+                new OA\Property(property: 'resumeId', type: 'string', format: 'uuid', nullable: true, example: '0195f798-7a12-7303-8db6-ece0cabf335d'),
                 new OA\Property(property: 'attachments', type: 'array', nullable: true, items: new OA\Items(type: 'string', format: 'uri')),
                 new OA\Property(property: 'status', type: 'string', enum: ['pending', 'accepted', 'rejected', 'withdrawn'], example: 'pending'),
                 new OA\Property(property: 'decidedBy', type: 'string', format: 'uuid', nullable: true, example: '0195f7a1-8e09-7f40-93f0-c3bcf2b42744'),
