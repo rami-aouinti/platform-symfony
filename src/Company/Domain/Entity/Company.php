@@ -69,6 +69,14 @@ class Company implements EntityInterface
     #[Groups(['Company', 'Company.status', 'Company.create', 'Company.show', 'Company.edit'])]
     private CompanyStatus $status = CompanyStatus::ACTIVE;
 
+    #[ORM\Column(name: 'photo_url', type: Types::STRING, length: 2048, nullable: true)]
+    #[Groups(['Company', 'Company.photoUrl', 'Company.create', 'Company.show', 'Company.edit'])]
+    private ?string $photoUrl = null;
+
+    #[ORM\Column(name: 'photo_media_id', type: Types::STRING, length: 255, nullable: true)]
+    #[Groups(['Company', 'Company.photoMediaId', 'Company.create', 'Company.show', 'Company.edit'])]
+    private ?string $photoMediaId = null;
+
     public function __construct()
     {
         $this->id = $this->createUuid();
@@ -151,5 +159,50 @@ class Company implements EntityInterface
         $this->status = $nextStatus;
 
         return $this;
+    }
+
+    public function getPhotoMediaId(): ?string
+    {
+        return $this->photoMediaId;
+    }
+
+    public function setPhotoMediaId(?string $photoMediaId): self
+    {
+        $this->photoMediaId = $photoMediaId;
+
+        return $this;
+    }
+
+    public function setPhotoUrl(?string $photoUrl): self
+    {
+        $this->photoUrl = $photoUrl;
+
+        return $this;
+    }
+
+    public function getStoredPhotoUrl(): ?string
+    {
+        return $this->photoUrl;
+    }
+
+    #[Groups(['Company', 'Company.photoUrl', 'Company.show'])]
+    public function getPhotoUrl(): string
+    {
+        return $this->photoUrl ?? sprintf(
+            'https://ui-avatars.com/api/?name=%s&format=png',
+            rawurlencode($this->legalName),
+        );
+    }
+
+    #[Groups(['Company', 'Company.photo', 'Company.show'])]
+    public function getPhoto(): string
+    {
+        return $this->getPhotoUrl();
+    }
+
+    #[Groups(['Company', 'Company.image', 'Company.show'])]
+    public function getImage(): string
+    {
+        return $this->getPhotoUrl();
     }
 }
