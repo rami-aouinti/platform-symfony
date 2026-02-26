@@ -75,6 +75,7 @@ class BlogPost implements EntityInterface
      * @var Collection<int, BlogComment>
      */
     #[ORM\OneToMany(targetEntity: BlogComment::class, mappedBy: 'post', orphanRemoval: true)]
+    #[Groups(['BlogPost', 'BlogPost.comments', 'BlogPost.show', 'BlogPost.edit'])]
     private Collection $comments;
 
     public function __construct()
@@ -205,5 +206,13 @@ class BlogPost implements EntityInterface
         $this->tags->removeElement($tag);
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, BlogComment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
     }
 }

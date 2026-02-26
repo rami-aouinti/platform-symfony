@@ -30,6 +30,9 @@ class BlogComment extends RestDto
     #[Assert\Choice(callback: [BlogReferenceType::class, 'getValues'])]
     protected ?string $referenceType = null;
 
+    #[Assert\Uuid]
+    protected ?string $referenceId = null;
+
     public function getPost(): ?BlogPost
     {
         return $this->post;
@@ -69,6 +72,19 @@ class BlogComment extends RestDto
         return $this;
     }
 
+    public function getReferenceId(): ?string
+    {
+        return $this->referenceId;
+    }
+
+    public function setReferenceId(?string $referenceId): self
+    {
+        $this->setVisited('referenceId');
+        $this->referenceId = $referenceId;
+
+        return $this;
+    }
+
     #[Override]
     public function load(EntityInterface $entity): self
     {
@@ -77,6 +93,7 @@ class BlogComment extends RestDto
             $this->post = $entity->getPost();
             $this->content = $entity->getContent();
             $this->referenceType = $entity->getReferenceType()?->value;
+            $this->referenceId = $entity->getReferenceId();
         }
 
         return $this;

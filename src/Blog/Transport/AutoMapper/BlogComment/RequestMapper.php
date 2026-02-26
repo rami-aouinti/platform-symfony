@@ -15,6 +15,7 @@ class RequestMapper extends RestRequestMapper
         'post',
         'content',
         'referenceType',
+        'referenceId',
     ];
 
     public function __construct(private readonly BlogPostResource $blogPostResource)

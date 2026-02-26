@@ -12,6 +12,7 @@ use App\User\Domain\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
+use Ramsey\Uuid\Uuid as RamseyUuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
@@ -122,9 +123,15 @@ class BlogComment implements EntityInterface
         return $this->referenceId?->toString();
     }
 
-    public function setReferenceId(?UuidInterface $referenceId): self
+    public function setReferenceId(UuidInterface|string|null $referenceId): self
     {
-        $this->referenceId = $referenceId;
+        if ($referenceId === null) {
+            $this->referenceId = null;
+
+            return $this;
+        }
+
+        $this->referenceId = $referenceId instanceof UuidInterface ? $referenceId : RamseyUuid::fromString($referenceId);
 
         return $this;
     }
