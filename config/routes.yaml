@@ -87,3 +87,12 @@ notification-controllers:
     prefix: /api
     defaults:
         _format: json
+
+chat-controllers:
+    resource:
+        path: ../src/Chat/Transport/Controller/Api/
+        namespace: App\Chat\Transport\Controller\Api
+    type: attribute
+    prefix: /api
+    defaults:
+        _format: json
