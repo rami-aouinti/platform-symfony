@@ -10,6 +10,7 @@ use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
 use App\JobOffer\Domain\Entity\JobOffer;
+use App\Resume\Domain\Entity\Resume;
 use App\User\Domain\Entity\User;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
@@ -51,6 +52,11 @@ class JobApplication implements EntityInterface
     #[ORM\Column(name: 'cv_url', type: Types::STRING, length: 2048, nullable: true)]
     #[Groups(['JobApplication', 'JobApplication.cvUrl', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit', 'JobOffer'])]
     private ?string $cvUrl = null;
+
+    #[ORM\ManyToOne(targetEntity: Resume::class)]
+    #[ORM\JoinColumn(name: 'resume_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[Groups(['JobApplication', 'JobApplication.resume', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit', 'JobOffer'])]
+    private ?Resume $resume = null;
 
     #[ORM\Column(name: 'attachments', type: Types::JSON, nullable: true)]
     #[Groups(['JobApplication', 'JobApplication.attachments', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit', 'JobOffer'])]
@@ -126,6 +132,18 @@ class JobApplication implements EntityInterface
     public function setCvUrl(?string $cvUrl): self
     {
         $this->cvUrl = $cvUrl;
+
+        return $this;
+    }
+
+    public function getResume(): ?Resume
+    {
+        return $this->resume;
+    }
+
+    public function setResume(?Resume $resume): self
+    {
+        $this->resume = $resume;
 
         return $this;
     }
