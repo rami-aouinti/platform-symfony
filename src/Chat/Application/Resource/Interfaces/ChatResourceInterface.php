@@ -11,6 +11,11 @@ interface ChatResourceInterface
 {
     public function createConversation(ConversationCreate $dto): ConversationView;
 
+    /**
+     * @return ConversationView[]
+     */
+    public function listConversationsForCurrentUser(): array;
+
     public function getConversation(string $conversationId): ConversationView;
 
     public function sendMessage(string $conversationId, string $content): ConversationView;

@@ -15,18 +15,19 @@ use App\Chat\Domain\Message\ChatMessageRealtimePublishMessage;
 use App\Chat\Domain\Repository\Interfaces\ChatMessageRepositoryInterface;
 use App\Chat\Domain\Repository\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Chat\Domain\Repository\Interfaces\ConversationRepositoryInterface;
+use App\General\Domain\Service\Interfaces\MessageServiceInterface;
 use App\JobApplication\Domain\Entity\JobApplication;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
-use App\General\Domain\Service\Interfaces\MessageServiceInterface;
+use App\User\Application\Security\Permission;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use function array_map;
-use function in_array;
 
 class ChatResource implements ChatResourceInterface
 {
@@ -36,6 +37,7 @@ class ChatResource implements ChatResourceInterface
         private readonly ChatMessageRepositoryInterface $messageRepository,
         private readonly UserTypeIdentification $userTypeIdentification,
         private readonly MessageServiceInterface $messageService,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
@@ -81,38 +83,69 @@ class ChatResource implements ChatResourceInterface
         return $this->toView($conversation);
     }
 
+    public function listConversationsForCurrentUser(): array
+    {
+        $currentUser = $this->getCurrentUser();
+        $conversationIds = $this->participantRepository->findConversationIdsByUserId($currentUser->getId());
+        $conversationIds = array_values(array_filter($conversationIds, static fn (string $id): bool => $id !== ''));
+
+        $conversations = array_map(
+            fn (string $conversationId): ?ConversationView => $this->tryBuildAllowedConversationView($conversationId),
+            $conversationIds,
+        );
+
+        return array_values(array_filter($conversations, static fn (?ConversationView $view): bool => $view instanceof ConversationView));
+    }
+
     public function getConversation(string $conversationId): ConversationView
     {
-        $conversation = $this->conversationRepository->find($conversationId);
-
-        if (!$conversation instanceof Conversation) {
-            throw new NotFoundHttpException('Conversation not found.');
-        }
-
-        $this->assertCurrentUserCanAccessConversation($conversation);
+        $conversation = $this->findAllowedConversation($conversationId, Permission::CHAT_VIEW);
 
         return $this->toView($conversation);
     }
 
     public function sendMessage(string $conversationId, string $content): ConversationView
     {
-        $conversation = $this->conversationRepository->find($conversationId);
-
-        if (!$conversation instanceof Conversation) {
-            throw new NotFoundHttpException('Conversation not found.');
-        }
-
-        $currentUser = $this->getCurrentUser();
-        $this->assertCurrentUserCanAccessConversation($conversation, $currentUser);
+        $conversation = $this->findAllowedConversation($conversationId, Permission::CHAT_POST);
 
         $message = (new ChatMessage())
             ->setConversation($conversation)
-            ->setSender($currentUser)
+            ->setSender($this->getCurrentUser())
             ->setContent($content);
 
         $this->messageRepository->save($message);
 
         $this->messageService->sendMessage(new ChatMessageRealtimePublishMessage($message->getId()));
+
+        return $this->toView($conversation);
+    }
+
+    private function findAllowedConversation(string $conversationId, Permission $permission): Conversation
+    {
+        $conversation = $this->conversationRepository->find($conversationId);
+
+        if (!$conversation instanceof Conversation || $conversation->getJobApplication() === null) {
+            throw new NotFoundHttpException('Conversation not found.');
+        }
+
+        if (!$this->authorizationChecker->isGranted($permission->value, $conversation)) {
+            throw new AccessDeniedHttpException('You are not allowed to access this conversation.');
+        }
+
+        return $conversation;
+    }
+
+    private function tryBuildAllowedConversationView(string $conversationId): ?ConversationView
+    {
+        $conversation = $this->conversationRepository->find($conversationId);
+
+        if (!$conversation instanceof Conversation || $conversation->getJobApplication() === null) {
+            return null;
+        }
+
+        if (!$this->authorizationChecker->isGranted(Permission::CHAT_VIEW->value, $conversation)) {
+            return null;
+        }
 
         return $this->toView($conversation);
     }
@@ -125,19 +158,6 @@ class ChatResource implements ChatResourceInterface
         );
 
         return new ConversationView($conversation, $messages);
-    }
-
-    private function assertCurrentUserCanAccessConversation(Conversation $conversation, ?User $currentUser = null): void
-    {
-        $currentUser ??= $this->getCurrentUser();
-        $participantUserIds = array_map(
-            static fn (ConversationParticipant $participant): string => $participant->getUser()?->getId() ?? '',
-            $this->participantRepository->findByConversationId($conversation->getId()),
-        );
-
-        if (!in_array($currentUser->getId(), $participantUserIds, true)) {
-            throw new AccessDeniedHttpException('You are not a participant of this conversation.');
-        }
     }
 
     private function getCurrentUser(): User

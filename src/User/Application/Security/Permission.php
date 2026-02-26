@@ -28,4 +28,7 @@ enum Permission: string
 
     case NOTIFICATION_VIEW = 'notification.view';
     case NOTIFICATION_MANAGE = 'notification.manage';
+
+    case CHAT_VIEW = 'chat.view';
+    case CHAT_POST = 'chat.post';
 }
