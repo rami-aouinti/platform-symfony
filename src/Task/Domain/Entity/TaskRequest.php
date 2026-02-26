@@ -7,7 +7,6 @@ namespace App\Task\Domain\Entity;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
-use App\Task\Domain\Enum\TaskRequestStatus;
 use App\Task\Domain\Enum\TaskRequestType;
 use App\Task\Domain\Enum\TaskStatus;
 use App\User\Domain\Entity\User;
@@ -23,7 +22,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Index(name: 'idx_task_request_task_id', columns: ['task_id'])]
 #[ORM\Index(name: 'idx_task_request_requester_id', columns: ['requester_id'])]
 #[ORM\Index(name: 'idx_task_request_reviewer_id', columns: ['reviewer_id'])]
-#[ORM\Index(name: 'idx_task_request_status', columns: ['status'])]
+#[ORM\Index(name: 'idx_task_request_sprint_id', columns: ['sprint_id'])]
 #[ORM\Index(name: 'idx_task_request_type', columns: ['type'])]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class TaskRequest implements EntityInterface
@@ -40,6 +39,11 @@ class TaskRequest implements EntityInterface
     #[ORM\JoinColumn(name: 'task_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     #[Groups(['TaskRequest', 'TaskRequest.task', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
     private ?Task $task = null;
+
+    #[ORM\ManyToOne(targetEntity: Sprint::class, inversedBy: 'taskRequests')]
+    #[ORM\JoinColumn(name: 'sprint_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[Groups(['TaskRequest', 'TaskRequest.sprint', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
+    private ?Sprint $sprint = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'requester_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
@@ -59,17 +63,13 @@ class TaskRequest implements EntityInterface
     #[Groups(['TaskRequest', 'TaskRequest.requestedStatus', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
     private ?TaskStatus $requestedStatus = null;
 
-    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, enumType: TaskRequestStatus::class)]
-    #[Groups(['TaskRequest', 'TaskRequest.status', 'TaskRequest.show', 'TaskRequest.edit'])]
-    private TaskRequestStatus $status = TaskRequestStatus::PENDING;
+    #[ORM\Column(name: 'time', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    #[Groups(['TaskRequest', 'TaskRequest.time', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
+    private ?DateTimeImmutable $time = null;
 
     #[ORM\Column(name: 'note', type: Types::TEXT, nullable: true)]
     #[Groups(['TaskRequest', 'TaskRequest.note', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
     private ?string $note = null;
-
-    #[ORM\Column(name: 'resolved_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    #[Groups(['TaskRequest', 'TaskRequest.resolvedAt', 'TaskRequest.show', 'TaskRequest.edit'])]
-    private ?DateTimeImmutable $resolvedAt = null;
 
     public function __construct()
     {
@@ -89,6 +89,18 @@ class TaskRequest implements EntityInterface
     public function setTask(?Task $task): self
     {
         $this->task = $task;
+
+        return $this;
+    }
+
+    public function getSprint(): ?Sprint
+    {
+        return $this->sprint;
+    }
+
+    public function setSprint(?Sprint $sprint): self
+    {
+        $this->sprint = $sprint;
 
         return $this;
     }
@@ -147,24 +159,14 @@ class TaskRequest implements EntityInterface
         return $this;
     }
 
-    public function getStatus(): TaskRequestStatus
+    public function getTime(): ?DateTimeImmutable
     {
-        return $this->status;
+        return $this->time;
     }
 
-    public function setStatus(TaskRequestStatus|string $status): self
+    public function setTime(?DateTimeImmutable $time): self
     {
-        $nextStatus = $status instanceof TaskRequestStatus ? $status : TaskRequestStatus::from($status);
-
-        if (!$this->status->canTransitionTo($nextStatus) && $this->status !== $nextStatus) {
-            return $this;
-        }
-
-        $this->status = $nextStatus;
-
-        if ($nextStatus !== TaskRequestStatus::PENDING && $this->resolvedAt === null) {
-            $this->resolvedAt = new DateTimeImmutable();
-        }
+        $this->time = $time;
 
         return $this;
     }
@@ -177,18 +179,6 @@ class TaskRequest implements EntityInterface
     public function setNote(?string $note): self
     {
         $this->note = $note;
-
-        return $this;
-    }
-
-    public function getResolvedAt(): ?DateTimeImmutable
-    {
-        return $this->resolvedAt;
-    }
-
-    public function setResolvedAt(?DateTimeImmutable $resolvedAt): self
-    {
-        $this->resolvedAt = $resolvedAt;
 
         return $this;
     }

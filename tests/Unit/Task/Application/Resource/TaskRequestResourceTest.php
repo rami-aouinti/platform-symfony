@@ -8,20 +8,19 @@ use App\Task\Application\Resource\TaskRequestResource;
 use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
 use App\Task\Domain\Entity\Task;
 use App\Task\Domain\Entity\TaskRequest;
-use App\Task\Domain\Enum\TaskRequestStatus;
 use App\Task\Domain\Enum\TaskStatus;
 use App\Task\Domain\Repository\Interfaces\TaskRequestRepositoryInterface;
+use App\User\Application\Resource\UserResource;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class TaskRequestResourceTest extends TestCase
 {
     #[AllowMockObjectsWithoutExpectations]
-    public function testChangeRequestedStatusUpdatesPendingRequest(): void
+    public function testChangeRequestedStatusUpdatesRequest(): void
     {
         $manager = (new User())
             ->setFirstName('John')
@@ -31,7 +30,6 @@ class TaskRequestResourceTest extends TestCase
 
         $taskRequest = (new TaskRequest())
             ->setTask(new Task())
-            ->setStatus(TaskRequestStatus::PENDING)
             ->setRequestedStatus(TaskStatus::TODO);
 
         $repository = $this->createMock(TaskRequestRepositoryInterface::class);
@@ -59,7 +57,7 @@ class TaskRequestResourceTest extends TestCase
             ->with($manager, $taskRequest)
             ->willReturn(true);
 
-        $resource = new TaskRequestResource($repository, $userTypeIdentification, $accessService);
+        $resource = new TaskRequestResource($repository, $userTypeIdentification, $accessService, $this->createMock(UserResource::class));
 
         $result = $resource->changeRequestedStatus('task-request-id', TaskStatus::DONE);
 
@@ -68,34 +66,42 @@ class TaskRequestResourceTest extends TestCase
     }
 
     #[AllowMockObjectsWithoutExpectations]
-    public function testChangeRequestedStatusRejectsNonPendingRequest(): void
+    public function testChangeRequestedStatusDeniedForNonReviewer(): void
     {
+        $manager = (new User())
+            ->setFirstName('John')
+            ->setLastName('Manager')
+            ->setUsername('john.manager')
+            ->setEmail('john.manager@example.com');
+
         $taskRequest = (new TaskRequest())
             ->setTask(new Task())
-            ->setStatus(TaskRequestStatus::APPROVED)
             ->setRequestedStatus(TaskStatus::TODO);
 
         $repository = $this->createMock(TaskRequestRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('find')
-            ->with('task-request-id')
             ->willReturn($taskRequest);
         $repository
             ->expects($this->never())
             ->method('save');
 
-        $resource = new TaskRequestResource(
-            $repository,
-            $this->createMock(UserTypeIdentification::class),
-            $this->createMock(TaskAccessServiceInterface::class),
-        );
+        $userTypeIdentification = $this->createMock(UserTypeIdentification::class);
+        $userTypeIdentification
+            ->expects($this->once())
+            ->method('getUser')
+            ->willReturn($manager);
 
-        try {
-            $resource->changeRequestedStatus('task-request-id', TaskStatus::DONE);
-            self::fail('Expected HttpException to be thrown.');
-        } catch (HttpException $exception) {
-            self::assertSame(Response::HTTP_BAD_REQUEST, $exception->getStatusCode());
-        }
+        $accessService = $this->createMock(TaskAccessServiceInterface::class);
+        $accessService
+            ->expects($this->once())
+            ->method('canReviewTaskRequest')
+            ->willReturn(false);
+
+        $resource = new TaskRequestResource($repository, $userTypeIdentification, $accessService, $this->createMock(UserResource::class));
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $resource->changeRequestedStatus('task-request-id', TaskStatus::DONE);
     }
 }
