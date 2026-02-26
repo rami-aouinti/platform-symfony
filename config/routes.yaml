@@ -78,3 +78,13 @@ chat-controllers:
     prefix: /api
     defaults:
         _format: json
+
+task-controllers:
+    resource:
+        path: ../src/Task/Transport/Controller/Api/
+        namespace: App\Task\Transport\Controller\Api
+    type: attribute
+    prefix: /api
+    defaults:
+        _format: json
+
