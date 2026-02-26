@@ -1,0 +1,6 @@
+App\Resume\Domain\Entity\Resume:
+    attributes:
+        createdAt:
+            groups: [ 'Resume', 'Resume.createdAt', 'Resume.show' ]
+        updatedAt:
+            groups: [ 'Resume', 'Resume.updatedAt', 'Resume.show' ]
