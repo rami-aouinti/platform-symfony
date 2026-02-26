@@ -33,7 +33,7 @@ class JobApplication implements EntityInterface
     #[Groups(['JobApplication', 'JobApplication.id', 'JobApplication.show'])]
     private UuidInterface $id;
 
-    #[ORM\ManyToOne(targetEntity: JobOffer::class)]
+    #[ORM\ManyToOne(targetEntity: JobOffer::class, inversedBy: 'jobApplications')]
     #[ORM\JoinColumn(name: 'job_offer_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     #[Groups(['JobApplication', 'JobApplication.jobOffer', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit'])]
     private ?JobOffer $jobOffer = null;
