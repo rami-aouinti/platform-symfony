@@ -21,7 +21,7 @@ readonly class ChatMessageRealtimePublishMessageHandler
 
     public function __invoke(ChatMessageRealtimePublishMessage $message): void
     {
-        $chatMessage = $this->chatMessageRepository->find($message->messageId);
+        $chatMessage = $this->chatMessageRepository->findById($message->messageId);
 
         if (!$chatMessage instanceof ChatMessage) {
             return;

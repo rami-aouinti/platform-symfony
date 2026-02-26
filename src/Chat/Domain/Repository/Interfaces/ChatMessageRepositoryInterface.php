@@ -8,7 +8,7 @@ use App\Chat\Domain\Entity\ChatMessage;
 
 interface ChatMessageRepositoryInterface
 {
-    public function find(string $id): ?ChatMessage;
+    public function findById(string $id): ?ChatMessage;
 
     /**
      * @return ChatMessage[]
