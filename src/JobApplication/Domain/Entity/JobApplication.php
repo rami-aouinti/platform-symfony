@@ -30,7 +30,7 @@ class JobApplication implements EntityInterface
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
-    #[Groups(['JobApplication', 'JobApplication.id', 'JobApplication.show'])]
+    #[Groups(['JobApplication', 'JobApplication.id', 'JobApplication.show', 'JobOffer'])]
     private UuidInterface $id;
 
     #[ORM\ManyToOne(targetEntity: JobOffer::class, inversedBy: 'jobApplications')]
@@ -40,7 +40,7 @@ class JobApplication implements EntityInterface
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'candidate_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[Groups(['JobApplication', 'JobApplication.candidate', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit'])]
+    #[Groups(['JobApplication', 'JobApplication.candidate', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit', 'JobOffer'])]
     private ?User $candidate = null;
 
     #[ORM\Column(name: 'cover_letter', type: Types::TEXT, nullable: true)]
@@ -48,24 +48,24 @@ class JobApplication implements EntityInterface
     private ?string $coverLetter = null;
 
     #[ORM\Column(name: 'cv_url', type: Types::STRING, length: 2048, nullable: true)]
-    #[Groups(['JobApplication', 'JobApplication.cvUrl', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit'])]
+    #[Groups(['JobApplication', 'JobApplication.cvUrl', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit', 'JobOffer'])]
     private ?string $cvUrl = null;
 
     #[ORM\Column(name: 'attachments', type: Types::JSON, nullable: true)]
-    #[Groups(['JobApplication', 'JobApplication.attachments', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit'])]
+    #[Groups(['JobApplication', 'JobApplication.attachments', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit', 'JobOffer'])]
     private ?array $attachments = null;
 
-    #[ORM\Column(name: 'status', enumType: JobApplicationStatus::class, type: Types::STRING, length: 32, nullable: false)]
-    #[Groups(['JobApplication', 'JobApplication.status', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit'])]
+    #[ORM\Column(name: 'status', type: Types::STRING, length: 32, nullable: false, enumType: JobApplicationStatus::class)]
+    #[Groups(['JobApplication', 'JobApplication.status', 'JobApplication.create', 'JobApplication.show', 'JobApplication.edit', 'JobOffer'])]
     private JobApplicationStatus $status = JobApplicationStatus::PENDING;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'decided_by_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[Groups(['JobApplication.decidedBy', 'JobApplication.show'])]
+    #[Groups(['JobApplication.decidedBy', 'JobApplication.show', 'JobOffer'])]
     private ?User $decidedBy = null;
 
     #[ORM\Column(name: 'decided_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    #[Groups(['JobApplication.decidedAt', 'JobApplication.show'])]
+    #[Groups(['JobApplication.decidedAt', 'JobApplication.show', 'JobOffer'])]
     private ?DateTimeImmutable $decidedAt = null;
 
     public function __construct()

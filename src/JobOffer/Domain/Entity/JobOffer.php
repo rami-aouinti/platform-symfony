@@ -74,11 +74,11 @@ class JobOffer implements EntityInterface
     #[Groups(['JobOffer', 'JobOffer.location', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private string $location = '';
 
-    #[ORM\Column(name: 'employment_type', enumType: EmploymentType::class, type: Types::STRING, length: 64, nullable: false)]
+    #[ORM\Column(name: 'employment_type', type: Types::STRING, length: 64, nullable: false, enumType: EmploymentType::class)]
     #[Groups(['JobOffer', 'JobOffer.employmentType', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private EmploymentType $employmentType = EmploymentType::FULL_TIME;
 
-    #[ORM\Column(name: 'status', enumType: JobOfferStatus::class, type: Types::STRING, length: 64, nullable: false)]
+    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, enumType: JobOfferStatus::class)]
     #[Groups(['JobOffer', 'JobOffer.status', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private JobOfferStatus $status = JobOfferStatus::DRAFT;
 
@@ -98,19 +98,19 @@ class JobOffer implements EntityInterface
     #[Groups(['JobOffer', 'JobOffer.salaryPeriod', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?string $salaryPeriod = null;
 
-    #[ORM\Column(name: 'remote_mode', enumType: RemoteMode::class, type: Types::STRING, length: 32, nullable: true)]
+    #[ORM\Column(name: 'remote_mode', type: Types::STRING, length: 32, nullable: true, enumType: RemoteMode::class)]
     #[Groups(['JobOffer', 'JobOffer.remoteMode', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?RemoteMode $remoteMode = null;
 
-    #[ORM\Column(name: 'experience_level', enumType: ExperienceLevel::class, type: Types::STRING, length: 32, nullable: true)]
+    #[ORM\Column(name: 'experience_level', type: Types::STRING, length: 32, nullable: true, enumType: ExperienceLevel::class)]
     #[Groups(['JobOffer', 'JobOffer.experienceLevel', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?ExperienceLevel $experienceLevel = null;
 
-    #[ORM\Column(name: 'work_time', enumType: WorkTime::class, type: Types::STRING, length: 32, nullable: true)]
+    #[ORM\Column(name: 'work_time', type: Types::STRING, length: 32, nullable: true, enumType: WorkTime::class)]
     #[Groups(['JobOffer', 'JobOffer.workTime', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?WorkTime $workTime = null;
 
-    #[ORM\Column(name: 'application_type', enumType: ApplicationType::class, type: Types::STRING, length: 32, nullable: true)]
+    #[ORM\Column(name: 'application_type', type: Types::STRING, length: 32, nullable: true, enumType: ApplicationType::class)]
     #[Groups(['JobOffer', 'JobOffer.applicationType', 'JobOffer.create', 'JobOffer.show', 'JobOffer.edit'])]
     private ?ApplicationType $applicationType = null;
 
@@ -166,7 +166,7 @@ class JobOffer implements EntityInterface
      * @var Collection<int, JobApplication>|null
      */
     #[ORM\OneToMany(targetEntity: JobApplication::class, mappedBy: 'jobOffer')]
-    #[Groups(['JobOffer.jobApplications', 'JobOffer.show'])]
+    #[Groups(['JobOffer', 'JobOffer.jobApplications', 'JobOffer.show'])]
     private ?Collection $jobApplications = null;
 
     public function __construct()

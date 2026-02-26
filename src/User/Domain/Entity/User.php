@@ -74,7 +74,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         'LogRequest.user',
 
         'UserGroup.users',
-
+        'JobOffer',
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
     ])]
@@ -90,7 +90,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         'User',
         'User.username',
         'Company.owner',
-
+        'JobOffer',
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
     ])]
@@ -112,7 +112,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         'User',
         'User.firstName',
         'Company.owner',
-
+        'JobOffer',
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
     ])]
@@ -156,7 +156,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         'User',
         'User.email',
         'Company.owner',
-
+        'JobOffer',
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
     ])]
