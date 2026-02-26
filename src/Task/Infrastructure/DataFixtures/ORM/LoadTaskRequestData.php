@@ -41,11 +41,11 @@ final class LoadTaskRequestData extends Fixture implements OrderedFixtureInterfa
             ['TaskRequest-008', '72000000-0000-1000-8000-000000000008', 'Task-b2b-account-switch', 'Sprint-2026-09-15', $john, $carol, TaskStatus::IN_PROGRESS, '2026-09-17 16:25:00', 'Development started with feature flag.'],
             ['TaskRequest-009', '72000000-0000-1000-8000-000000000009', 'Task-observability-tracing', 'Sprint-2026-09-15', $alice, $john, TaskStatus::DONE, '2026-09-18 13:15:00', 'Missing traces in queue workers.'],
             ['TaskRequest-010', '72000000-0000-1000-8000-000000000010', 'Task-observability-slo', 'Sprint-2026-09-15', $carol, $john, TaskStatus::IN_PROGRESS, '2026-09-18 09:45:00', 'Please approve start.'],
-            ['TaskRequest-011', '72000000-0000-1000-8000-000000000011', 'Task-generic-security-1', 'Sprint-2026-09-15', $alice, $john, TaskStatus::DONE, '2026-09-19 10:10:00', 'Security checklist completed.'],
-            ['TaskRequest-012', '72000000-0000-1000-8000-000000000012', 'Task-generic-security-2', 'Sprint-2026-09-15', $carol, $alice, TaskStatus::IN_PROGRESS, '2026-09-19 12:00:00', 'Dependency upgrade postponed.'],
-            ['TaskRequest-013', '72000000-0000-1000-8000-000000000013', 'Task-generic-ops-1', null, $john, $carol, TaskStatus::ARCHIVED, '2026-09-20 08:30:00', 'Task can be archived.'],
-            ['TaskRequest-014', '72000000-0000-1000-8000-000000000014', 'Task-generic-doc-1', null, $carol, $alice, TaskStatus::ARCHIVED, '2026-09-20 11:30:00', 'Documentation task complete and archived.'],
-            ['TaskRequest-015', '72000000-0000-1000-8000-000000000015', 'Task-generic-backlog-1', null, $alice, $john, TaskStatus::IN_PROGRESS, '2026-09-21 09:00:00', 'Started backlog refinement.'],
+            ['TaskRequest-011', '72000000-0000-1000-8000-000000000011', 'Task-generic-security-1', 'Sprint-2026-09-29', $alice, $john, TaskStatus::DONE, '2026-09-19 10:10:00', 'Security checklist completed.'],
+            ['TaskRequest-012', '72000000-0000-1000-8000-000000000012', 'Task-generic-security-2', 'Sprint-2026-09-29', $carol, $alice, TaskStatus::IN_PROGRESS, '2026-09-19 12:00:00', 'Dependency upgrade postponed.'],
+            ['TaskRequest-013', '72000000-0000-1000-8000-000000000013', 'Task-generic-ops-1', 'Sprint-2026-09-29', $john, $carol, TaskStatus::ARCHIVED, '2026-09-20 08:30:00', 'Task can be archived.'],
+            ['TaskRequest-014', '72000000-0000-1000-8000-000000000014', 'Task-generic-doc-1', 'Sprint-2026-10-13', $carol, $alice, TaskStatus::ARCHIVED, '2026-09-20 11:30:00', 'Documentation task complete and archived.'],
+            ['TaskRequest-015', '72000000-0000-1000-8000-000000000015', 'Task-generic-backlog-1', 'Sprint-2026-10-13', $alice, $john, TaskStatus::IN_PROGRESS, '2026-09-21 09:00:00', 'Started backlog refinement.'],
         ];
 
         foreach ($rows as [$reference, $uuid, $taskReference, $sprintReference, $requester, $reviewer, $requestedStatus, $time, $note]) {

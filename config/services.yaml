@@ -204,8 +204,14 @@ services:
     App\Task\Application\Resource\Interfaces\ProjectResourceInterface:
         class: App\Task\Application\Resource\ProjectResource
 
+    App\Task\Application\Resource\Interfaces\SprintResourceInterface:
+        class: App\Task\Application\Resource\SprintResource
+
     App\Task\Application\Resource\Interfaces\TaskRequestResourceInterface:
         class: App\Task\Application\Resource\TaskRequestResource
+
+    App\Task\Domain\Repository\Interfaces\SprintRepositoryInterface:
+        class: App\Task\Infrastructure\Repository\SprintRepository
 
     App\Blog\Application\Resource\Interfaces\BlogPostResourceInterface:
         class: App\Blog\Application\Resource\BlogPostResource
