@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Task\Domain\Entity;
 
+use App\Company\Domain\Entity\Company;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
@@ -18,6 +19,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity]
 #[ORM\Table(name: 'project')]
 #[ORM\Index(name: 'idx_project_owner_id', columns: ['owner_id'])]
+#[ORM\Index(name: 'idx_project_company_id', columns: ['company_id'])]
 #[ORM\Index(name: 'idx_project_status', columns: ['status'])]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class Project implements EntityInterface
@@ -34,6 +36,11 @@ class Project implements EntityInterface
     #[ORM\JoinColumn(name: 'owner_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     #[Groups(['Project', 'Project.owner', 'Project.show', 'Project.edit'])]
     private ?User $owner = null;
+
+    #[ORM\ManyToOne(targetEntity: Company::class)]
+    #[ORM\JoinColumn(name: 'company_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['Project', 'Project.company', 'Project.create', 'Project.show', 'Project.edit'])]
+    private Company $company;
 
     #[ORM\Column(name: 'name', type: Types::STRING, length: 255, nullable: false)]
     #[Groups(['Project', 'Project.name', 'Project.create', 'Project.show', 'Project.edit'])]
@@ -65,6 +72,18 @@ class Project implements EntityInterface
     public function setOwner(?User $owner): self
     {
         $this->owner = $owner;
+
+        return $this;
+    }
+
+    public function getCompany(): Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(Company $company): self
+    {
+        $this->company = $company;
 
         return $this;
     }

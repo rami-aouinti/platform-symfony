@@ -7,6 +7,7 @@ namespace App\Task\Application\Resource;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\Company\Domain\Repository\Interfaces\CompanyRepositoryInterface;
 use App\Task\Application\Resource\Interfaces\ProjectResourceInterface;
 use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
 use App\Task\Domain\Entity\Project as Entity;
@@ -24,6 +25,7 @@ class ProjectResource extends RestResource implements ProjectResourceInterface
         RepositoryInterface $repository,
         private readonly UserTypeIdentification $userTypeIdentification,
         private readonly TaskAccessServiceInterface $taskAccessService,
+        private readonly CompanyRepositoryInterface $companyRepository,
     ) {
         parent::__construct($repository);
     }
@@ -49,7 +51,18 @@ class ProjectResource extends RestResource implements ProjectResourceInterface
     public function beforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $entity->setOwner($this->getCurrentUser());
+            $currentUser = $this->getCurrentUser();
+            $entity->setOwner($currentUser);
+
+            $company = $this->companyRepository->findOneBy([
+                'owner' => $currentUser,
+            ]);
+
+            if ($company === null) {
+                throw new AccessDeniedHttpException('No company found for current user.');
+            }
+
+            $entity->setCompany($company);
         }
     }
 

@@ -77,6 +77,26 @@ class CompanyControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
 
+
+    /**
+     * @throws Throwable
+     */
+    public function testOwnerCanListProjectsByCompany(): void
+    {
+        $client = $this->getTestClient('john-user', 'password-user');
+
+        $client->request('GET', self::BASE_URL . '/' . self::COMPANY_ID . '/projects');
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $projects = JSON::decode((string)$client->getResponse()->getContent(), true);
+        self::assertIsArray($projects);
+        self::assertCount(3, $projects);
+
+        foreach ($projects as $project) {
+            self::assertSame(self::COMPANY_ID, (string)$project['company']['id']);
+        }
+    }
+
     public static function unauthorizedUserProvider(): array
     {
         return [
