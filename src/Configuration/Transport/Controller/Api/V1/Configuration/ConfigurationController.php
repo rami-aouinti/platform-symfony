@@ -24,6 +24,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 #[AsController]
 #[Route(path: '/v1/configuration')]
+#[Route(path: '/v1/configurations')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'Configuration Management')]
 class ConfigurationController extends Controller
