@@ -8,6 +8,8 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use App\User\Domain\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
@@ -73,9 +75,30 @@ class Resume implements EntityInterface
     #[Groups(['Resume', 'Resume.isPublic', 'Resume.create', 'Resume.show', 'Resume.edit'])]
     private bool $isPublic = false;
 
+    /**
+     * @var Collection<int, ResumeExperience>
+     */
+    #[ORM\OneToMany(targetEntity: ResumeExperience::class, mappedBy: 'resume', orphanRemoval: true)]
+    private Collection $resumeExperiences;
+
+    /**
+     * @var Collection<int, ResumeEducation>
+     */
+    #[ORM\OneToMany(targetEntity: ResumeEducation::class, mappedBy: 'resume', orphanRemoval: true)]
+    private Collection $resumeEducation;
+
+    /**
+     * @var Collection<int, ResumeSkill>
+     */
+    #[ORM\OneToMany(targetEntity: ResumeSkill::class, mappedBy: 'resume', orphanRemoval: true)]
+    private Collection $resumeSkills;
+
     public function __construct()
     {
         $this->id = $this->createUuid();
+        $this->resumeExperiences = new ArrayCollection();
+        $this->resumeEducation = new ArrayCollection();
+        $this->resumeSkills = new ArrayCollection();
     }
 
     public function getId(): string
@@ -201,5 +224,29 @@ class Resume implements EntityInterface
         $this->isPublic = $isPublic;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, ResumeExperience>
+     */
+    public function getResumeExperiences(): Collection
+    {
+        return $this->resumeExperiences;
+    }
+
+    /**
+     * @return Collection<int, ResumeEducation>
+     */
+    public function getResumeEducation(): Collection
+    {
+        return $this->resumeEducation;
+    }
+
+    /**
+     * @return Collection<int, ResumeSkill>
+     */
+    public function getResumeSkills(): Collection
+    {
+        return $this->resumeSkills;
     }
 }
