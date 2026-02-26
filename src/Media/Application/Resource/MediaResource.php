@@ -10,6 +10,7 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Media\Application\Resource\Interfaces\MediaResourceInterface;
 use App\Media\Application\Service\Interfaces\MediaStorageServiceInterface;
 use App\Media\Domain\Entity\Media as Entity;
+use App\Media\Domain\Enum\MediaStatus;
 use App\Media\Domain\Repository\Interfaces\MediaRepositoryInterface as RepositoryInterface;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
@@ -95,7 +96,7 @@ class MediaResource extends RestResource implements MediaResourceInterface
             ->setPath($storedFile->getPath())
             ->setMimeType($storedFile->getMimeType())
             ->setSize($storedFile->getSize())
-            ->setStatus('active');
+            ->setStatus(MediaStatus::ACTIVE);
 
         $this->save($media);
 

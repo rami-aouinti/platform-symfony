@@ -11,6 +11,9 @@ use App\Media\Domain\Entity\Media;
 use App\Recruit\Domain\Entity\JobCategory;
 use App\Recruit\Domain\Entity\Language;
 use App\Recruit\Domain\Entity\Offer;
+use App\Company\Domain\Enum\CompanyStatus;
+use App\Media\Domain\Enum\MediaStatus;
+use App\Recruit\Domain\Enum\OfferStatus;
 use App\Recruit\Domain\Entity\Skill;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -46,11 +49,11 @@ class SharedTraitsDoctrineHydrationTest extends KernelTestCase
     public function testDoctrineStyleHydrationForSharedFields(): void
     {
         $this->assertHydration(Company::class, 'slug', 'acme', 'getSlug');
-        $this->assertHydration(Company::class, 'status', 'active', 'getStatus');
+        $this->assertHydration(Company::class, 'status', CompanyStatus::ACTIVE, 'getStatus');
         $this->assertHydration(Offer::class, 'description', 'Offer body', 'getDescription');
-        $this->assertHydration(Offer::class, 'status', 'draft', 'getStatus');
+        $this->assertHydration(Offer::class, 'status', OfferStatus::DRAFT, 'getStatus');
         $this->assertHydration(Media::class, 'name', 'logo', 'getName');
-        $this->assertHydration(Media::class, 'status', 'active', 'getStatus');
+        $this->assertHydration(Media::class, 'status', MediaStatus::ACTIVE, 'getStatus');
         $this->assertHydration(Skill::class, 'name', 'PHP', 'getName');
         $this->assertHydration(JobCategory::class, 'name', 'Engineering', 'getName');
         $this->assertHydration(Language::class, 'name', 'Français', 'getName');

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Media\Domain\Entity;
 
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\Media\Domain\Enum\MediaStatus;
 use App\General\Domain\Entity\Traits\NameTrait;
-use App\General\Domain\Entity\Traits\StatusTrait;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use App\User\Domain\Entity\User;
@@ -31,7 +31,6 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class Media implements EntityInterface
 {
     use NameTrait;
-    use StatusTrait;
     use Timestampable;
     use Uuid;
 
@@ -57,10 +56,13 @@ class Media implements EntityInterface
     #[Groups(['Media', 'Media.size', 'Media.create', 'Media.show', 'Media.edit'])]
     private int $size = 0;
 
+    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, enumType: MediaStatus::class)]
+    #[Groups(['Media', 'Media.status', 'Media.create', 'Media.show', 'Media.edit'])]
+    private MediaStatus $status = MediaStatus::ACTIVE;
+
     public function __construct()
     {
         $this->id = $this->createUuid();
-        $this->status = 'active';
     }
 
     public function getId(): string
@@ -116,4 +118,23 @@ class Media implements EntityInterface
         return $this;
     }
 
+    public function getStatus(): MediaStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(MediaStatus|string $status): self
+    {
+        $nextStatus = $status instanceof MediaStatus ? $status : MediaStatus::from($status);
+
+        if (!$this->status->canTransitionTo($nextStatus) && $this->status !== $nextStatus) {
+            return $this;
+        }
+
+        $this->status = $nextStatus;
+
+        return $this;
+    }
+
 }
+

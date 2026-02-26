@@ -7,6 +7,7 @@ namespace App\Recruit\Infrastructure\DataFixtures\ORM;
 use App\Company\Domain\Entity\Company;
 use App\General\Domain\Rest\UuidHelper;
 use App\Recruit\Domain\Entity\CandidateProfile;
+use App\Recruit\Domain\Enum\CandidateProfileStatus;
 use App\Tests\Utils\PhpUnitUtil;
 use App\User\Domain\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -31,7 +32,7 @@ final class LoadCandidateProfileData extends Fixture implements OrderedFixtureIn
 
         $candidateProfile = (new CandidateProfile($user))
             ->setCompany($company)
-            ->setStatus('new');
+            ->setStatus(CandidateProfileStatus::NEW);
 
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('30000000-0000-1000-8000-000000000003'), $candidateProfile);
 

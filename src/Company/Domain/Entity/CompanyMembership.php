@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Company\Domain\Entity;
 
+use App\Company\Domain\Enum\CompanyMembershipStatus;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
@@ -53,9 +54,9 @@ class CompanyMembership implements EntityInterface
     #[Groups(['CompanyMembership', 'CompanyMembership.role'])]
     private string $role = self::ROLE_MEMBER;
 
-    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
+    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, enumType: CompanyMembershipStatus::class)]
     #[Groups(['CompanyMembership', 'CompanyMembership.status'])]
-    private string $status = 'invited';
+    private CompanyMembershipStatus $status = CompanyMembershipStatus::INVITED;
 
     #[ORM\Column(name: 'invited_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
     #[Groups(['CompanyMembership', 'CompanyMembership.invitedAt'])]
@@ -99,14 +100,20 @@ class CompanyMembership implements EntityInterface
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): CompanyMembershipStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): self
+    public function setStatus(CompanyMembershipStatus|string $status): self
     {
-        $this->status = $status;
+        $nextStatus = $status instanceof CompanyMembershipStatus ? $status : CompanyMembershipStatus::from($status);
+
+        if (!$this->status->canTransitionTo($nextStatus) && $this->status !== $nextStatus) {
+            return $this;
+        }
+
+        $this->status = $nextStatus;
 
         return $this;
     }
