@@ -22,5 +22,10 @@ interface JobApplicationResourceInterface extends RestResourceInterface
      */
     public function findAllowedForCurrentUser(): array;
 
+    /**
+     * @return JobApplication[]
+     */
+    public function findForMyOffers(): array;
+
     public function getAllowedForCurrentUser(string $applicationId): JobApplication;
 }
