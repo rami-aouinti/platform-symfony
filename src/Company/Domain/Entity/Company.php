@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Company\Domain\Entity;
 
 use App\Company\Domain\Enum\CompanyStatus;
+use App\General\Domain\Entity\Address as AddressValueObject;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\SlugTrait;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
-use App\General\Domain\ValueObject\Address as AddressValueObject;
 use App\Recruit\Domain\Entity\CandidateProfile;
 use App\User\Domain\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;

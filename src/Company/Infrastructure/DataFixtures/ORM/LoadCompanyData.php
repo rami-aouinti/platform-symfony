@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Company\Infrastructure\DataFixtures\ORM;
 
 use App\Company\Domain\Entity\Company;
+use App\Company\Domain\Entity\CompanyMembership;
 use App\Company\Domain\Enum\CompanyMembershipStatus;
 use App\Company\Domain\Enum\CompanyStatus;
-use App\Company\Domain\Entity\CompanyMembership;
+use App\General\Domain\Entity\Address as AddressValueObject;
 use App\General\Domain\Rest\UuidHelper;
-use App\General\Domain\ValueObject\Address as AddressValueObject;
 use App\Tests\Utils\PhpUnitUtil;
 use App\User\Domain\Entity\User;
 use DateTimeImmutable;

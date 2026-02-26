@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\General\Application\DTO;
 
-use App\General\Domain\ValueObject\Address as AddressValueObject;
+use App\General\Domain\Entity\Address as AddressValueObject;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Address

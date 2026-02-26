@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\General\Domain\ValueObject;
+namespace App\General\Domain\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

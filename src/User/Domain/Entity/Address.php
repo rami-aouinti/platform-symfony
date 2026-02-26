@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\User\Domain\Entity;
 
+use App\General\Domain\Entity\Address as AddressValueObject;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
-use App\General\Domain\ValueObject\Address as AddressValueObject;
 use App\User\Domain\Enum\AddressType;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

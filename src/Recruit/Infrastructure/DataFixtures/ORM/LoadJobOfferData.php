@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Recruit\Infrastructure\DataFixtures\ORM;
 
 use App\Company\Domain\Entity\Company;
+use App\General\Domain\Entity\Address as AddressValueObject;
 use App\General\Domain\Rest\UuidHelper;
-use App\General\Domain\ValueObject\Address as AddressValueObject;
 use App\Recruit\Domain\Entity\City;
 use App\Recruit\Domain\Entity\JobCategory;
 use App\Recruit\Domain\Entity\JobOffer;
