@@ -167,6 +167,12 @@ services:
     App\Media\Application\Service\Interfaces\MediaStorageServiceInterface:
         class: App\Media\Infrastructure\Service\MediaStorageService
 
+    App\Configuration\Application\Resource\Interfaces\ConfigurationResourceInterface:
+        class: App\Configuration\Application\Resource\ConfigurationResource
+
+    App\Configuration\Domain\Repository\Interfaces\ConfigurationRepositoryInterface:
+        class: App\Configuration\Infrastructure\Repository\ConfigurationRepository
+
     App\Notification\Application\Service\Interfaces\NotificationServiceInterface:
         class: App\Notification\Application\Service\NotificationService
 
