@@ -177,10 +177,7 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
 
     public function findForMyOffers(): array
     {
-        return array_values(array_filter(
-            $this->find(orderBy: ['createdAt' => 'DESC']),
-            fn (Entity $application): bool => $this->authorizationChecker->isGranted(Permission::JOB_APPLICATION_DECIDE->value, $application),
-        ));
+        return $this->getRepository()->findForMyOffers($this->getCurrentUser());
     }
 
     public function getAllowedForCurrentUser(string $applicationId): Entity

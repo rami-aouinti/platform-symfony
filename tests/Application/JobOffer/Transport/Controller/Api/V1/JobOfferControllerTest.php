@@ -73,6 +73,27 @@ class JobOfferControllerTest extends WebTestCase
         self::assertNotContains('60000000-0000-1000-8000-000000000003', $offerIds);
     }
 
+
+    /** @throws Throwable */
+    public function testMyRouteCanReturnApplicationsForManagedOffers(): void
+    {
+        $client = $this->getTestClient('alice-user', 'password-user');
+        $client->request('GET', self::BASE_URL . '/my', [
+            'applications' => '1',
+        ]);
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $applications = JSON::decode((string) $client->getResponse()->getContent(), true);
+        self::assertIsArray($applications);
+        self::assertNotEmpty($applications);
+
+        $applicationIds = array_column($applications, 'id');
+        self::assertContains('50000000-0000-1000-8000-000000000001', $applicationIds);
+        self::assertContains('50000000-0000-1000-8000-000000000003', $applicationIds);
+        self::assertNotContains('50000000-0000-1000-8000-000000000004', $applicationIds);
+    }
+
     /** @throws Throwable */
     public function testAvailableRouteReturnsOnlyOpenOffersUserCanApplyTo(): void
     {
