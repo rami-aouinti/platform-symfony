@@ -139,6 +139,14 @@ services:
         arguments:
             $serializer: '@app.serializer.external_message'
 
+
+    App\Chat\Application\Service\Realtime\ChatRealtimePublisher:
+        arguments:
+            $hub: '@?mercure.hub.default'
+
+    App\Chat\Application\Service\Realtime\Interfaces\ChatRealtimePublisherInterface:
+        alias: App\Chat\Application\Service\Realtime\ChatRealtimePublisher
+
     App\Notification\Application\Service\Channel\EmailNotification:
         arguments:
             $senderEmail: '%env(resolve:APP_SENDER_EMAIL)%'

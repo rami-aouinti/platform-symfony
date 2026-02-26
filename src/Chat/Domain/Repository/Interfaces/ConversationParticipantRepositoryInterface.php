@@ -12,4 +12,8 @@ interface ConversationParticipantRepositoryInterface
      * @return ConversationParticipant[]
      */
     public function findByConversationId(string $conversationId): array;
+    /**
+     * @return string[]
+     */
+    public function findConversationIdsByUserId(string $userId): array;
 }

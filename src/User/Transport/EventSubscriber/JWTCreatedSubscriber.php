@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\User\Transport\EventSubscriber;
 
+use App\Chat\Domain\Repository\Interfaces\ConversationParticipantRepositoryInterface;
 use App\General\Domain\Enum\Language;
 use App\General\Domain\Enum\Locale;
 use App\Tool\Domain\Service\Interfaces\LocalizationServiceInterface;
@@ -21,6 +22,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 use function hash;
 use function implode;
+use function array_map;
+use function sprintf;
 
 /**
  * @package App\User
@@ -30,6 +33,7 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly RequestStack $requestStack,
         private readonly LoggerInterface $logger,
+        private readonly ConversationParticipantRepositoryInterface $conversationParticipantRepository,
     ) {
     }
 
@@ -67,6 +71,8 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
         $this->setOrganizationData($payload, $event->getUser());
         // Add some extra security data to payload
         $this->setSecurityData($payload);
+        // Add Mercure claims for authorized subscriptions
+        $this->setMercureClaims($payload, $event->getUser());
         // And set new payload for JWT
         $event->setData($payload);
     }
@@ -104,6 +110,32 @@ class JWTCreatedSubscriber implements EventSubscriberInterface
             $payload['organization_context'] = $request->headers->get('X-Company-Id');
         }
     }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function setMercureClaims(array &$payload, UserInterface $user): void
+    {
+        if (!($user instanceof SecurityUser)) {
+            return;
+        }
+
+        $userId = $user->getUserIdentifier();
+        $conversationTopics = $this->conversationParticipantRepository->findConversationIdsByUserId($userId);
+
+        $subscribe = [
+            sprintf('/users/%s/notifications', $userId),
+            ...array_map(
+                static fn (string $conversationId): string => sprintf('/conversations/%s', $conversationId),
+                $conversationTopics,
+            ),
+        ];
+
+        $payload['mercure'] = [
+            'subscribe' => $subscribe,
+        ];
+    }
+
     /**
      * Method to set/modify JWT expiration date dynamically.
      *

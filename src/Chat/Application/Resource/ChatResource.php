@@ -11,11 +11,13 @@ use App\Chat\Application\Resource\Interfaces\ChatResourceInterface;
 use App\Chat\Domain\Entity\ChatMessage;
 use App\Chat\Domain\Entity\Conversation;
 use App\Chat\Domain\Entity\ConversationParticipant;
+use App\Chat\Domain\Message\ChatMessageRealtimePublishMessage;
 use App\Chat\Domain\Repository\Interfaces\ChatMessageRepositoryInterface;
 use App\Chat\Domain\Repository\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Chat\Domain\Repository\Interfaces\ConversationRepositoryInterface;
 use App\JobApplication\Domain\Entity\JobApplication;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
+use App\General\Domain\Service\Interfaces\MessageServiceInterface;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,6 +35,7 @@ class ChatResource implements ChatResourceInterface
         private readonly ConversationParticipantRepositoryInterface $participantRepository,
         private readonly ChatMessageRepositoryInterface $messageRepository,
         private readonly UserTypeIdentification $userTypeIdentification,
+        private readonly MessageServiceInterface $messageService,
     ) {
     }
 
@@ -108,6 +111,8 @@ class ChatResource implements ChatResourceInterface
             ->setContent($content);
 
         $this->messageRepository->save($message);
+
+        $this->messageService->sendMessage(new ChatMessageRealtimePublishMessage($message->getId()));
 
         return $this->toView($conversation);
     }
