@@ -12,6 +12,7 @@ use App\Media\Application\DTO\Media\MediaPatch;
 use App\Media\Application\DTO\Media\MediaUpdate;
 use App\Media\Application\Resource\Interfaces\MediaResourceInterface;
 use App\Media\Application\Resource\MediaResource;
+use App\Media\Application\Service\MediaExportService;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,6 +55,7 @@ class MediaController extends Controller
     public function __construct(
         MediaResourceInterface $resource,
         private readonly ValidatorInterface $validator,
+        private readonly MediaExportService $mediaExportService,
     ) {
         parent::__construct($resource);
     }
@@ -83,6 +85,42 @@ class MediaController extends Controller
         $media = $this->getResource()->createFromUploadedFile($file);
 
         return $this->getResponseHandler()->createResponse($request, $media, $this->getResource());
+    }
+
+    #[Route(path: '/export/{configurationId}/excel', methods: [Request::METHOD_GET])]
+    #[IsGranted('ROLE_USER')]
+    public function exportExcelAction(string $configurationId): Response
+    {
+        $configuration = $this->getResource()->resolveExportConfiguration($configurationId);
+        $mediaItems = $this->getResource()->findForExport($configuration['status']);
+        $content = $this->mediaExportService->buildExcelContent($mediaItems, $configuration['columns']);
+
+        return new Response(
+            $content,
+            Response::HTTP_OK,
+            [
+                'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="media-export.xls"',
+            ],
+        );
+    }
+
+    #[Route(path: '/export/{configurationId}/pdf', methods: [Request::METHOD_GET])]
+    #[IsGranted('ROLE_USER')]
+    public function exportPdfAction(string $configurationId): Response
+    {
+        $configuration = $this->getResource()->resolveExportConfiguration($configurationId);
+        $mediaItems = $this->getResource()->findForExport($configuration['status']);
+        $content = $this->mediaExportService->buildPdfContent($mediaItems, $configuration['columns'], $configuration['title']);
+
+        return new Response(
+            $content,
+            Response::HTTP_OK,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="media-export.pdf"',
+            ],
+        );
     }
 
     private function createValidationError(string $message): Response
