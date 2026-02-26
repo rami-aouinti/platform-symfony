@@ -13,6 +13,7 @@ use App\JobApplication\Application\DTO\JobApplication\OfferApplicationPayload;
 use App\JobApplication\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\JobApplication\Domain\Entity\JobApplication as Entity;
 use App\JobApplication\Domain\Message\JobApplicationDecidedMessage;
+use App\JobApplication\Domain\Message\ConversationEnsureForAcceptedApplicationMessage;
 use App\JobApplication\Domain\Message\JobApplicationSubmittedMessage;
 use App\JobApplication\Domain\Enum\JobApplicationStatus;
 use App\JobApplication\Domain\Exception\JobApplicationException;
@@ -162,6 +163,12 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
                 offerId: $jobOffer->getId(),
                 status: $status->value,
             ));
+
+            if ($status === JobApplicationStatus::ACCEPTED) {
+                $this->messageService->sendMessage(new ConversationEnsureForAcceptedApplicationMessage(
+                    applicationId: $application->getId(),
+                ));
+            }
         }
 
         return $application;
