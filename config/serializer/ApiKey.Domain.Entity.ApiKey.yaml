@@ -1,0 +1,6 @@
+App\ApiKey\Domain\Entity\ApiKey:
+    attributes:
+        createdAt:
+            groups: [ 'ApiKey.createdAt' ]
+        updatedAt:
+            groups: [ 'ApiKey.updatedAt' ]
