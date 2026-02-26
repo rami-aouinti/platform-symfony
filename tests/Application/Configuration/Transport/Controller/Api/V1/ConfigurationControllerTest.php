@@ -14,6 +14,7 @@ use Throwable;
 class ConfigurationControllerTest extends WebTestCase
 {
     private const string BASE_URL = self::API_URL_PREFIX . '/v1/configuration';
+    private const string BASE_URL_PLURAL = self::API_URL_PREFIX . '/v1/configurations';
 
     /**
      * @throws Throwable
@@ -84,6 +85,19 @@ class ConfigurationControllerTest extends WebTestCase
         self::assertSame($updatePayload['code'], $patched['code']);
 
         $client->request('DELETE', self::BASE_URL . '/' . $configurationId);
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+    }
+
+
+    /**
+     * @throws Throwable
+     */
+    #[DataProvider('authenticatedUserProvider')]
+    public function testAuthenticatedUserCanAccessPluralConfigurationRoute(string $username, string $password): void
+    {
+        $client = $this->getTestClient($username, $password);
+
+        $client->request('GET', self::BASE_URL_PLURAL);
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
@@ -165,6 +179,7 @@ class ConfigurationControllerTest extends WebTestCase
     public static function configurationActionsProvider(): Generator
     {
         yield ['GET', self::BASE_URL];
+        yield ['GET', self::BASE_URL_PLURAL];
         yield ['POST', self::BASE_URL];
         yield ['GET', self::BASE_URL . '/00000000-0000-0000-0000-000000000000'];
         yield ['PUT', self::BASE_URL . '/00000000-0000-0000-0000-000000000000'];
