@@ -1,0 +1,6 @@
+App\Blog\Domain\Entity\BlogTag:
+    attributes:
+        createdAt:
+            groups: [ 'BlogTag.createdAt' ]
+        updatedAt:
+            groups: [ 'BlogTag.updatedAt' ]

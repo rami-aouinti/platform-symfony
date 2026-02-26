@@ -1,0 +1,6 @@
+App\Blog\Domain\Entity\BlogPostLink:
+    attributes:
+        createdAt:
+            groups: [ 'BlogPostLink.createdAt' ]
+        updatedAt:
+            groups: [ 'BlogPostLink.updatedAt' ]
