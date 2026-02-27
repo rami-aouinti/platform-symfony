@@ -4,18 +4,12 @@ declare(strict_types=1);
 
 namespace App\Blog\Transport\AutoMapper\BlogPost;
 
-use App\Blog\Application\DTO\BlogPost\BlogPostCreate;
-use App\Blog\Application\DTO\BlogPost\BlogPostPatch;
-use App\Blog\Application\DTO\BlogPost\BlogPostUpdate;
-use App\General\Transport\AutoMapper\RestAutoMapperConfiguration;
+use App\Blog\Application\DTO\BlogPost\BlogPost;
+use App\General\Transport\AutoMapper\ConventionalRestAutoMapperConfiguration;
 
-class AutoMapperConfiguration extends RestAutoMapperConfiguration
+class AutoMapperConfiguration extends ConventionalRestAutoMapperConfiguration
 {
-    protected static array $requestMapperClasses = [
-        BlogPostCreate::class,
-        BlogPostUpdate::class,
-        BlogPostPatch::class,
-    ];
+    protected static string $dtoBaseClass = BlogPost::class;
 
     public function __construct(RequestMapper $requestMapper)
     {
