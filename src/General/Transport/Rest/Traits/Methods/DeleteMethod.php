@@ -36,13 +36,16 @@ trait DeleteMethod
             $entityManagerName = RequestHandler::getTenant($request);
 
             // Fetch data from database
-            return $this
+            $response = $this
                 ->getResponseHandler()
                 ->createResponse(
                     $request,
                     $resource->delete(id: $id, entityManagerName: $entityManagerName), /** @phpstan-ignore-next-line */
                     $resource
                 );
+            $this->invalidateReadEndpointCache();
+
+            return $response;
         } catch (Throwable $exception) {
             throw $this->handleRestMethodException($exception, $id, $entityManagerName ?? null);
         }

@@ -31,6 +31,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[OA\Tag(name: 'Task Management')]
 class TaskController extends Controller
 {
+    private const string READ_CACHE_SCOPE = 'task';
     use Actions\Authenticated\CreateAction;
     use Actions\Authenticated\DeleteAction;
     use Actions\Authenticated\FindAction;
@@ -52,12 +53,20 @@ class TaskController extends Controller
         parent::__construct($resource);
     }
 
+    protected function getReadCacheScope(): ?string
+    {
+        return self::READ_CACHE_SCOPE;
+    }
+
     #[Route(path: '/{id}/start', methods: [Request::METHOD_PATCH])]
     public function startAction(Request $request, string $id): Response
     {
         $task = $this->getResource()->changeStatus($id, TaskStatus::IN_PROGRESS);
 
-        return $this->getResponseHandler()->createResponse($request, $task, $this->getResource());
+        $response = $this->getResponseHandler()->createResponse($request, $task, $this->getResource());
+        $this->invalidateReadEndpointCache();
+
+        return $response;
     }
 
     #[Route(path: '/{id}/complete', methods: [Request::METHOD_PATCH])]
@@ -65,7 +74,10 @@ class TaskController extends Controller
     {
         $task = $this->getResource()->changeStatus($id, TaskStatus::DONE);
 
-        return $this->getResponseHandler()->createResponse($request, $task, $this->getResource());
+        $response = $this->getResponseHandler()->createResponse($request, $task, $this->getResource());
+        $this->invalidateReadEndpointCache();
+
+        return $response;
     }
 
     #[Route(path: '/{id}/archive', methods: [Request::METHOD_PATCH])]
@@ -73,7 +85,10 @@ class TaskController extends Controller
     {
         $task = $this->getResource()->changeStatus($id, TaskStatus::ARCHIVED);
 
-        return $this->getResponseHandler()->createResponse($request, $task, $this->getResource());
+        $response = $this->getResponseHandler()->createResponse($request, $task, $this->getResource());
+        $this->invalidateReadEndpointCache();
+
+        return $response;
     }
 
     #[Route(path: '/{id}/reopen', methods: [Request::METHOD_PATCH])]
@@ -81,6 +96,9 @@ class TaskController extends Controller
     {
         $task = $this->getResource()->changeStatus($id, TaskStatus::TODO);
 
-        return $this->getResponseHandler()->createResponse($request, $task, $this->getResource());
+        $response = $this->getResponseHandler()->createResponse($request, $task, $this->getResource());
+        $this->invalidateReadEndpointCache();
+
+        return $response;
     }
 }

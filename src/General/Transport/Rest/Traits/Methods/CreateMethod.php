@@ -40,9 +40,12 @@ trait CreateMethod
             $entityManagerName = RequestHandler::getTenant($request);
             $data = $resource->create(dto: $restDto, flush: true, entityManagerName: $entityManagerName);
 
-            return $this
+            $response = $this
                 ->getResponseHandler()
                 ->createResponse($request, $data, $resource, Response::HTTP_CREATED); /** @phpstan-ignore-line */
+            $this->invalidateReadEndpointCache();
+
+            return $response;
         } catch (Throwable $exception) {
             throw $this->handleRestMethodException(
                 exception: $exception,

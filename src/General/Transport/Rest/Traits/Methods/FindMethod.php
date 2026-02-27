@@ -42,20 +42,31 @@ trait FindMethod
             $entityManagerName = RequestHandler::getTenant($request);
             $this->processCriteria($criteria, $request, __METHOD__);
 
-            return $this
-                ->getResponseHandler()
-                ->createResponse(
-                    $request,
-                    $resource->find(
-                        $criteria,
-                        $orderBy,
-                        $limit,
-                        $offset,
-                        $search,
-                        $entityManagerName
-                    ), /** @phpstan-ignore-next-line */
-                    $resource
-                );
+            $data = $this->rememberReadEndpoint(
+                $request,
+                [
+                    'criteria' => $criteria,
+                    'orderBy' => $orderBy,
+                    'limit' => $limit,
+                    'offset' => $offset,
+                    'search' => $search,
+                    'tenant' => $entityManagerName,
+                ],
+                fn (): array => $resource->find(
+                    $criteria,
+                    $orderBy,
+                    $limit,
+                    $offset,
+                    $search,
+                    $entityManagerName
+                ),
+            );
+
+            return $this->getResponseHandler()->createResponse(
+                $request,
+                $data, /** @phpstan-ignore-next-line */
+                $resource
+            );
         } catch (Throwable $exception) {
             throw $this->handleRestMethodException(
                 exception: $exception,

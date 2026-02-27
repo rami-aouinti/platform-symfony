@@ -35,14 +35,20 @@ trait FindOneMethod
         try {
             $entityManagerName = RequestHandler::getTenant($request);
 
-            // Fetch data from database
-            return $this
-                ->getResponseHandler()
-                ->createResponse(
-                    $request,
-                    $resource->findOne($id, true, $entityManagerName), /** @phpstan-ignore-next-line */
-                    $resource
-                );
+            $data = $this->rememberReadEndpoint(
+                $request,
+                [
+                    'criteria' => ['id' => $id],
+                    'tenant' => $entityManagerName,
+                ],
+                fn (): mixed => $resource->findOne($id, true, $entityManagerName),
+            );
+
+            return $this->getResponseHandler()->createResponse(
+                $request,
+                $data, /** @phpstan-ignore-next-line */
+                $resource
+            );
         } catch (Throwable $exception) {
             throw $this->handleRestMethodException($exception, $id, $entityManagerName ?? null);
         }

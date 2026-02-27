@@ -39,11 +39,19 @@ trait CountMethod
             $entityManagerName = RequestHandler::getTenant($request);
             $this->processCriteria($criteria, $request, __METHOD__);
 
-            return $this
-                ->getResponseHandler()
-                ->createResponse($request, [
+            $data = $this->rememberReadEndpoint(
+                $request,
+                [
+                    'criteria' => $criteria,
+                    'search' => $search,
+                    'tenant' => $entityManagerName,
+                ],
+                fn (): array => [
                     'count' => $resource->count($criteria, $search, $entityManagerName),
-                ], $resource); /** @phpstan-ignore-line */
+                ],
+            );
+
+            return $this->getResponseHandler()->createResponse($request, $data, $resource); /** @phpstan-ignore-line */
         } catch (Throwable $exception) {
             throw $this->handleRestMethodException(
                 exception: $exception,

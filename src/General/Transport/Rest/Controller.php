@@ -10,6 +10,7 @@ use App\General\Transport\Rest\Interfaces\ControllerInterface;
 use App\General\Transport\Rest\Interfaces\ResponseHandlerInterface;
 use App\General\Transport\Rest\Traits\Actions\RestActionBase;
 use App\General\Transport\Rest\Traits\RestMethodHelper;
+use App\Tool\Application\Service\Rest\ReadEndpointCache;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Service\Attribute\Required;
@@ -45,6 +46,7 @@ abstract class Controller implements ControllerInterface
     public const string METHOD_UPDATE = 'updateMethod';
 
     protected ?ResponseHandlerInterface $responseHandler = null;
+    protected ?ReadEndpointCache $readEndpointCache = null;
 
     public function __construct(
         protected readonly RestResourceInterface|RestSmallResourceInterface $resource
@@ -81,6 +83,14 @@ abstract class Controller implements ControllerInterface
     public function setResponseHandler(ResponseHandler $responseHandler): static
     {
         $this->responseHandler = $responseHandler;
+
+        return $this;
+    }
+
+    #[Required]
+    public function setReadEndpointCache(ReadEndpointCache $readEndpointCache): static
+    {
+        $this->readEndpointCache = $readEndpointCache;
 
         return $this;
     }
