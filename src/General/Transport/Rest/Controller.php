@@ -34,6 +34,7 @@ abstract class Controller implements ControllerInterface
     public const string ACTION_FIND_ONE = 'findOneAction';
     public const string ACTION_IDS = 'idsAction';
     public const string ACTION_PATCH = 'patchAction';
+    public const string ACTION_SCHEMA = 'schemaAction';
     public const string ACTION_UPDATE = 'updateAction';
 
     public const string METHOD_COUNT = 'countMethod';
@@ -43,6 +44,7 @@ abstract class Controller implements ControllerInterface
     public const string METHOD_FIND_ONE = 'findOneMethod';
     public const string METHOD_IDS = 'idsMethod';
     public const string METHOD_PATCH = 'patchMethod';
+    public const string METHOD_SCHEMA = 'schemaMethod';
     public const string METHOD_UPDATE = 'updateMethod';
 
     protected ?ResponseHandlerInterface $responseHandler = null;

@@ -24,6 +24,7 @@ abstract class CrudController extends Controller
     use Actions\Authenticated\FindAction;
     use Actions\Authenticated\FindOneAction;
     use Actions\Authenticated\PatchAction;
+    use Actions\Authenticated\SchemaAction;
     use Actions\Authenticated\UpdateAction;
 
     /**
