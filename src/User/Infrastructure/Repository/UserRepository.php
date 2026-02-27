@@ -6,14 +6,18 @@ namespace App\User\Infrastructure\Repository;
 
 use App\General\Domain\Rest\UuidHelper;
 use App\General\Infrastructure\Repository\BaseRepository;
+use App\Role\Domain\Enum\Role;
 use App\User\Domain\Entity\User as Entity;
+use App\User\Domain\Entity\UserGroup;
 use App\User\Domain\Repository\Interfaces\UserRepositoryInterface;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
+use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 
 use function array_key_exists;
+use function in_array;
 
 /**
  * @package App\User
@@ -46,6 +50,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     public function __construct(
         protected ManagerRegistry $managerRegistry,
         private readonly string $environment,
+        private readonly RoleHierarchyInterface $roleHierarchy,
     ) {
     }
 
@@ -105,6 +110,47 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         }
 
         return $cache[$username] instanceof Entity ? $cache[$username] : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findByGroupOrInheritedRole(UserGroup $group): array
+    {
+        $roles = $this->getRolesGrantingAccessToRole($group->getRole()->getId());
+
+        /** @var array<int, Entity> $users */
+        $users = $this
+            ->createQueryBuilder('u')
+            ->select('DISTINCT u')
+            ->innerJoin('u.userGroups', 'ug')
+            ->innerJoin('ug.role', 'r')
+            ->where('r.id IN (:roles)')
+            ->setParameter('roles', $roles)
+            ->getQuery()
+            ->getResult();
+
+        return $users;
+    }
+
+    /**
+     * @param non-empty-string $targetRole
+     *
+     * @return array<int, string>
+     */
+    private function getRolesGrantingAccessToRole(string $targetRole): array
+    {
+        $roles = [];
+
+        foreach (Role::cases() as $role) {
+            $reachableRoles = $this->roleHierarchy->getReachableRoleNames([$role->value]);
+
+            if (in_array($targetRole, $reachableRoles, true)) {
+                $roles[] = $role->value;
+            }
+        }
+
+        return $roles;
     }
 
     /**

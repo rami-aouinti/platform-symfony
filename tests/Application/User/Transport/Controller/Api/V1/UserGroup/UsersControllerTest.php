@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\User\Transport\Controller\Api\V1\UserGroup;
 
+use App\General\Domain\Utils\JSON;
 use App\Role\Domain\Enum\Role;
 use App\Tests\Application\User\Transport\Controller\Api\V1\Traits\UserHelper;
 use App\Tests\TestCase\WebTestCase;
@@ -76,6 +77,32 @@ class UsersControllerTest extends WebTestCase
         yield ['john-user', 'password-user', Response::HTTP_FORBIDDEN];
         yield ['john-admin', 'password-admin', Response::HTTP_OK];
         yield ['john-root', 'password-root', Response::HTTP_OK];
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[TestDox('Test that user group users endpoint includes users via inherited roles.')]
+    public function testThatGetUserGroupUsersContainsInheritedRoles(): void
+    {
+        $client = $this->getTestClient('john-admin', 'password-admin');
+
+        $client->request('GET', static::$baseUrl);
+        $response = $client->getResponse();
+        $content = $response->getContent();
+        self::assertNotFalse($content);
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode(), "Response:\n" . $response);
+
+        $responseData = JSON::decode($content, true);
+        self::assertIsArray($responseData);
+
+        $usernames = array_map(
+            static fn (array $user): string => (string) $user['username'],
+            $responseData,
+        );
+
+        self::assertContains('john-admin', $usernames);
+        self::assertContains('john-root', $usernames);
     }
 
     /**

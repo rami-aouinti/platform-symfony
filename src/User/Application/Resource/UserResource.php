@@ -7,15 +7,10 @@ namespace App\User\Application\Resource;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
-use App\Role\Application\Security\Interfaces\RolesServiceInterface;
 use App\User\Domain\Entity\User as Entity;
 use App\User\Domain\Entity\UserGroup;
 use App\User\Domain\Repository\Interfaces\UserRepositoryInterface as Repository;
 use Throwable;
-
-use function array_filter;
-use function array_values;
-use function in_array;
 
 /**
  * @package App\User
@@ -42,10 +37,8 @@ class UserResource extends RestResource
     /**
      * @param \App\User\Infrastructure\Repository\UserRepository $repository
      */
-    public function __construct(
-        Repository $repository,
-        private readonly RolesServiceInterface $rolesService,
-    ) {
+    public function __construct(Repository $repository)
+    {
         parent::__construct($repository);
     }
 
@@ -67,24 +60,8 @@ class UserResource extends RestResource
      *
      * @return array<int, Entity>
      */
-
     public function getUsersForGroup(UserGroup $userGroup): array
     {
-        /**
-         * Filter method to see if specified user belongs to certain user group.
-         *
-         * @param Entity $user
-         *
-         * @return bool
-         */
-        $filter = fn (Entity $user): bool => in_array(
-            $userGroup->getRole()->getId(),
-            $this->rolesService->getInheritedRoles($user->getRoles()),
-            true
-        );
-
-        $users = $this->find();
-
-        return array_values(array_filter($users, $filter));
+        return $this->getRepository()->findByGroupOrInheritedRole($userGroup);
     }
 }

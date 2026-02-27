@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\User\Domain\Repository\Interfaces;
 
+use App\User\Domain\Entity\UserGroup;
 use App\User\Domain\Entity\User as Entity;
 use Doctrine\ORM\NonUniqueResultException;
 
@@ -46,4 +47,11 @@ interface UserRepositoryInterface
      * @throws NonUniqueResultException
      */
     public function loadUserByIdentifier(string $username, bool $uuid): ?Entity;
+
+    /**
+     * Method to fetch users that belongs to specified user group either directly or via inherited role hierarchy.
+     *
+     * @return array<int, Entity>
+     */
+    public function findByGroupOrInheritedRole(UserGroup $group): array;
 }
