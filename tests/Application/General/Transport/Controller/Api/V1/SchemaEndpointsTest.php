@@ -30,8 +30,9 @@ class SchemaEndpointsTest extends WebTestCase
 
         self::assertArrayHasKey('displayable', $data);
         self::assertArrayHasKey('editable', $data);
-        self::assertIsArray($data['displayable']);
-        self::assertIsArray($data['editable']);
+        self::assertArrayHasKey('creatable', $data);
+        self::assertTrue(is_array($data['displayable']) || $data['displayable'] === false);
+        self::assertTrue(is_array($data['editable']) || $data['editable'] === false);
     }
 
     /**
@@ -62,6 +63,9 @@ class SchemaEndpointsTest extends WebTestCase
         self::assertSame('object', $displayableByName['project']['type'] ?? null);
         self::assertSame('/api/v1/projects', $displayableByName['project']['endpoint'] ?? null);
         self::assertSame('object', $editableByName['project']['type'] ?? null);
+        self::assertIsArray($data['creatable']);
+        self::assertArrayHasKey('fields', $data['creatable']);
+        self::assertArrayHasKey('required', $data['creatable']);
     }
 
 
@@ -78,9 +82,10 @@ class SchemaEndpointsTest extends WebTestCase
         $data = JSON::decode((string)$client->getResponse()->getContent(), true);
 
         self::assertSame('id', $data['displayable'][0]['name'] ?? null);
-        self::assertSame('description', $data['editable'][0]['name'] ?? null);
         self::assertSame('object', $data['displayable'][2]['type'] ?? null);
         self::assertSame('/api/v1/user-groups', $data['displayable'][2]['endpoint'] ?? null);
+        self::assertFalse($data['editable']);
+        self::assertFalse($data['creatable']);
     }
 
     /**

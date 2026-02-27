@@ -17,23 +17,37 @@ use OpenApi\Attributes as OA;
     ],
 )]
 #[OA\Schema(
+    schema: 'RestResourceSchemaCreateSection',
+    type: 'object',
+    properties: [
+        new OA\Property(property: 'fields', type: 'array', items: new OA\Items(ref: '#/components/schemas/RestResourceSchemaField')),
+        new OA\Property(property: 'required', type: 'array', items: new OA\Items(type: 'string')),
+    ],
+)]
+#[OA\Schema(
     schema: 'RestResourceSchemaResponse',
     type: 'object',
     properties: [
-        new OA\Property(property: 'displayable', type: 'array', items: new OA\Items(ref: '#/components/schemas/RestResourceSchemaField')),
-        new OA\Property(property: 'editable', type: 'array', items: new OA\Items(ref: '#/components/schemas/RestResourceSchemaField')),
+        new OA\Property(property: 'displayable', oneOf: [new OA\Schema(type: 'boolean', enum: [false]), new OA\Schema(type: 'array', items: new OA\Items(ref: '#/components/schemas/RestResourceSchemaField'))]),
+        new OA\Property(property: 'editable', oneOf: [new OA\Schema(type: 'boolean', enum: [false]), new OA\Schema(type: 'array', items: new OA\Items(ref: '#/components/schemas/RestResourceSchemaField'))]),
+        new OA\Property(property: 'creatable', oneOf: [new OA\Schema(type: 'boolean', enum: [false]), new OA\Schema(ref: '#/components/schemas/RestResourceSchemaCreateSection')]),
     ],
     example: [
         'displayable' => [
-            ['name' => 'id', 'type' => 'normal'],
-            ['name' => 'title', 'type' => 'normal'],
-            ['name' => 'status', 'type' => 'normal'],
+            ['name' => 'id', 'type' => 'normal', 'targetClass' => null, 'endpoint' => null],
+            ['name' => 'title', 'type' => 'normal', 'targetClass' => null, 'endpoint' => null],
             ['name' => 'project', 'type' => 'object', 'targetClass' => 'App\\Task\\Domain\\Entity\\Project', 'endpoint' => '/api/v1/projects'],
         ],
         'editable' => [
-            ['name' => 'title', 'type' => 'normal'],
-            ['name' => 'status', 'type' => 'normal'],
+            ['name' => 'title', 'type' => 'normal', 'targetClass' => null, 'endpoint' => null],
             ['name' => 'project', 'type' => 'object', 'targetClass' => 'App\\Task\\Domain\\Entity\\Project', 'endpoint' => '/api/v1/projects'],
+        ],
+        'creatable' => [
+            'fields' => [
+                ['name' => 'title', 'type' => 'normal', 'targetClass' => null, 'endpoint' => null],
+                ['name' => 'project', 'type' => 'object', 'targetClass' => 'App\\Task\\Domain\\Entity\\Project', 'endpoint' => '/api/v1/projects'],
+            ],
+            'required' => ['title'],
         ],
     ],
 )]

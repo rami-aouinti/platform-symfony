@@ -17,6 +17,7 @@ use function class_exists;
 use function explode;
 use function in_array;
 use function is_array;
+use function is_bool;
 use function is_string;
 use function preg_replace;
 use function sort;
@@ -32,16 +33,32 @@ final class ResourceSchemaService
     /**
      * @param array<int, class-string> $dtoClasses
      */
-    public function build(BaseRestResourceInterface $resource, array $dtoClasses, array $configuration = []): array
-    {
+    public function build(
+        BaseRestResourceInterface $resource,
+        array $dtoClasses,
+        ?string $createDtoClass = null,
+        array $configuration = []
+    ): array {
         $metadata = $resource->getRepository()->getClassMetaData();
 
         $displayable = $this->hydrateFields($this->extractDisplayableProperties($resource), $metadata);
         $editable = $this->hydrateFields($this->extractEditableProperties($dtoClasses), $metadata);
+        $creatable = $this->hydrateFields(
+            $createDtoClass !== null ? $this->extractEditableProperties([$createDtoClass]) : [],
+            $metadata,
+        );
 
         return [
-            "displayable" => $this->applySectionConfiguration($displayable, $configuration["displayable"] ?? [], $metadata),
-            "editable" => $this->applySectionConfiguration($editable, $configuration["editable"] ?? [], $metadata),
+            'displayable' => $this->applySectionConfiguration($displayable, $configuration['displayable'] ?? []),
+            'editable' => $this->applySectionConfiguration($editable, $configuration['editable'] ?? []),
+            'creatable' => $this->resolveCreatableConfiguration(
+                $creatable,
+                $configuration['creatable'] ?? [
+                    'fields' => $creatable,
+                    'required' => [],
+                ],
+                $metadata,
+            ),
         ];
     }
 
@@ -137,31 +154,11 @@ final class ResourceSchemaService
         $hydrated = [];
 
         foreach ($properties as $property) {
-            if (isset($metadata->associationMappings[$property])) {
-                $targetClass = is_string($metadata->associationMappings[$property]['targetEntity'] ?? null)
-                    ? $metadata->associationMappings[$property]['targetEntity']
-                    : null;
+            $field = $this->buildFieldFromName($property, $metadata);
 
-                $hydrated[] = [
-                    'name' => $property,
-                    'type' => 'object',
-                    'targetClass' => $targetClass,
-                    'endpoint' => $targetClass !== null ? $this->guessEndpointFromEntity($targetClass) : null,
-                ];
-
-                continue;
+            if ($field !== null) {
+                $hydrated[] = $field;
             }
-
-            $doctrineType = is_string($metadata->fieldMappings[$property]['type'] ?? null)
-                ? $metadata->fieldMappings[$property]['type']
-                : null;
-
-            $hydrated[] = [
-                'name' => $property,
-                'type' => $this->normalizeFieldType($doctrineType),
-                'targetClass' => null,
-                'endpoint' => null,
-            ];
         }
 
         return $hydrated;
@@ -169,30 +166,24 @@ final class ResourceSchemaService
 
     /**
      * @param array<int, array<string, string|null>> $autoFields
-     * @param array<int, string|array<string, string|null>> $configuration
+     * @param array<int, string|array<string, string|null>>|bool $configuration
      *
-     * @return array<int, array<string, string|null>>
+     * @return array<int, array<string, string|null>>|false
      */
-    private function applySectionConfiguration(array $autoFields, array $configuration, ClassMetadata $metadata): array
+    private function applySectionConfiguration(array $autoFields, array|bool $configuration): array|false
     {
-        if ($configuration === []) {
-            return $autoFields;
+        if (is_bool($configuration)) {
+            return $configuration === false ? false : $autoFields;
         }
 
-        $autoByName = [];
-
-        foreach ($autoFields as $field) {
-            $name = $field['name'] ?? null;
-
-            if (is_string($name)) {
-                $autoByName[$name] = $field;
-            }
+        if ($configuration === []) {
+            return $autoFields;
         }
 
         $resolved = [];
 
         foreach ($configuration as $configuredField) {
-            $normalized = $this->normalizeConfiguredField($configuredField, $autoByName, $metadata);
+            $normalized = $this->normalizeConfiguredField($configuredField, $autoFields);
 
             if ($normalized !== null) {
                 $resolved[] = $normalized;
@@ -203,15 +194,70 @@ final class ResourceSchemaService
     }
 
     /**
+     * @param array<int, array<string, string|null>> $autoFields
+     * @param array{fields?: array<int, string|array<string, string|null>>, required?: array<int, string>}|bool $configuration
+     *
+     * @return array<string, mixed>|false
+     */
+    private function resolveCreatableConfiguration(array $autoFields, array|bool $configuration, ClassMetadata $metadata): array|false
+    {
+        if ($configuration === false) {
+            return false;
+        }
+
+        $fieldsConfig = is_array($configuration) ? ($configuration['fields'] ?? []) : [];
+        $required = is_array($configuration) && is_array($configuration['required'] ?? null)
+            ? array_values(array_unique($configuration['required']))
+            : [];
+
+        return [
+            'fields' => $this->applySectionConfiguration($autoFields, $fieldsConfig),
+            'required' => $this->filterRequiredFields($required, $metadata),
+        ];
+    }
+
+    /**
+     * @param array<int, string> $required
+     *
+     * @return array<int, string>
+     */
+    private function filterRequiredFields(array $required, ClassMetadata $metadata): array
+    {
+        $filtered = [];
+
+        foreach ($required as $fieldName) {
+            if (!is_string($fieldName)) {
+                continue;
+            }
+
+            if (isset($metadata->fieldMappings[$fieldName]) || isset($metadata->associationMappings[$fieldName])) {
+                $filtered[] = $fieldName;
+            }
+        }
+
+        return array_values(array_unique($filtered));
+    }
+
+    /**
      * @param string|array<string, string|null> $configuredField
-     * @param array<string, array<string, string|null>> $autoByName
+     * @param array<int, array<string, string|null>> $autoFields
      *
      * @return array<string, string|null>|null
      */
-    private function normalizeConfiguredField(string|array $configuredField, array $autoByName, ClassMetadata $metadata): ?array
+    private function normalizeConfiguredField(string|array $configuredField, array $autoFields): ?array
     {
+        $autoByName = [];
+
+        foreach ($autoFields as $field) {
+            $name = $field['name'] ?? null;
+
+            if (is_string($name)) {
+                $autoByName[$name] = $field;
+            }
+        }
+
         if (is_string($configuredField)) {
-            return $autoByName[$configuredField] ?? $this->buildFieldFromName($configuredField, $metadata);
+            return $autoByName[$configuredField] ?? null;
         }
 
         $name = $configuredField['name'] ?? null;
@@ -220,7 +266,7 @@ final class ResourceSchemaService
             return null;
         }
 
-        $base = $autoByName[$name] ?? $this->buildFieldFromName($name, $metadata);
+        $base = $autoByName[$name] ?? null;
 
         if ($base === null) {
             return null;

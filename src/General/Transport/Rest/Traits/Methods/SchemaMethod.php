@@ -42,6 +42,7 @@ trait SchemaMethod
             fn () => $this->getResourceSchemaService()->build(
                 $resource,
                 $this->resolveSchemaDtoClasses(),
+                $this->resolveCreateDtoClass(),
                 $this->getSchemaFieldConfiguration(),
             ),
         );
@@ -82,20 +83,32 @@ trait SchemaMethod
         return array_values(array_unique($dtoClasses));
     }
 
+    /**
+     * @return class-string|null
+     */
+    private function resolveCreateDtoClass(): ?string
+    {
+        try {
+            return $this->getDtoClass(Controller::METHOD_CREATE);
+        } catch (Throwable) {
+            return null;
+        }
+    }
 
     /**
      * Override this in specific controllers when you need manual schema control.
      *
      * Supported format:
      *  [
-     *      'displayable' => [
-     *          'title',
-     *          ['name' => 'project', 'type' => 'object', 'endpoint' => '/api/v1/projects'],
+     *      'displayable' => false|[...],
+     *      'editable' => false|[...],
+     *      'creatable' => false|[
+     *          'fields' => [...],
+     *          'required' => ['title'],
      *      ],
-     *      'editable' => ['title'],
      *  ]
      *
-     * @return array<string, array<int, string|array<string, string|null>>>
+     * @return array<string, mixed>
      */
     protected function getSchemaFieldConfiguration(): array
     {

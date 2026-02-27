@@ -44,18 +44,22 @@ class RoleController extends Controller
     /**
      * Example of manual and intelligent schema control for this module.
      *
-     * @return array<string, array<int, string|array<string, string|null>>>
+     * @return array<string, mixed>
      */
     protected function getSchemaFieldConfiguration(): array
     {
         return [
             'displayable' => [
-                'name',
-                'description'
-            ],
-            'editable' => [
+                'id',
                 'description',
+                [
+                    'name' => 'userGroups',
+                    'type' => 'object',
+                    'endpoint' => '/api/v1/user-groups',
+                ],
             ],
+            'creatable' => false,
+            'editable' => false,
         ];
     }
 
