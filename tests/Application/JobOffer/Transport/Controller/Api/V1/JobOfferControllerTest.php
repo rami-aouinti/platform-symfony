@@ -152,24 +152,45 @@ class JobOfferControllerTest extends WebTestCase
     public function testFindActionSupportsMultiValueFilters(): void
     {
         $client = $this->getTestClient('alice-user', 'password-user');
-        $client->request('GET', self::BASE_URL, [
+        $baseQuery = [
             'remotePolicy' => ['hybrid', 'remote'],
             'skills' => [
                 '61000000-0000-1000-8000-000000000001',
                 '61000000-0000-1000-8000-000000000003',
             ],
             'languages' => [
-                '62000000-0000-1000-8000-000000000003',
+                '62000000-0000-1000-8000-000000000002',
             ],
-        ]);
+            'order' => [
+                'id' => 'ASC',
+            ],
+        ];
 
+        $client->request('GET', self::BASE_URL, $baseQuery);
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
         $offers = JSON::decode((string)$client->getResponse()->getContent(), true);
         $offerIds = array_column($offers, 'id');
 
-        self::assertContains('60000000-0000-1000-8000-000000000002', $offerIds);
-        self::assertNotContains('60000000-0000-1000-8000-000000000001', $offerIds);
+        self::assertSame([
+            '60000000-0000-1000-8000-000000000001',
+            '60000000-0000-1000-8000-000000000002',
+        ], $offerIds);
+
+        $client->request('GET', self::BASE_URL, [
+            ...$baseQuery,
+            'limit' => 1,
+            'offset' => 1,
+        ]);
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $pagedOffers = JSON::decode((string)$client->getResponse()->getContent(), true);
+        $pagedOfferIds = array_column($pagedOffers, 'id');
+
+        self::assertCount(1, $pagedOffers);
+        self::assertSame([
+            '60000000-0000-1000-8000-000000000002',
+        ], $pagedOfferIds);
     }
 
     /**
