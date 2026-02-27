@@ -18,6 +18,7 @@ use App\User\Application\Resource\UserResource;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Exception\InvalidUuidStringException;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
@@ -118,20 +119,22 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
     public function listBySprintGroupedByTask(string $sprintId, ?string $userId = null): array
     {
         $user = $this->getCurrentUser();
+        $sprintUuid = $this->parseUuid($sprintId, 'sprintId');
         $qb = $this->getRepository()->createQueryBuilder('tr')
             ->leftJoin('tr.task', 't')
             ->leftJoin('tr.sprint', 's')
             ->andWhere('s.id = :sprintId')
-            ->setParameter('sprintId', Uuid::fromString($sprintId), UuidBinaryOrderedTimeType::NAME)
+            ->setParameter('sprintId', $sprintUuid, UuidBinaryOrderedTimeType::NAME)
             ->orderBy('t.title', 'ASC')
             ->addOrderBy('tr.time', 'ASC');
 
         if ($userId !== null && $userId !== '') {
+            $userUuid = $this->parseUuid($userId, 'user');
             $qb
                 ->leftJoin('tr.requester', 'requester')
                 ->leftJoin('tr.reviewer', 'reviewer')
                 ->andWhere('requester.id = :userId OR reviewer.id = :userId')
-                ->setParameter('userId', Uuid::fromString($userId), UuidBinaryOrderedTimeType::NAME);
+                ->setParameter('userId', $userUuid, UuidBinaryOrderedTimeType::NAME);
         }
 
         /** @var array<int, Entity> $requests */
@@ -222,6 +225,15 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
         }
 
         return $entity;
+    }
+
+    private function parseUuid(string $value, string $fieldName): Uuid
+    {
+        try {
+            return Uuid::fromString($value);
+        } catch (InvalidUuidStringException) {
+            throw new HttpException(Response::HTTP_BAD_REQUEST, sprintf('Invalid UUID format for "%s".', $fieldName));
+        }
     }
 
     private function getUserById(string $id): User
