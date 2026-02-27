@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Calendar\Transport\AutoMapper\Event;
 
 use App\General\Transport\AutoMapper\RestRequestMapper;
+use App\General\Transport\AutoMapper\PropertiesConventionTrait;
 use App\User\Application\Resource\UserResource;
 use App\User\Domain\Entity\User;
 use DateTimeImmutable;
@@ -12,12 +13,14 @@ use Throwable;
 
 class RequestMapper extends RestRequestMapper
 {
+    use PropertiesConventionTrait;
+
     public function __construct(
         private readonly UserResource $userResource,
     ) {
     }
 
-    protected static array $properties = [
+    private const PROPERTIES = [
         'title',
         'description',
         'location',

@@ -4,18 +4,12 @@ declare(strict_types=1);
 
 namespace App\Calendar\Transport\AutoMapper\Event;
 
-use App\Calendar\Application\DTO\Event\EventCreate;
-use App\Calendar\Application\DTO\Event\EventPatch;
-use App\Calendar\Application\DTO\Event\EventUpdate;
-use App\General\Transport\AutoMapper\RestAutoMapperConfiguration;
+use App\Calendar\Application\DTO\Event\Event;
+use App\General\Transport\AutoMapper\ConventionalRestAutoMapperConfiguration;
 
-class AutoMapperConfiguration extends RestAutoMapperConfiguration
+class AutoMapperConfiguration extends ConventionalRestAutoMapperConfiguration
 {
-    protected static array $requestMapperClasses = [
-        EventCreate::class,
-        EventUpdate::class,
-        EventPatch::class,
-    ];
+    protected static string $dtoBaseClass = Event::class;
 
     public function __construct(RequestMapper $requestMapper)
     {
