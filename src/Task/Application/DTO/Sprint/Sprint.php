@@ -7,6 +7,7 @@ namespace App\Task\Application\DTO\Sprint;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\DTO\RestDto;
 use App\General\Application\Validator\Constraints as AppAssert;
+use App\Company\Domain\Entity\Company;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Task\Domain\Entity\Sprint as Entity;
 use App\Task\Domain\Entity\TaskRequest;
@@ -24,6 +25,7 @@ class Sprint extends RestDto
 {
     protected static array $mappings = [
         'taskRequests' => 'mapTaskRequests',
+        'company' => 'mapCompany',
     ];
 
     #[Assert\NotBlank]
@@ -31,6 +33,10 @@ class Sprint extends RestDto
 
     #[Assert\NotBlank]
     protected ?DateTimeImmutable $endDate = null;
+
+    #[Assert\NotBlank]
+    #[AppAssert\EntityReferenceExists(Company::class)]
+    protected ?Company $company = null;
 
     /**
      * @var array<int, TaskRequest>
@@ -64,6 +70,19 @@ class Sprint extends RestDto
         return $this;
     }
 
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?Company $company): self
+    {
+        $this->setVisited('company');
+        $this->company = $company;
+
+        return $this;
+    }
+
     /**
      * @return array<int, TaskRequest>
      */
@@ -90,15 +109,18 @@ class Sprint extends RestDto
             $this->id = $entity->getId();
             $this->startDate = $entity->getStartDate();
             $this->endDate = $entity->getEndDate();
+            $this->company = $entity->getCompany();
             $this->taskRequests = $entity->getTaskRequests()->toArray();
         }
 
         return $this;
     }
 
-    /**
-     * @param array<int, TaskRequest> $taskRequests
-     */
+    protected function mapCompany(Entity $entity, Company $company): void
+    {
+        $entity->setCompany($company);
+    }
+
     protected function mapTaskRequests(Entity $entity, array $taskRequests): void
     {
         /** @var Collection<int, TaskRequest> $existingTaskRequests */
