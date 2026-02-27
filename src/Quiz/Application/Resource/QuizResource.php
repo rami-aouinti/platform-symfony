@@ -8,6 +8,7 @@ use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Quiz\Application\Resource\Interfaces\QuizResourceInterface;
+use App\Quiz\Application\Service\Interfaces\QuizAccessServiceInterface;
 use App\Quiz\Domain\Entity\Quiz as Entity;
 use App\Quiz\Domain\Repository\Interfaces\QuizRepositoryInterface as RepositoryInterface;
 use App\User\Application\Security\UserTypeIdentification;
@@ -22,13 +23,20 @@ class QuizResource extends RestResource implements QuizResourceInterface
     public function __construct(
         RepositoryInterface $repository,
         private readonly UserTypeIdentification $userTypeIdentification,
+        private readonly QuizAccessServiceInterface $quizAccessService,
     ) {
         parent::__construct($repository);
     }
 
     public function beforeFind(array &$criteria, array &$orderBy, ?int &$limit, ?int &$offset, array &$search): void
     {
-        $criteria['owner'] = $this->getCurrentUser();
+        $currentUser = $this->getCurrentUser();
+
+        if ($this->quizAccessService->isAdminLike($currentUser)) {
+            return;
+        }
+
+        $criteria['owner'] = $currentUser;
     }
 
     public function beforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
@@ -70,7 +78,7 @@ class QuizResource extends RestResource implements QuizResourceInterface
     {
         $currentUser = $this->getCurrentUser();
 
-        if ($quiz->getOwner()?->getId() === $currentUser->getId()) {
+        if ($this->quizAccessService->canManageQuiz($currentUser, $quiz)) {
             return;
         }
 

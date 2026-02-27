@@ -198,6 +198,9 @@ services:
     App\Task\Application\Service\Interfaces\TaskAccessServiceInterface:
         class: App\Task\Application\Service\TaskAccessService
 
+    App\Quiz\Application\Service\Interfaces\QuizAccessServiceInterface:
+        class: App\Quiz\Application\Service\QuizAccessService
+
     App\Task\Application\Resource\Interfaces\TaskResourceInterface:
         class: App\Task\Application\Resource\TaskResource
 

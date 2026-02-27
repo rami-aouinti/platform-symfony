@@ -1,0 +1,6 @@
+App\Quiz\Domain\Entity\Quiz:
+    attributes:
+        createdAt:
+            groups: [ 'Quiz.createdAt' ]
+        updatedAt:
+            groups: [ 'Quiz.updatedAt' ]
