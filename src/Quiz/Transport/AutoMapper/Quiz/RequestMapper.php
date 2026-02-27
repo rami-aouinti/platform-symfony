@@ -11,5 +11,12 @@ class RequestMapper extends RestRequestMapper
     protected static array $properties = [
         'title',
         'description',
+        'category',
+        'difficulty',
+        'timeLimit',
+        'isPublished',
+        'startsAt',
+        'endsAt',
+        'owner',
     ];
 }
