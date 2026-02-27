@@ -32,13 +32,16 @@ final class ResourceSchemaService
     /**
      * @param array<int, class-string> $dtoClasses
      */
-    public function build(BaseRestResourceInterface $resource, array $dtoClasses): array
+    public function build(BaseRestResourceInterface $resource, array $dtoClasses, array $configuration = []): array
     {
         $metadata = $resource->getRepository()->getClassMetaData();
 
+        $displayable = $this->hydrateFields($this->extractDisplayableProperties($resource), $metadata);
+        $editable = $this->hydrateFields($this->extractEditableProperties($dtoClasses), $metadata);
+
         return [
-            "displayable" => $this->hydrateFields($this->extractDisplayableProperties($resource), $metadata),
-            "editable" => $this->hydrateFields($this->extractEditableProperties($dtoClasses), $metadata),
+            "displayable" => $this->applySectionConfiguration($displayable, $configuration["displayable"] ?? [], $metadata),
+            "editable" => $this->applySectionConfiguration($editable, $configuration["editable"] ?? [], $metadata),
         ];
     }
 
@@ -162,6 +165,108 @@ final class ResourceSchemaService
         }
 
         return $hydrated;
+    }
+
+    /**
+     * @param array<int, array<string, string|null>> $autoFields
+     * @param array<int, string|array<string, string|null>> $configuration
+     *
+     * @return array<int, array<string, string|null>>
+     */
+    private function applySectionConfiguration(array $autoFields, array $configuration, ClassMetadata $metadata): array
+    {
+        if ($configuration === []) {
+            return $autoFields;
+        }
+
+        $autoByName = [];
+
+        foreach ($autoFields as $field) {
+            $name = $field['name'] ?? null;
+
+            if (is_string($name)) {
+                $autoByName[$name] = $field;
+            }
+        }
+
+        $resolved = [];
+
+        foreach ($configuration as $configuredField) {
+            $normalized = $this->normalizeConfiguredField($configuredField, $autoByName, $metadata);
+
+            if ($normalized !== null) {
+                $resolved[] = $normalized;
+            }
+        }
+
+        return $resolved;
+    }
+
+    /**
+     * @param string|array<string, string|null> $configuredField
+     * @param array<string, array<string, string|null>> $autoByName
+     *
+     * @return array<string, string|null>|null
+     */
+    private function normalizeConfiguredField(string|array $configuredField, array $autoByName, ClassMetadata $metadata): ?array
+    {
+        if (is_string($configuredField)) {
+            return $autoByName[$configuredField] ?? $this->buildFieldFromName($configuredField, $metadata);
+        }
+
+        $name = $configuredField['name'] ?? null;
+
+        if (!is_string($name) || $name === '') {
+            return null;
+        }
+
+        $base = $autoByName[$name] ?? $this->buildFieldFromName($name, $metadata);
+
+        if ($base === null) {
+            return null;
+        }
+
+        foreach (['type', 'targetClass', 'endpoint'] as $key) {
+            if (isset($configuredField[$key])) {
+                $base[$key] = $configuredField[$key];
+            }
+        }
+
+        return $base;
+    }
+
+    /**
+     * @return array<string, string|null>|null
+     */
+    private function buildFieldFromName(string $name, ClassMetadata $metadata): ?array
+    {
+        if (isset($metadata->associationMappings[$name])) {
+            $targetClass = is_string($metadata->associationMappings[$name]['targetEntity'] ?? null)
+                ? $metadata->associationMappings[$name]['targetEntity']
+                : null;
+
+            return [
+                'name' => $name,
+                'type' => 'object',
+                'targetClass' => $targetClass,
+                'endpoint' => $targetClass !== null ? $this->guessEndpointFromEntity($targetClass) : null,
+            ];
+        }
+
+        if (isset($metadata->fieldMappings[$name])) {
+            $doctrineType = is_string($metadata->fieldMappings[$name]['type'] ?? null)
+                ? $metadata->fieldMappings[$name]['type']
+                : null;
+
+            return [
+                'name' => $name,
+                'type' => $this->normalizeFieldType($doctrineType),
+                'targetClass' => null,
+                'endpoint' => null,
+            ];
+        }
+
+        return null;
     }
 
     /**

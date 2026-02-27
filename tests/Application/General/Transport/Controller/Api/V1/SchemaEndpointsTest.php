@@ -64,6 +64,25 @@ class SchemaEndpointsTest extends WebTestCase
         self::assertSame('object', $editableByName['project']['type'] ?? null);
     }
 
+
+    /**
+     * @throws Throwable
+     */
+    public function testRoleSchemaSupportsManualConfiguration(): void
+    {
+        $client = $this->getTestClient('john-admin', 'password-admin');
+        $client->request('GET', self::API_URL_PREFIX . '/v1/role/schema');
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $data = JSON::decode((string)$client->getResponse()->getContent(), true);
+
+        self::assertSame('id', $data['displayable'][0]['name'] ?? null);
+        self::assertSame('description', $data['editable'][0]['name'] ?? null);
+        self::assertSame('object', $data['displayable'][2]['type'] ?? null);
+        self::assertSame('/api/v1/user-groups', $data['displayable'][2]['endpoint'] ?? null);
+    }
+
     /**
      * @return array<string, array{0: string, 1: string, 2: string}>
      */

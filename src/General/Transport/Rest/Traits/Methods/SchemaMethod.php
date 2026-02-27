@@ -39,7 +39,11 @@ trait SchemaMethod
         $data = $this->rememberReadEndpoint(
             $request,
             ['type' => 'schema'],
-            fn () => $this->getResourceSchemaService()->build($resource, $this->resolveSchemaDtoClasses()),
+            fn () => $this->getResourceSchemaService()->build(
+                $resource,
+                $this->resolveSchemaDtoClasses(),
+                $this->getSchemaFieldConfiguration(),
+            ),
         );
 
         return $this->getResponseHandler()->createResponse($request, $data, $resource); /** @phpstan-ignore-line */
@@ -76,6 +80,26 @@ trait SchemaMethod
 
         /** @var array<int, class-string> $dtoClasses */
         return array_values(array_unique($dtoClasses));
+    }
+
+
+    /**
+     * Override this in specific controllers when you need manual schema control.
+     *
+     * Supported format:
+     *  [
+     *      'displayable' => [
+     *          'title',
+     *          ['name' => 'project', 'type' => 'object', 'endpoint' => '/api/v1/projects'],
+     *      ],
+     *      'editable' => ['title'],
+     *  ]
+     *
+     * @return array<string, array<int, string|array<string, string|null>>>
+     */
+    protected function getSchemaFieldConfiguration(): array
+    {
+        return [];
     }
 
     private function getResourceSchemaService(): ResourceSchemaService
