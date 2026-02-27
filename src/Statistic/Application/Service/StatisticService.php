@@ -7,9 +7,14 @@ namespace App\Statistic\Application\Service;
 use DateInterval;
 use DatePeriod;
 use DateTimeImmutable;
+use Doctrine\DBAL\Exception\TableNotFoundException;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
+use Throwable;
+use UnitEnum;
+use BackedEnum;
 use RuntimeException;
 
 use function array_filter;
@@ -112,11 +117,19 @@ class StatisticService
                 continue;
             }
 
-            $count = (int) $entityManager->createQueryBuilder()
-                ->select('COUNT(entityAlias)')
-                ->from($metadata->getName(), 'entityAlias')
-                ->getQuery()
-                ->getSingleScalarResult();
+            try {
+                $count = (int) $entityManager->createQueryBuilder()
+                    ->select('COUNT(entityAlias)')
+                    ->from($metadata->getName(), 'entityAlias')
+                    ->getQuery()
+                    ->getSingleScalarResult();
+            } catch (Throwable $exception) {
+                if ($this->isMissingTableException($exception)) {
+                    continue;
+                }
+
+                throw $exception;
+            }
 
             $rows[] = [
                 'entity' => $metadata->getReflectionClass()->getShortName(),
@@ -152,21 +165,20 @@ class StatisticService
         );
 
         foreach ($metadataList as $metadata) {
-            $alias = 'entityAlias';
             $dateField = $this->resolveCreatedField($metadata);
             if ($dateField === null) {
                 continue;
             }
 
-            $rows = $entityManager->createQueryBuilder()
-                ->select(sprintf('DATE(%s.%s) as day', $alias, $dateField))
-                ->addSelect(sprintf('COUNT(%s) as total', $alias))
-                ->from($metadata->getName(), $alias)
-                ->where(sprintf('%s.%s >= :dateFrom', $alias, $dateField))
-                ->setParameter('dateFrom', $dateFrom)
-                ->groupBy('day')
-                ->getQuery()
-                ->getArrayResult();
+            try {
+                $rows = $this->getDailyRowsForMetadata($metadata, $dateField, $dateFrom);
+            } catch (Throwable $exception) {
+                if ($this->isMissingTableException($exception)) {
+                    continue;
+                }
+
+                throw $exception;
+            }
 
             foreach ($rows as $row) {
                 $day = (string) ($row['day'] ?? '');
@@ -219,16 +231,15 @@ class StatisticService
             $points[$date->format('Y-m-d')] = 0;
         }
 
-        $entityManager = $this->getEntityManager();
-        $rows = $entityManager->createQueryBuilder()
-            ->select(sprintf('DATE(entityAlias.%s) as day', $dateField))
-            ->addSelect('COUNT(entityAlias) as total')
-            ->from($metadata->getName(), 'entityAlias')
-            ->where(sprintf('entityAlias.%s >= :dateFrom', $dateField))
-            ->setParameter('dateFrom', $dateFrom)
-            ->groupBy('day')
-            ->getQuery()
-            ->getArrayResult();
+        try {
+            $rows = $this->getDailyRowsForMetadata($metadata, $dateField, $dateFrom);
+        } catch (Throwable $exception) {
+            if ($this->isMissingTableException($exception)) {
+                $rows = [];
+            } else {
+                throw $exception;
+            }
+        }
 
         foreach ($rows as $row) {
             $day = (string) ($row['day'] ?? '');
@@ -267,17 +278,25 @@ class StatisticService
                 continue;
             }
 
-            $rows = $entityManager->createQueryBuilder()
-                ->select(sprintf('entityAlias.%s as label', $target['field']))
-                ->addSelect('COUNT(entityAlias) as value')
-                ->from($target['class'], 'entityAlias')
-                ->groupBy('label')
-                ->getQuery()
-                ->getArrayResult();
+            try {
+                $rows = $entityManager->createQueryBuilder()
+                    ->select(sprintf('entityAlias.%s as label', $target['field']))
+                    ->addSelect('COUNT(entityAlias) as value')
+                    ->from($target['class'], 'entityAlias')
+                    ->groupBy('label')
+                    ->getQuery()
+                    ->getArrayResult();
+            } catch (Throwable $exception) {
+                if ($this->isMissingTableException($exception)) {
+                    continue;
+                }
+
+                throw $exception;
+            }
 
             $payload[$key] = array_map(
-                static fn (array $row): array => [
-                    'label' => (string) ($row['label'] ?? ''),
+                fn (array $row): array => [
+                    'label' => $this->normalizeLabel($row['label'] ?? ''),
                     'value' => (int) ($row['value'] ?? 0),
                 ],
                 $rows,
@@ -354,5 +373,56 @@ class StatisticService
 
         return null;
     }
-}
 
+    /**
+     * @return array<int, array{day: string, total: int|string}>
+     */
+    private function getDailyRowsForMetadata(ClassMetadata $metadata, string $dateField, DateTimeImmutable $dateFrom): array
+    {
+        $entityManager = $this->getEntityManager();
+        $connection = $entityManager->getConnection();
+        $table = $connection->quoteIdentifier($metadata->getTableName());
+        $column = $connection->quoteIdentifier($metadata->getColumnName($dateField));
+
+        $rows = $connection->createQueryBuilder()
+            ->select(sprintf('DATE(%s) as day', $column))
+            ->addSelect('COUNT(*) as total')
+            ->from($table)
+            ->where(sprintf('%s >= :dateFrom', $column))
+            ->setParameter('dateFrom', $dateFrom, Types::DATETIME_IMMUTABLE)
+            ->groupBy(sprintf('DATE(%s)', $column))
+            ->executeQuery()
+            ->fetchAllAssociative();
+
+        return array_map(
+            static fn (array $row): array => [
+                'day' => (string) ($row['day'] ?? ''),
+                'total' => $row['total'] ?? 0,
+            ],
+            $rows,
+        );
+    }
+
+    private function isMissingTableException(Throwable $exception): bool
+    {
+        if ($exception instanceof TableNotFoundException) {
+            return true;
+        }
+
+        return str_contains($exception->getMessage(), 'Base table or view not found')
+            || str_contains($exception->getMessage(), 'doesn\'t exist');
+    }
+
+    private function normalizeLabel(mixed $label): string
+    {
+        if ($label instanceof BackedEnum) {
+            return (string) $label->value;
+        }
+
+        if ($label instanceof UnitEnum) {
+            return $label->name;
+        }
+
+        return (string) $label;
+    }
+}
