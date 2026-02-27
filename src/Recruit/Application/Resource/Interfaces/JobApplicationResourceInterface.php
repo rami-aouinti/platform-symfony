@@ -25,7 +25,14 @@ interface JobApplicationResourceInterface extends RestResourceInterface
     /**
      * @return JobApplication[]
      */
-    public function findAllowedForCurrentUser(): array;
+    public function findAllowedForCurrentUser(
+        ?array $criteria = null,
+        ?array $orderBy = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?array $search = null,
+        ?string $entityManagerName = null,
+    ): array;
 
     /**
      * @return JobApplication[]
