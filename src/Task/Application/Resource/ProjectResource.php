@@ -6,33 +6,32 @@ namespace App\Task\Application\Resource;
 
 use App\Company\Domain\Repository\Interfaces\CompanyRepositoryInterface;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
-use App\General\Application\Rest\RestResource;
+use App\General\Application\Rest\AbstractOwnedResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Task\Application\Resource\Interfaces\ProjectResourceInterface;
 use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
 use App\Task\Domain\Entity\Project as Entity;
 use App\Task\Domain\Repository\Interfaces\ProjectRepositoryInterface as RepositoryInterface;
 use App\User\Application\Security\UserTypeIdentification;
-use App\User\Domain\Entity\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
  */
-class ProjectResource extends RestResource implements ProjectResourceInterface
+class ProjectResource extends AbstractOwnedResource implements ProjectResourceInterface
 {
     public function __construct(
         RepositoryInterface $repository,
-        private readonly UserTypeIdentification $userTypeIdentification,
+        UserTypeIdentification $userTypeIdentification,
         private readonly TaskAccessServiceInterface $taskAccessService,
         private readonly CompanyRepositoryInterface $companyRepository,
     ) {
-        parent::__construct($repository);
+        parent::__construct($repository, $userTypeIdentification);
     }
 
     public function beforeFind(array &$criteria, array &$orderBy, ?int &$limit, ?int &$offset, array &$search): void
     {
-        $currentUser = $this->getCurrentUser();
+        $currentUser = $this->getCurrentUserOrDeny();
 
         if ($this->taskAccessService->isAdminLike($currentUser)) {
             return;
@@ -48,10 +47,10 @@ class ProjectResource extends RestResource implements ProjectResourceInterface
         }
     }
 
-    public function beforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
+    protected function onBeforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $currentUser = $this->getCurrentUser();
+            $currentUser = $this->getCurrentUserOrDeny();
             $entity->setOwner($currentUser);
 
             $company = $this->companyRepository->findOneBy([
@@ -66,21 +65,21 @@ class ProjectResource extends RestResource implements ProjectResourceInterface
         }
     }
 
-    public function beforeUpdate(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
+    protected function authorizeBeforeUpdate(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
             $this->assertCanManageProject($entity);
         }
     }
 
-    public function beforePatch(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
+    protected function authorizeBeforePatch(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
             $this->assertCanManageProject($entity);
         }
     }
 
-    public function beforeDelete(string &$id, EntityInterface $entity): void
+    protected function authorizeBeforeDelete(string &$id, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
             $this->assertCanManageProject($entity);
@@ -89,23 +88,11 @@ class ProjectResource extends RestResource implements ProjectResourceInterface
 
     private function assertCanManageProject(Entity $project): void
     {
-        $currentUser = $this->getCurrentUser();
+        $currentUser = $this->getCurrentUserOrDeny();
 
-        if ($this->taskAccessService->canManageProject($currentUser, $project)) {
-            return;
-        }
-
-        throw new AccessDeniedHttpException('Only project owner can manage this project.');
-    }
-
-    private function getCurrentUser(): User
-    {
-        $user = $this->userTypeIdentification->getUser();
-
-        if (!$user instanceof User) {
-            throw new AccessDeniedHttpException('Authenticated user not found.');
-        }
-
-        return $user;
+        $this->assertOwnerOrDeny(
+            $this->taskAccessService->canManageProject($currentUser, $project),
+            'Only project owner can manage this project.',
+        );
     }
 }
