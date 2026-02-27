@@ -213,6 +213,12 @@ services:
     App\Task\Domain\Repository\Interfaces\SprintRepositoryInterface:
         class: App\Task\Infrastructure\Repository\SprintRepository
 
+    App\Quiz\Application\Resource\Interfaces\QuizResourceInterface:
+        class: App\Quiz\Application\Resource\QuizResource
+
+    App\Quiz\Domain\Repository\Interfaces\QuizRepositoryInterface:
+        class: App\Quiz\Infrastructure\Repository\QuizRepository
+
     App\Blog\Application\Resource\Interfaces\BlogPostResourceInterface:
         class: App\Blog\Application\Resource\BlogPostResource
 
