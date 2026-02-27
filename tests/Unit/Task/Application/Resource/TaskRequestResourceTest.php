@@ -17,6 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class TaskRequestResourceTest extends TestCase
 {
@@ -116,5 +117,39 @@ class TaskRequestResourceTest extends TestCase
 
         $this->expectException(AccessDeniedHttpException::class);
         $resource->changeRequestedStatus('task-request-id', TaskStatus::DONE);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testListBySprintGroupedByTaskThrowsBadRequestForInvalidSprintId(): void
+    {
+        $manager = (new User())
+            ->setFirstName('John')
+            ->setLastName('Manager')
+            ->setUsername('john.manager')
+            ->setEmail('john.manager@example.com');
+
+        $repository = $this->createMock(TaskRequestRepositoryInterface::class);
+        $repository
+            ->expects($this->never())
+            ->method('createQueryBuilder');
+
+        $userTypeIdentification = $this->createMock(UserTypeIdentification::class);
+        $userTypeIdentification
+            ->expects($this->once())
+            ->method('getUser')
+            ->willReturn($manager);
+
+        $resource = new TaskRequestResource(
+            $repository,
+            $userTypeIdentification,
+            $this->createMock(TaskAccessServiceInterface::class),
+            $this->createMock(UserResource::class),
+            $this->createMock(EntityManagerInterface::class),
+        );
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage('Invalid UUID format for "sprintId".');
+
+        $resource->listBySprintGroupedByTask('73000000-0000-1000-8000-00000000000');
     }
 }
