@@ -30,13 +30,14 @@ class SchemaEndpointsTest extends WebTestCase
 
         self::assertArrayHasKey('displayable', $data);
         self::assertArrayHasKey('editable', $data);
-        self::assertArrayHasKey('relations', $data);
+        self::assertIsArray($data['displayable']);
+        self::assertIsArray($data['editable']);
     }
 
     /**
      * @throws Throwable
      */
-    public function testTaskSchemaContainsKnownRelationAndEditableField(): void
+    public function testTaskSchemaContainsTypedFieldMetadata(): void
     {
         $client = $this->getTestClient('john-user', 'password-user');
         $client->request('GET', self::API_URL_PREFIX . '/v1/tasks/schema');
@@ -45,9 +46,41 @@ class SchemaEndpointsTest extends WebTestCase
 
         $data = JSON::decode((string)$client->getResponse()->getContent(), true);
 
-        self::assertSame('object', $data['relations']['project']['type'] ?? null);
-        self::assertContains('project', $data['relations']['project']['groups'] ?? []);
-        self::assertContains('title', $data['editable']);
+        $displayableByName = [];
+
+        foreach ($data['displayable'] as $field) {
+            $displayableByName[$field['name']] = $field;
+        }
+
+        $editableByName = [];
+
+        foreach ($data['editable'] as $field) {
+            $editableByName[$field['name']] = $field;
+        }
+
+        self::assertSame('normal', $displayableByName['title']['type'] ?? null);
+        self::assertSame('object', $displayableByName['project']['type'] ?? null);
+        self::assertSame('/api/v1/projects', $displayableByName['project']['endpoint'] ?? null);
+        self::assertSame('object', $editableByName['project']['type'] ?? null);
+    }
+
+
+    /**
+     * @throws Throwable
+     */
+    public function testRoleSchemaSupportsManualConfiguration(): void
+    {
+        $client = $this->getTestClient('john-admin', 'password-admin');
+        $client->request('GET', self::API_URL_PREFIX . '/v1/role/schema');
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $data = JSON::decode((string)$client->getResponse()->getContent(), true);
+
+        self::assertSame('id', $data['displayable'][0]['name'] ?? null);
+        self::assertSame('description', $data['editable'][0]['name'] ?? null);
+        self::assertSame('object', $data['displayable'][2]['type'] ?? null);
+        self::assertSame('/api/v1/user-groups', $data['displayable'][2]['endpoint'] ?? null);
     }
 
     /**
