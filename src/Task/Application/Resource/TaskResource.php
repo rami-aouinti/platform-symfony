@@ -14,8 +14,11 @@ use App\Task\Application\UseCase\FilterTasksForCurrentUser;
 use App\Task\Application\UseCase\PrepareTaskForCreate;
 use App\Task\Domain\Entity\Task as Entity;
 use App\Task\Domain\Enum\TaskStatus;
+use App\Task\Domain\Exception\InvalidTaskStatusTransition;
 use App\Task\Domain\Repository\Interfaces\TaskRepositoryInterface as RepositoryInterface;
 use App\User\Application\Security\UserTypeIdentification;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
@@ -75,6 +78,10 @@ class TaskResource extends AbstractOwnedResource implements TaskResourceInterfac
 
     public function changeStatus(string $id, TaskStatus $status): Entity
     {
-        return $this->changeTaskStatus->execute($id, $status);
+        try {
+            return $this->changeTaskStatus->execute($id, $status);
+        } catch (InvalidTaskStatusTransition $exception) {
+            throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, $exception->getMessage(), $exception);
+        }
     }
 }

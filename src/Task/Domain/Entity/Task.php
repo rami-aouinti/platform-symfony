@@ -9,6 +9,7 @@ use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use App\Task\Domain\Enum\TaskPriority;
 use App\Task\Domain\Enum\TaskStatus;
+use App\Task\Domain\Exception\InvalidTaskStatusTransition;
 use App\User\Domain\Entity\User;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
@@ -149,7 +150,7 @@ class Task implements EntityInterface
         $nextStatus = $status instanceof TaskStatus ? $status : TaskStatus::from($status);
 
         if (!$this->status->canTransitionTo($nextStatus) && $this->status !== $nextStatus) {
-            return $this;
+            throw InvalidTaskStatusTransition::create($this->status, $nextStatus);
         }
 
         $this->status = $nextStatus;
