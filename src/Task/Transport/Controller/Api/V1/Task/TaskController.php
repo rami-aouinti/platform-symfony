@@ -61,40 +61,30 @@ class TaskController extends Controller
     #[Route(path: '/{id}/start', methods: [Request::METHOD_PATCH])]
     public function startAction(Request $request, string $id): Response
     {
-        $task = $this->getResource()->changeStatus($id, TaskStatus::IN_PROGRESS);
-
-        $response = $this->getResponseHandler()->createResponse($request, $task, $this->getResource());
-        $this->invalidateReadEndpointCache();
-
-        return $response;
+        return $this->changeStatusAction($request, $id, TaskStatus::IN_PROGRESS);
     }
 
     #[Route(path: '/{id}/complete', methods: [Request::METHOD_PATCH])]
     public function completeAction(Request $request, string $id): Response
     {
-        $task = $this->getResource()->changeStatus($id, TaskStatus::DONE);
-
-        $response = $this->getResponseHandler()->createResponse($request, $task, $this->getResource());
-        $this->invalidateReadEndpointCache();
-
-        return $response;
+        return $this->changeStatusAction($request, $id, TaskStatus::DONE);
     }
 
     #[Route(path: '/{id}/archive', methods: [Request::METHOD_PATCH])]
     public function archiveAction(Request $request, string $id): Response
     {
-        $task = $this->getResource()->changeStatus($id, TaskStatus::ARCHIVED);
-
-        $response = $this->getResponseHandler()->createResponse($request, $task, $this->getResource());
-        $this->invalidateReadEndpointCache();
-
-        return $response;
+        return $this->changeStatusAction($request, $id, TaskStatus::ARCHIVED);
     }
 
     #[Route(path: '/{id}/reopen', methods: [Request::METHOD_PATCH])]
     public function reopenAction(Request $request, string $id): Response
     {
-        $task = $this->getResource()->changeStatus($id, TaskStatus::TODO);
+        return $this->changeStatusAction($request, $id, TaskStatus::TODO);
+    }
+
+    private function changeStatusAction(Request $request, string $id, TaskStatus $status): Response
+    {
+        $task = $this->getResource()->changeStatus($id, $status);
 
         $response = $this->getResponseHandler()->createResponse($request, $task, $this->getResource());
         $this->invalidateReadEndpointCache();
