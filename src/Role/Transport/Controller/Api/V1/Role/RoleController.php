@@ -38,6 +38,7 @@ class RoleController extends Controller
     use Actions\Admin\CountAction;
     use Actions\Admin\FindAction;
     use Actions\Admin\IdsAction;
+    use Actions\Admin\SchemaAction;
 
     public function __construct(
         RoleResource $resource,

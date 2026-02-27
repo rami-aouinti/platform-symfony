@@ -38,6 +38,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ApiKeyCreateController extends Controller
 {
     use Actions\Root\CreateAction;
+    use Actions\Root\SchemaAction;
 
     /**
      * @var array<string, string>

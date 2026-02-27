@@ -38,6 +38,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ApiKeyUpdateController extends Controller
 {
     use Actions\Root\UpdateAction;
+    use Actions\Root\SchemaAction;
 
     /**
      * @var array<string, string>

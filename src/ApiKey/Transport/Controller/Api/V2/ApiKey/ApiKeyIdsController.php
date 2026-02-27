@@ -37,6 +37,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ApiKeyIdsController extends Controller
 {
     use Actions\Root\IdsAction;
+    use Actions\Root\SchemaAction;
 
     /**
      * @param \App\ApiKey\Application\Resource\ApiKeyIdsResource $resource

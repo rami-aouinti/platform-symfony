@@ -37,6 +37,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ApiKeyCountController extends Controller
 {
     use Actions\Root\CountAction;
+    use Actions\Root\SchemaAction;
 
     /**
      * @param \App\ApiKey\Application\Resource\ApiKeyCountResource $resource

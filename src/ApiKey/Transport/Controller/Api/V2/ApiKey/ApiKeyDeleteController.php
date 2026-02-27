@@ -37,6 +37,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ApiKeyDeleteController extends Controller
 {
     use Actions\Root\DeleteAction;
+    use Actions\Root\SchemaAction;
 
     /**
      * @param \App\ApiKey\Application\Resource\ApiKeyDeleteResource $resource
