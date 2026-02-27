@@ -18,9 +18,12 @@ use App\User\Application\Resource\UserResource;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+
+use function array_values;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
@@ -118,7 +121,7 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
             ->leftJoin('tr.task', 't')
             ->leftJoin('tr.sprint', 's')
             ->andWhere('s.id = :sprintId')
-            ->setParameter('sprintId', $sprintId)
+            ->setParameter('sprintId', Uuid::fromString($sprintId))
             ->orderBy('t.title', 'ASC')
             ->addOrderBy('tr.time', 'ASC');
 
@@ -127,7 +130,7 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
                 ->leftJoin('tr.requester', 'requester')
                 ->leftJoin('tr.reviewer', 'reviewer')
                 ->andWhere('requester.id = :userId OR reviewer.id = :userId')
-                ->setParameter('userId', $userId);
+                ->setParameter('userId', Uuid::fromString($userId));
         }
 
         /** @var array<int, Entity> $requests */
@@ -151,7 +154,7 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
             $grouped[$taskId]['taskRequests'][] = $request;
         }
 
-        if (!$this->taskAccessService->isAdminLike($user) && $userId !== null && $userId !== '' && $user->getId() !== $userId) {
+        if (!$this->taskAccessService->isAdminLike($user) && null !== $userId && $userId !== '' && $user->getId() !== $userId) {
             throw new AccessDeniedHttpException('You cannot filter by another user.');
         }
 
