@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\General\Application\Service\Rest;
 
-use App\General\Application\DTO\Rest\ResourceSchemaMetadataDto;
-use App\General\Application\DTO\Rest\ResourceSchemaRelationDto;
 use App\General\Application\Rest\Interfaces\BaseRestResourceInterface;
 use App\General\Transport\AutoMapper\RestRequestMapper;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use ReflectionClass;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -16,14 +15,16 @@ use function array_keys;
 use function array_unique;
 use function class_exists;
 use function explode;
+use function in_array;
 use function is_array;
-use function is_int;
 use function is_string;
-use function ksort;
+use function preg_replace;
 use function sort;
 use function str_contains;
 use function str_ends_with;
+use function str_replace;
 use function strrpos;
+use function strtolower;
 use function substr;
 
 final class ResourceSchemaService
@@ -31,13 +32,14 @@ final class ResourceSchemaService
     /**
      * @param array<int, class-string> $dtoClasses
      */
-    public function build(BaseRestResourceInterface $resource, array $dtoClasses): ResourceSchemaMetadataDto
+    public function build(BaseRestResourceInterface $resource, array $dtoClasses): array
     {
-        return new ResourceSchemaMetadataDto(
-            $this->extractDisplayableProperties($resource),
-            $this->extractEditableProperties($dtoClasses),
-            $this->extractRelations($resource->getRepository()->getAssociations()),
-        );
+        $metadata = $resource->getRepository()->getClassMetaData();
+
+        return [
+            "displayable" => $this->hydrateFields($this->extractDisplayableProperties($resource), $metadata),
+            "editable" => $this->hydrateFields($this->extractEditableProperties($dtoClasses), $metadata),
+        ];
     }
 
     /**
@@ -123,24 +125,43 @@ final class ResourceSchemaService
     }
 
     /**
-     * @param array<string, array<string, mixed>> $associations
+     * @param array<int, string> $properties
      *
-     * @return array<string, ResourceSchemaRelationDto>
+     * @return array<int, array<string, string|null>>
      */
-    private function extractRelations(array $associations): array
+    private function hydrateFields(array $properties, ClassMetadata $metadata): array
     {
-        $relations = [];
+        $hydrated = [];
 
-        foreach ($associations as $association => $mapping) {
-            $relations[$association] = new ResourceSchemaRelationDto(
-                is_string($mapping['targetEntity'] ?? null) ? $mapping['targetEntity'] : '',
-                $this->normalizeRelationType(is_int($mapping['type'] ?? null) ? $mapping['type'] : null),
-            );
+        foreach ($properties as $property) {
+            if (isset($metadata->associationMappings[$property])) {
+                $targetClass = is_string($metadata->associationMappings[$property]['targetEntity'] ?? null)
+                    ? $metadata->associationMappings[$property]['targetEntity']
+                    : null;
+
+                $hydrated[] = [
+                    'name' => $property,
+                    'type' => 'object',
+                    'targetClass' => $targetClass,
+                    'endpoint' => $targetClass !== null ? $this->guessEndpointFromEntity($targetClass) : null,
+                ];
+
+                continue;
+            }
+
+            $doctrineType = is_string($metadata->fieldMappings[$property]['type'] ?? null)
+                ? $metadata->fieldMappings[$property]['type']
+                : null;
+
+            $hydrated[] = [
+                'name' => $property,
+                'type' => $this->normalizeFieldType($doctrineType),
+                'targetClass' => null,
+                'endpoint' => null,
+            ];
         }
 
-        ksort($relations);
-
-        return $relations;
+        return $hydrated;
     }
 
     /**
@@ -168,14 +189,24 @@ final class ResourceSchemaService
         return class_exists($mapperClass) ? $mapperClass : null;
     }
 
-    private function normalizeRelationType(?int $relationType): string
+    private function normalizeFieldType(?string $doctrineType): string
     {
-        return match ($relationType) {
-            ClassMetadata::ONE_TO_ONE => 'oneToOne',
-            ClassMetadata::MANY_TO_ONE => 'manyToOne',
-            ClassMetadata::ONE_TO_MANY => 'oneToMany',
-            ClassMetadata::MANY_TO_MANY => 'manyToMany',
-            default => 'unknown',
-        };
+        if ($doctrineType === null) {
+            return 'normal';
+        }
+
+        return in_array($doctrineType, [Types::BOOLEAN], true) ? 'boolean' : 'normal';
+    }
+
+    /**
+     * @param class-string $entityClass
+     */
+    private function guessEndpointFromEntity(string $entityClass): string
+    {
+        $shortName = substr($entityClass, (int) strrpos($entityClass, '\\') + 1);
+        $snakeCase = (string) preg_replace('/(?<!^)[A-Z]/', '_$0', $shortName);
+        $resource = strtolower(str_replace('__', '_', $snakeCase));
+
+        return '/api/v1/' . $resource . 's';
     }
 }
