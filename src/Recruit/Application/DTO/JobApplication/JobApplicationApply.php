@@ -6,8 +6,11 @@ namespace App\Recruit\Application\DTO\JobApplication;
 
 use App\General\Application\DTO\RestDto;
 use App\General\Application\Validator\Constraints as AppAssert;
+use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\Recruit\Domain\Entity\JobApplication as Entity;
 use App\Recruit\Domain\Entity\JobOffer;
 use App\Recruit\Domain\Entity\Resume;
+use Override;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class JobApplicationApply extends RestDto
@@ -97,6 +100,24 @@ class JobApplicationApply extends RestDto
     {
         $this->setVisited('attachments');
         $this->attachments = $attachments;
+
+        return $this;
+    }
+
+    /**
+     * @param EntityInterface|Entity $entity
+     */
+    #[Override]
+    public function load(EntityInterface $entity): self
+    {
+        if ($entity instanceof Entity) {
+            $this->id = $entity->getId();
+            $this->jobOffer = $entity->getJobOffer();
+            $this->coverLetter = $entity->getCoverLetter();
+            $this->cvUrl = $entity->getCvUrl();
+            $this->resume = $entity->getResume();
+            $this->attachments = $entity->getAttachments();
+        }
 
         return $this;
     }
