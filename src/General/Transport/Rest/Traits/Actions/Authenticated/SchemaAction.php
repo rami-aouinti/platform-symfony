@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace App\General\Transport\Rest\Traits\Actions\Authenticated;
 
 use App\General\Transport\Rest\Traits\Methods\SchemaMethod;
-use OpenApi\Attributes as OA;
-use OpenApi\Attributes\JsonContent;
-use OpenApi\Attributes\Property;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,47 +21,6 @@ trait SchemaAction
      */
     #[Route(path: '/schema', methods: [Request::METHOD_GET])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-    #[OA\Response(
-        response: 200,
-        description: 'success',
-        content: new JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(property: 'displayable', type: 'array', items: new OA\Items(type: 'string')),
-                new OA\Property(property: 'editable', type: 'array', items: new OA\Items(type: 'string')),
-                new OA\Property(
-                    property: 'relations',
-                    type: 'object',
-                    additionalProperties: new OA\AdditionalProperties(
-                        properties: [
-                            new OA\Property(property: 'cardinality', type: 'string', example: 'manyToOne'),
-                            new OA\Property(
-                                property: 'targetClass',
-                                type: 'string',
-                                example: 'App\\Task\\Domain\\Entity\\Project'
-                            ),
-                        ],
-                        type: 'object',
-                    ),
-                ),
-            ],
-        ),
-    )]
-    #[OA\Response(
-        response: 403,
-        description: 'Access denied',
-        content: new JsonContent(
-            properties: [
-                new Property(property: 'code', description: 'Error code', type: 'integer'),
-                new Property(property: 'message', description: 'Error description', type: 'string'),
-            ],
-            type: 'object',
-            example: [
-                'code' => 403,
-                'message' => 'Access denied',
-            ],
-        ),
-    )]
     public function schemaAction(Request $request): Response
     {
         return $this->schemaMethod($request);
