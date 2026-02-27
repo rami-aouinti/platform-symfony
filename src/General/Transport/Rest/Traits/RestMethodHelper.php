@@ -34,6 +34,38 @@ trait RestMethodHelper
 {
     use RestMethodProcessCriteria;
 
+
+
+    protected function getReadCacheScope(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     */
+    protected function rememberReadEndpoint(Request $request, array $context, callable $resolver): mixed
+    {
+        $scope = $this->getReadCacheScope();
+
+        if ($scope === null || $this->readEndpointCache === null) {
+            return $resolver();
+        }
+
+        return $this->readEndpointCache->remember($scope, $request, $context, $resolver);
+    }
+
+    protected function invalidateReadEndpointCache(): void
+    {
+        $scope = $this->getReadCacheScope();
+
+        if ($scope === null || $this->readEndpointCache === null) {
+            return;
+        }
+
+        $this->readEndpointCache->invalidate($scope);
+    }
+
     /**
      * Method + DTO class names (key + value)
      *

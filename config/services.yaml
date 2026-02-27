@@ -9,6 +9,9 @@ parameters:
     read_endpoint_cache.ttls:
         job_offer: '%env(int:REST_READ_CACHE_JOB_OFFER_TTL)%'
         job_application: '%env(int:REST_READ_CACHE_JOB_APPLICATION_TTL)%'
+        user: '%env(int:REST_READ_CACHE_USER_TTL)%'
+        task: '%env(int:REST_READ_CACHE_TASK_TTL)%'
+        blog: '%env(int:REST_READ_CACHE_BLOG_TTL)%'
 
 services:
     # default configuration for services in *this* file

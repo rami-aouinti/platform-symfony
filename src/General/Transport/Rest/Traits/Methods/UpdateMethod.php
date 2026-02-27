@@ -41,7 +41,10 @@ trait UpdateMethod
             $entityManagerName = RequestHandler::getTenant($request);
             $data = $resource->update(id: $id, dto: $restDto, flush: true, entityManagerName: $entityManagerName);
 
-            return $this->getResponseHandler()->createResponse($request, $data, $resource); /** @phpstan-ignore-line */
+            $response = $this->getResponseHandler()->createResponse($request, $data, $resource); /** @phpstan-ignore-line */
+            $this->invalidateReadEndpointCache();
+
+            return $response;
         } catch (Throwable $exception) {
             throw $this->handleRestMethodException($exception, $id, $entityManagerName ?? null);
         }

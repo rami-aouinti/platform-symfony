@@ -35,6 +35,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[OA\Tag(name: 'User Management')]
 class UserController extends Controller
 {
+    private const string READ_CACHE_SCOPE = 'user';
     use Actions\Admin\CountAction;
     use Actions\Admin\FindAction;
     use Actions\Admin\FindOneAction;
@@ -56,5 +57,10 @@ class UserController extends Controller
         UserResource $resource,
     ) {
         parent::__construct($resource);
+    }
+
+    protected function getReadCacheScope(): ?string
+    {
+        return self::READ_CACHE_SCOPE;
     }
 }

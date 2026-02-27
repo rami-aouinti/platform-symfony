@@ -8,6 +8,7 @@ use App\ApiKey\Application\Security\ApiKeyUser;
 use App\User\Application\Security\SecurityUser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
@@ -35,6 +36,7 @@ class ReadEndpointCache
         private readonly TokenStorageInterface $tokenStorage,
         private readonly int $defaultTtl,
         private readonly array $ttls = [],
+        private readonly ?LoggerInterface $logger = null,
     ) {
     }
 
@@ -46,7 +48,10 @@ class ReadEndpointCache
         $key = $this->buildKey($scope, $request, $context);
         $tag = $this->buildTag($scope);
 
-        return $this->cache->get($key, function (ItemInterface $item) use ($resolver, $tag, $scope): mixed {
+        $hit = true;
+        $value = $this->cache->get($key, function (ItemInterface $item) use ($resolver, $tag, $scope, &$hit): mixed {
+            $hit = false;
+
             if ($this->cache instanceof TagAwareCacheInterface) {
                 $item->tag($tag);
             }
@@ -55,6 +60,15 @@ class ReadEndpointCache
 
             return $resolver();
         });
+
+        $this->logger?->debug('rest_read_cache.' . ($hit ? 'hit' : 'miss'), [
+            'scope' => $scope,
+            'key' => $key,
+            'ttl' => $this->resolveTtl($scope),
+            'route' => $request->attributes->get('_route', $request->getPathInfo()),
+        ]);
+
+        return $value;
     }
 
     public function invalidate(string $scope): void
@@ -64,6 +78,10 @@ class ReadEndpointCache
         }
 
         $this->cache->invalidateTags([$this->buildTag($scope)]);
+        $this->logger?->debug('rest_read_cache.invalidate', [
+            'scope' => $scope,
+            'tag' => $this->buildTag($scope),
+        ]);
     }
 
     /**

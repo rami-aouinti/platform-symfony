@@ -28,6 +28,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[OA\Tag(name: 'Blog')]
 class BlogPostController extends Controller
 {
+    private const string READ_CACHE_SCOPE = 'blog';
     use Actions\Authenticated\CreateAction;
     use Actions\Authenticated\DeleteAction;
     use Actions\Authenticated\FindAction;
@@ -44,5 +45,10 @@ class BlogPostController extends Controller
     public function __construct(BlogPostResourceInterface $resource)
     {
         parent::__construct($resource);
+    }
+
+    protected function getReadCacheScope(): ?string
+    {
+        return self::READ_CACHE_SCOPE;
     }
 }
