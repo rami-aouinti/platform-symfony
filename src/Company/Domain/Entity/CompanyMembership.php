@@ -43,6 +43,7 @@ class CompanyMembership implements EntityInterface
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'companyMemberships')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['CompanyMembership', 'CompanyMembership.user'])]
     private User $user;
 
     #[ORM\ManyToOne(targetEntity: Company::class, inversedBy: 'memberships')]

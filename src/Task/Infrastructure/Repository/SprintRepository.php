@@ -27,7 +27,8 @@ class SprintRepository extends BaseRepository implements SprintRepositoryInterfa
     public function findByCompany(string $companyId, ?bool $active = null): array
     {
         $qb = $this->createQueryBuilder('s')
-            ->andWhere('IDENTITY(s.company) = :companyId')
+            ->join('s.company', 'company')
+            ->andWhere('company.id = :companyId')
             ->setParameter('companyId', $companyId)
             ->orderBy('s.startDate', 'DESC');
 
