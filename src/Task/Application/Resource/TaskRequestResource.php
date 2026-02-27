@@ -61,14 +61,14 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
     public function beforeUpdate(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $this->assertTaskRequestViewAccess->execute($entity);
+            $this->assertTaskRequestReviewAccess->execute($entity);
         }
     }
 
     public function beforePatch(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $this->assertTaskRequestViewAccess->execute($entity);
+            $this->assertTaskRequestReviewAccess->execute($entity);
         }
     }
 

@@ -4,152 +4,96 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Task\Application\Resource;
 
+use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\Task\Application\Resource\TaskRequestResource;
 use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
+use App\Task\Application\Service\TaskAccessService;
+use App\Task\Application\UseCase\AssertTaskRequestReviewAccess;
+use App\Task\Application\UseCase\AssertTaskRequestViewAccess;
+use App\Task\Application\UseCase\AssignTaskRequestRequester;
+use App\Task\Application\UseCase\AssignTaskRequestReviewer;
+use App\Task\Application\UseCase\AssignTaskRequestSprint;
+use App\Task\Application\UseCase\ChangeTaskRequestStatus;
+use App\Task\Application\UseCase\ListTaskRequestsBySprint;
+use App\Task\Application\UseCase\PrepareTaskRequestForCreate;
+use App\Task\Application\UseCase\Support\CurrentTaskUserProvider;
 use App\Task\Domain\Entity\Task;
 use App\Task\Domain\Entity\TaskRequest;
-use App\Task\Domain\Enum\TaskStatus;
 use App\Task\Domain\Repository\Interfaces\TaskRequestRepositoryInterface;
-use App\User\Application\Resource\UserResource;
-use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class TaskRequestResourceTest extends TestCase
 {
-    #[AllowMockObjectsWithoutExpectations]
-    public function testChangeRequestedStatusUpdatesRequest(): void
+    public function testBeforePatchDeniesRequesterWithViewOnlyAccess(): void
     {
-        $manager = (new User())
-            ->setFirstName('John')
-            ->setLastName('Manager')
-            ->setUsername('john.manager')
-            ->setEmail('john.manager@example.com');
+        $requester = (new User())->setEmail('requester@example.com');
 
         $taskRequest = (new TaskRequest())
             ->setTask(new Task())
-            ->setRequestedStatus(TaskStatus::TODO);
+            ->setRequester($requester);
 
-        $repository = $this->createMock(TaskRequestRepositoryInterface::class);
-        $repository
-            ->expects($this->once())
-            ->method('find')
-            ->with('task-request-id')
-            ->willReturn($taskRequest);
-        $repository
-            ->expects($this->once())
-            ->method('save')
-            ->with($taskRequest, true, null)
-            ->willReturnSelf();
-
-        $userTypeIdentification = $this->createMock(UserTypeIdentification::class);
-        $userTypeIdentification
-            ->expects($this->once())
-            ->method('getUser')
-            ->willReturn($manager);
-
-        $accessService = $this->createMock(TaskAccessServiceInterface::class);
-        $accessService
-            ->expects($this->once())
-            ->method('canReviewTaskRequest')
-            ->with($manager, $taskRequest)
-            ->willReturn(true);
-
-        $resource = new TaskRequestResource(
-            $repository,
-            $userTypeIdentification,
-            $accessService,
-            $this->createMock(UserResource::class),
-            $this->createMock(EntityManagerInterface::class),
-        );
-
-        $result = $resource->changeRequestedStatus('task-request-id', TaskStatus::DONE);
-
-        self::assertSame($taskRequest, $result);
-        self::assertSame(TaskStatus::DONE, $taskRequest->getRequestedStatus());
-    }
-
-    #[AllowMockObjectsWithoutExpectations]
-    public function testChangeRequestedStatusDeniedForNonReviewer(): void
-    {
-        $manager = (new User())
-            ->setFirstName('John')
-            ->setLastName('Manager')
-            ->setUsername('john.manager')
-            ->setEmail('john.manager@example.com');
-
-        $taskRequest = (new TaskRequest())
-            ->setTask(new Task())
-            ->setRequestedStatus(TaskStatus::TODO);
-
-        $repository = $this->createMock(TaskRequestRepositoryInterface::class);
-        $repository
-            ->expects($this->once())
-            ->method('find')
-            ->willReturn($taskRequest);
-        $repository
-            ->expects($this->never())
-            ->method('save');
-
-        $userTypeIdentification = $this->createMock(UserTypeIdentification::class);
-        $userTypeIdentification
-            ->expects($this->once())
-            ->method('getUser')
-            ->willReturn($manager);
-
-        $accessService = $this->createMock(TaskAccessServiceInterface::class);
-        $accessService
-            ->expects($this->once())
-            ->method('canReviewTaskRequest')
-            ->willReturn(false);
-
-        $resource = new TaskRequestResource(
-            $repository,
-            $userTypeIdentification,
-            $accessService,
-            $this->createMock(UserResource::class),
-            $this->createMock(EntityManagerInterface::class),
-        );
+        $resource = $this->createResourceForUser($requester, new TaskAccessService());
+        $id = 'task-request-id';
 
         $this->expectException(AccessDeniedHttpException::class);
-        $resource->changeRequestedStatus('task-request-id', TaskStatus::DONE);
+        $resource->beforePatch($id, $this->createMock(RestDtoInterface::class), $taskRequest);
     }
 
-    #[AllowMockObjectsWithoutExpectations]
-    public function testListBySprintGroupedByTaskThrowsBadRequestForInvalidSprintId(): void
+    public function testBeforeUpdateAllowsReviewer(): void
     {
-        $manager = (new User())
-            ->setFirstName('John')
-            ->setLastName('Manager')
-            ->setUsername('john.manager')
-            ->setEmail('john.manager@example.com');
+        $reviewer = (new User())->setEmail('reviewer@example.com');
 
-        $repository = $this->createMock(TaskRequestRepositoryInterface::class);
-        $repository
-            ->expects($this->never())
-            ->method('createQueryBuilder');
+        $taskRequest = (new TaskRequest())
+            ->setTask(new Task())
+            ->setReviewer($reviewer);
 
-        $userTypeIdentification = $this->createMock(UserTypeIdentification::class);
-        $userTypeIdentification
-            ->expects($this->once())
-            ->method('getUser')
-            ->willReturn($manager);
+        $resource = $this->createResourceForUser($reviewer, new TaskAccessService());
+        $id = 'task-request-id';
 
-        $resource = new TaskRequestResource(
-            $repository,
-            $userTypeIdentification,
-            $this->createMock(TaskAccessServiceInterface::class),
-            $this->createMock(UserResource::class),
-            $this->createMock(EntityManagerInterface::class),
+        $resource->beforeUpdate($id, $this->createMock(RestDtoInterface::class), $taskRequest);
+
+        self::assertTrue(true);
+    }
+
+    public function testBeforePatchAllowsAdmin(): void
+    {
+        $admin = (new User())
+            ->setEmail('admin@example.com')
+            ->setRoles(['ROLE_ADMIN']);
+
+        $taskRequest = (new TaskRequest())
+            ->setTask(new Task())
+            ->setRequester((new User())->setEmail('requester@example.com'));
+
+        $resource = $this->createResourceForUser($admin, new TaskAccessService());
+        $id = 'task-request-id';
+
+        $resource->beforePatch($id, $this->createMock(RestDtoInterface::class), $taskRequest);
+
+        self::assertTrue(true);
+    }
+
+    private function createResourceForUser(User $user, TaskAccessServiceInterface $accessService): TaskRequestResource
+    {
+        $currentTaskUserProvider = $this->createMock(CurrentTaskUserProvider::class);
+        $currentTaskUserProvider
+            ->method('getCurrentUser')
+            ->willReturn($user);
+
+        return new TaskRequestResource(
+            $this->createMock(TaskRequestRepositoryInterface::class),
+            $currentTaskUserProvider,
+            $accessService,
+            $this->createMock(PrepareTaskRequestForCreate::class),
+            new AssertTaskRequestViewAccess($currentTaskUserProvider, $accessService),
+            new AssertTaskRequestReviewAccess($currentTaskUserProvider, $accessService),
+            $this->createMock(ChangeTaskRequestStatus::class),
+            $this->createMock(ListTaskRequestsBySprint::class),
+            $this->createMock(AssignTaskRequestRequester::class),
+            $this->createMock(AssignTaskRequestReviewer::class),
+            $this->createMock(AssignTaskRequestSprint::class),
         );
-
-        $this->expectException(HttpException::class);
-        $this->expectExceptionMessage('Invalid UUID format for "sprintId".');
-
-        $resource->listBySprintGroupedByTask('73000000-0000-1000-8000-00000000000');
     }
 }
