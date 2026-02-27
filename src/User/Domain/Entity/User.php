@@ -71,9 +71,11 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     #[Groups([
         'User',
         'User.id',
+        'Company',
+        'CompanyMembership',
         'Company.owner',
         'CompanyMembership.user',
-
+        'Sprint',
         'LogLogin.user',
         'LogLoginFailure.user',
         'LogRequest.user',
@@ -94,9 +96,12 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     #[Groups([
         'User',
         'User.username',
+        'Company',
+        'CompanyMembership',
         'Company.owner',
         'CompanyMembership.user',
         'JobOffer',
+        'Sprint',
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
     ])]
@@ -117,9 +122,12 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     #[Groups([
         'User',
         'User.firstName',
+        'Company',
+        'CompanyMembership',
         'Company.owner',
         'CompanyMembership.user',
         'JobOffer',
+        'Sprint',
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
     ])]
@@ -140,9 +148,11 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     #[Groups([
         'User',
         'User.lastName',
+        'Company',
+        'CompanyMembership',
         'Company.owner',
         'CompanyMembership.user',
-
+        'Sprint',
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
     ])]
@@ -163,8 +173,11 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     #[Groups([
         'User',
         'User.email',
+        'Company',
+        'CompanyMembership',
         'Company.owner',
         'JobOffer',
+        'Sprint',
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
     ])]
@@ -258,6 +271,9 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     )]
     #[Groups([
         'User.userProfile',
+        'Company',
+        'CompanyMembership',
+        'Sprint',
     ])]
     private ?UserProfile $userProfile = null;
 

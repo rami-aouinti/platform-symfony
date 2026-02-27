@@ -29,12 +29,12 @@ class Project implements EntityInterface
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
-    #[Groups(['Project', 'Project.id', 'Project.show', 'Project.edit'])]
+    #[Groups(['Sprint', 'Project', 'Project.id', 'Project.show', 'Project.edit'])]
     private UuidInterface $id;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'owner_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[Groups(['Project', 'Project.owner', 'Project.show', 'Project.edit'])]
+    #[Groups(['Sprint', 'Project', 'Project.owner', 'Project.show', 'Project.edit'])]
     private ?User $owner = null;
 
     #[ORM\ManyToOne(targetEntity: Company::class)]
@@ -43,23 +43,23 @@ class Project implements EntityInterface
     private Company $company;
 
     #[ORM\Column(name: 'name', type: Types::STRING, length: 255, nullable: false)]
-    #[Groups(['Project', 'Project.name', 'Project.create', 'Project.show', 'Project.edit'])]
+    #[Groups(['Sprint', 'Project', 'Project.name', 'Project.create', 'Project.show', 'Project.edit'])]
     private string $name = '';
 
     #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
-    #[Groups(['Project', 'Project.description', 'Project.create', 'Project.show', 'Project.edit'])]
+    #[Groups(['Sprint', 'Project', 'Project.description', 'Project.create', 'Project.show', 'Project.edit'])]
     private ?string $description = null;
 
     #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, enumType: ProjectStatus::class)]
-    #[Groups(['Project', 'Project.status', 'Project.create', 'Project.show', 'Project.edit'])]
+    #[Groups(['Sprint', 'Project', 'Project.status', 'Project.create', 'Project.show', 'Project.edit'])]
     private ProjectStatus $status = ProjectStatus::ACTIVE;
 
     #[ORM\Column(name: 'photo_url', type: Types::STRING, length: 2048, nullable: true)]
-    #[Groups(['Project', 'Project.photoUrl', 'Project.create', 'Project.show', 'Project.edit'])]
+    #[Groups(['Sprint', 'Project', 'Project.photoUrl', 'Project.create', 'Project.show', 'Project.edit'])]
     private ?string $photoUrl = null;
 
     #[ORM\Column(name: 'photo_media_id', type: Types::STRING, length: 255, nullable: true)]
-    #[Groups(['Project', 'Project.photoMediaId', 'Project.create', 'Project.show', 'Project.edit'])]
+    #[Groups(['Sprint', 'Project', 'Project.photoMediaId', 'Project.create', 'Project.show', 'Project.edit'])]
     private ?string $photoMediaId = null;
 
     public function __construct()

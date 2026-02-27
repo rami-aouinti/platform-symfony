@@ -32,12 +32,12 @@ class TaskRequest implements EntityInterface
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
-    #[Groups(['TaskRequest', 'TaskRequest.id', 'TaskRequest.show', 'TaskRequest.edit'])]
+    #[Groups(['Sprint','TaskRequest', 'TaskRequest.id', 'TaskRequest.show', 'TaskRequest.edit'])]
     private UuidInterface $id;
 
     #[ORM\ManyToOne(targetEntity: Task::class)]
     #[ORM\JoinColumn(name: 'task_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[Groups(['TaskRequest', 'TaskRequest.task', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
+    #[Groups(['Sprint', 'TaskRequest', 'TaskRequest.task', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
     private ?Task $task = null;
 
     #[ORM\ManyToOne(targetEntity: Sprint::class, inversedBy: 'taskRequests')]
@@ -47,28 +47,28 @@ class TaskRequest implements EntityInterface
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'requester_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[Groups(['TaskRequest', 'TaskRequest.requester', 'TaskRequest.show', 'TaskRequest.edit'])]
+    #[Groups(['Sprint', 'TaskRequest', 'TaskRequest.requester', 'TaskRequest.show', 'TaskRequest.edit'])]
     private ?User $requester = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'reviewer_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[Groups(['TaskRequest', 'TaskRequest.reviewer', 'TaskRequest.show', 'TaskRequest.edit'])]
+    #[Groups(['Sprint', 'TaskRequest', 'TaskRequest.reviewer', 'TaskRequest.show', 'TaskRequest.edit'])]
     private ?User $reviewer = null;
 
     #[ORM\Column(name: 'type', type: Types::STRING, length: 64, nullable: false, enumType: TaskRequestType::class)]
-    #[Groups(['TaskRequest', 'TaskRequest.type', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
+    #[Groups(['Sprint', 'TaskRequest', 'TaskRequest.type', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
     private TaskRequestType $type = TaskRequestType::STATUS_CHANGE;
 
     #[ORM\Column(name: 'requested_status', type: Types::STRING, length: 64, nullable: true, enumType: TaskStatus::class)]
-    #[Groups(['TaskRequest', 'TaskRequest.requestedStatus', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
+    #[Groups(['Sprint', 'TaskRequest', 'TaskRequest.requestedStatus', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
     private ?TaskStatus $requestedStatus = null;
 
     #[ORM\Column(name: 'time', type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    #[Groups(['TaskRequest', 'TaskRequest.time', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
+    #[Groups(['Sprint', 'TaskRequest', 'TaskRequest.time', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
     private ?DateTimeImmutable $time = null;
 
     #[ORM\Column(name: 'note', type: Types::TEXT, nullable: true)]
-    #[Groups(['TaskRequest', 'TaskRequest.note', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
+    #[Groups(['Sprint', 'TaskRequest', 'TaskRequest.note', 'TaskRequest.create', 'TaskRequest.show', 'TaskRequest.edit'])]
     private ?string $note = null;
 
     public function __construct()

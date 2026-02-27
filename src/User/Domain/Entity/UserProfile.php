@@ -68,6 +68,10 @@ class UserProfile implements EntityInterface
         'UserProfile.phone',
 
         'User.userProfile',
+
+        'Company',
+        'CompanyMembership',
+        'Sprint',
     ])]
     private ?string $phone = null;
 
@@ -109,6 +113,10 @@ class UserProfile implements EntityInterface
         'UserProfile.avatar',
 
         'User.userProfile',
+
+        'Company',
+        'CompanyMembership',
+        'Sprint',
     ])]
     private ?UserAvatar $avatar = null;
 

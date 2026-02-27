@@ -43,7 +43,7 @@ class CompanyMembership implements EntityInterface
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'companyMemberships')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    #[Groups(['CompanyMembership', 'CompanyMembership.user'])]
+    #[Groups(['Company','CompanyMembership', 'CompanyMembership.user'])]
     private User $user;
 
     #[ORM\ManyToOne(targetEntity: Company::class, inversedBy: 'memberships')]
@@ -56,15 +56,15 @@ class CompanyMembership implements EntityInterface
     private string $role = self::ROLE_MEMBER;
 
     #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, enumType: CompanyMembershipStatus::class)]
-    #[Groups(['CompanyMembership', 'CompanyMembership.status'])]
+    #[Groups(['Company','CompanyMembership', 'CompanyMembership.status'])]
     private CompanyMembershipStatus $status = CompanyMembershipStatus::INVITED;
 
     #[ORM\Column(name: 'invited_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    #[Groups(['CompanyMembership', 'CompanyMembership.invitedAt'])]
+    #[Groups(['Company','CompanyMembership', 'CompanyMembership.invitedAt'])]
     private ?DateTimeImmutable $invitedAt = null;
 
     #[ORM\Column(name: 'joined_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    #[Groups(['CompanyMembership', 'CompanyMembership.joinedAt'])]
+    #[Groups(['Company','CompanyMembership', 'CompanyMembership.joinedAt'])]
     private ?DateTimeImmutable $joinedAt = null;
 
     public function __construct(User $user, Company $company)

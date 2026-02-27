@@ -32,41 +32,41 @@ class Task implements EntityInterface
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
-    #[Groups(['Task', 'Task.id', 'Task.show', 'Task.edit'])]
+    #[Groups(['Sprint', 'Task', 'Task.id', 'Task.show', 'Task.edit'])]
     private UuidInterface $id;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'owner_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[Groups(['Task', 'Task.owner', 'Task.show', 'Task.edit'])]
+    #[Groups(['Sprint', 'Task', 'Task.owner', 'Task.show', 'Task.edit'])]
     private ?User $owner = null;
 
     #[ORM\ManyToOne(targetEntity: Project::class)]
     #[ORM\JoinColumn(name: 'project_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
-    #[Groups(['Task', 'Task.project', 'Task.create', 'Task.show', 'Task.edit'])]
+    #[Groups(['Sprint', 'Task', 'Task.project', 'Task.create', 'Task.show', 'Task.edit'])]
     private ?Project $project = null;
 
     #[ORM\Column(name: 'title', type: Types::STRING, length: 255, nullable: false)]
-    #[Groups(['Task', 'Task.title', 'Task.create', 'Task.show', 'Task.edit'])]
+    #[Groups(['Sprint', 'Task', 'Task.title', 'Task.create', 'Task.show', 'Task.edit'])]
     private string $title = '';
 
     #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
-    #[Groups(['Task', 'Task.description', 'Task.create', 'Task.show', 'Task.edit'])]
+    #[Groups(['Sprint', 'Task', 'Task.description', 'Task.create', 'Task.show', 'Task.edit'])]
     private ?string $description = null;
 
     #[ORM\Column(name: 'priority', type: Types::STRING, length: 64, nullable: false, enumType: TaskPriority::class)]
-    #[Groups(['Task', 'Task.priority', 'Task.create', 'Task.show', 'Task.edit'])]
+    #[Groups(['Sprint', 'Task', 'Task.priority', 'Task.create', 'Task.show', 'Task.edit'])]
     private TaskPriority $priority = TaskPriority::MEDIUM;
 
     #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, enumType: TaskStatus::class)]
-    #[Groups(['Task', 'Task.status', 'Task.create', 'Task.show', 'Task.edit'])]
+    #[Groups(['Sprint', 'Task', 'Task.status', 'Task.create', 'Task.show', 'Task.edit'])]
     private TaskStatus $status = TaskStatus::TODO;
 
     #[ORM\Column(name: 'due_date', type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    #[Groups(['Task', 'Task.dueDate', 'Task.create', 'Task.show', 'Task.edit'])]
+    #[Groups(['Sprint', 'Task', 'Task.dueDate', 'Task.create', 'Task.show', 'Task.edit'])]
     private ?DateTimeImmutable $dueDate = null;
 
     #[ORM\Column(name: 'completed_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    #[Groups(['Task', 'Task.completedAt', 'Task.create', 'Task.show', 'Task.edit'])]
+    #[Groups(['Sprint', 'Task', 'Task.completedAt', 'Task.create', 'Task.show', 'Task.edit'])]
     private ?DateTimeImmutable $completedAt = null;
 
     public function __construct()

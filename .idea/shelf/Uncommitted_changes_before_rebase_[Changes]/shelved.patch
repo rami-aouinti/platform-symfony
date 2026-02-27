@@ -1,0 +1,32 @@
+Index: src/Task/Infrastructure/DataFixtures/ORM/LoadSprintData.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\r\n\r\ndeclare(strict_types=1);\r\n\r\nnamespace App\\Task\\Infrastructure\\DataFixtures\\ORM;\r\n\r\nuse App\\Company\\Domain\\Entity\\Company;\r\nuse App\\General\\Domain\\Rest\\UuidHelper;\r\nuse App\\Task\\Domain\\Entity\\Sprint;\r\nuse App\\Tests\\Utils\\PhpUnitUtil;\r\nuse DateTimeImmutable;\r\nuse Doctrine\\Bundle\\FixturesBundle\\Fixture;\r\nuse Doctrine\\Common\\DataFixtures\\DependentFixtureInterface;\r\nuse Doctrine\\Common\\DataFixtures\\OrderedFixtureInterface;\r\nuse Doctrine\\Persistence\\ObjectManager;\r\nuse Override;\r\n\r\nfinal class LoadSprintData extends Fixture implements DependentFixtureInterface, OrderedFixtureInterface\r\n{\r\n    #[Override]\r\n    public function load(ObjectManager $manager): void\r\n    {\r\n        $sprints = [\r\n            ['Sprint-2026-09-01', '73000000-0000-1000-8000-000000000001', '2026-09-01 00:00:00', '2026-09-14 23:59:59', 'Company-acme-demo'],\r\n            ['Sprint-2026-09-15', '73000000-0000-1000-8000-000000000002', '2026-09-15 00:00:00', '2026-09-28 23:59:59', 'Company-acme-demo'],\r\n            ['Sprint-2026-09-29', '73000000-0000-1000-8000-000000000003', '2026-09-29 00:00:00', '2026-10-12 23:59:59', 'Company-external-corp'],\r\n            ['Sprint-2026-10-13', '73000000-0000-1000-8000-000000000004', '2026-10-13 00:00:00', '2026-10-26 23:59:59', 'Company-beta-labs'],\r\n        ];\r\n\r\n        foreach ($sprints as [$reference, $uuid, $startDate, $endDate, $companyReference]) {\r\n            $company = $this->getReference($companyReference, Company::class);\r\n\r\n            $sprint = (new Sprint())\r\n                ->setStartDate(new DateTimeImmutable($startDate))\r\n                ->setEndDate(new DateTimeImmutable($endDate))\r\n                ->setCompany($company);\r\n\r\n            PhpUnitUtil::setProperty('id', UuidHelper::fromString($uuid), $sprint);\r\n            $manager->persist($sprint);\r\n            $this->addReference($reference, $sprint);\r\n        }\r\n\r\n        $manager->flush();\r\n    }\r\n\r\n    #[Override]\r\n    public function getOrder(): int\r\n    {\r\n        return 11;\r\n    }\r\n\r\n    #[Override]\r\n    public function getDependencies(): array\r\n    {\r\n        return [\r\n            \\App\\Company\\Infrastructure\\DataFixtures\\ORM\\LoadCompanyData::class,\r\n        ];\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Task/Infrastructure/DataFixtures/ORM/LoadSprintData.php b/src/Task/Infrastructure/DataFixtures/ORM/LoadSprintData.php
+--- a/src/Task/Infrastructure/DataFixtures/ORM/LoadSprintData.php	(revision 25d0ab26936a5e6402c6279a8efc744d31f3c730)
++++ b/src/Task/Infrastructure/DataFixtures/ORM/LoadSprintData.php	(date 1772151268011)
+@@ -15,7 +15,7 @@
+ use Doctrine\Persistence\ObjectManager;
+ use Override;
+ 
+-final class LoadSprintData extends Fixture implements DependentFixtureInterface, OrderedFixtureInterface
++final class LoadSprintData extends Fixture implements OrderedFixtureInterface
+ {
+     #[Override]
+     public function load(ObjectManager $manager): void
+@@ -48,12 +48,4 @@
+     {
+         return 11;
+     }
+-
+-    #[Override]
+-    public function getDependencies(): array
+-    {
+-        return [
+-            \App\Company\Infrastructure\DataFixtures\ORM\LoadCompanyData::class,
+-        ];
+-    }
+ }
