@@ -9,7 +9,7 @@ use App\Role\Domain\Entity\Role as RoleEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @package App\User
+ * @package App\User\Application\DTO\UserGroup
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserGroupUpdate extends UserGroup

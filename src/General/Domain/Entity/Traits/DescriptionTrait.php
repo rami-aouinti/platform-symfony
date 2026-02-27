@@ -7,6 +7,12 @@ namespace App\General\Domain\Entity\Traits;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * DescriptionTrait.
+ *
+ * @package App\General\Domain\Entity\Traits
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 trait DescriptionTrait
 {
     #[ORM\Column(name: 'description', type: Types::TEXT, nullable: false)]

@@ -8,8 +8,7 @@ use App\Notification\Domain\Entity\Notification;
 use App\User\Domain\Entity\User;
 
 /**
- * @package
- * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Notification\Application\Service\Interfaces* @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface NotificationServiceInterface
 {

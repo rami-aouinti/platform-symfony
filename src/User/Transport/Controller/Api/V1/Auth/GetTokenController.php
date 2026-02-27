@@ -20,7 +20,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use function sprintf;
 
 /**
- * @package App\User
+ * API controller for GetTokenController endpoints.
+ *
+ * @package App\User\Transport\Controller\Api\V1\Auth
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

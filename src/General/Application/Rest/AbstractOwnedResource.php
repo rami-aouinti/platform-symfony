@@ -11,6 +11,12 @@ use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
+/**
+ * AbstractOwnedResource.
+ *
+ * @package App\General\Application\Rest
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 abstract class AbstractOwnedResource extends RestResource
 {
     public function __construct(

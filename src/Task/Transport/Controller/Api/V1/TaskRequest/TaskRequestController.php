@@ -31,8 +31,12 @@ use function sprintf;
 use function strtolower;
 
 /**
+ * API controller for TaskRequestController endpoints.
+ *
  * @method TaskRequestResource getResource()
  * @method ResponseHandler getResponseHandler()
+ * @package App\Task\Transport\Controller\Api\V1\TaskRequest
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 #[AsController]
 #[Route(path: '/v1/task-requests')]

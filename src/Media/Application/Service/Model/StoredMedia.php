@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Media\Application\Service\Model;
 
 /**
- * @package App\Media
+ * @package App\Media\Application\Service\Model
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

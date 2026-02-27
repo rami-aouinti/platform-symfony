@@ -8,7 +8,7 @@ use App\Tool\Domain\Repository\Interfaces\MessengerMessagesRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Infrastructure\Repository
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class MessengerMessagesRepository implements MessengerMessagesRepositoryInterface

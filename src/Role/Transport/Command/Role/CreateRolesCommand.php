@@ -25,6 +25,7 @@ use function sprintf;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Role\Transport\Command\Role
  */
 
 class CreateRolesCommand extends Command

@@ -10,7 +10,7 @@ use App\Tool\Domain\Exception\Crypt\Exception;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Transport\EventListener
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyEntityEventListener

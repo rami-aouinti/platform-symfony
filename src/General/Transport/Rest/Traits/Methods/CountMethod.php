@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
- * @package App\General
+ * @package App\General\Transport\Rest\Traits\Methods
  *
  * @method ResponseHandler getResponseHandler()
  * @author  Rami Aouinti <rami.aouinti@gmail.com>

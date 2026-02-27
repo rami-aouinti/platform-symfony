@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use function in_array;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Transport\EventSubscriber
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class AcceptLanguageSubscriber implements EventSubscriberInterface

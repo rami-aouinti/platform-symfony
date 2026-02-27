@@ -10,6 +10,12 @@ use App\Task\Domain\Repository\Interfaces\TaskRequestRepositoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * ChangeTaskRequestStatus.
+ *
+ * @package App\Task\Application\UseCase
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class ChangeTaskRequestStatus
 {
     public function __construct(

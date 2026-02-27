@@ -19,7 +19,7 @@ use function implode;
 use function in_array;
 
 /**
- * @package App\User
+ * @package App\User\Transport\EventSubscriber
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class JWTDecodedSubscriber implements EventSubscriberInterface

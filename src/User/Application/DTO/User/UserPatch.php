@@ -7,7 +7,7 @@ namespace App\User\Application\DTO\User;
 use App\User\Application\DTO\Traits\PatchUserGroups;
 
 /**
- * @package App\User
+ * @package App\User\Application\DTO\User
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserPatch extends User

@@ -10,7 +10,7 @@ use DateTime;
 use Dukecity\CommandSchedulerBundle\Entity\ScheduledCommand;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Service\Scheduler
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ScheduledCommandService implements ScheduledCommandServiceInterface

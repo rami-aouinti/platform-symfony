@@ -7,7 +7,7 @@ namespace App\Chat\Application\Service\Realtime\Interfaces;
 use App\Chat\Domain\Entity\ChatMessage;
 
 /**
- * @package App\Chat
+ * @package App\Chat\Application\Service\Realtime\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

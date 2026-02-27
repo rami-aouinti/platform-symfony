@@ -33,6 +33,7 @@ use function sprintf;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\DateDimension\Transport\Command\Utils
  */
 
 class CreateDateDimensionEntitiesCommand extends Command

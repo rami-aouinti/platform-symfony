@@ -15,7 +15,7 @@ use function array_search;
 use function array_values;
 
 /**
- * @package App\General
+ * @package App\General\Transport\Command\Traits
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait ExecuteMultipleCommandTrait

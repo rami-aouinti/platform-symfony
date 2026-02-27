@@ -11,7 +11,7 @@ use App\Role\Domain\Entity\Role as Entity;
 use App\Role\Domain\Repository\Interfaces\RoleRepositoryInterface as Repository;
 
 /**
- * @package App\Role
+ * @package App\Role\Application\Resource
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

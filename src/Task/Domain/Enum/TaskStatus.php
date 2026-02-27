@@ -7,6 +7,12 @@ namespace App\Task\Domain\Enum;
 use App\General\Domain\Enum\Interfaces\DatabaseEnumInterface;
 use App\General\Domain\Enum\Traits\GetValues;
 
+/**
+ * TaskStatus.
+ *
+ * @package App\Task\Domain\Enum
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 enum TaskStatus: string implements DatabaseEnumInterface
 {
     use GetValues;

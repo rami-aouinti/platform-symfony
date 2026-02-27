@@ -10,7 +10,7 @@ use App\Recruit\Domain\Entity\JobApplication;
 use App\Recruit\Domain\Enum\JobApplicationStatus;
 
 /**
- * @package App\JobApplication
+ * @package App\Recruit\Application\Resource\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

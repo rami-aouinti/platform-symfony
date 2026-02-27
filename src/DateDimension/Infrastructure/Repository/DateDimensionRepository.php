@@ -11,7 +11,7 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @package App\DateDimension
+ * @package App\DateDimension\Infrastructure\Repository
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

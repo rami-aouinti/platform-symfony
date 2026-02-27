@@ -16,7 +16,7 @@ use Override;
 /**
  * @see http://doctrine-orm.readthedocs.org/en/latest/cookbook/working-with-datetime.html
  *
- * @package App\General
+ * @package App\General\Domain\Doctrine\DBAL\Types
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UTCDateTimeType extends DateTimeType

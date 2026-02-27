@@ -7,7 +7,7 @@ namespace App\General\Domain\Enum\Traits;
 use function array_column;
 
 /**
- * @package App\General
+ * @package App\General\Domain\Enum\Traits
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait GetValues

@@ -9,6 +9,12 @@ use App\Recruit\Application\Resource\ResumeResource;
 use App\Recruit\Domain\Entity\Resume;
 use Throwable;
 
+/**
+ * RequestMapper.
+ *
+ * @package App\Recruit\Transport\AutoMapper\ResumeSkill
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [

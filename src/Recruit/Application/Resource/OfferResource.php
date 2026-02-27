@@ -22,7 +22,7 @@ use function in_array;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
- * @package App\Offer
+ * @package App\Recruit\Application\Resource
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class OfferResource extends RestResource implements OfferResourceInterface

@@ -14,7 +14,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Throwable;
 
 /**
- * @package App\User
+ * @package App\User\Transport\EventSubscriber
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class AuthenticationSuccessSubscriber implements EventSubscriberInterface

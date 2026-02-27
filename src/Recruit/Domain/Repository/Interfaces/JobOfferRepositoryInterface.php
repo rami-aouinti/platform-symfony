@@ -8,7 +8,7 @@ use App\Recruit\Domain\Entity\JobOffer;
 use App\User\Domain\Entity\User;
 
 /**
- * @package App\JobOffer
+ * @package App\Recruit\Domain\Repository\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

@@ -18,7 +18,9 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
- * @package App\User
+ * API controller for UserRolesController endpoints.
+ *
+ * @package App\User\Transport\Controller\Api\V1\User
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

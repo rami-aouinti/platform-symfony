@@ -26,7 +26,7 @@ use function is_string;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
- * @package App\Media
+ * @package App\Media\Application\Resource
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class MediaResource extends RestResource implements MediaResourceInterface

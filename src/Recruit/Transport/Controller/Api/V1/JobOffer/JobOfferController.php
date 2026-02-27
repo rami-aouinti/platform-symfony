@@ -44,9 +44,11 @@ use function sprintf;
 use function trim;
 
 /**
+ * API controller for JobOfferController endpoints.
+ *
  * @method JobOfferResource getResource()
  * @method ResponseHandler getResponseHandler()
- * @package App\JobOffer
+ * @package App\Recruit\Transport\Controller\Api\V1\JobOffer
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

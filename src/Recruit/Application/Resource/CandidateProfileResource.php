@@ -13,7 +13,7 @@ use App\Recruit\Domain\Repository\Interfaces\CandidateProfileRepositoryInterface
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
- * @package App\Candidate
+ * @package App\Recruit\Application\Resource
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class CandidateProfileResource extends RestSmallResource implements CandidateProfileResourceInterface

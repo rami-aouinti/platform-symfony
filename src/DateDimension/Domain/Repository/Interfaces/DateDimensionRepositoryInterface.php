@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\DateDimension\Domain\Repository\Interfaces;
 
 /**
- * @package App\DateDimension
+ * @package App\DateDimension\Domain\Repository\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface DateDimensionRepositoryInterface

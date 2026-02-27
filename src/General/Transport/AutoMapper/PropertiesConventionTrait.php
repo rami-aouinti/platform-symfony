@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\General\Transport\AutoMapper;
 
+/**
+ * PropertiesConventionTrait.
+ *
+ * @package App\General\Transport\AutoMapper
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 trait PropertiesConventionTrait
 {
     /**

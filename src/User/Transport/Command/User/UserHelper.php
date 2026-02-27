@@ -16,7 +16,7 @@ use function array_map;
 use function sprintf;
 
 /**
- * @package App\User
+ * @package App\User\Transport\Command\User
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserHelper

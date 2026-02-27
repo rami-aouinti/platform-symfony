@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * @package App\General
+ * @package App\General\Transport\Rest\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ResponseHandlerInterface

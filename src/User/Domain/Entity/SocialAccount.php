@@ -14,7 +14,7 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 
 /**
- * @package App\User
+ * @package App\User\Domain\Entity
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

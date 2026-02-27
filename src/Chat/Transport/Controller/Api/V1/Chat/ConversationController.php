@@ -22,7 +22,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 
 /**
- * @package App\Chat
+ * API controller for ConversationController endpoints.
+ *
+ * @package App\Chat\Transport\Controller\Api\V1\Chat
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

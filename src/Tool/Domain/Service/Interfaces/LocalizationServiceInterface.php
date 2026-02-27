@@ -7,7 +7,7 @@ namespace App\Tool\Domain\Service\Interfaces;
 use Throwable;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Domain\Service\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface LocalizationServiceInterface

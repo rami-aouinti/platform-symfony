@@ -19,8 +19,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
+ * API controller for BlogCommentController endpoints.
+ *
  * @method BlogCommentResource getResource()
  * @method ResponseHandler getResponseHandler()
+ * @package App\Blog\Transport\Controller\Api\V1\BlogComment
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 #[AsController]
 #[Route(path: '/v1/blog-comments')]

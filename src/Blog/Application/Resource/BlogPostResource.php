@@ -12,6 +12,12 @@ use App\General\Application\Rest\AbstractOwnedResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\User\Application\Security\UserTypeIdentification;
 
+/**
+ * BlogPostResource.
+ *
+ * @package App\Blog\Application\Resource
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class BlogPostResource extends AbstractOwnedResource implements BlogPostResourceInterface
 {
     public function __construct(

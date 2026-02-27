@@ -8,8 +8,7 @@ use App\General\Domain\Repository\Interfaces\BaseRepositoryInterface;
 use DateTimeInterface;
 
 /**
- * @package
- * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Notification\Domain\Repository\Interfaces* @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface NotificationRepositoryInterface extends BaseRepositoryInterface
 {

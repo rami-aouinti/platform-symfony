@@ -18,6 +18,12 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use function array_values;
 
+/**
+ * ListTaskRequestsBySprint.
+ *
+ * @package App\Task\Application\UseCase
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class ListTaskRequestsBySprint
 {
     public function __construct(

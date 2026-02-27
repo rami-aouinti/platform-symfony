@@ -13,7 +13,7 @@ use App\User\Domain\Repository\Interfaces\UserRepositoryInterface as Repository;
 use Throwable;
 
 /**
- * @package App\User
+ * @package App\User\Application\Resource
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

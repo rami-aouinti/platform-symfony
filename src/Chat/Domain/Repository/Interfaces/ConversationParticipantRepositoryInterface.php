@@ -7,7 +7,7 @@ namespace App\Chat\Domain\Repository\Interfaces;
 use App\Chat\Domain\Entity\ConversationParticipant;
 
 /**
- * @package App\Chat
+ * @package App\Chat\Domain\Repository\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Recruit\Domain\Enum;
 
 /**
- * @package App\JobOffer
+ * @package App\Recruit\Domain\Enum
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

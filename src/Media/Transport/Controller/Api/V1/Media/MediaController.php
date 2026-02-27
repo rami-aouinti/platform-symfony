@@ -22,9 +22,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
+ * API controller for MediaController endpoints.
+ *
  * @method MediaResource getResource()
  * @method ResponseHandler getResponseHandler()
- * @package App\Media
+ * @package App\Media\Transport\Controller\Api\V1\Media
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

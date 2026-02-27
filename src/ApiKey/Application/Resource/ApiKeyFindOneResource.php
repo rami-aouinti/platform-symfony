@@ -12,7 +12,7 @@ use App\General\Application\Rest\Traits\Methods\ResourceFindOneByMethod;
 use App\General\Application\Rest\Traits\Methods\ResourceFindOneMethod;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Application\Resource
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

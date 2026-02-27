@@ -9,6 +9,12 @@ use App\Recruit\Application\DTO\ResumeExperience\ResumeExperienceCreate;
 use App\Recruit\Application\DTO\ResumeExperience\ResumeExperiencePatch;
 use App\Recruit\Application\DTO\ResumeExperience\ResumeExperienceUpdate;
 
+/**
+ * AutoMapperConfiguration.
+ *
+ * @package App\Recruit\Transport\AutoMapper\ResumeExperience
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration
 {
     protected static array $requestMapperClasses = [

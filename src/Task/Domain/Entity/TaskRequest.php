@@ -17,6 +17,12 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * TaskRequest.
+ *
+ * @package App\Task\Domain\Entity
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'task_request')]
 #[ORM\Index(name: 'idx_task_request_task_id', columns: ['task_id'])]

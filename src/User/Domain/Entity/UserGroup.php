@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Throwable;
 
 /**
- * @package App\User
+ * @package App\User\Domain\Entity
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[ORM\Entity]

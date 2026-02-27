@@ -13,6 +13,12 @@ use App\Task\Domain\Entity\Task;
 use App\Task\Domain\Entity\TaskRequest;
 use Throwable;
 
+/**
+ * RequestMapper.
+ *
+ * @package App\Blog\Transport\AutoMapper\BlogPostLink
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [

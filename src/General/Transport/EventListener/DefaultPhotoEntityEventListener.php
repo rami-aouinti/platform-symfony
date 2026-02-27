@@ -14,6 +14,12 @@ use function rawurlencode;
 use function sprintf;
 use function trim;
 
+/**
+ * DefaultPhotoEntityEventListener.
+ *
+ * @package App\General\Transport\EventListener
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class DefaultPhotoEntityEventListener
 {
     public function prePersist(LifecycleEventArgs $event): void

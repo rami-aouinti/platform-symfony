@@ -9,7 +9,7 @@ use App\General\Domain\Message\Interfaces\MessageLowInterface;
 use Throwable;
 
 /**
- * @package App\General
+ * @package App\General\Domain\Service\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface MessageServiceInterface

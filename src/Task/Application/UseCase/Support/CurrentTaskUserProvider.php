@@ -8,6 +8,12 @@ use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
+/**
+ * CurrentTaskUserProvider.
+ *
+ * @package App\Task\Application\UseCase\Support
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class CurrentTaskUserProvider
 {
     public function __construct(

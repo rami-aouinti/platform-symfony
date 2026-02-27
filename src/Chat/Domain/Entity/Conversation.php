@@ -15,7 +15,7 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 
 /**
- * @package App\Chat
+ * @package App\Chat\Domain\Entity
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

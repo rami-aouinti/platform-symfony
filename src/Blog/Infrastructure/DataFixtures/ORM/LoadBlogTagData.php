@@ -12,6 +12,12 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Override;
 
+/**
+ * LoadBlogTagData.
+ *
+ * @package App\Blog\Infrastructure\DataFixtures\ORM
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class LoadBlogTagData extends Fixture implements OrderedFixtureInterface
 {
     #[Override]

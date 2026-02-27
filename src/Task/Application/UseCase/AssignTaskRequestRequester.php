@@ -11,6 +11,12 @@ use App\User\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * AssignTaskRequestRequester.
+ *
+ * @package App\Task\Application\UseCase
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class AssignTaskRequestRequester
 {
     public function __construct(

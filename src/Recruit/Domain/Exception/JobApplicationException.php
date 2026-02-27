@@ -8,7 +8,7 @@ use App\General\Application\Exception\Interfaces\ClientErrorInterface;
 use RuntimeException;
 
 /**
- * @package App\JobApplication
+ * @package App\Recruit\Domain\Exception
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

@@ -27,6 +27,7 @@ use Throwable;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\User\Transport\Command\User
  */
 
 class EditUserCommand extends Command

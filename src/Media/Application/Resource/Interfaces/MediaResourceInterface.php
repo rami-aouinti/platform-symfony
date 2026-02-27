@@ -9,7 +9,7 @@ use App\Media\Domain\Entity\Media;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * @package App\Media
+ * @package App\Media\Application\Resource\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

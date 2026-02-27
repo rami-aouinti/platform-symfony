@@ -15,7 +15,7 @@ use function in_array;
 use function is_array;
 
 /**
- * @package App\General
+ * @package App\General\Transport\EventSubscriber
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class BodySubscriber implements EventSubscriberInterface

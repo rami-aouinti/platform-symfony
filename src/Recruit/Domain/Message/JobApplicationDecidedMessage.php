@@ -7,7 +7,7 @@ namespace App\Recruit\Domain\Message;
 use App\General\Domain\Message\Interfaces\MessageHighInterface;
 
 /**
- * @package App\JobApplication
+ * @package App\Recruit\Domain\Message
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

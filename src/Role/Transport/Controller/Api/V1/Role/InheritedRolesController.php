@@ -18,7 +18,9 @@ use Symfony\Component\Routing\Requirement\EnumRequirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
- * @package App\Role
+ * API controller for InheritedRolesController endpoints.
+ *
+ * @package App\Role\Transport\Controller\Api\V1\Role
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

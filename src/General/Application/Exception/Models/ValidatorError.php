@@ -10,7 +10,7 @@ use Symfony\Component\Validator\ConstraintViolationInterface;
 use function str_replace;
 
 /**
- * @package App\General
+ * @package App\General\Application\Exception\Models
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ValidatorError

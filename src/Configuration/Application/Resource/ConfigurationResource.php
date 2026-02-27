@@ -11,6 +11,8 @@ use App\General\Application\Rest\RestResource;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
+ * @package App\Configuration\Application\Resource
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 class ConfigurationResource extends RestResource implements ConfigurationResourceInterface
 {

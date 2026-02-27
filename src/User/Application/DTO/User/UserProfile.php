@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use function array_map;
 
 /**
- * @package App\User
+ * @package App\User\Application\DTO\User
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserProfile

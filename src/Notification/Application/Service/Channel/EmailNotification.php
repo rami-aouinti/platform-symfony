@@ -8,8 +8,7 @@ use App\General\Domain\Service\Interfaces\MailerServiceInterface;
 use App\Notification\Application\Service\Channel\Interfaces\EmailNotificationInterface;
 
 /**
- * @package
- * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Notification\Application\Service\Channel* @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 readonly class EmailNotification implements EmailNotificationInterface
 {

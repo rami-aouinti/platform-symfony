@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tool\Application\Service\Interfaces;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Service\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface VersionServiceInterface

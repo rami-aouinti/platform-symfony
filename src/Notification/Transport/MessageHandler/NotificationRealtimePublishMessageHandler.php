@@ -9,7 +9,7 @@ use App\Notification\Domain\Message\NotificationRealtimePublishMessage;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * @package App\Notification
+ * @package App\Notification\Transport\MessageHandler
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

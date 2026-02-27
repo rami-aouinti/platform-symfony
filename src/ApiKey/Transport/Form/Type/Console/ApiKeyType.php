@@ -19,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Throwable;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Transport\Form\Type\Console
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyType extends AbstractType

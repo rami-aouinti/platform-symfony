@@ -20,7 +20,7 @@ use Throwable;
 use function array_map;
 
 /**
- * @package App\User
+ * @package App\User\Transport\AutoMapper\User
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class RequestMapper extends RestRequestMapper

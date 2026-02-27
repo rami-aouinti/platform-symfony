@@ -8,7 +8,7 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use Throwable;
 
 /**
- * @package App\General
+ * @package App\General\Application\Rest\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface RestFindOneResourceInterface extends RestSmallResourceInterface

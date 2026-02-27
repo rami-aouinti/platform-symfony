@@ -20,6 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @method self|RestDtoInterface get(string $id)
  * @method self|RestDtoInterface patch(RestDtoInterface $dto)
  * @method Entity|EntityInterface update(EntityInterface $entity)
+ * @package App\Blog\Application\DTO\BlogPostLink
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 class BlogPostLink extends RestDto
 {

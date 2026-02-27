@@ -11,6 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * PrepareTaskRequestForCreate.
+ *
+ * @package App\Task\Application\UseCase
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class PrepareTaskRequestForCreate
 {
     public function __construct(

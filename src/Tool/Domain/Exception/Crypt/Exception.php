@@ -7,7 +7,7 @@ namespace App\Tool\Domain\Exception\Crypt;
 use App\General\Domain\Exception\BaseTranslatableException;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Domain\Exception\Crypt
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class Exception extends BaseTranslatableException

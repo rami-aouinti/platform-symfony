@@ -10,7 +10,7 @@ use function json_decode;
 use function json_encode;
 
 /**
- * @package App\General
+ * @package App\General\Domain\Utils
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class JSON

@@ -19,9 +19,11 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
+ * API controller for ResumeSkillController endpoints.
+ *
  * @method ResumeSkillResource getResource()
  * @method ResponseHandler getResponseHandler()
- * @package App\Resume
+ * @package App\Recruit\Transport\Controller\Api\V1\Resume
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

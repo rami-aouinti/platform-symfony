@@ -11,7 +11,7 @@ use Override;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @package App\General
+ * @package App\General\Transport\AutoMapper
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 abstract class RestAutoMapperConfiguration implements AutoMapperConfiguratorInterface

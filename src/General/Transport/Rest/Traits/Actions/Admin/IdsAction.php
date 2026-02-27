@@ -20,7 +20,7 @@ use Throwable;
  *
  * @see \App\General\Transport\Rest\Traits\Methods\IdsMethod for detailed documents.
  *
- * @package App\General
+ * @package App\General\Transport\Rest\Traits\Actions\Admin
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait IdsAction

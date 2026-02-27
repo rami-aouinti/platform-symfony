@@ -7,6 +7,12 @@ namespace App\General\Domain\Entity\Traits;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * StatusTrait.
+ *
+ * @package App\General\Domain\Entity\Traits
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 trait StatusTrait
 {
     #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]

@@ -17,8 +17,7 @@ use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
- * @package
- * @author
+ * @package App\Company\Domain\Entity* @author
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'company_membership')]

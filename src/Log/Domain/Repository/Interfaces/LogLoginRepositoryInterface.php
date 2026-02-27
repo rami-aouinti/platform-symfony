@@ -7,7 +7,7 @@ namespace App\Log\Domain\Repository\Interfaces;
 use Exception;
 
 /**
- * @package App\Log
+ * @package App\Log\Domain\Repository\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface LogLoginRepositoryInterface

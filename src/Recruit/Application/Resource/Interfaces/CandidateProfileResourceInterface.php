@@ -7,7 +7,7 @@ namespace App\Recruit\Application\Resource\Interfaces;
 use App\General\Application\Rest\Interfaces\RestSmallResourceInterface;
 
 /**
- * @package App\Candidate
+ * @package App\Recruit\Application\Resource\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

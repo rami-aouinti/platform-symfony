@@ -19,7 +19,7 @@ use Throwable;
 use function sprintf;
 
 /**
- * @package App\User
+ * @package App\User\Application\Security\Provider
  *
  * @template-implements UserProviderInterface<SecurityUser>
  * @author  Rami Aouinti <rami.aouinti@gmail.com>

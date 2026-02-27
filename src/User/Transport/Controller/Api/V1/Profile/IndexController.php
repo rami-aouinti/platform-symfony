@@ -21,7 +21,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * @package App\User
+ * API controller for IndexController endpoints.
+ *
+ * @package App\User\Transport\Controller\Api\V1\Profile
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

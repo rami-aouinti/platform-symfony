@@ -7,6 +7,12 @@ namespace App\General\Domain\Entity\Traits;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * NameTrait.
+ *
+ * @package App\General\Domain\Entity\Traits
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 trait NameTrait
 {
     #[ORM\Column(name: 'name', type: Types::STRING, length: 255, nullable: false)]

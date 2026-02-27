@@ -7,7 +7,7 @@ namespace App\Tool\Domain\Service\Crypt\Interfaces;
 use App\Tool\Domain\Exception\Crypt\Exception;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Domain\Service\Crypt\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface CryptServiceInterface

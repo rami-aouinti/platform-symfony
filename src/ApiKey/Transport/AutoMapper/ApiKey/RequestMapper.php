@@ -12,7 +12,7 @@ use Throwable;
 use function array_map;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Transport\AutoMapper\ApiKey
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class RequestMapper extends RestRequestMapper

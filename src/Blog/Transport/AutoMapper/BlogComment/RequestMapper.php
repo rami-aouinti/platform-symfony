@@ -9,6 +9,12 @@ use App\Blog\Domain\Entity\BlogPost;
 use App\General\Transport\AutoMapper\RestRequestMapper;
 use Throwable;
 
+/**
+ * RequestMapper.
+ *
+ * @package App\Blog\Transport\AutoMapper\BlogComment
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [

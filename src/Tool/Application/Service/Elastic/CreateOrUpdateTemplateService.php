@@ -10,7 +10,7 @@ use App\Tool\Application\Service\Elastic\Interfaces\CreateOrUpdateTemplateServic
 use function array_key_exists;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Service\Elastic
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class CreateOrUpdateTemplateService implements CreateOrUpdateTemplateServiceInterface

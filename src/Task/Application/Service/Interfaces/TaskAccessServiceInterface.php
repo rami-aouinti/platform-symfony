@@ -9,6 +9,12 @@ use App\Task\Domain\Entity\Task;
 use App\Task\Domain\Entity\TaskRequest;
 use App\User\Domain\Entity\User;
 
+/**
+ * TaskAccessServiceInterface.
+ *
+ * @package App\Task\Application\Service\Interfaces
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 interface TaskAccessServiceInterface
 {
     public function isAdminLike(User $user): bool;

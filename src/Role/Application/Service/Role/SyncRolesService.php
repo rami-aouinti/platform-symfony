@@ -14,7 +14,7 @@ use function array_map;
 use function array_sum;
 
 /**
- * @package App\Role
+ * @package App\Role\Application\Service\Role
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class SyncRolesService implements SyncRolesServiceInterface

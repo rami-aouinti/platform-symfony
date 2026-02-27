@@ -7,7 +7,7 @@ namespace App\Role\Application\Service\Role\Interfaces;
 use Throwable;
 
 /**
- * @package App\Role
+ * @package App\Role\Application\Service\Role\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface SyncRolesServiceInterface

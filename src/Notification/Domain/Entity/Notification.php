@@ -15,7 +15,7 @@ use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
- * @package App\Notification
+ * @package App\Notification\Domain\Entity
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

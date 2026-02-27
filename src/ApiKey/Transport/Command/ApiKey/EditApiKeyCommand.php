@@ -27,6 +27,7 @@ use Throwable;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\ApiKey\Transport\Command\ApiKey
  */
 
 class EditApiKeyCommand extends Command

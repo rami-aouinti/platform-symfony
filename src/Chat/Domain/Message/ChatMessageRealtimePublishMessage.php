@@ -7,7 +7,7 @@ namespace App\Chat\Domain\Message;
 use App\General\Domain\Message\Interfaces\MessageHighInterface;
 
 /**
- * @package App\Chat
+ * @package App\Chat\Domain\Message
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

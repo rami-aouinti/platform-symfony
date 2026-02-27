@@ -22,6 +22,7 @@ use Throwable;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Tool\Transport\Command\Elastic
  */
 
 class CreateOrUpdateTemplateCommand extends Command

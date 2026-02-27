@@ -13,7 +13,7 @@ use function is_array;
 use function is_string;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Domain\Service\Crypt
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class OpenSslCryptService implements OpenSslCryptServiceInterface

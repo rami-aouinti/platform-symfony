@@ -16,7 +16,7 @@ use function is_string;
 
 /**
  * @extends Voter<string, mixed>
- * @package App\Notification
+ * @package App\Notification\Application\Security\Voter
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class NotificationPermissionVoter extends Voter

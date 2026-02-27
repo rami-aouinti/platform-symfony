@@ -6,6 +6,12 @@ namespace App\Media\Application\Service;
 
 use App\Media\Domain\Entity\Media;
 
+/**
+ * MediaExportService.
+ *
+ * @package App\Media\Application\Service
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class MediaExportService
 {
     /**

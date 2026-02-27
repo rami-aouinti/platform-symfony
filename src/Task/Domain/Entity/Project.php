@@ -16,6 +16,12 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * Project.
+ *
+ * @package App\Task\Domain\Entity
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'project')]
 #[ORM\Index(name: 'idx_project_owner_id', columns: ['owner_id'])]

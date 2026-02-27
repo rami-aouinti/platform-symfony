@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use function array_values;
 
 /**
- * @package App\User
+ * @package App\User\Application\Security
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface

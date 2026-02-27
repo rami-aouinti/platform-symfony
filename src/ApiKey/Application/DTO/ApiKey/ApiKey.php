@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use function array_map;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Application\DTO\ApiKey
  *
  * @method self|RestDtoInterface get(string $id)
  * @method self|RestDtoInterface patch(RestDtoInterface $dto)

@@ -18,7 +18,7 @@ use function is_array;
 use function is_string;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Service
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class VersionService implements VersionServiceInterface

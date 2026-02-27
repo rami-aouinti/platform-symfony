@@ -11,7 +11,7 @@ use App\Chat\Domain\Repository\Interfaces\ChatMessageRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * @package App\Chat
+ * @package App\Chat\Transport\MessageHandler
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

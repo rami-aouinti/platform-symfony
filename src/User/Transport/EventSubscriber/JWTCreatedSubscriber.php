@@ -26,7 +26,7 @@ use function implode;
 use function sprintf;
 
 /**
- * @package App\User
+ * @package App\User\Transport\EventSubscriber
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class JWTCreatedSubscriber implements EventSubscriberInterface

@@ -15,6 +15,12 @@ use Throwable;
 use function array_filter;
 use function array_map;
 
+/**
+ * RequestMapper.
+ *
+ * @package App\Task\Transport\AutoMapper\Sprint
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [

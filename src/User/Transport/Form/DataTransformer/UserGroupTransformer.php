@@ -17,7 +17,7 @@ use function is_array;
 use function sprintf;
 
 /**
- * @package App\User
+ * @package App\User\Transport\Form\DataTransformer
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserGroupTransformer implements DataTransformerInterface

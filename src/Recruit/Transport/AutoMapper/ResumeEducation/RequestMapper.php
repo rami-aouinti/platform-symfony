@@ -10,6 +10,12 @@ use App\Recruit\Domain\Entity\Resume;
 use DateTimeImmutable;
 use Throwable;
 
+/**
+ * RequestMapper.
+ *
+ * @package App\Recruit\Transport\AutoMapper\ResumeEducation
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [

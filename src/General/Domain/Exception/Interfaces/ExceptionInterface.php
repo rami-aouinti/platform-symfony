@@ -7,7 +7,7 @@ namespace App\General\Domain\Exception\Interfaces;
 use Throwable;
 
 /**
- * @package App\General
+ * @package App\General\Domain\Exception\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ExceptionInterface extends Throwable

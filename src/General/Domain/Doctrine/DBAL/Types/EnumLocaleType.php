@@ -7,7 +7,7 @@ namespace App\General\Domain\Doctrine\DBAL\Types;
 use App\General\Domain\Enum\Locale;
 
 /**
- * @package App\General
+ * @package App\General\Domain\Doctrine\DBAL\Types
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class EnumLocaleType extends EnumType

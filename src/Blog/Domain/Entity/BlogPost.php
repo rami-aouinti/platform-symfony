@@ -18,6 +18,12 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * BlogPost.
+ *
+ * @package App\Blog\Domain\Entity
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'blog_post')]
 #[ORM\Index(name: 'idx_blog_post_owner_id', columns: ['owner_id'])]

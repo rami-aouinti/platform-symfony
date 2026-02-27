@@ -14,7 +14,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
 /**
- * @package App\Tool
+ * API controller for TimeZoneController endpoints.
+ *
+ * @package App\Tool\Transport\Controller\Api\V1\Localization
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

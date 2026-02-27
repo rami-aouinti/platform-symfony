@@ -25,6 +25,8 @@ use App\Task\Domain\Repository\Interfaces\TaskRequestRepositoryInterface as Repo
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
+ * @package App\Task\Application\Resource
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 class TaskRequestResource extends RestResource implements TaskRequestResourceInterface
 {

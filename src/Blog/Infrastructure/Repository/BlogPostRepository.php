@@ -13,6 +13,8 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @method Entity|null find(string $id, LockMode|int|null $lockMode = null, ?int $lockVersion = null, ?string $entityManagerName = null)
  * @method Entity[] findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?string $entityManagerName = null)
+ * @package App\Blog\Infrastructure\Repository
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 class BlogPostRepository extends BaseRepository implements BlogPostRepositoryInterface
 {

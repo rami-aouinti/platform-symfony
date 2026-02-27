@@ -23,6 +23,12 @@ use function count;
 use function sprintf;
 use function str_contains;
 
+/**
+ * StatisticService.
+ *
+ * @package App\Statistic\Application\Service
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class StatisticService
 {
     private const DATE_FIELDS = [

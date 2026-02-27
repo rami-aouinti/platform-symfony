@@ -15,7 +15,7 @@ use App\User\Domain\Entity\User;
 use function sprintf;
 
 /**
- * @package App\Notification
+ * @package App\Notification\Application\Service
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

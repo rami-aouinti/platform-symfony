@@ -7,6 +7,12 @@ namespace App\Task\Application\UseCase;
 use App\Task\Application\UseCase\Support\CurrentTaskUserProvider;
 use App\Task\Domain\Entity\Task;
 
+/**
+ * PrepareTaskForCreate.
+ *
+ * @package App\Task\Application\UseCase
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class PrepareTaskForCreate
 {
     public function __construct(

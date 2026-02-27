@@ -24,7 +24,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Throwable;
 
 /**
- * @package App\User
+ * API controller for AttachUserGroupController endpoints.
+ *
+ * @package App\User\Transport\Controller\Api\V1\User
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

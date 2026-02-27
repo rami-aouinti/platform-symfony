@@ -27,6 +27,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Role\Domain\Entity
  */
 
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

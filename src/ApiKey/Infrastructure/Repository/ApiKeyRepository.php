@@ -11,7 +11,7 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Infrastructure\Repository
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

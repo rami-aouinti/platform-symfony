@@ -12,6 +12,12 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Throwable;
 
+/**
+ * RequestMapper.
+ *
+ * @package App\Task\Transport\AutoMapper\TaskRequest
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [

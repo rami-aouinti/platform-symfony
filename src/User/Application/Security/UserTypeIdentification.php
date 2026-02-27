@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
 /**
- * @package App\User
+ * @package App\User\Application\Security
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserTypeIdentification

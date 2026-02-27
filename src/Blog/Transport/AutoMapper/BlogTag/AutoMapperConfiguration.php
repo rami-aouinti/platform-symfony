@@ -9,6 +9,12 @@ use App\Blog\Application\DTO\BlogTag\BlogTagPatch;
 use App\Blog\Application\DTO\BlogTag\BlogTagUpdate;
 use App\General\Transport\AutoMapper\RestAutoMapperConfiguration;
 
+/**
+ * AutoMapperConfiguration.
+ *
+ * @package App\Blog\Transport\AutoMapper\BlogTag
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration
 {
     protected static array $requestMapperClasses = [

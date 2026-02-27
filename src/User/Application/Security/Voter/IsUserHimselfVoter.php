@@ -18,7 +18,7 @@ use function is_array;
 use function is_string;
 
 /**
- * @package App\User
+ * @package App\User\Application\Security\Voter
  *
  * @template TAttribute of string
  * @template TSubject of mixed

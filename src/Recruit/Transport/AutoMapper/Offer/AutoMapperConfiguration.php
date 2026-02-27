@@ -10,7 +10,7 @@ use App\Recruit\Application\DTO\Offer\OfferPatch;
 use App\Recruit\Application\DTO\Offer\OfferUpdate;
 
 /**
- * @package App\Offer
+ * @package App\Recruit\Transport\AutoMapper\Offer
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

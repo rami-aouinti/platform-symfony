@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * @package App\General
+ * @package App\General\Domain\Entity\Traits
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait Timestampable

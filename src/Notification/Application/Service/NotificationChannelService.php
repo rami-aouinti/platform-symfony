@@ -10,8 +10,7 @@ use App\Notification\Application\Service\Channel\Interfaces\SmsNotificationInter
 use App\Notification\Application\Service\Interfaces\NotificationChannelServiceInterface;
 
 /**
- * @package
- * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Notification\Application\Service* @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 readonly class NotificationChannelService implements NotificationChannelServiceInterface
 {

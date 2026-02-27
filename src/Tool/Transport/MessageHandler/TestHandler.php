@@ -13,7 +13,7 @@ use Throwable;
  * If you need handling multiple - follow https://symfony.com/doc/current/messenger.html#handling-multiple-messages
  * TODO: This is handler example, you can delete it.
  *
- * @package App\Tool
+ * @package App\Tool\Transport\MessageHandler
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsMessageHandler]

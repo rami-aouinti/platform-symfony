@@ -14,7 +14,7 @@ use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
- * @package App\User
+ * @package App\User\Domain\Entity
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

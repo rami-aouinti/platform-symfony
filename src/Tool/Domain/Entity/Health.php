@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Throwable;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Domain\Entity
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[ORM\Entity]

@@ -14,7 +14,7 @@ use function method_exists;
 use function sprintf;
 
 /**
- * @package App\Chat
+ * @package App\Chat\Application\Service\Realtime
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

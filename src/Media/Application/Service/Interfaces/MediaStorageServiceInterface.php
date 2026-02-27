@@ -8,7 +8,7 @@ use App\Media\Application\Service\Model\StoredMedia;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * @package App\Media
+ * @package App\Media\Application\Service\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

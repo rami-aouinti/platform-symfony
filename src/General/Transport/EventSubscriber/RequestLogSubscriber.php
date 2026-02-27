@@ -21,7 +21,7 @@ use function str_contains;
 use function substr;
 
 /**
- * @package App\General
+ * @package App\General\Transport\EventSubscriber
  *
  * @property array<int, string> $ignoredRoutes
  * @author  Rami Aouinti <rami.aouinti@gmail.com>

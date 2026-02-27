@@ -17,6 +17,12 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * Sprint.
+ *
+ * @package App\Task\Domain\Entity
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'sprint')]
 #[ORM\Index(name: 'idx_sprint_start_date', columns: ['start_date'])]

@@ -7,6 +7,12 @@ namespace App\General\Domain\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * Address.
+ *
+ * @package App\General\Domain\Entity
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[ORM\Embeddable]
 class Address
 {

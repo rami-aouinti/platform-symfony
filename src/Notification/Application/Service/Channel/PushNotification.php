@@ -13,8 +13,7 @@ use function method_exists;
 use function sprintf;
 
 /**
- * @package
- * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Notification\Application\Service\Channel* @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 readonly class PushNotification implements PushNotificationInterface
 {

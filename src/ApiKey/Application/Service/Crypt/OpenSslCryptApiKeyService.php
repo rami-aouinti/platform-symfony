@@ -11,7 +11,7 @@ use App\Tool\Domain\Service\Crypt\Interfaces\OpenSslCryptServiceInterface;
 use function strlen;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Application\Service\Crypt
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class OpenSslCryptApiKeyService implements OpenSslCryptApiKeyServiceInterface

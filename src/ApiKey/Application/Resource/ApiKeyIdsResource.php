@@ -11,7 +11,7 @@ use App\General\Application\Rest\RestSmallResource;
 use App\General\Application\Rest\Traits\Methods\ResourceIdsMethod;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Application\Resource
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

@@ -15,6 +15,12 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * BlogTag.
+ *
+ * @package App\Blog\Domain\Entity
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'blog_tag')]
 #[ORM\UniqueConstraint(name: 'uq_blog_tag_slug', columns: ['slug'])]

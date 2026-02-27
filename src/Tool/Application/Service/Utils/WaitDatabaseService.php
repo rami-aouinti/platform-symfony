@@ -8,7 +8,7 @@ use App\Tool\Application\Service\Utils\Interfaces\WaitDatabaseServiceInterface;
 use App\Tool\Domain\Service\Utils\Interfaces\CheckDatabaseConnectionServiceInterface;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Service\Utils
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class WaitDatabaseService implements WaitDatabaseServiceInterface

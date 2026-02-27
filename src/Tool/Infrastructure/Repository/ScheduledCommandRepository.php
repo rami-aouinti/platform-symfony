@@ -11,7 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Dukecity\CommandSchedulerBundle\Entity\ScheduledCommand as Entity;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Infrastructure\Repository
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

@@ -9,6 +9,12 @@ use App\Task\Application\DTO\Task\TaskCreate;
 use App\Task\Application\DTO\Task\TaskPatch;
 use App\Task\Application\DTO\Task\TaskUpdate;
 
+/**
+ * AutoMapperConfiguration.
+ *
+ * @package App\Task\Transport\AutoMapper\Task
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration
 {
     protected static array $requestMapperClasses = [

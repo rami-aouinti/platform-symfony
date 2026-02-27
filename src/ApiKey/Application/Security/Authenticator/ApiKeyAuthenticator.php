@@ -21,7 +21,7 @@ use Throwable;
 use function preg_match;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Application\Security\Authenticator
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyAuthenticator extends AbstractAuthenticator

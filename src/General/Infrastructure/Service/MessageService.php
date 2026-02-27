@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * @package App\General
+ * @package App\General\Infrastructure\Service
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class MessageService implements MessageServiceInterface

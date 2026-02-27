@@ -18,6 +18,7 @@ use Symfony\Component\Console\Exception\LogicException;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\User\Transport\Command\User
  */
 
 class ManagementCommand extends Command

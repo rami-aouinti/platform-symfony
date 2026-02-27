@@ -9,7 +9,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Dukecity\CommandSchedulerBundle\Entity\ScheduledCommand as Entity;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Domain\Repository\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ScheduledCommandRepositoryInterface

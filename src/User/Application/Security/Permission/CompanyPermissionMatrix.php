@@ -14,7 +14,7 @@ use Override;
 use function in_array;
 
 /**
- * @package App\User
+ * @package App\User\Application\Security\Permission
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

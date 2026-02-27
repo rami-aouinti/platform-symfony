@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraint;
  * @Annotation
  * @Target({"CLASS"})
  *
- * @package App\User
+ * @package App\User\Application\Validator\Constraints
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]

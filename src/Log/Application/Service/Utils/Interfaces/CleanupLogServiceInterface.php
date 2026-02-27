@@ -7,7 +7,7 @@ namespace App\Log\Application\Service\Utils\Interfaces;
 use Throwable;
 
 /**
- * @package App\Log
+ * @package App\Log\Application\Service\Utils\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface CleanupLogServiceInterface

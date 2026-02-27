@@ -9,6 +9,12 @@ use App\Task\Application\DTO\Sprint\SprintCreate;
 use App\Task\Application\DTO\Sprint\SprintPatch;
 use App\Task\Application\DTO\Sprint\SprintUpdate;
 
+/**
+ * AutoMapperConfiguration.
+ *
+ * @package App\Task\Transport\AutoMapper\Sprint
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration
 {
     protected static array $requestMapperClasses = [

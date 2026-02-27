@@ -9,7 +9,7 @@ use App\General\Domain\Message\Interfaces\MessageHighInterface;
 /**
  * TODO: This is message example, you can delete it.
  *
- * @package App\Tool
+ * @package App\Tool\Domain\Message
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class TestMessage implements MessageHighInterface

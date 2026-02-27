@@ -10,7 +10,7 @@ use App\General\Domain\Enum\Traits\GetValues;
 /**
  * Language
  *
- * @package App\General
+ * @package App\General\Domain\Enum
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 enum Language: string implements DatabaseEnumInterface

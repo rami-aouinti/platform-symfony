@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use function array_unique;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Application\Security
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyUser implements ApiKeyUserInterface, UserInterface

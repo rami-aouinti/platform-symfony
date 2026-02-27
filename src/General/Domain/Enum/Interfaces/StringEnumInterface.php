@@ -9,7 +9,7 @@ use BackedEnum;
 /**
  * Enum StringEnumInterface
  *
- * @package App\General
+ * @package App\General\Domain\Enum\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface StringEnumInterface extends BackedEnum

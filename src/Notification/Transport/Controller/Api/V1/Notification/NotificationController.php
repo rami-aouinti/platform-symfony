@@ -21,8 +21,9 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * @package
- * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * API controller for NotificationController endpoints.
+ *
+ * @package App\Notification\Transport\Controller\Api\V1\Notification* @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
 #[Route(path: '/v1/notifications')]

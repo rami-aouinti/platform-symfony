@@ -6,6 +6,12 @@ namespace App\Task\Domain\Repository\Interfaces;
 
 use App\Task\Domain\Entity\Sprint;
 
+/**
+ * SprintRepositoryInterface.
+ *
+ * @package App\Task\Domain\Repository\Interfaces
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 interface SprintRepositoryInterface
 {
     /**

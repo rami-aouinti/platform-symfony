@@ -10,6 +10,12 @@ use App\Task\Domain\Entity\Project;
 use DateTimeImmutable;
 use Throwable;
 
+/**
+ * RequestMapper.
+ *
+ * @package App\Task\Transport\AutoMapper\Task
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [

@@ -9,7 +9,7 @@ use App\User\Domain\Enum\AddressType;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @package App\User
+ * @package App\User\Application\DTO\User
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

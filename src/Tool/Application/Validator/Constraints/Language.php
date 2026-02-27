@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraint;
  * @Annotation
  * @Target({"PROPERTY"})
  *
- * @package App\Tool
+ * @package App\Tool\Application\Validator\Constraints
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::IS_REPEATABLE)]

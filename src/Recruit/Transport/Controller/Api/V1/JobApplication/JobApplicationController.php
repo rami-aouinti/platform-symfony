@@ -34,9 +34,11 @@ use function array_keys;
 use function implode;
 
 /**
+ * API controller for JobApplicationController endpoints.
+ *
  * @method JobApplicationResource getResource()
  * @method ResponseHandler getResponseHandler()
- * @package App\JobApplication
+ * @package App\Recruit\Transport\Controller\Api\V1\JobApplication
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

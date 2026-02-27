@@ -9,6 +9,12 @@ use App\Blog\Application\DTO\BlogComment\BlogCommentPatch;
 use App\Blog\Application\DTO\BlogComment\BlogCommentUpdate;
 use App\General\Transport\AutoMapper\RestAutoMapperConfiguration;
 
+/**
+ * AutoMapperConfiguration.
+ *
+ * @package App\Blog\Transport\AutoMapper\BlogComment
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration
 {
     protected static array $requestMapperClasses = [
