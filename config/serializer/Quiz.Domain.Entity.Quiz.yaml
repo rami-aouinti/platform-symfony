@@ -1,6 +1,26 @@
 App\Quiz\Domain\Entity\Quiz:
     attributes:
+        id:
+            groups: [ 'Quiz.id', 'Quiz.show', 'Quiz.edit' ]
+        owner:
+            groups: [ 'Quiz.owner', 'Quiz.show', 'Quiz.edit' ]
+        title:
+            groups: [ 'Quiz.title', 'Quiz.create', 'Quiz.show', 'Quiz.edit' ]
+        description:
+            groups: [ 'Quiz.description', 'Quiz.create', 'Quiz.show', 'Quiz.edit' ]
+        category:
+            groups: [ 'Quiz.category', 'Quiz.create', 'Quiz.show', 'Quiz.edit' ]
+        difficulty:
+            groups: [ 'Quiz.difficulty', 'Quiz.create', 'Quiz.show', 'Quiz.edit' ]
+        timeLimit:
+            groups: [ 'Quiz.timeLimit', 'Quiz.create', 'Quiz.show', 'Quiz.edit' ]
+        isPublished:
+            groups: [ 'Quiz.isPublished', 'Quiz.create', 'Quiz.show', 'Quiz.edit' ]
+        startsAt:
+            groups: [ 'Quiz.startsAt', 'Quiz.create', 'Quiz.show', 'Quiz.edit' ]
+        endsAt:
+            groups: [ 'Quiz.endsAt', 'Quiz.create', 'Quiz.show', 'Quiz.edit' ]
         createdAt:
-            groups: [ 'Quiz.createdAt' ]
+            groups: [ 'Quiz.createdAt', 'Quiz.show' ]
         updatedAt:
-            groups: [ 'Quiz.updatedAt' ]
+            groups: [ 'Quiz.updatedAt', 'Quiz.show' ]
