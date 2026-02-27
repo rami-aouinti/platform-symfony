@@ -72,6 +72,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         'User',
         'User.id',
         'Company.owner',
+        'CompanyMembership.user',
 
         'LogLogin.user',
         'LogLoginFailure.user',
@@ -94,6 +95,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         'User',
         'User.username',
         'Company.owner',
+        'CompanyMembership.user',
         'JobOffer',
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
@@ -116,6 +118,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         'User',
         'User.firstName',
         'Company.owner',
+        'CompanyMembership.user',
         'JobOffer',
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
@@ -138,6 +141,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         'User',
         'User.lastName',
         'Company.owner',
+        'CompanyMembership.user',
 
         self::SET_USER_PROFILE,
         self::SET_USER_BASIC,
@@ -476,6 +480,18 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         }
 
         return $this;
+    }
+
+
+    #[Groups([
+        'CompanyMembership.user',
+    ])]
+    public function getPhoto(): string
+    {
+        return $this->getUserProfile()?->getPhoto() ?? sprintf(
+            'https://ui-avatars.com/api/?name=%s&format=png',
+            rawurlencode($this->username),
+        );
     }
 
     public function getOrCreateUserProfile(): UserProfile
