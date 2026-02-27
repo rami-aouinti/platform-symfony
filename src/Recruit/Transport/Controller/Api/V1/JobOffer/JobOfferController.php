@@ -34,8 +34,6 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Throwable;
 
-use function array_filter;
-use function array_map;
 use function array_values;
 use function explode;
 use function in_array;
@@ -227,7 +225,7 @@ class JobOfferController extends Controller
 
         $this->processCriteria($criteria, $request, __METHOD__);
 
-        [$criteria, $postFilters] = $this->normalizeBusinessQueryParams($request, $criteria);
+        [$criteria] = $this->normalizeBusinessQueryParams($request, $criteria);
         $this->applyCandidateSearchDefaults($criteria, $orderBy, $limit, $offset);
 
         $data = $this->readEndpointCache->remember(
@@ -241,10 +239,7 @@ class JobOfferController extends Controller
                 'search' => $search,
                 'tenant' => $entityManagerName,
             ],
-            fn (): array => $this->applyPostFilters(
-                $this->getResource()->find($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
-                $postFilters,
-            ),
+            fn (): array => $this->getResource()->find($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
         );
 
         return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
@@ -449,7 +444,7 @@ class JobOfferController extends Controller
             $criteria = RequestHandler::getCriteria($request);
             $entityManagerName = RequestHandler::getTenant($request);
             $this->processCriteria($criteria, $request, __METHOD__);
-            [$criteria, $postFilters] = $this->normalizeBusinessQueryParams($request, $criteria);
+            [$criteria] = $this->normalizeBusinessQueryParams($request, $criteria);
 
             $data = $this->readEndpointCache->remember(
                 self::CACHE_SCOPE,
@@ -462,10 +457,7 @@ class JobOfferController extends Controller
                     'search' => $search,
                     'tenant' => $entityManagerName,
                 ],
-                fn (): array => $this->applyPostFilters(
-                    $resolver($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
-                    $postFilters,
-                ),
+                fn (): array => $resolver($criteria, $orderBy, $limit, $offset, $search, $entityManagerName),
             );
 
             return $this->getResponseHandler()->createResponse(
@@ -493,16 +485,14 @@ class JobOfferController extends Controller
             ...$this->getQueryList($request, 'languages'),
         ]);
 
-        $postFilters = [
-            'skills' => $this->normalizeUuidValues($this->getQueryList($request, 'skills')),
-            'languages' => $languageFilters,
-        ];
 
         $mappedInFilters = [
             'remoteMode' => 'remoteMode',
             'remotePolicy' => 'remoteMode',
             'employmentType' => 'employmentType',
             'workTime' => 'workTime',
+            'skills' => 'skills',
+            'languages' => 'languages',
             'city' => 'city',
             'region' => 'region',
             'jobCategory' => 'jobCategory',
@@ -544,6 +534,16 @@ class JobOfferController extends Controller
             ];
         }
 
+        if ($languageFilters !== []) {
+            $existingLanguages = isset($criteria['languages']) && is_array($criteria['languages']) ? $criteria['languages'] : [];
+            $criteria['languages'] = array_values(array_unique([...$existingLanguages, ...$languageFilters]));
+        }
+
+        $postFilters = [
+            'skills' => isset($criteria['skills']) && is_array($criteria['skills']) ? $criteria['skills'] : [],
+            'languages' => isset($criteria['languages']) && is_array($criteria['languages']) ? $criteria['languages'] : [],
+        ];
+
         return [$criteria, $postFilters];
     }
 
@@ -561,34 +561,6 @@ class JobOfferController extends Controller
         $offset ??= self::DEFAULT_OFFSET;
     }
 
-    /**
-     * @param array<int, object> $offers
-     * @param array{skills: array<int, string>, languages: array<int, string>} $postFilters
-     *
-     * @return array<int, object>
-     */
-    private function applyPostFilters(array $offers, array $postFilters): array
-    {
-        return array_values(array_filter($offers, function (object $offer) use ($postFilters): bool {
-            if ($postFilters['skills'] !== []) {
-                $skillIds = array_map(static fn ($skill): string => $skill->getId(), $offer->getSkills()->toArray());
-
-                if (array_values(array_intersect($postFilters['skills'], $skillIds)) === []) {
-                    return false;
-                }
-            }
-
-            if ($postFilters['languages'] !== []) {
-                $languageIds = array_map(static fn ($language): string => $language->getId(), $offer->getLanguages()->toArray());
-
-                if (array_values(array_intersect($postFilters['languages'], $languageIds)) === []) {
-                    return false;
-                }
-            }
-
-            return true;
-        }));
-    }
 
     /**
      * @param array<int, string> $values

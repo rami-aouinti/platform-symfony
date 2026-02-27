@@ -180,9 +180,17 @@ class JobOfferRepository extends BaseRepository implements JobOfferRepositoryInt
         ?array $search,
         ?string $entityManagerName,
     ): QueryBuilder {
+        $criteria = $criteria ?? [];
         $queryBuilder = $this->createQueryBuilder(entityManagerName: $entityManagerName);
 
-        RepositoryHelper::processCriteria($queryBuilder, $criteria ?? []);
+        $skillFilters = isset($criteria['skills']) && is_array($criteria['skills']) ? $criteria['skills'] : [];
+        $languageFilters = isset($criteria['languages']) && is_array($criteria['languages']) ? $criteria['languages'] : [];
+
+        unset($criteria['skills'], $criteria['languages']);
+
+        $this->applySkillAndLanguageFilters($queryBuilder, $skillFilters, $languageFilters, 'searchFilter');
+
+        RepositoryHelper::processCriteria($queryBuilder, $criteria);
         RepositoryHelper::processSearchTerms($queryBuilder, $this->getSearchColumns(), $search ?? []);
 
         $queryBuilder->distinct();
@@ -301,19 +309,12 @@ class JobOfferRepository extends BaseRepository implements JobOfferRepositoryInt
         RepositoryHelper::processCriteria($queryBuilder, $criteria ?? []);
         RepositoryHelper::processSearchTerms($queryBuilder, $this->getSearchColumns(), $search ?? []);
 
-        if ($postFilters['skills'] !== []) {
-            $queryBuilder
-                ->innerJoin('entity.skills', 'filterSkill')
-                ->andWhere('filterSkill.id IN (:facetFilterSkills)')
-                ->setParameter('facetFilterSkills', $postFilters['skills']);
-        }
-
-        if ($postFilters['languages'] !== []) {
-            $queryBuilder
-                ->innerJoin('entity.languages', 'filterLanguage')
-                ->andWhere('filterLanguage.id IN (:facetFilterLanguages)')
-                ->setParameter('facetFilterLanguages', $postFilters['languages']);
-        }
+        $this->applySkillAndLanguageFilters(
+            $queryBuilder,
+            $postFilters['skills'],
+            $postFilters['languages'],
+            'facetFilter',
+        );
 
         $queryBuilder
             ->setFirstResult(null)
@@ -321,6 +322,31 @@ class JobOfferRepository extends BaseRepository implements JobOfferRepositoryInt
             ->distinct();
 
         return $queryBuilder;
+    }
+
+    /**
+     * @param array<int, string> $skills
+     * @param array<int, string> $languages
+     */
+    private function applySkillAndLanguageFilters(
+        QueryBuilder $queryBuilder,
+        array $skills,
+        array $languages,
+        string $parameterPrefix,
+    ): void {
+        if ($skills !== []) {
+            $queryBuilder
+                ->innerJoin('entity.skills', $parameterPrefix . 'Skill')
+                ->andWhere($parameterPrefix . 'Skill.id IN (:' . $parameterPrefix . 'Skills)')
+                ->setParameter($parameterPrefix . 'Skills', $skills);
+        }
+
+        if ($languages !== []) {
+            $queryBuilder
+                ->innerJoin('entity.languages', $parameterPrefix . 'Language')
+                ->andWhere($parameterPrefix . 'Language.id IN (:' . $parameterPrefix . 'Languages)')
+                ->setParameter($parameterPrefix . 'Languages', $languages);
+        }
     }
 
     /**
