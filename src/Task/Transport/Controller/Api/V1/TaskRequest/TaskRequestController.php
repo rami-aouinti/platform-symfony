@@ -21,6 +21,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use ValueError;
 
 use function array_unique;
@@ -71,6 +72,10 @@ class TaskRequestController extends Controller
             'Task',
             'Sprint',
             'User',
+        ]));
+        $context[AbstractNormalizer::IGNORED_ATTRIBUTES] = array_values(array_unique([
+            ...($context[AbstractNormalizer::IGNORED_ATTRIBUTES] ?? []),
+            'sprint',
         ]));
 
         return $this->getResponseHandler()->createResponse(
