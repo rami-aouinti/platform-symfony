@@ -13,11 +13,16 @@ use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+use function array_intersect;
+use function array_keys;
+use function implode;
 
 /**
  * @method JobApplicationResource getResource()
@@ -79,6 +84,8 @@ class OfferApplicationController extends Controller
     )]
     public function createForOfferAction(Request $request, string $id): Response
     {
+        $this->assertNoCandidateManagedFields($request);
+
         $payload = OfferApplicationPayload::fromArray($request->getContent() === '' ? [] : $request->toArray());
 
         return $this->getResponseHandler()->createResponse(
@@ -87,5 +94,20 @@ class OfferApplicationController extends Controller
             $this->getResource(),
             Response::HTTP_CREATED,
         );
+    }
+
+
+    /**
+     * @throws BadRequestHttpException
+     */
+    private function assertNoCandidateManagedFields(Request $request): void
+    {
+        $forbiddenFields = ['candidate', 'status', 'decidedBy', 'decidedAt'];
+        $submittedFields = array_keys($request->request->all());
+        $invalidFields = array_intersect($forbiddenFields, $submittedFields);
+
+        if ($invalidFields !== []) {
+            throw new BadRequestHttpException('Fields not allowed in candidate flow: ' . implode(', ', $invalidFields) . '.');
+        }
     }
 }
