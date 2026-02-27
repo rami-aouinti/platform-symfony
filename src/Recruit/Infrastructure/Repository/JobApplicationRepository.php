@@ -6,6 +6,7 @@ namespace App\Recruit\Infrastructure\Repository;
 
 use App\Company\Domain\Entity\CompanyMembership;
 use App\General\Infrastructure\Repository\BaseRepository;
+use App\General\Infrastructure\Rest\RepositoryHelper;
 use App\Recruit\Domain\Entity\JobApplication as Entity;
 use App\Recruit\Domain\Repository\Interfaces\JobApplicationRepositoryInterface;
 use App\Role\Domain\Enum\Role;
@@ -65,5 +66,55 @@ class JobApplicationRepository extends BaseRepository implements JobApplicationR
             ->orderBy('application.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
+    }
+
+    public function findAllowedForUser(
+        User $user,
+        ?array $criteria = null,
+        ?array $orderBy = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?array $search = null,
+        ?string $entityManagerName = null,
+    ): array {
+        $criteria ??= [];
+        $orderBy ??= [];
+        $search ??= [];
+
+        $queryBuilder = $this->createQueryBuilder('entity', entityManagerName: $entityManagerName)
+            ->addSelect('jobOffer', 'company', 'candidate', 'decidedBy')
+            ->join('entity.jobOffer', 'jobOffer')
+            ->leftJoin('jobOffer.company', 'company')
+            ->leftJoin('entity.candidate', 'candidate')
+            ->leftJoin('entity.decidedBy', 'decidedBy');
+
+        if (!in_array(Role::ROOT->value, $user->getRoles(), true) && !in_array(Role::ADMIN->value, $user->getRoles(), true)) {
+            $queryBuilder
+                ->leftJoin(
+                    CompanyMembership::class,
+                    'membership',
+                    Join::WITH,
+                    'membership.company = company AND membership.user = :user AND membership.role IN (:decisionRoles)',
+                )
+                ->andWhere('(candidate = :user OR jobOffer.createdBy = :user OR company.owner = :user OR membership.id IS NOT NULL)')
+                ->setParameter('decisionRoles', [CompanyMembership::ROLE_OWNER, CompanyMembership::ROLE_CRM_MANAGER]);
+        }
+
+        RepositoryHelper::processCriteria($queryBuilder, $criteria);
+        RepositoryHelper::processSearchTerms($queryBuilder, $this->getSearchColumns(), $search);
+        RepositoryHelper::processOrderBy($queryBuilder, $orderBy);
+
+        if ($orderBy === []) {
+            $queryBuilder->addOrderBy('entity.createdAt', 'DESC');
+        }
+
+        $queryBuilder
+            ->setMaxResults($limit)
+            ->setFirstResult($offset ?? 0)
+            ->setParameter('user', $user);
+
+        RepositoryHelper::resetParameterCount();
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

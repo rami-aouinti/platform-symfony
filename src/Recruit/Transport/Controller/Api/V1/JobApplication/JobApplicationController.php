@@ -166,19 +166,32 @@ class JobApplicationController extends Controller
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     public function findAction(Request $request): Response
     {
+        $orderBy = RequestHandler::getOrderBy($request);
+        $limit = RequestHandler::getLimit($request);
+        $offset = RequestHandler::getOffset($request);
+        $search = RequestHandler::getSearchTerms($request);
+        $criteria = RequestHandler::getCriteria($request);
         $entityManagerName = RequestHandler::getTenant($request);
+
         $data = $this->readEndpointCache->remember(
             self::CACHE_SCOPE,
             $request,
             [
-                'criteria' => [],
-                'orderBy' => [],
-                'limit' => null,
-                'offset' => null,
-                'search' => [],
+                'criteria' => $criteria,
+                'orderBy' => $orderBy,
+                'limit' => $limit,
+                'offset' => $offset,
+                'search' => $search,
                 'tenant' => $entityManagerName,
             ],
-            fn (): array => $this->getResource()->findAllowedForCurrentUser(),
+            fn (): array => $this->getResource()->findAllowedForCurrentUser(
+                $criteria,
+                $orderBy,
+                $limit,
+                $offset,
+                $search,
+                $entityManagerName,
+            ),
         );
 
         return $this->getResponseHandler()->createResponse(

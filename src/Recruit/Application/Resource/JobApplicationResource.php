@@ -28,8 +28,6 @@ use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-use function array_filter;
-use function array_values;
 use function in_array;
 
 /**
@@ -183,14 +181,23 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
         return $application;
     }
 
-    public function findAllowedForCurrentUser(): array
-    {
-        return array_values(array_filter(
-            $this->find(orderBy: [
-                'createdAt' => 'DESC',
-            ]),
-            fn (Entity $application): bool => $this->authorizationChecker->isGranted(Permission::JOB_APPLICATION_VIEW->value, $application),
-        ));
+    public function findAllowedForCurrentUser(
+        ?array $criteria = null,
+        ?array $orderBy = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?array $search = null,
+        ?string $entityManagerName = null,
+    ): array {
+        return $this->getRepository()->findAllowedForUser(
+            $this->getCurrentUser(),
+            $criteria,
+            $orderBy,
+            $limit,
+            $offset,
+            $search,
+            $entityManagerName,
+        );
     }
 
     public function findForMyOffers(): array

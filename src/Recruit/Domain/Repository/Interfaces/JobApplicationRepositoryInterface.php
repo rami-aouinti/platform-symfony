@@ -18,4 +18,17 @@ interface JobApplicationRepositoryInterface
      * @return JobApplication[]
      */
     public function findForMyOffers(User $user): array;
+
+    /**
+     * @return JobApplication[]
+     */
+    public function findAllowedForUser(
+        User $user,
+        ?array $criteria = null,
+        ?array $orderBy = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?array $search = null,
+        ?string $entityManagerName = null,
+    ): array;
 }

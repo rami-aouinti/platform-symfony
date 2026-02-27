@@ -254,6 +254,56 @@ class JobApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_NOT_FOUND, $outsiderClient->getResponse()->getStatusCode());
     }
 
+
+    /**
+     * @throws Throwable
+     */
+    public function testFindListSupportsCriteriaSearchOrderAndPagination(): void
+    {
+        $rootClient = $this->getTestClient('john-root', 'password-root');
+        $rootClient->request('GET', self::BASE_URL . '?where=%7B%22status%22%3A%22pending%22%7D');
+        self::assertSame(Response::HTTP_OK, $rootClient->getResponse()->getStatusCode());
+
+        $pendingList = JSON::decode((string)$rootClient->getResponse()->getContent(), true);
+        self::assertCount(1, $pendingList);
+        self::assertSame('pending', $pendingList[0]['status']);
+
+        $rootClient->request('GET', self::BASE_URL . '?search=withdrawn');
+        self::assertSame(Response::HTTP_OK, $rootClient->getResponse()->getStatusCode());
+
+        $searchList = JSON::decode((string)$rootClient->getResponse()->getContent(), true);
+        self::assertNotEmpty($searchList);
+        self::assertContains('withdrawn', array_map(static fn (array $application): string => (string)$application['status'], $searchList));
+
+        $rootClient->request('GET', self::BASE_URL . '?order%5Bid%5D=ASC&limit=2&offset=1');
+        self::assertSame(Response::HTTP_OK, $rootClient->getResponse()->getStatusCode());
+
+        $paginatedList = JSON::decode((string)$rootClient->getResponse()->getContent(), true);
+        self::assertCount(2, $paginatedList);
+
+        $ids = array_map(static fn (array $application): string => (string)$application['id'], $paginatedList);
+        $sortedIds = $ids;
+        sort($sortedIds);
+        self::assertSame($sortedIds, $ids);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testFindListRespectsAccessControlForCrmManager(): void
+    {
+        $managerClient = $this->getTestClient('alice-user', 'password-user');
+        $managerClient->request('GET', self::BASE_URL);
+        self::assertSame(Response::HTTP_OK, $managerClient->getResponse()->getStatusCode());
+
+        $managerList = JSON::decode((string)$managerClient->getResponse()->getContent(), true);
+        self::assertNotEmpty($managerList);
+
+        $applicationIds = array_map(static fn (array $application): string => (string)$application['id'], $managerList);
+        self::assertContains(self::APPLICATION_ID, $applicationIds);
+        self::assertNotContains(self::UNAUTHORIZED_APPLICATION_ID, $applicationIds);
+    }
+
     /**
      * @throws Throwable
      */
