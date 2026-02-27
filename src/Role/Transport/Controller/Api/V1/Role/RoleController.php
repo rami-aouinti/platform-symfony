@@ -50,13 +50,8 @@ class RoleController extends Controller
     {
         return [
             'displayable' => [
-                'id',
-                'description',
-                [
-                    'name' => 'userGroups',
-                    'type' => 'object',
-                    'endpoint' => '/api/v1/user-groups',
-                ],
+                'name',
+                'description'
             ],
             'editable' => [
                 'description',
