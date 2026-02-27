@@ -115,3 +115,13 @@ calendar-controllers:
     prefix: /api
     defaults:
         _format: json
+
+
+statistic-controllers:
+    resource:
+        path: ../src/Statistic/Transport/Controller/Api/
+        namespace: App\Statistic\Transport\Controller\Api
+    type: attribute
+    prefix: /api
+    defaults:
+        _format: json
