@@ -19,10 +19,6 @@ final class FilterTasksForCurrentUser
     {
         $currentUser = $this->currentTaskUserProvider->getCurrentUser();
 
-        if ($this->taskAccessService->isAdminLike($currentUser)) {
-            return;
-        }
-
-        $criteria['owner'] = $currentUser;
+        $this->taskAccessService->scopeTasksQuery($currentUser, $criteria);
     }
 }

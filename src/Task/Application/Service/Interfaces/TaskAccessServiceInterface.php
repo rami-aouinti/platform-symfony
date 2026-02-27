@@ -13,6 +13,10 @@ interface TaskAccessServiceInterface
 {
     public function isAdminLike(User $user): bool;
 
+    public function scopeTasksQuery(User $user, array &$criteria): void;
+
+    public function scopeTaskRequestsQuery(User $user, array &$criteria): void;
+
     public function canManageTask(User $user, Task $task): bool;
 
     public function canManageProject(User $user, Project $project): bool;
