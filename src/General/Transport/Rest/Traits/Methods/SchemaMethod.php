@@ -58,7 +58,13 @@ trait SchemaMethod
      */
     private function resolveSchemaDtoClasses(): array
     {
-        $dtoClasses = [$this->getDtoClass()];
+        $dtoClasses = [];
+
+        try {
+            $dtoClasses[] = $this->getDtoClass();
+        } catch (Throwable) {
+            // Some resources don't have a default DTO class (read-only/list/count split controllers).
+        }
 
         foreach ([Controller::METHOD_CREATE, Controller::METHOD_UPDATE, Controller::METHOD_PATCH] as $method) {
             try {
