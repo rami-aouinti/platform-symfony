@@ -43,6 +43,14 @@ abstract class RestRequestMapper implements MapperInterface
     }
 
     /**
+     * @return array<int, non-empty-string>
+     */
+    public static function getEditableProperties(): array
+    {
+        return static::properties();
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @psalm-param array<array-key, mixed>|object $source

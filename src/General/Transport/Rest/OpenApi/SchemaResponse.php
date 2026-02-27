@@ -10,8 +10,8 @@ use OpenApi\Attributes as OA;
     schema: 'RestResourceSchemaRelation',
     type: 'object',
     properties: [
-        new OA\Property(property: 'type', type: 'string', example: 'manyToOne'),
-        new OA\Property(property: 'targetEntity', type: 'string', example: 'App\\Task\\Domain\\Entity\\Project'),
+        new OA\Property(property: 'cardinality', type: 'string', example: 'manyToOne'),
+        new OA\Property(property: 'targetClass', type: 'string', example: 'App\\Task\\Domain\\Entity\\Project'),
     ],
 )]
 #[OA\Schema(
@@ -31,8 +31,8 @@ use OpenApi\Attributes as OA;
         'editable' => ['title', 'status', 'project'],
         'relations' => [
             'project' => [
-                'type' => 'manyToOne',
-                'targetEntity' => 'App\\Task\\Domain\\Entity\\Project',
+                'cardinality' => 'manyToOne',
+                'targetClass' => 'App\\Task\\Domain\\Entity\\Project',
             ],
         ],
     ],
