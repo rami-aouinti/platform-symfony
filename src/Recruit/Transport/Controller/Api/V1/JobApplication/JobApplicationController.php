@@ -11,8 +11,7 @@ use App\General\Transport\Rest\ResponseHandler;
 use App\General\Transport\Rest\Traits\Methods\CreateMethod;
 use App\General\Transport\Rest\Traits\Methods\PatchMethod;
 use App\General\Transport\Rest\Traits\Methods\UpdateMethod;
-use App\Recruit\Application\DTO\JobApplication\JobApplicationCreate;
-use App\Recruit\Application\DTO\JobApplication\JobApplicationPatch;
+use App\Recruit\Application\DTO\JobApplication\JobApplicationApply;
 use App\Recruit\Application\DTO\JobApplication\JobApplicationUpdate;
 use App\Recruit\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\Recruit\Application\Resource\JobApplicationResource;
@@ -27,7 +26,12 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Throwable;
+
+use function array_intersect;
+use function array_keys;
+use function implode;
 
 /**
  * @method JobApplicationResource getResource()
@@ -52,9 +56,9 @@ class JobApplicationController extends Controller
      * @var array<string, string>
      */
     protected static array $dtoClasses = [
-        Controller::METHOD_CREATE => JobApplicationCreate::class,
+        Controller::METHOD_CREATE => JobApplicationApply::class,
         Controller::METHOD_UPDATE => JobApplicationUpdate::class,
-        Controller::METHOD_PATCH => JobApplicationPatch::class,
+        Controller::METHOD_PATCH => JobApplicationApply::class,
     ];
 
     public function __construct(
@@ -70,14 +74,12 @@ class JobApplicationController extends Controller
     #[Route(path: '', methods: [Request::METHOD_POST])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\RequestBody(required: true, content: new JsonContent(
-        required: ['jobOffer', 'candidate', 'status'],
+        required: ['jobOffer'],
         properties: [
             new OA\Property(property: 'jobOffer', type: 'string', format: 'uuid', example: '0195f7ac-199f-7188-bc2c-fe59f1161b08'),
-            new OA\Property(property: 'candidate', type: 'string', format: 'uuid', example: '0195f798-7a12-7303-8db6-ece0cabf335d'),
             new OA\Property(property: 'coverLetter', type: 'string', nullable: true, example: 'I built high-scale Symfony APIs for 5 years.'),
             new OA\Property(property: 'cvUrl', type: 'string', format: 'uri', nullable: true, example: 'https://cdn.example.com/cv/jane-doe.pdf'),
             new OA\Property(property: 'attachments', type: 'array', nullable: true, items: new OA\Items(type: 'string', format: 'uri'), example: ['https://cdn.example.com/portfolio.pdf']),
-            new OA\Property(property: 'status', type: 'string', enum: ['pending', 'accepted', 'rejected', 'withdrawn'], example: 'pending'),
         ],
         type: 'object',
     ))]
@@ -86,10 +88,10 @@ class JobApplicationController extends Controller
             new OA\Property(property: 'id', type: 'string', format: 'uuid', example: '0195f8d4-5209-77a5-93ae-9f11dfce290f'),
             new OA\Property(property: 'jobOffer', type: 'string', format: 'uuid', example: '0195f7ac-199f-7188-bc2c-fe59f1161b08'),
             new OA\Property(property: 'candidate', type: 'string', format: 'uuid', example: '0195f798-7a12-7303-8db6-ece0cabf335d'),
+            new OA\Property(property: 'status', type: 'string', enum: ['pending', 'accepted', 'rejected', 'withdrawn'], example: 'pending'),
             new OA\Property(property: 'coverLetter', type: 'string', nullable: true, example: 'I built high-scale Symfony APIs for 5 years.'),
             new OA\Property(property: 'cvUrl', type: 'string', format: 'uri', nullable: true, example: 'https://cdn.example.com/cv/jane-doe.pdf'),
             new OA\Property(property: 'attachments', type: 'array', nullable: true, items: new OA\Items(type: 'string', format: 'uri')),
-            new OA\Property(property: 'status', type: 'string', enum: ['pending', 'accepted', 'rejected', 'withdrawn'], example: 'pending'),
             new OA\Property(property: 'decidedBy', type: 'string', format: 'uuid', nullable: true, example: '0195f7a1-8e09-7f40-93f0-c3bcf2b42744'),
             new OA\Property(property: 'decidedAt', type: 'string', format: 'date-time', nullable: true, example: '2026-02-25T12:45:00+00:00'),
         ],
@@ -97,6 +99,8 @@ class JobApplicationController extends Controller
     ))]
     public function createAction(Request $request, RestDtoInterface $restDto): Response
     {
+        $this->assertNoCandidateManagedFields($request);
+
         $response = $this->createMethod($request, $restDto);
         $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
 
@@ -111,14 +115,12 @@ class JobApplicationController extends Controller
     ], methods: [Request::METHOD_PUT])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\RequestBody(required: true, content: new JsonContent(
-        required: ['jobOffer', 'candidate', 'status'],
+        required: ['jobOffer'],
         properties: [
             new OA\Property(property: 'jobOffer', type: 'string', format: 'uuid', example: '0195f7ac-199f-7188-bc2c-fe59f1161b08'),
-            new OA\Property(property: 'candidate', type: 'string', format: 'uuid', example: '0195f798-7a12-7303-8db6-ece0cabf335d'),
             new OA\Property(property: 'coverLetter', type: 'string', nullable: true, example: 'I built high-scale Symfony APIs for 5 years.'),
             new OA\Property(property: 'cvUrl', type: 'string', format: 'uri', nullable: true, example: 'https://cdn.example.com/cv/jane-doe.pdf'),
             new OA\Property(property: 'attachments', type: 'array', nullable: true, items: new OA\Items(type: 'string', format: 'uri'), example: ['https://cdn.example.com/portfolio.pdf']),
-            new OA\Property(property: 'status', type: 'string', enum: ['pending', 'accepted', 'rejected', 'withdrawn'], example: 'pending'),
         ],
         type: 'object',
     ))]
@@ -139,20 +141,20 @@ class JobApplicationController extends Controller
     ], methods: [Request::METHOD_PATCH])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\RequestBody(required: true, content: new JsonContent(
-        required: ['jobOffer', 'candidate', 'status'],
+        required: ['jobOffer'],
         properties: [
             new OA\Property(property: 'jobOffer', type: 'string', format: 'uuid', example: '0195f7ac-199f-7188-bc2c-fe59f1161b08'),
-            new OA\Property(property: 'candidate', type: 'string', format: 'uuid', example: '0195f798-7a12-7303-8db6-ece0cabf335d'),
             new OA\Property(property: 'coverLetter', type: 'string', nullable: true, example: 'I built high-scale Symfony APIs for 5 years.'),
             new OA\Property(property: 'cvUrl', type: 'string', format: 'uri', nullable: true, example: 'https://cdn.example.com/cv/jane-doe.pdf'),
             new OA\Property(property: 'attachments', type: 'array', nullable: true, items: new OA\Items(type: 'string', format: 'uri'), example: ['https://cdn.example.com/portfolio.pdf']),
-            new OA\Property(property: 'status', type: 'string', enum: ['pending', 'accepted', 'rejected', 'withdrawn'], example: 'pending'),
         ],
         type: 'object',
     ))]
     #[OA\Response(response: 200, description: 'Job application patched', content: new JsonContent(type: 'object'))]
     public function patchAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
+        $this->assertNoCandidateManagedFields($request);
+
         $response = $this->patchMethod($request, $restDto, $id);
         $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
 
@@ -283,6 +285,20 @@ class JobApplicationController extends Controller
         $this->readEndpointCache->invalidate(self::CACHE_SCOPE);
 
         return $response;
+    }
+
+    /**
+     * @throws BadRequestHttpException
+     */
+    private function assertNoCandidateManagedFields(Request $request): void
+    {
+        $forbiddenFields = ['candidate', 'status', 'decidedBy', 'decidedAt'];
+        $submittedFields = array_keys($request->request->all());
+        $invalidFields = array_intersect($forbiddenFields, $submittedFields);
+
+        if ($invalidFields !== []) {
+            throw new BadRequestHttpException('Fields not allowed in candidate flow: ' . implode(', ', $invalidFields) . '.');
+        }
     }
 
     #[Route(path: '/{id}/accept', requirements: [

@@ -9,21 +9,17 @@ use App\Recruit\Application\Resource\JobOfferResource;
 use App\Recruit\Application\Resource\ResumeResource;
 use App\Recruit\Domain\Entity\JobOffer;
 use App\Recruit\Domain\Entity\Resume;
-use App\User\Application\Resource\UserResource;
-use App\User\Domain\Entity\User;
-use DateTimeImmutable;
 use Throwable;
 
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [
-        'jobOffer', 'candidate', 'coverLetter', 'cvUrl', 'resume', 'attachments', 'status', 'decidedBy', 'decidedAt',
+        'jobOffer', 'coverLetter', 'cvUrl', 'resume', 'attachments',
     ];
 
     public function __construct(
         private readonly JobOfferResource $jobOfferResource,
         private readonly ResumeResource $resumeResource,
-        private readonly UserResource $userResource,
     ) {
     }
 
@@ -42,25 +38,5 @@ class RequestMapper extends RestRequestMapper
         } catch (Throwable) {
             return null;
         }
-    }
-    protected function transformCandidate(?string $candidate): ?User
-    {
-        try {
-            return $candidate !== null && $candidate !== '' ? $this->userResource->getReference($candidate) : null;
-        } catch (Throwable) {
-            return null;
-        }
-    }
-    protected function transformDecidedBy(?string $decidedBy): ?User
-    {
-        try {
-            return $decidedBy !== null && $decidedBy !== '' ? $this->userResource->getReference($decidedBy) : null;
-        } catch (Throwable) {
-            return null;
-        }
-    }
-    protected function transformDecidedAt(?string $decidedAt): ?DateTimeImmutable
-    {
-        return $decidedAt !== null && $decidedAt !== '' ? new DateTimeImmutable($decidedAt) : null;
     }
 }

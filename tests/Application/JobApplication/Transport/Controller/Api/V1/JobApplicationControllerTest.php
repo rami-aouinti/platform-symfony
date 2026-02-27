@@ -75,6 +75,27 @@ class JobApplicationControllerTest extends WebTestCase
     /**
      * @throws Throwable
      */
+    public function testCandidateApplyRejectsManagedFieldsInPayload(): void
+    {
+        $candidateClient = $this->getTestClient('bob-admin', 'password-admin');
+        $candidateClient->request(
+            'POST',
+            self::API_URL_PREFIX . '/v1/job-offers/' . self::OFFER_ID . '/apply',
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: JSON::encode([
+                'coverLetter' => 'Motivation personnalisée',
+                'status' => 'accepted',
+                'candidate' => '40000000-0000-1000-8000-000000000099',
+            ]),
+        );
+
+        self::assertSame(Response::HTTP_BAD_REQUEST, $candidateClient->getResponse()->getStatusCode());
+        $payload = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
+        self::assertStringContainsString('Fields not allowed in candidate flow', (string)($payload['message'] ?? ''));
+    }
+
     public function testDuplicateApplicationIsBlocked(): void
     {
         $candidateClient = $this->getTestClient('carol-user', 'password-user');
@@ -86,6 +107,26 @@ class JobApplicationControllerTest extends WebTestCase
     /**
      * @throws Throwable
      */
+    public function testCreateEndpointRejectsManagedFieldsInCandidateFlow(): void
+    {
+        $candidateClient = $this->getTestClient('alice-user', 'password-user');
+        $candidateClient->request(
+            'POST',
+            self::BASE_URL,
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: JSON::encode([
+                'jobOffer' => self::OFFER_ID,
+                'status' => 'accepted',
+            ]),
+        );
+
+        self::assertSame(Response::HTTP_BAD_REQUEST, $candidateClient->getResponse()->getStatusCode());
+        $payload = JSON::decode((string)$candidateClient->getResponse()->getContent(), true);
+        self::assertStringContainsString('Fields not allowed in candidate flow', (string)($payload['message'] ?? ''));
+    }
+
     public function testAcceptAndRejectAreAllowedOnlyForOfferOwnerOrAuthorizedManager(): void
     {
         $candidateClient = $this->getTestClient('alice-user', 'password-user');
