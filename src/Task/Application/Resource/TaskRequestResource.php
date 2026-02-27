@@ -9,24 +9,18 @@ use App\General\Application\Rest\RestResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Task\Application\DTO\TaskRequest\TaskRequest as TaskRequestDto;
 use App\Task\Application\Resource\Interfaces\TaskRequestResourceInterface;
-use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
-use App\Task\Domain\Entity\Sprint;
+use App\Task\Application\UseCase\AssertTaskRequestReviewAccess;
+use App\Task\Application\UseCase\AssertTaskRequestViewAccess;
+use App\Task\Application\UseCase\AssignTaskRequestRequester;
+use App\Task\Application\UseCase\AssignTaskRequestReviewer;
+use App\Task\Application\UseCase\AssignTaskRequestSprint;
+use App\Task\Application\UseCase\ChangeTaskRequestStatus;
+use App\Task\Application\UseCase\FilterTaskRequestsForCurrentUser;
+use App\Task\Application\UseCase\ListTaskRequestsBySprint;
+use App\Task\Application\UseCase\PrepareTaskRequestForCreate;
 use App\Task\Domain\Entity\TaskRequest as Entity;
 use App\Task\Domain\Enum\TaskStatus;
 use App\Task\Domain\Repository\Interfaces\TaskRequestRepositoryInterface as RepositoryInterface;
-use App\User\Application\Resource\UserResource;
-use App\User\Application\Security\UserTypeIdentification;
-use App\User\Domain\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Exception\InvalidUuidStringException;
-use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-
-use function array_values;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
@@ -35,23 +29,22 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
 {
     public function __construct(
         RepositoryInterface $repository,
-        private readonly UserTypeIdentification $userTypeIdentification,
-        private readonly TaskAccessServiceInterface $taskAccessService,
-        private readonly UserResource $userResource,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly FilterTaskRequestsForCurrentUser $filterTaskRequestsForCurrentUser,
+        private readonly PrepareTaskRequestForCreate $prepareTaskRequestForCreate,
+        private readonly AssertTaskRequestViewAccess $assertTaskRequestViewAccess,
+        private readonly AssertTaskRequestReviewAccess $assertTaskRequestReviewAccess,
+        private readonly ChangeTaskRequestStatus $changeTaskRequestStatus,
+        private readonly ListTaskRequestsBySprint $listTaskRequestsBySprint,
+        private readonly AssignTaskRequestRequester $assignTaskRequestRequester,
+        private readonly AssignTaskRequestReviewer $assignTaskRequestReviewer,
+        private readonly AssignTaskRequestSprint $assignTaskRequestSprint,
     ) {
         parent::__construct($repository);
     }
 
     public function beforeFind(array &$criteria, array &$orderBy, ?int &$limit, ?int &$offset, array &$search): void
     {
-        $user = $this->getCurrentUser();
-
-        if ($this->taskAccessService->isAdminLike($user)) {
-            return;
-        }
-
-        $criteria['requester'] = $user;
+        $this->filterTaskRequestsForCurrentUser->execute($criteria);
     }
 
     public function beforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
@@ -60,224 +53,59 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
             return;
         }
 
-        $user = $this->getCurrentUser();
-        $task = $entity->getTask();
-
-        if ($task === null) {
-            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Task is required.');
-        }
-
-        if (!$this->taskAccessService->canViewTask($user, $task)) {
-            throw new AccessDeniedHttpException('You cannot create requests for this task.');
-        }
-
-        if ($entity->getRequestedStatus() === null) {
-            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Requested status is required.');
-        }
-
-        $entity->setRequester($user);
+        $this->prepareTaskRequestForCreate->execute($entity);
     }
 
     public function beforeUpdate(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $this->assertCanViewRequest($entity);
+            $this->assertTaskRequestViewAccess->execute($entity);
         }
     }
 
     public function beforePatch(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $this->assertCanViewRequest($entity);
+            $this->assertTaskRequestViewAccess->execute($entity);
         }
     }
 
     public function beforeDelete(string &$id, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $this->assertCanReviewRequest($entity);
+            $this->assertTaskRequestReviewAccess->execute($entity);
         }
     }
 
     public function afterFindOne(string &$id, ?EntityInterface $entity = null): void
     {
         if ($entity instanceof Entity) {
-            $this->assertCanViewRequest($entity);
+            $this->assertTaskRequestViewAccess->execute($entity);
         }
     }
 
     public function changeRequestedStatus(string $id, TaskStatus $requestedStatus): Entity
     {
-        $request = $this->getRequestById($id);
-
-        $this->assertCanReviewRequest($request);
-        $request->setRequestedStatus($requestedStatus);
-        $this->save($request);
-
-        return $request;
+        return $this->changeTaskRequestStatus->execute($id, $requestedStatus);
     }
 
     public function listBySprintGroupedByTask(string $sprintId, ?string $userId = null): array
     {
-        $user = $this->getCurrentUser();
-        $sprintUuid = $this->parseUuid($sprintId, 'sprintId');
-        $qb = $this->getRepository()->createQueryBuilder('tr')
-            ->leftJoin('tr.task', 't')
-            ->leftJoin('tr.sprint', 's')
-            ->andWhere('s.id = :sprintId')
-            ->setParameter('sprintId', $sprintUuid, UuidBinaryOrderedTimeType::NAME)
-            ->orderBy('t.title', 'ASC')
-            ->addOrderBy('tr.time', 'ASC');
-
-        if ($userId !== null && $userId !== '') {
-            $userUuid = $this->parseUuid($userId, 'user');
-            $qb
-                ->leftJoin('tr.requester', 'requester')
-                ->leftJoin('tr.reviewer', 'reviewer')
-                ->andWhere('requester.id = :userId OR reviewer.id = :userId')
-                ->setParameter('userId', $userUuid, UuidBinaryOrderedTimeType::NAME);
-        }
-
-        /** @var array<int, Entity> $requests */
-        $requests = $qb->getQuery()->getResult();
-
-        $grouped = [];
-
-        foreach ($requests as $request) {
-            $this->assertCanViewRequest($request);
-
-            $task = $request->getTask();
-            $taskId = $task?->getId() ?? 'no-task';
-
-            if (!isset($grouped[$taskId])) {
-                $grouped[$taskId] = [
-                    'task' => $task,
-                    'taskRequests' => [],
-                ];
-            }
-
-            $grouped[$taskId]['taskRequests'][] = $request;
-        }
-
-        if (!$this->taskAccessService->isAdminLike($user) && null !== $userId && $userId !== '' && $user->getId() !== $userId) {
-            throw new AccessDeniedHttpException('You cannot filter by another user.');
-        }
-
-        return [
-            'sprintId' => $sprintId,
-            'groupedByTask' => array_values($grouped),
-        ];
+        return $this->listTaskRequestsBySprint->execute($sprintId, $userId);
     }
 
     public function assignRequester(string $id, string $requesterId): Entity
     {
-        $request = $this->getRequestById($id);
-        $this->assertCanReviewRequest($request);
-
-        $requester = $this->getUserById($requesterId);
-        $request->setRequester($requester);
-        $this->save($request);
-
-        return $request;
+        return $this->assignTaskRequestRequester->execute($id, $requesterId);
     }
 
     public function assignReviewer(string $id, string $reviewerId): Entity
     {
-        $request = $this->getRequestById($id);
-        $this->assertCanReviewRequest($request);
-
-        $reviewer = $this->getUserById($reviewerId);
-        $request->setReviewer($reviewer);
-        $this->save($request);
-
-        return $request;
+        return $this->assignTaskRequestReviewer->execute($id, $reviewerId);
     }
 
     public function assignSprint(string $id, ?string $sprintId): Entity
     {
-        $request = $this->getRequestById($id);
-        $this->assertCanReviewRequest($request);
-
-        if ($sprintId === null || $sprintId === '') {
-            $request->setSprint(null);
-            $this->save($request);
-
-            return $request;
-        }
-
-        $sprint = $this->entityManager->find(Sprint::class, $sprintId);
-
-        if (!$sprint instanceof Sprint) {
-            throw new HttpException(Response::HTTP_NOT_FOUND, 'Sprint not found.');
-        }
-
-        $request->setSprint($sprint);
-        $this->save($request);
-
-        return $request;
-    }
-
-    private function getRequestById(string $id): Entity
-    {
-        $entity = $this->getRepository()->find($id);
-
-        if (!$entity instanceof Entity) {
-            throw new HttpException(Response::HTTP_NOT_FOUND, 'Task request not found.');
-        }
-
-        return $entity;
-    }
-
-    private function parseUuid(string $value, string $fieldName): UuidInterface
-    {
-        try {
-            return Uuid::fromString($value);
-        } catch (InvalidUuidStringException) {
-            throw new HttpException(Response::HTTP_BAD_REQUEST, sprintf('Invalid UUID format for "%s".', $fieldName));
-        }
-    }
-
-    private function getUserById(string $id): User
-    {
-        $user = $this->userResource->findOne($id);
-
-        if (!$user instanceof User) {
-            throw new HttpException(Response::HTTP_NOT_FOUND, 'User not found.');
-        }
-
-        return $user;
-    }
-
-    private function assertCanViewRequest(Entity $request): void
-    {
-        $user = $this->getCurrentUser();
-
-        if ($this->taskAccessService->canViewTaskRequest($user, $request)) {
-            return;
-        }
-
-        throw new AccessDeniedHttpException('Not allowed to view this request.');
-    }
-
-    private function assertCanReviewRequest(Entity $request): void
-    {
-        $user = $this->getCurrentUser();
-
-        if ($this->taskAccessService->canReviewTaskRequest($user, $request)) {
-            return;
-        }
-
-        throw new AccessDeniedHttpException('Only task manager can review this request.');
-    }
-
-    private function getCurrentUser(): User
-    {
-        $user = $this->userTypeIdentification->getUser();
-
-        if (!$user instanceof User) {
-            throw new AccessDeniedHttpException('Authenticated user not found.');
-        }
-
-        return $user;
+        return $this->assignTaskRequestSprint->execute($id, $sprintId);
     }
 }
