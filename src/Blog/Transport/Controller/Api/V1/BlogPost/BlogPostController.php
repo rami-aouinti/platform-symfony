@@ -26,18 +26,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class BlogPostController extends CrudController
 {
     private const string READ_CACHE_SCOPE = 'blog';
-    use Actions\Authenticated\CreateAction;
-    use Actions\Authenticated\DeleteAction;
-    use Actions\Authenticated\FindAction;
-    use Actions\Authenticated\FindOneAction;
-    use Actions\Authenticated\PatchAction;
-    use Actions\Authenticated\UpdateAction;
 
-    protected static array $dtoClasses = [
-        Controller::METHOD_CREATE => BlogPostCreate::class,
-        Controller::METHOD_UPDATE => BlogPostUpdate::class,
-        Controller::METHOD_PATCH => BlogPostPatch::class,
-    ];
     protected static string $dtoBaseClass = BlogPost::class;
 
     public function __construct(BlogPostResourceInterface $resource)
