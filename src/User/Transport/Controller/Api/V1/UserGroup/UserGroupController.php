@@ -46,6 +46,7 @@ class UserGroupController extends Controller
     use Actions\Root\DeleteAction;
     use Actions\Root\PatchAction;
     use Actions\Root\UpdateAction;
+    use Actions\Admin\SchemaAction;
 
     /**
      * @var array<string, string>

@@ -46,6 +46,7 @@ class UserController extends Controller
     use Actions\Root\CreateAction;
     use Actions\Root\PatchAction;
     use Actions\Root\UpdateAction;
+    use Actions\Admin\SchemaAction;
 
     /**
      * @var array<string, string>

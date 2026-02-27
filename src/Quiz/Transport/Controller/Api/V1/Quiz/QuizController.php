@@ -34,6 +34,7 @@ class QuizController extends Controller
     use Actions\Authenticated\FindOneAction;
     use Actions\Authenticated\PatchAction;
     use Actions\Authenticated\UpdateAction;
+    use Actions\Authenticated\SchemaAction;
 
     /**
      * @var array<string, string>
