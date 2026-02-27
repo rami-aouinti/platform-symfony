@@ -13,6 +13,7 @@ use App\Task\Domain\Repository\Interfaces\TaskRequestRepositoryInterface;
 use App\User\Application\Resource\UserResource;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -57,7 +58,13 @@ class TaskRequestResourceTest extends TestCase
             ->with($manager, $taskRequest)
             ->willReturn(true);
 
-        $resource = new TaskRequestResource($repository, $userTypeIdentification, $accessService, $this->createMock(UserResource::class));
+        $resource = new TaskRequestResource(
+            $repository,
+            $userTypeIdentification,
+            $accessService,
+            $this->createMock(UserResource::class),
+            $this->createMock(EntityManagerInterface::class),
+        );
 
         $result = $resource->changeRequestedStatus('task-request-id', TaskStatus::DONE);
 
@@ -99,7 +106,13 @@ class TaskRequestResourceTest extends TestCase
             ->method('canReviewTaskRequest')
             ->willReturn(false);
 
-        $resource = new TaskRequestResource($repository, $userTypeIdentification, $accessService, $this->createMock(UserResource::class));
+        $resource = new TaskRequestResource(
+            $repository,
+            $userTypeIdentification,
+            $accessService,
+            $this->createMock(UserResource::class),
+            $this->createMock(EntityManagerInterface::class),
+        );
 
         $this->expectException(AccessDeniedHttpException::class);
         $resource->changeRequestedStatus('task-request-id', TaskStatus::DONE);

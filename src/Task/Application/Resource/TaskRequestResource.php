@@ -18,6 +18,7 @@ use App\User\Application\Resource\UserResource;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -121,7 +122,7 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
             ->leftJoin('tr.task', 't')
             ->leftJoin('tr.sprint', 's')
             ->andWhere('s.id = :sprintId')
-            ->setParameter('sprintId', Uuid::fromString($sprintId))
+            ->setParameter('sprintId', Uuid::fromString($sprintId), UuidBinaryOrderedTimeType::NAME)
             ->orderBy('t.title', 'ASC')
             ->addOrderBy('tr.time', 'ASC');
 
@@ -130,7 +131,7 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
                 ->leftJoin('tr.requester', 'requester')
                 ->leftJoin('tr.reviewer', 'reviewer')
                 ->andWhere('requester.id = :userId OR reviewer.id = :userId')
-                ->setParameter('userId', Uuid::fromString($userId));
+                ->setParameter('userId', Uuid::fromString($userId), UuidBinaryOrderedTimeType::NAME);
         }
 
         /** @var array<int, Entity> $requests */
