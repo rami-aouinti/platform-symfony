@@ -7,6 +7,7 @@ namespace App\Task\Infrastructure\Repository;
 use App\General\Infrastructure\Repository\BaseRepository;
 use App\Task\Domain\Entity\Sprint as Entity;
 use App\Task\Domain\Repository\Interfaces\SprintRepositoryInterface;
+use DateTimeImmutable;
 use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,5 +22,35 @@ class SprintRepository extends BaseRepository implements SprintRepositoryInterfa
     public function __construct(
         protected ManagerRegistry $managerRegistry,
     ) {
+    }
+
+    public function findByCompany(string $companyId, ?bool $active = null): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->andWhere('IDENTITY(s.company) = :companyId')
+            ->setParameter('companyId', $companyId)
+            ->orderBy('s.startDate', 'DESC');
+
+        if ($active !== null) {
+            $now = new DateTimeImmutable();
+
+            if ($active) {
+                $qb
+                    ->andWhere('s.startDate <= :now')
+                    ->andWhere('s.endDate >= :now')
+                    ->setParameter('now', $now);
+            } else {
+                $qb
+                    ->andWhere(
+                        $qb->expr()->orX(
+                            $qb->expr()->gt('s.startDate', ':now'),
+                            $qb->expr()->lt('s.endDate', ':now'),
+                        ),
+                    )
+                    ->setParameter('now', $now);
+            }
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

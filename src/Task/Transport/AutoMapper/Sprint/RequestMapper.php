@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Task\Transport\AutoMapper\Sprint;
 
+use App\Company\Application\Resource\Interfaces\CompanyResourceInterface;
+use App\Company\Domain\Entity\Company;
 use App\General\Transport\AutoMapper\RestRequestMapper;
 use App\Task\Application\Resource\Interfaces\TaskRequestResourceInterface;
 use App\Task\Domain\Entity\TaskRequest;
@@ -18,11 +20,14 @@ class RequestMapper extends RestRequestMapper
     protected static array $properties = [
         'startDate',
         'endDate',
+        'company',
         'taskRequests',
     ];
 
-    public function __construct(private readonly TaskRequestResourceInterface $taskRequestResource)
-    {
+    public function __construct(
+        private readonly TaskRequestResourceInterface $taskRequestResource,
+        private readonly CompanyResourceInterface $companyResource,
+    ) {
     }
 
     protected function transformStartDate(?string $startDate): ?DateTimeImmutable
@@ -33,6 +38,15 @@ class RequestMapper extends RestRequestMapper
     protected function transformEndDate(?string $endDate): ?DateTimeImmutable
     {
         return $endDate !== null && $endDate !== '' ? new DateTimeImmutable($endDate) : null;
+    }
+
+    protected function transformCompany(?string $company): ?Company
+    {
+        try {
+            return $company !== null && $company !== '' ? $this->companyResource->getReference($company) : null;
+        } catch (Throwable) {
+            return null;
+        }
     }
 
     /**
