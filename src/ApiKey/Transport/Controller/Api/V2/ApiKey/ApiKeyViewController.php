@@ -37,6 +37,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ApiKeyViewController extends Controller
 {
     use Actions\Root\FindOneAction;
+    use Actions\Root\SchemaAction;
 
     /**
      * @param \App\ApiKey\Application\Resource\ApiKeyFindOneResource $resource

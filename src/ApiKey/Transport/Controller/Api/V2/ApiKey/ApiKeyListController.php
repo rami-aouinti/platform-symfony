@@ -37,6 +37,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ApiKeyListController extends Controller
 {
     use Actions\Root\FindAction;
+    use Actions\Root\SchemaAction;
 
     /**
      * @param \App\ApiKey\Application\Resource\ApiKeyListResource $resource
