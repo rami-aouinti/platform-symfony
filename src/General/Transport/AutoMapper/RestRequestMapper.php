@@ -35,6 +35,14 @@ abstract class RestRequestMapper implements MapperInterface
     protected static array $properties = [];
 
     /**
+     * @return array<int, non-empty-string>
+     */
+    protected static function properties(): array
+    {
+        return static::$properties;
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @psalm-param array<array-key, mixed>|object $source
@@ -92,7 +100,7 @@ abstract class RestRequestMapper implements MapperInterface
             );
         }
 
-        if (static::$properties === []) {
+        if (static::properties() === []) {
             throw new LengthException(
                 sprintf(
                     'RestRequestMapper expects that mapper "%s::$properties" contains properties to convert',
@@ -136,6 +144,6 @@ abstract class RestRequestMapper implements MapperInterface
      */
     private function getValidProperties(Request $request): array
     {
-        return array_filter(static::$properties, static fn ($property) => $request->request->has($property));
+        return array_filter(static::properties(), static fn ($property) => $request->request->has($property));
     }
 }

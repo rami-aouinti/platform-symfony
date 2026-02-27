@@ -8,43 +8,41 @@ use App\Blog\Application\Resource\Interfaces\BlogCommentResourceInterface;
 use App\Blog\Domain\Entity\BlogComment as Entity;
 use App\Blog\Domain\Repository\Interfaces\BlogCommentRepositoryInterface as RepositoryInterface;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
-use App\General\Application\Rest\RestResource;
+use App\General\Application\Rest\AbstractOwnedResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\User\Application\Security\UserTypeIdentification;
-use App\User\Domain\Entity\User;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class BlogCommentResource extends RestResource implements BlogCommentResourceInterface
+class BlogCommentResource extends AbstractOwnedResource implements BlogCommentResourceInterface
 {
     public function __construct(
         RepositoryInterface $repository,
-        private readonly UserTypeIdentification $userTypeIdentification,
+        UserTypeIdentification $userTypeIdentification,
     ) {
-        parent::__construct($repository);
+        parent::__construct($repository, $userTypeIdentification);
     }
 
-    public function beforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
+    protected function onBeforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
-            $entity->setAuthor($this->getCurrentUser());
+            $entity->setAuthor($this->getCurrentUserOrDeny());
         }
     }
 
-    public function beforeUpdate(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
-    {
-        if ($entity instanceof Entity) {
-            $this->assertAuthor($entity);
-        }
-    }
-
-    public function beforePatch(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
+    protected function authorizeBeforeUpdate(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
             $this->assertAuthor($entity);
         }
     }
 
-    public function beforeDelete(string &$id, EntityInterface $entity): void
+    protected function authorizeBeforePatch(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
+    {
+        if ($entity instanceof Entity) {
+            $this->assertAuthor($entity);
+        }
+    }
+
+    protected function authorizeBeforeDelete(string &$id, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
             $this->assertAuthor($entity);
@@ -53,21 +51,9 @@ class BlogCommentResource extends RestResource implements BlogCommentResourceInt
 
     private function assertAuthor(Entity $entity): void
     {
-        if ($entity->getAuthor()?->getId() === $this->getCurrentUser()->getId()) {
-            return;
-        }
-
-        throw new AccessDeniedHttpException('Only comment author can manage this comment.');
-    }
-
-    private function getCurrentUser(): User
-    {
-        $user = $this->userTypeIdentification->getUser();
-
-        if (!$user instanceof User) {
-            throw new AccessDeniedHttpException('Authenticated user not found.');
-        }
-
-        return $user;
+        $this->assertOwnerOrDeny(
+            $entity->getAuthor()?->getId() === $this->getCurrentUserOrDeny()->getId(),
+            'Only comment author can manage this comment.',
+        );
     }
 }
