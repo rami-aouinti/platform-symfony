@@ -23,6 +23,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use ValueError;
 
+use function array_unique;
+use function array_values;
 use function implode;
 use function sprintf;
 use function strtolower;
@@ -63,8 +65,20 @@ class TaskRequestController extends Controller
     {
         $userId = $request->query->getString('user', '');
         $data = $this->getResource()->listBySprintGroupedByTask($sprintId, $userId !== '' ? $userId : null);
+        $context = $this->getResponseHandler()->getSerializeContext($request, $this->getResource());
+        $context['groups'] = array_values(array_unique([
+            ...($context['groups'] ?? []),
+            'Task',
+            'Sprint',
+            'User',
+        ]));
 
-        return $this->getResponseHandler()->createResponse($request, $data, $this->getResource());
+        return $this->getResponseHandler()->createResponse(
+            $request,
+            $data,
+            $this->getResource(),
+            context: $context,
+        );
     }
 
     #[Route(path: '/{id}/requester/{requesterId}', methods: [Request::METHOD_PATCH])]
