@@ -7,6 +7,12 @@ namespace App\Company\Transport\AutoMapper\Company;
 use App\General\Application\DTO\Address;
 use App\General\Transport\AutoMapper\RestRequestMapper;
 
+/**
+ * RequestMapper.
+ *
+ * @package App\Company\Transport\AutoMapper\Company
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [

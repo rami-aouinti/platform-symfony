@@ -13,7 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @method Entity|null find(string $id, LockMode|int|null $lockMode = null, ?int $lockVersion = null, ?string $entityManagerName = null)
  * @method Entity[] findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?string $entityManagerName = null)
- * @package App\Resume
+ * @package App\Recruit\Infrastructure\Repository
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ResumeRepository extends BaseRepository implements ResumeRepositoryInterface

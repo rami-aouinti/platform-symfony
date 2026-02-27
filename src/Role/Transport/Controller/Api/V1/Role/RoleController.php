@@ -25,7 +25,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
     path: '/v1/role',
 )]
 /**
+ * API controller for RoleController endpoints.
+ *
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Role\Transport\Controller\Api\V1\Role
  */
 
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]

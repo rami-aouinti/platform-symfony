@@ -20,7 +20,7 @@ use function array_key_exists;
 use function in_array;
 
 /**
- * @package App\User
+ * @package App\User\Infrastructure\Repository
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

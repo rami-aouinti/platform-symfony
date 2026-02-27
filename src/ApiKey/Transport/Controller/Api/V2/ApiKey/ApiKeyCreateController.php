@@ -27,7 +27,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
     path: '/v2/api_key',
 )]
 /**
+ * API controller for ApiKeyCreateController endpoints.
+ *
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\ApiKey\Transport\Controller\Api\V2\ApiKey
  */
 
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]

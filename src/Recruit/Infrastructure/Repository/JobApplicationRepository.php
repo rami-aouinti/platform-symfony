@@ -21,7 +21,7 @@ use function in_array;
  * @method Entity|null find(string $id, LockMode|int|null $lockMode = null, ?int $lockVersion = null, ?string $entityManagerName = null)
  * @method Entity|null findOneBy(array $criteria, ?array $orderBy = null, ?string $entityManagerName = null)
  * @method Entity[] findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?string $entityManagerName = null)
- * @package App\JobApplication
+ * @package App\Recruit\Infrastructure\Repository
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class JobApplicationRepository extends BaseRepository implements JobApplicationRepositoryInterface

@@ -9,6 +9,12 @@ use App\Configuration\Application\DTO\Configuration\ConfigurationPatch;
 use App\Configuration\Application\DTO\Configuration\ConfigurationUpdate;
 use App\General\Transport\AutoMapper\RestAutoMapperConfiguration;
 
+/**
+ * AutoMapperConfiguration.
+ *
+ * @package App\Configuration\Transport\AutoMapper\Configuration
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration
 {
     protected static array $requestMapperClasses = [

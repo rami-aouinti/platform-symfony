@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @package App\Log
+ * @package App\Log\Application\Service\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface RequestLoggerServiceInterface

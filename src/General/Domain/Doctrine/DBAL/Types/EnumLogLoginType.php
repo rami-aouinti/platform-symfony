@@ -7,7 +7,7 @@ namespace App\General\Domain\Doctrine\DBAL\Types;
 use App\Log\Domain\Enum\LogLogin;
 
 /**
- * @package App\General
+ * @package App\General\Domain\Doctrine\DBAL\Types
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class EnumLogLoginType extends EnumType

@@ -17,7 +17,7 @@ use Doctrine\Persistence\ObjectManager;
 use Override;
 
 /**
- * @package App\JobApplication
+ * @package App\Recruit\Infrastructure\DataFixtures\ORM
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

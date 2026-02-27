@@ -11,6 +11,12 @@ use App\General\Transport\AutoMapper\RestRequestMapper;
 use DateTimeImmutable;
 use Throwable;
 
+/**
+ * RequestMapper.
+ *
+ * @package App\Recruit\Transport\AutoMapper\JobOffer
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [

@@ -7,7 +7,7 @@ namespace App\ApiKey\Application\Resource\Interfaces;
 use App\General\Application\Rest\Interfaces\RestCountResourceInterface;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Application\Resource\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ApiKeyCountResourceInterface extends RestCountResourceInterface

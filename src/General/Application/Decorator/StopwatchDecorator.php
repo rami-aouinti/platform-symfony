@@ -20,7 +20,7 @@ use function str_contains;
 use function str_starts_with;
 
 /**
- * @package App\General
+ * @package App\General\Application\Decorator
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class StopwatchDecorator

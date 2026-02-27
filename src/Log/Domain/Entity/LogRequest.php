@@ -42,6 +42,7 @@ use function mb_strlen;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Log\Domain\Entity
  */
 
 #[ORM\HasLifecycleCallbacks]

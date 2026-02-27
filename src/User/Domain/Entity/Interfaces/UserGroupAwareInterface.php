@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 /**
- * @package App\User
+ * @package App\User\Domain\Entity\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface UserGroupAwareInterface extends EntityInterface

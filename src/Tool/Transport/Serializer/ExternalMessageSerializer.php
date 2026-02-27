@@ -18,7 +18,7 @@ use Throwable;
 use function sprintf;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Transport\Serializer
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ExternalMessageSerializer implements MessengerSerializerInterface

@@ -11,6 +11,12 @@ use App\Recruit\Domain\Entity\JobOffer;
 use App\Recruit\Domain\Entity\Resume;
 use Throwable;
 
+/**
+ * RequestMapper.
+ *
+ * @package App\Recruit\Transport\AutoMapper\JobApplication
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [

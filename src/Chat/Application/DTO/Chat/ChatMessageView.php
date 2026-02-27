@@ -8,7 +8,7 @@ use App\Chat\Domain\Entity\ChatMessage;
 use DateTimeImmutable;
 
 /**
- * @package App\Chat
+ * @package App\Chat\Application\DTO\Chat
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

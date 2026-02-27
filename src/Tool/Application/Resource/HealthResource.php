@@ -11,7 +11,7 @@ use App\Tool\Domain\Entity\Health as Entity;
 use App\Tool\Domain\Repository\Interfaces\HealthRepositoryInterface as Repository;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Resource
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

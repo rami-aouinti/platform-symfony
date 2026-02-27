@@ -9,6 +9,12 @@ use App\Recruit\Application\DTO\JobOffer\JobOfferCreate;
 use App\Recruit\Application\DTO\JobOffer\JobOfferPatch;
 use App\Recruit\Application\DTO\JobOffer\JobOfferUpdate;
 
+/**
+ * AutoMapperConfiguration.
+ *
+ * @package App\Recruit\Transport\AutoMapper\JobOffer
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration
 {
     protected static array $requestMapperClasses = [

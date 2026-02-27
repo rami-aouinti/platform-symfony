@@ -10,7 +10,7 @@ use App\Task\Application\DTO\Project\ProjectPatch;
 use App\Task\Application\DTO\Project\ProjectUpdate;
 
 /**
- * @package App\Task
+ * @package App\Task\Transport\AutoMapper\Project
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration

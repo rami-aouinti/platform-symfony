@@ -10,7 +10,7 @@ use App\Role\Application\Security\Interfaces\RolesServiceInterface;
 use Throwable;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Application\Security\Provider\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ApiKeyUserProviderInterface

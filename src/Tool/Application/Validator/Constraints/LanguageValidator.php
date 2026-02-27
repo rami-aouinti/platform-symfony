@@ -12,7 +12,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 use function in_array;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Validator\Constraints
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class LanguageValidator extends ConstraintValidator

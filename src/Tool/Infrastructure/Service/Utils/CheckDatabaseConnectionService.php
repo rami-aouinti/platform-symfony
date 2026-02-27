@@ -8,7 +8,7 @@ use App\Tool\Domain\Service\Utils\Interfaces\CheckDatabaseConnectionServiceInter
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Infrastructure\Service\Utils
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class CheckDatabaseConnectionService implements CheckDatabaseConnectionServiceInterface

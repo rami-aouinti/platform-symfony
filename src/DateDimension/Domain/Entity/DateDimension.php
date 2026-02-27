@@ -31,6 +31,7 @@ use function floor;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\DateDimension\Domain\Entity
  */
 
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

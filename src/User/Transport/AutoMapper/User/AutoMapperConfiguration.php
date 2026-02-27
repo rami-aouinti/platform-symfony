@@ -10,7 +10,7 @@ use App\User\Application\DTO\User\UserPatch;
 use App\User\Application\DTO\User\UserUpdate;
 
 /**
- * @package App\User
+ * @package App\User\Transport\AutoMapper\User
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration

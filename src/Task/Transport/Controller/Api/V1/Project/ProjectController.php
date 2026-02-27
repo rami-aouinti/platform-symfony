@@ -16,6 +16,12 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+/**
+ * API controller for ProjectController endpoints.
+ *
+ * @package App\Task\Transport\Controller\Api\V1\Project
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[AsController]
 #[Route(path: '/v1/projects')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]

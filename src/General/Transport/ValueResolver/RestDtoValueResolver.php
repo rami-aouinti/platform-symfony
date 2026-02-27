@@ -20,7 +20,7 @@ use function explode;
 use function in_array;
 
 /**
- * @package App\General
+ * @package App\General\Transport\ValueResolver
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class RestDtoValueResolver implements ValueResolverInterface

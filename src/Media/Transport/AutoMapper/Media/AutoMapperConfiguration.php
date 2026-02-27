@@ -7,6 +7,12 @@ namespace App\Media\Transport\AutoMapper\Media;
 use App\General\Transport\AutoMapper\ConventionalRestAutoMapperConfiguration;
 use App\Media\Application\DTO\Media\Media;
 
+/**
+ * AutoMapperConfiguration.
+ *
+ * @package App\Media\Transport\AutoMapper\Media
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class AutoMapperConfiguration extends ConventionalRestAutoMapperConfiguration
 {
     protected static string $dtoBaseClass = Media::class;

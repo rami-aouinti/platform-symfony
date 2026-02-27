@@ -15,6 +15,12 @@ use App\User\Application\Security\Permission;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * AbstractResumeChildResource.
+ *
+ * @package App\Recruit\Application\Resource
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 abstract class AbstractResumeChildResource extends RestResource
 {
     public function __construct(

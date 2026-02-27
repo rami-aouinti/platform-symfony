@@ -8,7 +8,7 @@ use App\Recruit\Domain\Enum\JobApplicationStatus;
 use App\User\Domain\Entity\User;
 
 /**
- * @package App\Notification
+ * @package App\Notification\Application\Service\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

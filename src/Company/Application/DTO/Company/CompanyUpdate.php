@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Company\Application\DTO\Company;
 
 /**
- * @package App\Company
+ * @package App\Company\Application\DTO\Company
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

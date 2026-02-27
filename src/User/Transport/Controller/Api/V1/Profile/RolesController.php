@@ -17,7 +17,9 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
- * @package App\User
+ * API controller for RolesController endpoints.
+ *
+ * @package App\User\Transport\Controller\Api\V1\Profile
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

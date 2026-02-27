@@ -25,7 +25,7 @@ use function preg_replace;
 use function str_contains;
 
 /**
- * @package App\Log
+ * @package App\Log\Domain\Entity\Traits
  *
  * @method array<int, string> getSensitiveProperties();
  * @author  Rami Aouinti <rami.aouinti@gmail.com>

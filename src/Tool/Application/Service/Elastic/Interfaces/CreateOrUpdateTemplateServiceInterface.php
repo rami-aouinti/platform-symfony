@@ -7,7 +7,7 @@ namespace App\Tool\Application\Service\Elastic\Interfaces;
 use Throwable;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Service\Elastic\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface CreateOrUpdateTemplateServiceInterface

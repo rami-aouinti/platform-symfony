@@ -10,7 +10,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
- * @package App\User
+ * @package App\User\Domain\Entity\Traits
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait Blameable

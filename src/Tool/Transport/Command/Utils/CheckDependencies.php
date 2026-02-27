@@ -42,6 +42,7 @@ use function strlen;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Tool\Transport\Command\Utils
  */
 
 class CheckDependencies extends Command

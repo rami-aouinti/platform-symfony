@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Notification\Domain\Enum;
 
 /**
- * @package App\Notification
+ * @package App\Notification\Domain\Enum
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

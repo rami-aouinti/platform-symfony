@@ -19,8 +19,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
+ * API controller for ConfigurationController endpoints.
+ *
  * @method ConfigurationResource getResource()
  * @method ResponseHandler getResponseHandler()
+ * @package App\Configuration\Transport\Controller\Api\V1\Configuration
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 #[AsController]
 #[Route(path: '/v1/configuration')]

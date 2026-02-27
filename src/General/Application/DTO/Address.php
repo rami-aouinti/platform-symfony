@@ -7,6 +7,12 @@ namespace App\General\Application\DTO;
 use App\General\Domain\Entity\Address as AddressValueObject;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Address.
+ *
+ * @package App\General\Application\DTO
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class Address
 {
     #[Assert\Length(max: 255)]

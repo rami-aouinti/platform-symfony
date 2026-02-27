@@ -12,6 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 
+/**
+ * ResumeReference.
+ *
+ * @package App\Recruit\Domain\Entity
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'resume_reference')]
 #[ORM\Index(name: 'idx_resume_reference_resume_sort', columns: ['resume_id', 'sort_order'])]

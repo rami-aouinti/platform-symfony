@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 /**
- * @package App\User
+ * @package App\User\Application\Validator\Constraints
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UniqueUsernameValidator extends ConstraintValidator

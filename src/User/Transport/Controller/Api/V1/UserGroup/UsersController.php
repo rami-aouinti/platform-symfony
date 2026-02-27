@@ -22,7 +22,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Throwable;
 
 /**
- * @package App\User
+ * API controller for UsersController endpoints.
+ *
+ * @package App\User\Transport\Controller\Api\V1\UserGroup
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

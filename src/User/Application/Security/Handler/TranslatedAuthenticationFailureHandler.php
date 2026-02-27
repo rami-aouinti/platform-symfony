@@ -15,7 +15,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @package App\User
+ * @package App\User\Application\Security\Handler
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class TranslatedAuthenticationFailureHandler extends AuthenticationFailureHandler

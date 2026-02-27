@@ -9,7 +9,7 @@ use App\Log\Domain\Repository\Interfaces\LogLoginRepositoryInterface;
 use App\Log\Domain\Repository\Interfaces\LogRequestRepositoryInterface;
 
 /**
- * @package App\Log
+ * @package App\Log\Application\Service\Utils
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class CleanupLogService implements CleanupLogServiceInterface

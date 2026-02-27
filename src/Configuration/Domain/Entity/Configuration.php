@@ -13,6 +13,12 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * Configuration.
+ *
+ * @package App\Configuration\Domain\Entity
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'configuration')]
 #[ORM\UniqueConstraint(name: 'uq_configuration_key', columns: ['key_name'])]

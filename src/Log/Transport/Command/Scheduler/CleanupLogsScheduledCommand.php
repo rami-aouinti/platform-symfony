@@ -23,6 +23,7 @@ use Throwable;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Log\Transport\Command\Scheduler
  */
 
 class CleanupLogsScheduledCommand extends Command

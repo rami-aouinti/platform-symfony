@@ -13,8 +13,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 
 /**
- * @package
- * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Notification\Application\Service* @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 readonly class NotificationService implements NotificationServiceInterface
 {

@@ -15,6 +15,8 @@ use App\User\Application\Security\UserTypeIdentification;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
+ * @package App\Task\Application\Resource
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 class SprintResource extends AbstractOwnedResource implements SprintResourceInterface
 {

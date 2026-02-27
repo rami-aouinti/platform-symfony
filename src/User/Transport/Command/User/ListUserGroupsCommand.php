@@ -30,6 +30,7 @@ use function sprintf;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\User\Transport\Command\User
  */
 
 class ListUserGroupsCommand extends Command

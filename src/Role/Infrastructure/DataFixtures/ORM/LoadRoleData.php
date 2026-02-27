@@ -15,7 +15,7 @@ use Throwable;
 use function array_map;
 
 /**
- * @package App\Role
+ * @package App\Role\Infrastructure\DataFixtures\ORM
  *
  * @psalm-suppress PropertyNotSetInConstructor
  * @author  Rami Aouinti <rami.aouinti@gmail.com>

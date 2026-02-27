@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Throwable;
 
 /**
- * @package App\Log
+ * @package App\Log\Domain\Entity\Traits
  *
  * @property User|null $user
  * @author  Rami Aouinti <rami.aouinti@gmail.com>

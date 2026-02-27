@@ -16,6 +16,12 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+/**
+ * API controller for QuizController endpoints.
+ *
+ * @package App\Quiz\Transport\Controller\Api\V1\Quiz
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[AsController]
 #[Route(path: '/v1/quizzes')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]

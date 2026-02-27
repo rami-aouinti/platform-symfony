@@ -18,8 +18,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
+ * API controller for CompanyProjectsController endpoints.
+ *
  * @method ProjectResource getResource()
  * @method ResponseHandler getResponseHandler()
+ * @package App\Company\Transport\Controller\Api\V1\Company
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 #[AsController]
 #[Route(path: '/v1/companies')]

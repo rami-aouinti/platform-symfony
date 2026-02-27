@@ -22,7 +22,7 @@ use function in_array;
 use function str_replace;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Service
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 readonly class LocalizationService implements LocalizationServiceInterface

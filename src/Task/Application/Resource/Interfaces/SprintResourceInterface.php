@@ -7,6 +7,12 @@ namespace App\Task\Application\Resource\Interfaces;
 use App\General\Application\Rest\Interfaces\RestResourceInterface;
 use App\Task\Domain\Entity\Sprint;
 
+/**
+ * SprintResourceInterface.
+ *
+ * @package App\Task\Application\Resource\Interfaces
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 interface SprintResourceInterface extends RestResourceInterface
 {
     /**

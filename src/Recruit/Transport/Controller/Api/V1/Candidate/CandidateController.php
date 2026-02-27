@@ -16,9 +16,11 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
+ * API controller for CandidateController endpoints.
+ *
  * @method CandidateProfileResource getResource()
  * @method ResponseHandler getResponseHandler()
- * @package App\Candidate
+ * @package App\Recruit\Transport\Controller\Api\V1\Candidate
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

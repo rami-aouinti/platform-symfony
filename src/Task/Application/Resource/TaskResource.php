@@ -22,6 +22,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
+ * @package App\Task\Application\Resource
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 class TaskResource extends AbstractOwnedResource implements TaskResourceInterface
 {

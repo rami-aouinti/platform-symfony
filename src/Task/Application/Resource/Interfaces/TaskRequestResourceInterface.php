@@ -8,6 +8,12 @@ use App\General\Application\Rest\Interfaces\RestResourceInterface;
 use App\Task\Domain\Entity\TaskRequest;
 use App\Task\Domain\Enum\TaskStatus;
 
+/**
+ * TaskRequestResourceInterface.
+ *
+ * @package App\Task\Application\Resource\Interfaces
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 interface TaskRequestResourceInterface extends RestResourceInterface
 {
     public function changeRequestedStatus(string $id, TaskStatus $requestedStatus): TaskRequest;

@@ -29,7 +29,9 @@ use function is_array;
 use function is_string;
 
 /**
- * @package App\User
+ * API controller for SocialConnectController endpoints.
+ *
+ * @package App\User\Transport\Controller\Api\V1\Auth
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

@@ -31,6 +31,7 @@ use function sprintf;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\ApiKey\Transport\Command\ApiKey
  */
 
 class ListApiKeysCommand extends Command

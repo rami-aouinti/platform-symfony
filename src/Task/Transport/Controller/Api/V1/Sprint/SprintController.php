@@ -18,7 +18,11 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
+ * API controller for SprintController endpoints.
+ *
  * @method SprintResource getResource()
+ * @package App\Task\Transport\Controller\Api\V1\Sprint
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 #[AsController]
 #[Route(path: '/v1/sprints')]

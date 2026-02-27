@@ -23,7 +23,7 @@ use function sha1;
 use function spl_object_hash;
 
 /**
- * @package App\General
+ * @package App\General\Infrastructure\Repository
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AutoconfigureTag('app.rest.repository')]

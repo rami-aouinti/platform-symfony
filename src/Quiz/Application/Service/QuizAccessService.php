@@ -10,6 +10,12 @@ use App\User\Domain\Entity\User;
 
 use function in_array;
 
+/**
+ * QuizAccessService.
+ *
+ * @package App\Quiz\Application\Service
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class QuizAccessService implements QuizAccessServiceInterface
 {
     public function isAdminLike(User $user): bool

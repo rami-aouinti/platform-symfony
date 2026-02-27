@@ -7,7 +7,7 @@ namespace App\General\Domain\Entity\Interfaces;
 use DateTimeImmutable;
 
 /**
- * @package App\General
+ * @package App\General\Domain\Entity\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface EntityInterface

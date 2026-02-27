@@ -9,6 +9,12 @@ use App\Recruit\Application\DTO\ResumeEducation\ResumeEducationCreate;
 use App\Recruit\Application\DTO\ResumeEducation\ResumeEducationPatch;
 use App\Recruit\Application\DTO\ResumeEducation\ResumeEducationUpdate;
 
+/**
+ * AutoMapperConfiguration.
+ *
+ * @package App\Recruit\Transport\AutoMapper\ResumeEducation
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration
 {
     protected static array $requestMapperClasses = [

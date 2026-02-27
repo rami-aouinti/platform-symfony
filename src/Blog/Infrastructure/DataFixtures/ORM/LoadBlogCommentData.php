@@ -17,6 +17,12 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Override;
 
+/**
+ * LoadBlogCommentData.
+ *
+ * @package App\Blog\Infrastructure\DataFixtures\ORM
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class LoadBlogCommentData extends Fixture implements OrderedFixtureInterface
 {
     #[Override]

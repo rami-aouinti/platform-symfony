@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Throwable;
 
 /**
- * @package App\User
+ * @package App\User\Transport\Form\Type\Console
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class UserGroupType extends AbstractType

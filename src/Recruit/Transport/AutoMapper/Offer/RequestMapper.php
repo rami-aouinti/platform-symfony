@@ -10,7 +10,7 @@ use App\General\Transport\AutoMapper\RestRequestMapper;
 use Throwable;
 
 /**
- * @package App\Offer
+ * @package App\Recruit\Transport\AutoMapper\Offer
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

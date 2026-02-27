@@ -9,7 +9,7 @@ use App\Tool\Domain\Entity\Health;
 use App\Tool\Domain\Repository\Interfaces\HealthRepositoryInterface;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Service
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 readonly class HealthService implements HealthServiceInterface

@@ -8,7 +8,7 @@ use App\General\Domain\Exception\Interfaces\ExceptionInterface;
 use Exception;
 
 /**
- * @package App\General
+ * @package App\General\Domain\Exception
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 abstract class BaseException extends Exception implements ExceptionInterface

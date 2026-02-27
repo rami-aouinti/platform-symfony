@@ -10,7 +10,7 @@ use App\Role\Domain\Entity\Role;
 use Throwable;
 
 /**
- * @package App\User
+ * @package App\User\Transport\AutoMapper\UserGroup
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class RequestMapper extends RestRequestMapper

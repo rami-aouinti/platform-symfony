@@ -20,7 +20,7 @@ use function is_string;
 use function sprintf;
 
 /**
- * @package App\General
+ * @package App\General\Domain\Doctrine\DBAL\Types
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 abstract class EnumType extends Type

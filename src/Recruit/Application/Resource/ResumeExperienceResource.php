@@ -9,7 +9,7 @@ use App\Recruit\Domain\Repository\Interfaces\ResumeExperienceRepositoryInterface
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
- * @package App\Resume
+ * @package App\Recruit\Application\Resource
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

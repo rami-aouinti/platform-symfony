@@ -20,7 +20,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * @package App\User
+ * API controller for UserGroupsController endpoints.
+ *
+ * @package App\User\Transport\Controller\Api\V1\User
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

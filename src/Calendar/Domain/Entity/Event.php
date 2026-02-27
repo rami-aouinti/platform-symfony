@@ -15,6 +15,12 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * Event.
+ *
+ * @package App\Calendar\Domain\Entity
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'calendar_event')]
 #[ORM\Index(name: 'idx_calendar_event_start_at', columns: ['start_at'])]

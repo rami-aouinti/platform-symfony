@@ -14,7 +14,7 @@ use App\General\Application\Rest\Traits\Methods\ResourceUpdateMethod;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Application\Resource
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

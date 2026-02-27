@@ -44,6 +44,7 @@ use Throwable;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\User\Domain\Entity
  */
 
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

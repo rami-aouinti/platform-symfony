@@ -7,7 +7,7 @@ namespace App\General\Domain\Service\Interfaces;
 use Throwable;
 
 /**
- * @package App\General
+ * @package App\General\Domain\Service\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface MailerServiceInterface

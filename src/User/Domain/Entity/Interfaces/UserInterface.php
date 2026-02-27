@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\User\Domain\Entity\Interfaces;
 
 /**
- * @package App\User
+ * @package App\User\Domain\Entity\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface UserInterface

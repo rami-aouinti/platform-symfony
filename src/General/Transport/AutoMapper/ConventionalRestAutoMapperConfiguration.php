@@ -7,6 +7,12 @@ namespace App\General\Transport\AutoMapper;
 use App\General\Application\DTO\CrudDtoClassResolver;
 use AutoMapperPlus\Configuration\AutoMapperConfigInterface;
 
+/**
+ * ConventionalRestAutoMapperConfiguration.
+ *
+ * @package App\General\Transport\AutoMapper
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 abstract class ConventionalRestAutoMapperConfiguration extends RestAutoMapperConfiguration
 {
     /**

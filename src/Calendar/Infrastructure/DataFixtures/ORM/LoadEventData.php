@@ -14,6 +14,12 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Override;
 
+/**
+ * LoadEventData.
+ *
+ * @package App\Calendar\Infrastructure\DataFixtures\ORM
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class LoadEventData extends Fixture implements OrderedFixtureInterface
 {
     #[Override]

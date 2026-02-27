@@ -7,7 +7,7 @@ namespace App\Notification\Domain\Message;
 use App\General\Domain\Message\Interfaces\MessageHighInterface;
 
 /**
- * @package App\Notification
+ * @package App\Notification\Domain\Message
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

@@ -11,7 +11,7 @@ use App\Log\Domain\Entity\LogLogin as Entity;
 use App\Log\Domain\Repository\Interfaces\LogLoginRepositoryInterface as Repository;
 
 /**
- * @package App\Log
+ * @package App\Log\Application\Resource
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

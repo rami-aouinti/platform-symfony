@@ -18,7 +18,7 @@ use Exception;
 use Throwable;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Infrastructure\Repository
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

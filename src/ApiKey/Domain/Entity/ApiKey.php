@@ -41,6 +41,7 @@ use function array_values;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\ApiKey\Domain\Entity
  */
 
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]

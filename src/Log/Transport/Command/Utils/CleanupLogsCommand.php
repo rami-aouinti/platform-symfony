@@ -22,6 +22,7 @@ use Throwable;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Log\Transport\Command\Utils
  */
 
 class CleanupLogsCommand extends Command

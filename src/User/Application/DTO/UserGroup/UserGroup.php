@@ -14,7 +14,7 @@ use Override;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @package App\User
+ * @package App\User\Application\DTO\UserGroup
  *
  * @method self|RestDtoInterface get(string $id)
  * @method self|RestDtoInterface patch(RestDtoInterface $dto)

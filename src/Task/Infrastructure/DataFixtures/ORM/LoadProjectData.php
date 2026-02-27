@@ -15,6 +15,12 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Override;
 
+/**
+ * LoadProjectData.
+ *
+ * @package App\Task\Infrastructure\DataFixtures\ORM
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class LoadProjectData extends Fixture implements OrderedFixtureInterface
 {
     #[Override]

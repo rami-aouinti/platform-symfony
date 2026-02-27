@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\General\Infrastructure\Rest\Interfaces;
 
 /**
- * @package App\General
+ * @package App\General\Infrastructure\Rest\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface SearchTermInterface

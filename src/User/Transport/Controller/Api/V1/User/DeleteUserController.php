@@ -23,7 +23,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Throwable;
 
 /**
- * @package App\User
+ * API controller for DeleteUserController endpoints.
+ *
+ * @package App\User\Transport\Controller\Api\V1\User
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

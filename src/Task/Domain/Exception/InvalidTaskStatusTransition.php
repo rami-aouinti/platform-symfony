@@ -7,6 +7,12 @@ namespace App\Task\Domain\Exception;
 use App\Task\Domain\Enum\TaskStatus;
 use RuntimeException;
 
+/**
+ * InvalidTaskStatusTransition.
+ *
+ * @package App\Task\Domain\Exception
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class InvalidTaskStatusTransition extends RuntimeException
 {
     public static function create(TaskStatus $from, TaskStatus $to): self

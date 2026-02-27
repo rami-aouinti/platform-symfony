@@ -21,7 +21,7 @@ use Throwable;
 use function sprintf;
 
 /**
- * @package App\General
+ * @package App\General\Application\Resource
  *
  * @method IteratorAggregate<int, RestResourceInterface|RestSmallResourceInterface> getAll()
  * @author  Rami Aouinti <rami.aouinti@gmail.com>

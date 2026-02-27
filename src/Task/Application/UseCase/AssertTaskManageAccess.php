@@ -9,6 +9,12 @@ use App\Task\Application\UseCase\Support\CurrentTaskUserProvider;
 use App\Task\Domain\Entity\Task;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
+/**
+ * AssertTaskManageAccess.
+ *
+ * @package App\Task\Application\UseCase
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class AssertTaskManageAccess
 {
     public function __construct(

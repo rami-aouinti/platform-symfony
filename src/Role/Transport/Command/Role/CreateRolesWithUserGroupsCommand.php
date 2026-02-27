@@ -27,6 +27,7 @@ use Throwable;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Role\Transport\Command\Role
  */
 
 class CreateRolesWithUserGroupsCommand extends Command

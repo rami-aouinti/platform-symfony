@@ -20,8 +20,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use function filter_var;
 
 /**
+ * API controller for CompanySprintsController endpoints.
+ *
  * @method SprintResource getResource()
  * @method ResponseHandler getResponseHandler()
+ * @package App\Company\Transport\Controller\Api\V1\Company
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 #[AsController]
 #[Route(path: '/v1/companies')]

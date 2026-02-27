@@ -10,7 +10,7 @@ use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 
 /**
- * @package App\General
+ * @package App\General\Infrastructure\Service
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ElasticsearchService implements ElasticsearchServiceInterface

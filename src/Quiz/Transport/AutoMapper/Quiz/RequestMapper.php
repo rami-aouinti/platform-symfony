@@ -6,6 +6,12 @@ namespace App\Quiz\Transport\AutoMapper\Quiz;
 
 use App\General\Transport\AutoMapper\RestRequestMapper;
 
+/**
+ * RequestMapper.
+ *
+ * @package App\Quiz\Transport\AutoMapper\Quiz
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [

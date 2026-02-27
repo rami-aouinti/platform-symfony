@@ -10,6 +10,12 @@ use InvalidArgumentException;
 use function array_key_exists;
 use function sprintf;
 
+/**
+ * CrudDtoClassResolver.
+ *
+ * @package App\General\Application\DTO
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class CrudDtoClassResolver
 {
     /**

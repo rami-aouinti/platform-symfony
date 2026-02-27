@@ -8,7 +8,7 @@ use App\Chat\Application\DTO\Chat\ConversationCreate;
 use App\Chat\Application\DTO\Chat\ConversationView;
 
 /**
- * @package App\Chat
+ * @package App\Chat\Application\Resource\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

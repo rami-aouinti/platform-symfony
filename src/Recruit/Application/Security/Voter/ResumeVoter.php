@@ -15,7 +15,7 @@ use function in_array;
 
 /**
  * @extends Voter<string, mixed>
- * @package App\Resume
+ * @package App\Recruit\Application\Security\Voter
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ResumeVoter extends Voter

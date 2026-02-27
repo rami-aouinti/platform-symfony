@@ -32,7 +32,7 @@ use function array_map;
  * @method self|RestDtoInterface get(string $id)
  * @method self|RestDtoInterface patch(RestDtoInterface $dto)
  * @method Entity|EntityInterface update(EntityInterface $entity)
- * @package App\JobOffer
+ * @package App\Recruit\Application\DTO\JobOffer
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class JobOffer extends RestDto

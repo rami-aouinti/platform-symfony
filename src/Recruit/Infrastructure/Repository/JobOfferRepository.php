@@ -22,7 +22,7 @@ use function usort;
 /**
  * @method Entity|null find(string $id, LockMode|int|null $lockMode = null, ?int $lockVersion = null, ?string $entityManagerName = null)
  * @method Entity[] findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?string $entityManagerName = null)
- * @package App\JobOffer
+ * @package App\Recruit\Infrastructure\Repository
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class JobOfferRepository extends BaseRepository implements JobOfferRepositoryInterface

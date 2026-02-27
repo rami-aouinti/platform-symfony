@@ -15,6 +15,12 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+/**
+ * API controller for StatisticController endpoints.
+ *
+ * @package App\Statistic\Transport\Controller\Api\V1\Statistic
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[AsController]
 #[Route(path: '/v1/statistics')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]

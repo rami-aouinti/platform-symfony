@@ -23,7 +23,7 @@ use function is_array;
 use function str_replace;
 
 /**
- * @package App\General
+ * @package App\General\Application\Validator\Constraints
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class EntityReferenceExistsValidator extends ConstraintValidator

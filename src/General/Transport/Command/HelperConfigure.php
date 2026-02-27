@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputOption;
 use function array_map;
 
 /**
- * @package App\General
+ * @package App\General\Transport\Command
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class HelperConfigure

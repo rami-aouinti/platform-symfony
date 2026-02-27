@@ -8,7 +8,7 @@ use App\User\Domain\Entity\SocialAccount;
 use App\User\Domain\Enum\SocialProvider;
 
 /**
- * @package App\User
+ * @package App\User\Domain\Repository\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

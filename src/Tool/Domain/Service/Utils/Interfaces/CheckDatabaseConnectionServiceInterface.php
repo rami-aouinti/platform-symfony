@@ -7,7 +7,7 @@ namespace App\Tool\Domain\Service\Utils\Interfaces;
 use Exception;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Domain\Service\Utils\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface CheckDatabaseConnectionServiceInterface

@@ -8,7 +8,7 @@ use App\Tool\Application\Service\Utils\Interfaces\MessengerMessagesServiceInterf
 use App\Tool\Domain\Repository\Interfaces\MessengerMessagesRepositoryInterface;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Service\Utils
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class MessengerMessagesService implements MessengerMessagesServiceInterface

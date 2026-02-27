@@ -14,6 +14,12 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Override;
 
+/**
+ * LoadQuizData.
+ *
+ * @package App\Quiz\Infrastructure\DataFixtures\ORM
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 final class LoadQuizData extends Fixture implements OrderedFixtureInterface
 {
     #[Override]

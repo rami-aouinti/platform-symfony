@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use function sprintf;
 
 /**
- * @package App\General
+ * @package App\General\Transport\Rest
  *
  * @method ControllerInterface get(string $className)
  * @method IteratorAggregate<int, ControllerInterface> getAll()

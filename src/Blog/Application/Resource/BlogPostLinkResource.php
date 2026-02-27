@@ -14,6 +14,12 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * BlogPostLinkResource.
+ *
+ * @package App\Blog\Application\Resource
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class BlogPostLinkResource extends RestResource implements BlogPostLinkResourceInterface
 {
     public function __construct(RepositoryInterface $repository)

@@ -8,7 +8,7 @@ use App\General\Application\Rest\Interfaces\RestResourceInterface;
 use App\Recruit\Domain\Entity\Resume;
 
 /**
- * @package App\Resume
+ * @package App\Recruit\Application\Resource\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

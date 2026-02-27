@@ -8,7 +8,7 @@ use App\Tool\Domain\Entity\Health;
 use Throwable;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Service\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface HealthServiceInterface

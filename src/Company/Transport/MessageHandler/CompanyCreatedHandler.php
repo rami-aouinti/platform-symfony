@@ -11,7 +11,7 @@ use App\User\Infrastructure\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * @package App\Company
+ * @package App\Company\Transport\MessageHandler
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

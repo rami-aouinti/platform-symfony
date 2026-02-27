@@ -7,7 +7,7 @@ namespace App\Log\Domain\Repository\Interfaces;
 use App\User\Domain\Entity\User;
 
 /**
- * @package App\Log
+ * @package App\Log\Domain\Repository\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface LogLoginFailureRepositoryInterface

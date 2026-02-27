@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\General\Transport\Form\Type\Interfaces;
 
 /**
- * @package App\General
+ * @package App\General\Transport\Form\Type\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface FormTypeLabelInterface

@@ -9,6 +9,12 @@ use App\Blog\Application\DTO\BlogPostLink\BlogPostLinkPatch;
 use App\Blog\Application\DTO\BlogPostLink\BlogPostLinkUpdate;
 use App\General\Transport\AutoMapper\RestAutoMapperConfiguration;
 
+/**
+ * AutoMapperConfiguration.
+ *
+ * @package App\Blog\Transport\AutoMapper\BlogPostLink
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration
 {
     protected static array $requestMapperClasses = [

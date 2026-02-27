@@ -7,7 +7,7 @@ namespace App\General\Domain\Enum\Interfaces;
 /**
  * Enum StringEnumInterface
  *
- * @package App\General
+ * @package App\General\Domain\Enum\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface DatabaseEnumInterface extends StringEnumInterface

@@ -13,7 +13,7 @@ use UnexpectedValueException;
 use function assert;
 
 /**
- * @package App\General
+ * @package App\General\Application\Rest\Traits\Methods
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait ResourceCreateMethod

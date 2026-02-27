@@ -16,6 +16,12 @@ use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 
+/**
+ * Resume.
+ *
+ * @package App\Recruit\Domain\Entity
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'resume')]
 #[ORM\Index(name: 'idx_resume_owner_created_at', columns: ['owner_id', 'created_at'])]

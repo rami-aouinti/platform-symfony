@@ -10,7 +10,7 @@ use App\ApiKey\Application\DTO\ApiKey\ApiKeyUpdate;
 use App\General\Transport\AutoMapper\RestAutoMapperConfiguration;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Transport\AutoMapper\ApiKey
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class AutoMapperConfiguration extends RestAutoMapperConfiguration

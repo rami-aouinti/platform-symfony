@@ -9,7 +9,7 @@ use Symfony\Component\Messenger\Retry\RetryStrategyInterface;
 use Throwable;
 
 /**
- * @package App
+ * @package App\General\Infrastructure\Messenger\Strategy
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class FailedRetry implements RetryStrategyInterface

@@ -13,7 +13,7 @@ use App\User\Domain\Entity\User;
 use Throwable;
 
 /**
- * @package App\Log
+ * @package App\Log\Application\Resource
  *
  * @psalm-suppress LessSpecificImplementedReturnType
  * @codingStandardsIgnoreStart

@@ -11,6 +11,12 @@ use LogicException;
 use function in_array;
 use function sprintf;
 
+/**
+ * CrudController.
+ *
+ * @package App\General\Transport\Rest
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 abstract class CrudController extends Controller
 {
     use Actions\Authenticated\CreateAction;

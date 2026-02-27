@@ -7,7 +7,7 @@ namespace App\Company\Domain\Message;
 use App\General\Domain\Message\Interfaces\MessageLowInterface;
 
 /**
- * @package App\Company
+ * @package App\Company\Domain\Message
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

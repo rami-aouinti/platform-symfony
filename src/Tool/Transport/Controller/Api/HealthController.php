@@ -17,7 +17,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
 /**
- * @package App\Tool
+ * API controller for HealthController endpoints.
+ *
+ * @package App\Tool\Transport\Controller\Api
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

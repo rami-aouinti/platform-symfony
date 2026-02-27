@@ -7,7 +7,7 @@ namespace App\ApiKey\Application\DTO\ApiKey;
 use App\User\Application\DTO\Traits\PatchUserGroups;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Application\DTO\ApiKey
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyPatch extends ApiKey

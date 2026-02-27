@@ -9,7 +9,7 @@ use App\Recruit\Domain\Entity\JobApplication;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @package App\Chat
+ * @package App\Chat\Application\DTO\Chat
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

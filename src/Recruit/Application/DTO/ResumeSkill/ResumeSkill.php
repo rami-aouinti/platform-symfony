@@ -14,7 +14,7 @@ use Override;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @package App\Resume
+ * @package App\Recruit\Application\DTO\ResumeSkill
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

@@ -11,6 +11,12 @@ use App\User\Domain\Entity\User;
 use DateTimeImmutable;
 use Throwable;
 
+/**
+ * RequestMapper.
+ *
+ * @package App\Calendar\Transport\AutoMapper\Event
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class RequestMapper extends RestRequestMapper
 {
     use PropertiesConventionTrait;

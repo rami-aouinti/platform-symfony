@@ -30,7 +30,7 @@ use function in_array;
 use function spl_object_hash;
 
 /**
- * @package App\General
+ * @package App\General\Transport\EventSubscriber
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ExceptionSubscriber implements EventSubscriberInterface

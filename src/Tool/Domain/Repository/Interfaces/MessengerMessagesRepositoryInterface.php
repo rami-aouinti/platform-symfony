@@ -7,7 +7,7 @@ namespace App\Tool\Domain\Repository\Interfaces;
 use Exception;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Domain\Repository\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface MessengerMessagesRepositoryInterface

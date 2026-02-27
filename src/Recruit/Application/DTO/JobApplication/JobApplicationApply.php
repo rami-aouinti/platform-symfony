@@ -13,6 +13,12 @@ use App\Recruit\Domain\Entity\Resume;
 use Override;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * JobApplicationApply.
+ *
+ * @package App\Recruit\Application\DTO\JobApplication
+ * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
+ */
 class JobApplicationApply extends RestDto
 {
     #[Assert\NotNull]

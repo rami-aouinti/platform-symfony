@@ -11,8 +11,7 @@ use function is_object;
 use function method_exists;
 
 /**
- * @package
- * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Notification\Application\Service\Channel* @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 readonly class SmsNotification implements SmsNotificationInterface
 {

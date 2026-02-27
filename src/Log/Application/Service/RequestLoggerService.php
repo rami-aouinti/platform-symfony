@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
- * @package App\Log
+ * @package App\Log\Application\Service
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class RequestLoggerService implements RequestLoggerServiceInterface

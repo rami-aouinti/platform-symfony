@@ -16,7 +16,7 @@ use function sort;
 use const DIRECTORY_SEPARATOR;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Service\Utils
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class CheckDependenciesService implements CheckDependenciesServiceInterface

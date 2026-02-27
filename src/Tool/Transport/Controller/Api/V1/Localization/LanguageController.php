@@ -13,7 +13,9 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * @package App\Tool
+ * API controller for LanguageController endpoints.
+ *
+ * @package App\Tool\Transport\Controller\Api\V1\Localization
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]

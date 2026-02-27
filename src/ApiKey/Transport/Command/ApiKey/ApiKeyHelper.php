@@ -16,7 +16,7 @@ use function implode;
 use function sprintf;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Transport\Command\ApiKey
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 class ApiKeyHelper

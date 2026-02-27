@@ -8,7 +8,7 @@ use App\User\Application\Security\Permission;
 use App\User\Application\Security\SecurityUser;
 
 /**
- * @package App\User
+ * @package App\User\Application\Security\Permission\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

@@ -27,7 +27,7 @@ use function mb_substr;
 use function str_starts_with;
 
 /**
- * @package App\General
+ * @package App\General\Transport\Rest
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 final class RequestHandler

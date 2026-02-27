@@ -22,7 +22,7 @@ use function json_encode;
 use function ksort;
 
 /**
- * @package App\Tool
+ * @package App\Tool\Application\Service\Rest
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

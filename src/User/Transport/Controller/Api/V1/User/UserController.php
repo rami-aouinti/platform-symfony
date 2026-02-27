@@ -28,7 +28,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
     path: '/v1/user',
 )]
 /**
+ * API controller for UserController endpoints.
+ *
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\User\Transport\Controller\Api\V1\User
  */
 
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]

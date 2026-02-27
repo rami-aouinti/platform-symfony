@@ -7,7 +7,7 @@ namespace App\ApiKey\Application\Security\Interfaces;
 use App\ApiKey\Domain\Entity\ApiKey;
 
 /**
- * @package App\ApiKey
+ * @package App\ApiKey\Application\Security\Interfaces
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 interface ApiKeyUserInterface

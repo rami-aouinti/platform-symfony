@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
 /**
- * @package App\General
+ * @package App\General\Transport\Rest\Traits\Actions
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 trait RestActionBase

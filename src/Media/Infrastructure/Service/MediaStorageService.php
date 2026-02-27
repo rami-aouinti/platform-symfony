@@ -12,7 +12,7 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * @package App\Media
+ * @package App\Media\Infrastructure\Service
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 

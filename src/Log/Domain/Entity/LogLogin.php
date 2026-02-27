@@ -38,6 +38,7 @@ use function is_array;
 )]
 /**
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
+ * @package App\Log\Domain\Entity
  */
 
 #[ORM\HasLifecycleCallbacks]
