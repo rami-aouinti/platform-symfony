@@ -40,6 +40,29 @@ class RoleController extends Controller
     use Actions\Admin\IdsAction;
     use Actions\Admin\SchemaAction;
 
+
+    /**
+     * Example of manual and intelligent schema control for this module.
+     *
+     * @return array<string, mixed>
+     */
+    protected function getSchemaFieldConfiguration(): array
+    {
+        return [
+            'displayable' => [
+                'id',
+                'description',
+                [
+                    'name' => 'userGroups',
+                    'type' => 'object',
+                    'endpoint' => '/api/v1/user-groups',
+                ],
+            ],
+            'creatable' => false,
+            'editable' => false,
+        ];
+    }
+
     public function __construct(
         RoleResource $resource,
     ) {
