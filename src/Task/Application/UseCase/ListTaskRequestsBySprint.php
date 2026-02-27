@@ -63,7 +63,8 @@ final class ListTaskRequestsBySprint
 
         if (!$isAdminLike) {
             $qb
-                ->andWhere('requester.id = :currentUserId OR taskOwner.id = :currentUserId OR projectOwner.id = :currentUserId')
+                // Keep in sync with TaskAccessService::canViewTaskRequest() visibility rules.
+                ->andWhere('requester.id = :currentUserId OR reviewer.id = :currentUserId OR taskOwner.id = :currentUserId OR projectOwner.id = :currentUserId')
                 ->setParameter('currentUserId', $this->parseUuid($user->getId(), 'currentUserId'), UuidBinaryOrderedTimeType::NAME);
         }
 
