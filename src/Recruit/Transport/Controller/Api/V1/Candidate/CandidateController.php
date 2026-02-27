@@ -31,6 +31,7 @@ class CandidateController extends Controller
 {
     use Actions\Authenticated\FindAction;
     use Actions\Authenticated\FindOneAction;
+    use Actions\Authenticated\SchemaAction;
 
     public function __construct(CandidateProfileResourceInterface $resource)
     {

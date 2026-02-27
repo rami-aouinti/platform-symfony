@@ -36,6 +36,7 @@ class SprintController extends Controller
     use Actions\Authenticated\FindOneAction;
     use Actions\Authenticated\PatchAction;
     use Actions\Authenticated\UpdateAction;
+    use Actions\Authenticated\SchemaAction;
 
     protected static array $dtoClasses = [
         Controller::METHOD_CREATE => SprintCreate::class,

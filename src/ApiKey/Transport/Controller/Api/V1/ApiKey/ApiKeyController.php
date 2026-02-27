@@ -46,6 +46,7 @@ class ApiKeyController extends Controller
     use Actions\Root\DeleteAction;
     use Actions\Root\PatchAction;
     use Actions\Root\UpdateAction;
+    use Actions\Root\SchemaAction;
 
     /**
      * @var array<string, string>
