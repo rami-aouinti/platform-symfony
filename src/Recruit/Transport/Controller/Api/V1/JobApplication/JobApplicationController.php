@@ -63,9 +63,10 @@ class JobApplicationController extends Controller
 
     public function __construct(
         JobApplicationResourceInterface $resource,
-        private readonly ReadEndpointCache $readEndpointCache,
+        ReadEndpointCache $readEndpointCache,
     ) {
         parent::__construct($resource);
+        $this->readEndpointCache = $readEndpointCache;
     }
 
     /**
