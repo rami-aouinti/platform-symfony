@@ -210,6 +210,12 @@ services:
     App\Task\Application\Resource\Interfaces\TaskRequestResourceInterface:
         class: App\Task\Application\Resource\TaskRequestResource
 
+    App\Calendar\Application\Resource\Interfaces\EventResourceInterface:
+        class: App\Calendar\Application\Resource\EventResource
+
+    App\Calendar\Domain\Repository\Interfaces\EventRepositoryInterface:
+        class: App\Calendar\Infrastructure\Repository\EventRepository
+
     App\Task\Domain\Repository\Interfaces\SprintRepositoryInterface:
         class: App\Task\Infrastructure\Repository\SprintRepository
 
@@ -263,6 +269,9 @@ when@dev:
 
         App\Task\Infrastructure\DataFixtures\:
             resource: '../src/Task/Infrastructure/DataFixtures/*'
+
+        App\Calendar\Infrastructure\DataFixtures\:
+            resource: '../src/Calendar/Infrastructure/DataFixtures/*'
         App\Tests\TestCase\:
             resource: '../tests/TestCase/*'
 
@@ -314,3 +323,6 @@ when@test:
 
         App\Tests\Utils\:
             resource: '../tests/Utils/*'
+
+        App\Calendar\Infrastructure\DataFixtures\:
+            resource: '../src/Calendar/Infrastructure/DataFixtures/*'
