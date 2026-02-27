@@ -15,7 +15,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Override;
 
-final class LoadSprintData extends Fixture implements DependentFixtureInterface, OrderedFixtureInterface
+final class LoadSprintData extends Fixture implements OrderedFixtureInterface
 {
     #[Override]
     public function load(ObjectManager $manager): void
@@ -47,13 +47,5 @@ final class LoadSprintData extends Fixture implements DependentFixtureInterface,
     public function getOrder(): int
     {
         return 11;
-    }
-
-    #[Override]
-    public function getDependencies(): array
-    {
-        return [
-            \App\Company\Infrastructure\DataFixtures\ORM\LoadCompanyData::class,
-        ];
     }
 }
