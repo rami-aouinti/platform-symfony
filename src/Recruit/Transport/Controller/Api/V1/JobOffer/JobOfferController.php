@@ -85,10 +85,11 @@ class JobOfferController extends Controller
 
     public function __construct(
         JobOfferResourceInterface $resource,
-        private readonly ReadEndpointCache $readEndpointCache,
+        ReadEndpointCache $readEndpointCache,
         private readonly JobApplicationResourceInterface $jobApplicationResource,
     ) {
         parent::__construct($resource);
+        $this->readEndpointCache = $readEndpointCache;
     }
 
     /**
