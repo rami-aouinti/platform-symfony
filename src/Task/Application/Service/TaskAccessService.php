@@ -19,6 +19,24 @@ class TaskAccessService implements TaskAccessServiceInterface
         return in_array('ROLE_ROOT', $user->getRoles(), true) || in_array('ROLE_ADMIN', $user->getRoles(), true);
     }
 
+    public function scopeTasksQuery(User $user, array &$criteria): void
+    {
+        if ($this->isAdminLike($user)) {
+            return;
+        }
+
+        $criteria['owner'] = $user;
+    }
+
+    public function scopeTaskRequestsQuery(User $user, array &$criteria): void
+    {
+        if ($this->isAdminLike($user)) {
+            return;
+        }
+
+        $criteria['requester'] = $user;
+    }
+
     public function canManageTask(User $user, Task $task): bool
     {
         if ($this->isAdminLike($user)) {
@@ -39,7 +57,11 @@ class TaskAccessService implements TaskAccessServiceInterface
 
     public function canViewTask(User $user, Task $task): bool
     {
-        return $this->canManageTask($user, $task);
+        if ($this->canManageTask($user, $task)) {
+            return true;
+        }
+
+        return $task->getProject()?->getOwner()?->getId() === $user->getId();
     }
 
     public function canViewTaskRequest(User $user, TaskRequest $taskRequest): bool
@@ -52,13 +74,25 @@ class TaskAccessService implements TaskAccessServiceInterface
             return true;
         }
 
+        if ($taskRequest->getReviewer()?->getId() === $user->getId()) {
+            return true;
+        }
+
         $task = $taskRequest->getTask();
 
-        return $task instanceof Task && $this->canManageTask($user, $task);
+        return $task instanceof Task && $this->canViewTask($user, $task);
     }
 
     public function canReviewTaskRequest(User $user, TaskRequest $taskRequest): bool
     {
+        if ($this->isAdminLike($user)) {
+            return true;
+        }
+
+        if ($taskRequest->getReviewer()?->getId() === $user->getId()) {
+            return true;
+        }
+
         $task = $taskRequest->getTask();
 
         return $task instanceof Task && $this->canManageTask($user, $task);

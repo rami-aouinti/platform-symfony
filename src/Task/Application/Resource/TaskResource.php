@@ -10,7 +10,7 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Task\Application\Resource\Interfaces\TaskResourceInterface;
 use App\Task\Application\UseCase\AssertTaskManageAccess;
 use App\Task\Application\UseCase\ChangeTaskStatus;
-use App\Task\Application\UseCase\FilterTasksForCurrentUser;
+use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
 use App\Task\Application\UseCase\PrepareTaskForCreate;
 use App\Task\Domain\Entity\Task as Entity;
 use App\Task\Domain\Enum\TaskStatus;
@@ -28,7 +28,7 @@ class TaskResource extends AbstractOwnedResource implements TaskResourceInterfac
     public function __construct(
         RepositoryInterface $repository,
         UserTypeIdentification $userTypeIdentification,
-        private readonly FilterTasksForCurrentUser $filterTasksForCurrentUser,
+        private readonly TaskAccessServiceInterface $taskAccessService,
         private readonly AssertTaskManageAccess $assertTaskManageAccess,
         private readonly PrepareTaskForCreate $prepareTaskForCreate,
         private readonly ChangeTaskStatus $changeTaskStatus,
@@ -38,7 +38,7 @@ class TaskResource extends AbstractOwnedResource implements TaskResourceInterfac
 
     public function beforeFind(array &$criteria, array &$orderBy, ?int &$limit, ?int &$offset, array &$search): void
     {
-        $this->filterTasksForCurrentUser->execute($criteria);
+        $this->taskAccessService->scopeTasksQuery($this->getCurrentUserOrDeny(), $criteria);
     }
 
     public function afterFindOne(string &$id, ?EntityInterface $entity = null): void

@@ -15,7 +15,8 @@ use App\Task\Application\UseCase\AssignTaskRequestRequester;
 use App\Task\Application\UseCase\AssignTaskRequestReviewer;
 use App\Task\Application\UseCase\AssignTaskRequestSprint;
 use App\Task\Application\UseCase\ChangeTaskRequestStatus;
-use App\Task\Application\UseCase\FilterTaskRequestsForCurrentUser;
+use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
+use App\Task\Application\UseCase\Support\CurrentTaskUserProvider;
 use App\Task\Application\UseCase\ListTaskRequestsBySprint;
 use App\Task\Application\UseCase\PrepareTaskRequestForCreate;
 use App\Task\Domain\Entity\TaskRequest as Entity;
@@ -29,7 +30,8 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
 {
     public function __construct(
         RepositoryInterface $repository,
-        private readonly FilterTaskRequestsForCurrentUser $filterTaskRequestsForCurrentUser,
+        private readonly CurrentTaskUserProvider $currentTaskUserProvider,
+        private readonly TaskAccessServiceInterface $taskAccessService,
         private readonly PrepareTaskRequestForCreate $prepareTaskRequestForCreate,
         private readonly AssertTaskRequestViewAccess $assertTaskRequestViewAccess,
         private readonly AssertTaskRequestReviewAccess $assertTaskRequestReviewAccess,
@@ -44,7 +46,7 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
 
     public function beforeFind(array &$criteria, array &$orderBy, ?int &$limit, ?int &$offset, array &$search): void
     {
-        $this->filterTaskRequestsForCurrentUser->execute($criteria);
+        $this->taskAccessService->scopeTaskRequestsQuery($this->currentTaskUserProvider->getCurrentUser(), $criteria);
     }
 
     public function beforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
