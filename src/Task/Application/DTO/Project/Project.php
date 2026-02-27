@@ -72,7 +72,6 @@ class Project extends RestDto
         return $this;
     }
 
-
     public function getPhotoUrl(): ?string
     {
         return $this->photoUrl;

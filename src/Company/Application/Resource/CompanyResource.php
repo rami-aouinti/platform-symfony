@@ -6,8 +6,8 @@ namespace App\Company\Application\Resource;
 
 use App\Company\Application\Resource\Interfaces\CompanyResourceInterface;
 use App\Company\Domain\Entity\Company as Entity;
-use App\Company\Domain\Enum\CompanyMembershipStatus;
 use App\Company\Domain\Entity\CompanyMembership;
+use App\Company\Domain\Enum\CompanyMembershipStatus;
 use App\Company\Domain\Message\CompanyCreatedMessage;
 use App\Company\Domain\Repository\Interfaces\CompanyMembershipRepositoryInterface;
 use App\Company\Domain\Repository\Interfaces\CompanyRepositoryInterface as RepositoryInterface;

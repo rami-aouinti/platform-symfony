@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Recruit\Domain\Entity;
 
 use App\Company\Domain\Entity\Company;
-use App\Recruit\Domain\Enum\CandidateProfileStatus;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
+use App\Recruit\Domain\Enum\CandidateProfileStatus;
 use App\User\Domain\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

@@ -6,12 +6,12 @@ namespace App\Recruit\Infrastructure\DataFixtures\ORM;
 
 use App\Company\Domain\Entity\Company;
 use App\General\Domain\Entity\Address as AddressValueObject;
-use App\General\Domain\Rest\UuidHelper;
 use App\General\Domain\Entity\City;
+use App\General\Domain\Entity\Region;
+use App\General\Domain\Rest\UuidHelper;
 use App\Recruit\Domain\Entity\JobCategory;
 use App\Recruit\Domain\Entity\JobOffer;
 use App\Recruit\Domain\Entity\Language;
-use App\General\Domain\Entity\Region;
 use App\Recruit\Domain\Entity\Skill;
 use App\Tests\Utils\PhpUnitUtil;
 use App\User\Domain\Entity\User;

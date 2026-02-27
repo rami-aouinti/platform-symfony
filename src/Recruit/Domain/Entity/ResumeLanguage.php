@@ -35,7 +35,9 @@ class ResumeLanguage implements EntityInterface
     #[ORM\Column(name: 'level', type: Types::STRING, length: 64, nullable: true)]
     private ?string $level = null;
 
-    #[ORM\Column(name: 'sort_order', type: Types::INTEGER, options: ['default' => 0])]
+    #[ORM\Column(name: 'sort_order', type: Types::INTEGER, options: [
+        'default' => 0,
+    ])]
     private int $sortOrder = 0;
 
     public function __construct()

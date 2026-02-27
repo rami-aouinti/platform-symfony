@@ -15,9 +15,9 @@ use App\Task\Domain\Entity\TaskRequest as Entity;
 use App\Task\Domain\Enum\TaskStatus;
 use App\Task\Domain\Repository\Interfaces\TaskRequestRepositoryInterface as RepositoryInterface;
 use App\User\Application\Resource\UserResource;
-use Doctrine\ORM\EntityManagerInterface;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -230,7 +230,6 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
 
         return $user;
     }
-
 
     private function assertCanViewRequest(Entity $request): void
     {

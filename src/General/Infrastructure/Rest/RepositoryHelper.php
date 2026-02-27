@@ -19,8 +19,8 @@ use function array_map;
 use function array_walk;
 use function call_user_func_array;
 use function is_array;
-use function is_object;
 use function is_numeric;
+use function is_object;
 use function str_contains;
 use function strcmp;
 use function strtolower;
@@ -272,8 +272,6 @@ class RepositoryHelper
 
     /**
      * Lambda function to create condition array for 'getExpression' method.
-     *
-     * @param mixed $value
      *
      * @return array{0: string, 1: string, 2: mixed}
      */

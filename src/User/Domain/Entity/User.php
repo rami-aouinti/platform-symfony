@@ -498,7 +498,6 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         return $this;
     }
 
-
     #[Groups([
         'CompanyMembership.user',
     ])]

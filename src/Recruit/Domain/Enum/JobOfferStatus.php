@@ -15,8 +15,8 @@ use App\General\Domain\Enum\Traits\GetValues;
 enum JobOfferStatus: string implements DatabaseEnumInterface
 {
     use GetValues;
+
     case DRAFT = 'draft';
     case OPEN = 'open';
     case CLOSED = 'closed';
-
 }

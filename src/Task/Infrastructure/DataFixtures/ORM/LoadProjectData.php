@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Task\Infrastructure\DataFixtures\ORM;
 
-use App\General\Domain\Rest\UuidHelper;
 use App\Company\Domain\Entity\Company;
+use App\General\Domain\Rest\UuidHelper;
 use App\Task\Domain\Entity\Project;
 use App\Task\Domain\Enum\ProjectStatus;
 use App\Tests\Utils\PhpUnitUtil;

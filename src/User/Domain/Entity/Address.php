@@ -46,26 +46,107 @@ class Address implements EntityInterface
         $this->address = new AddressValueObject();
     }
 
-    public function getId(): string { return $this->id->toString(); }
-    public function getUserProfile(): ?UserProfile { return $this->userProfile; }
-    public function setUserProfile(?UserProfile $userProfile): self { $this->userProfile = $userProfile; return $this; }
-    public function getType(): AddressType { return $this->type; }
-    public function setType(AddressType $type): self { $this->type = $type; return $this; }
-    public function getAddress(): AddressValueObject { return $this->address; }
-    public function setAddress(AddressValueObject $address): self { $this->address = $address; return $this; }
+    public function getId(): string
+    {
+        return $this->id->toString();
+    }
+    public function getUserProfile(): ?UserProfile
+    {
+        return $this->userProfile;
+    }
+    public function setUserProfile(?UserProfile $userProfile): self
+    {
+        $this->userProfile = $userProfile;
 
-    public function getStreetLine1(): string { return $this->address->getStreetLine1() ?? ''; }
-    public function setStreetLine1(string $streetLine1): self { $this->address->setStreetLine1($streetLine1); return $this; }
-    public function getStreetLine2(): ?string { return $this->address->getStreetLine2(); }
-    public function setStreetLine2(?string $streetLine2): self { $this->address->setStreetLine2($streetLine2); return $this; }
-    public function getPostalCode(): string { return $this->address->getPostalCode() ?? ''; }
-    public function setPostalCode(string $postalCode): self { $this->address->setPostalCode($postalCode); return $this; }
-    public function getCity(): string { return $this->address->getCity(); }
-    public function setCity(string $city): self { $this->address->setCity($city); return $this; }
-    public function getRegion(): ?string { return $this->address->getRegion(); }
-    public function setRegion(?string $region): self { $this->address->setRegion($region); return $this; }
-    public function getState(): ?string { return $this->getRegion(); }
-    public function setState(?string $state): self { return $this->setRegion($state); }
-    public function getCountryCode(): string { return $this->address->getCountryCode(); }
-    public function setCountryCode(string $countryCode): self { $this->address->setCountryCode($countryCode); return $this; }
+        return $this;
+    }
+    public function getType(): AddressType
+    {
+        return $this->type;
+    }
+    public function setType(AddressType $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+    public function getAddress(): AddressValueObject
+    {
+        return $this->address;
+    }
+    public function setAddress(AddressValueObject $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getStreetLine1(): string
+    {
+        return $this->address->getStreetLine1() ?? '';
+    }
+    public function setStreetLine1(string $streetLine1): self
+    {
+        $this->address->setStreetLine1($streetLine1);
+
+        return $this;
+    }
+    public function getStreetLine2(): ?string
+    {
+        return $this->address->getStreetLine2();
+    }
+    public function setStreetLine2(?string $streetLine2): self
+    {
+        $this->address->setStreetLine2($streetLine2);
+
+        return $this;
+    }
+    public function getPostalCode(): string
+    {
+        return $this->address->getPostalCode() ?? '';
+    }
+    public function setPostalCode(string $postalCode): self
+    {
+        $this->address->setPostalCode($postalCode);
+
+        return $this;
+    }
+    public function getCity(): string
+    {
+        return $this->address->getCity();
+    }
+    public function setCity(string $city): self
+    {
+        $this->address->setCity($city);
+
+        return $this;
+    }
+    public function getRegion(): ?string
+    {
+        return $this->address->getRegion();
+    }
+    public function setRegion(?string $region): self
+    {
+        $this->address->setRegion($region);
+
+        return $this;
+    }
+    public function getState(): ?string
+    {
+        return $this->getRegion();
+    }
+    public function setState(?string $state): self
+    {
+        return $this->setRegion($state);
+    }
+    public function getCountryCode(): string
+    {
+        return $this->address->getCountryCode();
+    }
+    public function setCountryCode(string $countryCode): self
+    {
+        $this->address->setCountryCode($countryCode);
+
+        return $this;
+    }
 }

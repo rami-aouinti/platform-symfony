@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Recruit\Application\DTO\JobOffer;
 
 use App\Company\Domain\Entity\Company;
+use App\General\Application\DTO\Address;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\DTO\RestDto;
-use App\General\Application\DTO\Address;
 use App\General\Application\Validator\Constraints as AppAssert;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Recruit\Domain\Entity\JobCategory;

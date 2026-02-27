@@ -46,5 +46,4 @@ class Skill implements EntityInterface
     {
         return $this->id->toString();
     }
-
 }

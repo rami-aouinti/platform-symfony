@@ -22,8 +22,9 @@ class RequestMapper extends RestRequestMapper
         'completedAt',
     ];
 
-    public function __construct(private readonly ProjectResource $projectResource)
-    {
+    public function __construct(
+        private readonly ProjectResource $projectResource
+    ) {
     }
 
     protected function transformProject(?string $project): ?Project

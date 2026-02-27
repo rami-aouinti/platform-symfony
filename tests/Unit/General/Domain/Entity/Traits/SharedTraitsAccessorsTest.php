@@ -17,7 +17,7 @@ class SharedTraitsAccessorsTest extends TestCase
     #[TestDox('Shared traits expose strict typed getters and fluent setters.')]
     public function testSharedTraitsAccessors(): void
     {
-        $entity = new class {
+        $entity = new class() {
             use NameTrait;
             use DescriptionTrait;
             use SlugTrait;

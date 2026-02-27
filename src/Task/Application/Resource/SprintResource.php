@@ -28,7 +28,6 @@ class SprintResource extends RestResource implements SprintResourceInterface
         parent::__construct($repository);
     }
 
-
     public function findByCompany(string $companyId, ?bool $active = null): array
     {
         /** @var RepositoryInterface $repository */

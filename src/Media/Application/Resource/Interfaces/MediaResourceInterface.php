@@ -8,7 +8,6 @@ use App\General\Application\Rest\Interfaces\RestResourceInterface;
 use App\Media\Domain\Entity\Media;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-
 /**
  * @package App\Media
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
@@ -27,5 +26,4 @@ interface MediaResourceInterface extends RestResourceInterface
      * @return Media[]
      */
     public function findForExport(?string $status = null): array;
-
 }

@@ -29,19 +29,35 @@ class RequestMapper extends RestRequestMapper
 
     protected function transformJobOffer(?string $jobOffer): ?JobOffer
     {
-        try { return $jobOffer !== null && $jobOffer !== '' ? $this->jobOfferResource->getReference($jobOffer) : null; } catch (Throwable) { return null; }
+        try {
+            return $jobOffer !== null && $jobOffer !== '' ? $this->jobOfferResource->getReference($jobOffer) : null;
+        } catch (Throwable) {
+            return null;
+        }
     }
     protected function transformResume(?string $resume): ?Resume
     {
-        try { return $resume !== null && $resume !== '' ? $this->resumeResource->getReference($resume) : null; } catch (Throwable) { return null; }
+        try {
+            return $resume !== null && $resume !== '' ? $this->resumeResource->getReference($resume) : null;
+        } catch (Throwable) {
+            return null;
+        }
     }
     protected function transformCandidate(?string $candidate): ?User
     {
-        try { return $candidate !== null && $candidate !== '' ? $this->userResource->getReference($candidate) : null; } catch (Throwable) { return null; }
+        try {
+            return $candidate !== null && $candidate !== '' ? $this->userResource->getReference($candidate) : null;
+        } catch (Throwable) {
+            return null;
+        }
     }
     protected function transformDecidedBy(?string $decidedBy): ?User
     {
-        try { return $decidedBy !== null && $decidedBy !== '' ? $this->userResource->getReference($decidedBy) : null; } catch (Throwable) { return null; }
+        try {
+            return $decidedBy !== null && $decidedBy !== '' ? $this->userResource->getReference($decidedBy) : null;
+        } catch (Throwable) {
+            return null;
+        }
     }
     protected function transformDecidedAt(?string $decidedAt): ?DateTimeImmutable
     {

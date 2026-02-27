@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Task\Application\DTO\Sprint;
 
+use App\Company\Domain\Entity\Company;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\DTO\RestDto;
 use App\General\Application\Validator\Constraints as AppAssert;
-use App\Company\Domain\Entity\Company;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Task\Domain\Entity\Sprint as Entity;
 use App\Task\Domain\Entity\TaskRequest;
-use Doctrine\Common\Collections\Collection;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\Collection;
 use Override;
 use Symfony\Component\Validator\Constraints as Assert;
 

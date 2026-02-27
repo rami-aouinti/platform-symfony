@@ -49,18 +49,18 @@ class DefaultPhotoEntityEventListener
 
     private function ensureCompanyPhotoUrl(Company $company): void
     {
-        $photoUrl = trim((string) $company->getStoredPhotoUrl());
+        $photoUrl = trim((string)$company->getStoredPhotoUrl());
 
-        if ('' === $photoUrl) {
+        if ($photoUrl === '') {
             $company->setPhotoUrl($this->buildAvatarUrl($company->getLegalName()));
         }
     }
 
     private function ensureProjectPhotoUrl(Project $project): void
     {
-        $photoUrl = trim((string) $project->getStoredPhotoUrl());
+        $photoUrl = trim((string)$project->getStoredPhotoUrl());
 
-        if ('' === $photoUrl) {
+        if ($photoUrl === '') {
             $project->setPhotoUrl($this->buildAvatarUrl($project->getName()));
         }
     }
@@ -80,7 +80,7 @@ class DefaultPhotoEntityEventListener
 
         $avatarUrl = trim($avatar->getUrl());
 
-        if ('' === $avatarUrl) {
+        if ($avatarUrl === '') {
             $avatar->setUrl($this->buildAvatarUrl($profile->getUser()->getUsername()));
         }
     }

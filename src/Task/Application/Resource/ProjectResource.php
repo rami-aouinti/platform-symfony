@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Task\Application\Resource;
 
+use App\Company\Domain\Repository\Interfaces\CompanyRepositoryInterface;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
-use App\Company\Domain\Repository\Interfaces\CompanyRepositoryInterface;
 use App\Task\Application\Resource\Interfaces\ProjectResourceInterface;
 use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
 use App\Task\Domain\Entity\Project as Entity;

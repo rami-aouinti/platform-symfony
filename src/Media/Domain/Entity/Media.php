@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Media\Domain\Entity;
 
 use App\General\Domain\Entity\Interfaces\EntityInterface;
-use App\Media\Domain\Enum\MediaStatus;
 use App\General\Domain\Entity\Traits\NameTrait;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
+use App\Media\Domain\Enum\MediaStatus;
 use App\User\Domain\Entity\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -135,6 +135,4 @@ class Media implements EntityInterface
 
         return $this;
     }
-
 }
-

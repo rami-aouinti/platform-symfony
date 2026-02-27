@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Company\Application\DTO\Company;
 
 use App\Company\Domain\Entity\Company as Entity;
+use App\General\Application\DTO\Address;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\DTO\RestDto;
-use App\General\Application\DTO\Address;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use Override;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -21,7 +21,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Company extends RestDto
 {
-
     protected static array $mappings = [
         'mainAddress' => 'updateMainAddress',
     ];
@@ -99,7 +98,6 @@ class Company extends RestDto
         return $this;
     }
 
-
     public function getPhotoUrl(): ?string
     {
         return $this->photoUrl;
@@ -152,5 +150,4 @@ class Company extends RestDto
 
         return $this;
     }
-
 }

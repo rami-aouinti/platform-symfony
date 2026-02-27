@@ -32,7 +32,7 @@ class TaskRequest implements EntityInterface
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
-    #[Groups(['Sprint','TaskRequest', 'TaskRequest.id', 'TaskRequest.show', 'TaskRequest.edit'])]
+    #[Groups(['Sprint', 'TaskRequest', 'TaskRequest.id', 'TaskRequest.show', 'TaskRequest.edit'])]
     private UuidInterface $id;
 
     #[ORM\ManyToOne(targetEntity: Task::class)]

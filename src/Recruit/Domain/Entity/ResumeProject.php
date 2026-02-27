@@ -48,7 +48,9 @@ class ResumeProject implements EntityInterface
     #[ORM\Column(name: 'end_date', type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $endDate = null;
 
-    #[ORM\Column(name: 'sort_order', type: Types::INTEGER, options: ['default' => 0])]
+    #[ORM\Column(name: 'sort_order', type: Types::INTEGER, options: [
+        'default' => 0,
+    ])]
     private int $sortOrder = 0;
 
     public function __construct()

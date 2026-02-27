@@ -118,13 +118,15 @@ class MediaResource extends RestResource implements MediaResourceInterface
     {
         $criteria = [];
 
-        if (null !== $status && '' !== $status) {
+        if ($status !== null && $status !== '') {
             $criteria['status'] = MediaStatus::from($status);
         }
 
         return $this->find(
             criteria: $criteria,
-            orderBy: ['createdAt' => 'DESC'],
+            orderBy: [
+                'createdAt' => 'DESC',
+            ],
         );
     }
 
@@ -151,19 +153,19 @@ class MediaResource extends RestResource implements MediaResourceInterface
             static fn (mixed $column): bool => is_string($column) && in_array($column, self::ALLOWED_EXPORT_COLUMNS, true),
         ));
 
-        if ([] === $columns) {
+        if ($columns === []) {
             $columns = ['id', 'name', 'mimeType', 'size', 'status', 'createdAt'];
         }
 
         $status = $decoded['status'] ?? null;
 
-        if (!is_string($status) || '' === $status) {
+        if (!is_string($status) || $status === '') {
             $status = null;
         }
 
         $title = $decoded['title'] ?? 'Media export';
 
-        if (!is_string($title) || '' === $title) {
+        if (!is_string($title) || $title === '') {
             $title = 'Media export';
         }
 

@@ -18,8 +18,9 @@ class RequestMapper extends RestRequestMapper
         'referenceId',
     ];
 
-    public function __construct(private readonly BlogPostResource $blogPostResource)
-    {
+    public function __construct(
+        private readonly BlogPostResource $blogPostResource
+    ) {
     }
 
     protected function transformPost(?string $post): ?BlogPost

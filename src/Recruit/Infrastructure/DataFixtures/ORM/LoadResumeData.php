@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Recruit\Infrastructure\DataFixtures\ORM;
 
 use App\General\Domain\Rest\UuidHelper;
-use App\Recruit\Domain\Entity\ResumeLanguage;
 use App\Recruit\Domain\Entity\Resume;
 use App\Recruit\Domain\Entity\ResumeEducation;
 use App\Recruit\Domain\Entity\ResumeExperience;
+use App\Recruit\Domain\Entity\ResumeLanguage;
 use App\Recruit\Domain\Entity\ResumeProject;
 use App\Recruit\Domain\Entity\ResumeReference;
 use App\Recruit\Domain\Entity\ResumeSkill;

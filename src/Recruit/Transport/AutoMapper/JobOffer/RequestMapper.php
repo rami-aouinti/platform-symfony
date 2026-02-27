@@ -14,12 +14,13 @@ use Throwable;
 class RequestMapper extends RestRequestMapper
 {
     protected static array $properties = [
-        'title','description','location','employmentType','status','salaryMin','salaryMax','salaryCurrency','salaryPeriod',
-        'remoteMode','experienceLevel','workTime','applicationType','publishedAt','address','languageLevel','company',
+        'title', 'description', 'location', 'employmentType', 'status', 'salaryMin', 'salaryMax', 'salaryCurrency', 'salaryPeriod',
+        'remoteMode', 'experienceLevel', 'workTime', 'applicationType', 'publishedAt', 'address', 'languageLevel', 'company',
     ];
 
-    public function __construct(private readonly CompanyResource $companyResource)
-    {
+    public function __construct(
+        private readonly CompanyResource $companyResource
+    ) {
     }
 
     protected function transformPublishedAt(?string $publishedAt): ?DateTimeImmutable
@@ -44,6 +45,10 @@ class RequestMapper extends RestRequestMapper
 
     protected function transformCompany(?string $company): ?Company
     {
-        try { return $company !== null && $company !== '' ? $this->companyResource->getReference($company) : null; } catch (Throwable) { return null; }
+        try {
+            return $company !== null && $company !== '' ? $this->companyResource->getReference($company) : null;
+        } catch (Throwable) {
+            return null;
+        }
     }
 }

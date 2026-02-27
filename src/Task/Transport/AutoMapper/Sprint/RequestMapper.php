@@ -56,7 +56,7 @@ class RequestMapper extends RestRequestMapper
      */
     protected function transformTaskRequests(array|string|null $taskRequests): array
     {
-        $taskRequestIds = (array) $taskRequests;
+        $taskRequestIds = (array)$taskRequests;
 
         return array_values(array_filter(array_map(function (string $taskRequestId): ?TaskRequest {
             try {

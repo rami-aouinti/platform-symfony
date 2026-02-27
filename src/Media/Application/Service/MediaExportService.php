@@ -88,7 +88,7 @@ class MediaExportService
             $stream .= "({$line}) Tj\n";
         }
 
-        $stream .= "ET";
+        $stream .= 'ET';
 
         $objects = [];
         $objects[] = "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n";
@@ -109,7 +109,7 @@ class MediaExportService
         $pdf .= "xref\n0 " . (count($objects) + 1) . "\n";
         $pdf .= "0000000000 65535 f \n";
 
-        for ($i = 1; $i <= count($objects); ++$i) {
+        for ($i = 1; $i <= count($objects); $i++) {
             $pdf .= sprintf("%010d 00000 n \n", $offsets[$i]);
         }
 

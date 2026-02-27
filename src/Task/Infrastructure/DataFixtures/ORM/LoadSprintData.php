@@ -10,7 +10,6 @@ use App\Task\Domain\Entity\Sprint;
 use App\Tests\Utils\PhpUnitUtil;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Override;

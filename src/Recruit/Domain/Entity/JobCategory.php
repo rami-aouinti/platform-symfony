@@ -62,5 +62,4 @@ class JobCategory implements EntityInterface
 
         return $this;
     }
-
 }

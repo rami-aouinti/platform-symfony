@@ -25,8 +25,9 @@ class RequestMapper extends RestRequestMapper
         'sortOrder',
     ];
 
-    public function __construct(private readonly ResumeResource $resumeResource)
-    {
+    public function __construct(
+        private readonly ResumeResource $resumeResource
+    ) {
     }
 
     protected function transformResume(?string $resume): ?Resume

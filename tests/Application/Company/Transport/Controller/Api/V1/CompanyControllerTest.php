@@ -77,7 +77,6 @@ class CompanyControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
 
-
     /**
      * @throws Throwable
      */

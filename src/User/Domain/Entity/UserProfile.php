@@ -241,7 +241,7 @@ class UserProfile implements EntityInterface
     {
         $avatarUrl = $this->avatar?->getUrl();
 
-        if (is_string($avatarUrl) && '' !== $avatarUrl) {
+        if (is_string($avatarUrl) && $avatarUrl !== '') {
             return $avatarUrl;
         }
 
@@ -261,7 +261,6 @@ class UserProfile implements EntityInterface
     {
         return $this->getAvatarUrl();
     }
-
 
     #[Groups([
         'UserProfile',

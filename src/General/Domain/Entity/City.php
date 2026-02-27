@@ -64,5 +64,4 @@ class City implements EntityInterface
 
         return $this;
     }
-
 }

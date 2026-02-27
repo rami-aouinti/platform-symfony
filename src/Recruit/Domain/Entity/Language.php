@@ -62,5 +62,4 @@ class Language implements EntityInterface
 
         return $this;
     }
-
 }

@@ -33,7 +33,9 @@ class Sprint implements EntityInterface
     #[Groups(['Sprint', 'Sprint.id', 'Sprint.show', 'Sprint.edit'])]
     private UuidInterface $id;
 
-    /** @var Collection<int, TaskRequest> */
+    /**
+     * @var Collection<int, TaskRequest>
+     */
     #[ORM\OneToMany(mappedBy: 'sprint', targetEntity: TaskRequest::class)]
     #[Groups(['Sprint', 'Sprint.taskRequests', 'Sprint.show'])]
     private Collection $taskRequests;
@@ -62,7 +64,9 @@ class Sprint implements EntityInterface
         return $this->id->toString();
     }
 
-    /** @return Collection<int, TaskRequest> */
+    /**
+     * @return Collection<int, TaskRequest>
+     */
     public function getTaskRequests(): Collection
     {
         return $this->taskRequests;

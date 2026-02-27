@@ -19,4 +19,3 @@ enum CompanyStatus: string implements DatabaseEnumInterface
         return $this !== $target;
     }
 }
-
