@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Task\Domain\Entity;
 
+use App\Company\Domain\Entity\Company;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
@@ -20,6 +21,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Table(name: 'sprint')]
 #[ORM\Index(name: 'idx_sprint_start_date', columns: ['start_date'])]
 #[ORM\Index(name: 'idx_sprint_end_date', columns: ['end_date'])]
+#[ORM\Index(name: 'idx_sprint_company_id', columns: ['company_id'])]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class Sprint implements EntityInterface
 {
@@ -43,6 +45,11 @@ class Sprint implements EntityInterface
     #[ORM\Column(name: 'end_date', type: Types::DATETIME_IMMUTABLE, nullable: false)]
     #[Groups(['Sprint', 'Sprint.endDate', 'Sprint.create', 'Sprint.show', 'Sprint.edit'])]
     private ?DateTimeImmutable $endDate = null;
+
+    #[ORM\ManyToOne(targetEntity: Company::class)]
+    #[ORM\JoinColumn(name: 'company_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['Sprint', 'Sprint.company', 'Sprint.create', 'Sprint.show', 'Sprint.edit'])]
+    private ?Company $company = null;
 
     public function __construct()
     {
@@ -102,5 +109,29 @@ class Sprint implements EntityInterface
         $this->endDate = $endDate;
 
         return $this;
+    }
+
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?Company $company): self
+    {
+        $this->company = $company;
+
+        return $this;
+    }
+
+    #[Groups(['Sprint', 'Sprint.active', 'Sprint.show'])]
+    public function isActive(): bool
+    {
+        $now = new DateTimeImmutable();
+
+        if ($this->startDate === null || $this->endDate === null) {
+            return false;
+        }
+
+        return $this->startDate <= $now && $this->endDate >= $now;
     }
 }

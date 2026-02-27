@@ -28,6 +28,15 @@ class SprintResource extends RestResource implements SprintResourceInterface
         parent::__construct($repository);
     }
 
+
+    public function findByCompany(string $companyId, ?bool $active = null): array
+    {
+        /** @var RepositoryInterface $repository */
+        $repository = $this->getRepository();
+
+        return $repository->findByCompany($companyId, $active);
+    }
+
     public function beforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
     {
         $this->assertAdminLike();
