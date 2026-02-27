@@ -21,6 +21,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Exception\InvalidUuidStringException;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -227,7 +228,7 @@ class TaskRequestResource extends RestResource implements TaskRequestResourceInt
         return $entity;
     }
 
-    private function parseUuid(string $value, string $fieldName): Uuid
+    private function parseUuid(string $value, string $fieldName): UuidInterface
     {
         try {
             return Uuid::fromString($value);
