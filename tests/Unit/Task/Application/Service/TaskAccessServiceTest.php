@@ -66,4 +66,47 @@ class TaskAccessServiceTest extends TestCase
 
         self::assertTrue($service->canManageTask($projectOwner, $task));
     }
+
+    public function testCanViewTaskAllowsAdmin(): void
+    {
+        $service = new TaskAccessService();
+        $admin = (new User())->setEmail('admin@example.com')->setRoles(['ROLE_ADMIN']);
+        $task = new Task();
+
+        self::assertTrue($service->canViewTask($admin, $task));
+    }
+
+    public function testCanViewTaskAllowsTaskOwner(): void
+    {
+        $service = new TaskAccessService();
+        $owner = (new User())->setEmail('owner@example.com');
+        $task = (new Task())->setOwner($owner);
+
+        self::assertTrue($service->canViewTask($owner, $task));
+    }
+
+    public function testCanViewTaskAllowsProjectOwner(): void
+    {
+        $service = new TaskAccessService();
+        $projectOwner = (new User())->setEmail('project-owner@example.com');
+        $project = (new Project())->setOwner($projectOwner);
+        $task = (new Task())->setProject($project);
+
+        self::assertTrue($service->canViewTask($projectOwner, $task));
+    }
+
+    public function testCanViewTaskDeniesUnrelatedUser(): void
+    {
+        $service = new TaskAccessService();
+        $unrelatedUser = (new User())->setEmail('stranger@example.com');
+        $taskOwner = (new User())->setEmail('task-owner@example.com');
+        $projectOwner = (new User())->setEmail('project-owner@example.com');
+
+        $project = (new Project())->setOwner($projectOwner);
+        $task = (new Task())
+            ->setOwner($taskOwner)
+            ->setProject($project);
+
+        self::assertFalse($service->canViewTask($unrelatedUser, $task));
+    }
 }

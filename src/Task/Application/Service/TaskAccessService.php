@@ -39,6 +39,10 @@ class TaskAccessService implements TaskAccessServiceInterface
 
     public function canManageTask(User $user, Task $task): bool
     {
+        // Manage access rules:
+        // 1) Admin-like users can manage any task.
+        // 2) The task owner can manage their task.
+        // 3) The project owner can manage tasks of their project.
         if ($this->isAdminLike($user)) {
             return true;
         }
@@ -57,11 +61,7 @@ class TaskAccessService implements TaskAccessServiceInterface
 
     public function canViewTask(User $user, Task $task): bool
     {
-        if ($this->canManageTask($user, $task)) {
-            return true;
-        }
-
-        return $task->getProject()?->getOwner()?->getId() === $user->getId();
+        return $this->canManageTask($user, $task);
     }
 
     public function canViewTaskRequest(User $user, TaskRequest $taskRequest): bool
