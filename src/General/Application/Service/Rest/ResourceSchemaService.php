@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\General\Application\Service\Rest;
 
-use App\General\Application\DTO\Rest\ResourceSchemaFieldDto;
-use App\General\Application\DTO\Rest\ResourceSchemaMetadataDto;
 use App\General\Application\Rest\Interfaces\BaseRestResourceInterface;
 use App\General\Transport\AutoMapper\RestRequestMapper;
 use Doctrine\DBAL\Types\Types;
@@ -34,14 +32,14 @@ final class ResourceSchemaService
     /**
      * @param array<int, class-string> $dtoClasses
      */
-    public function build(BaseRestResourceInterface $resource, array $dtoClasses): ResourceSchemaMetadataDto
+    public function build(BaseRestResourceInterface $resource, array $dtoClasses): array
     {
         $metadata = $resource->getRepository()->getClassMetaData();
 
-        return new ResourceSchemaMetadataDto(
-            $this->hydrateFields($this->extractDisplayableProperties($resource), $metadata),
-            $this->hydrateFields($this->extractEditableProperties($dtoClasses), $metadata),
-        );
+        return [
+            "displayable" => $this->hydrateFields($this->extractDisplayableProperties($resource), $metadata),
+            "editable" => $this->hydrateFields($this->extractEditableProperties($dtoClasses), $metadata),
+        ];
     }
 
     /**
@@ -129,7 +127,7 @@ final class ResourceSchemaService
     /**
      * @param array<int, string> $properties
      *
-     * @return array<int, ResourceSchemaFieldDto>
+     * @return array<int, array<string, string|null>>
      */
     private function hydrateFields(array $properties, ClassMetadata $metadata): array
     {
@@ -141,12 +139,12 @@ final class ResourceSchemaService
                     ? $metadata->associationMappings[$property]['targetEntity']
                     : null;
 
-                $hydrated[] = new ResourceSchemaFieldDto(
-                    name: $property,
-                    type: 'object',
-                    targetClass: $targetClass,
-                    endpoint: $targetClass !== null ? $this->guessEndpointFromEntity($targetClass) : null,
-                );
+                $hydrated[] = [
+                    'name' => $property,
+                    'type' => 'object',
+                    'targetClass' => $targetClass,
+                    'endpoint' => $targetClass !== null ? $this->guessEndpointFromEntity($targetClass) : null,
+                ];
 
                 continue;
             }
@@ -155,10 +153,12 @@ final class ResourceSchemaService
                 ? $metadata->fieldMappings[$property]['type']
                 : null;
 
-            $hydrated[] = new ResourceSchemaFieldDto(
-                name: $property,
-                type: $this->normalizeFieldType($doctrineType),
-            );
+            $hydrated[] = [
+                'name' => $property,
+                'type' => $this->normalizeFieldType($doctrineType),
+                'targetClass' => null,
+                'endpoint' => null,
+            ];
         }
 
         return $hydrated;
