@@ -98,26 +98,6 @@ class UserController extends Controller
         parent::__construct($resource);
     }
 
-    /**
-     * Example of manual and intelligent schema control for this module.
-     *
-     * @return array<string, array<int, string|array<string, string|null>>>
-     */
-    protected function getSchemaFieldConfiguration(): array
-    {
-        return [
-            'displayable' => [
-                'firstName',
-                'lastName',
-                'email'
-            ],
-            'editable' => [
-                'firstName',
-                'lastName'
-            ],
-        ];
-    }
-
     protected function getReadCacheScope(): ?string
     {
         return self::READ_CACHE_SCOPE;
