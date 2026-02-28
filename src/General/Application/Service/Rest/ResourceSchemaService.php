@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\General\Application\Service\Rest;
 
-use App\General\Application\DTO\Rest\ResourceSchemaMetadataDto;
-use App\General\Application\DTO\Rest\ResourceSchemaRelationDto;
 use App\General\Application\Rest\Interfaces\BaseRestResourceInterface;
 use App\General\Transport\AutoMapper\RestRequestMapper;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use ReflectionClass;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -16,14 +15,17 @@ use function array_keys;
 use function array_unique;
 use function class_exists;
 use function explode;
+use function in_array;
 use function is_array;
-use function is_int;
+use function is_bool;
 use function is_string;
-use function ksort;
+use function preg_replace;
 use function sort;
 use function str_contains;
 use function str_ends_with;
+use function str_replace;
 use function strrpos;
+use function strtolower;
 use function substr;
 
 final class ResourceSchemaService
@@ -31,13 +33,33 @@ final class ResourceSchemaService
     /**
      * @param array<int, class-string> $dtoClasses
      */
-    public function build(BaseRestResourceInterface $resource, array $dtoClasses): ResourceSchemaMetadataDto
-    {
-        return new ResourceSchemaMetadataDto(
-            $this->extractDisplayableProperties($resource),
-            $this->extractEditableProperties($dtoClasses),
-            $this->extractRelations($resource->getRepository()->getAssociations()),
+    public function build(
+        BaseRestResourceInterface $resource,
+        array $dtoClasses,
+        ?string $createDtoClass = null,
+        array $configuration = []
+    ): array {
+        $metadata = $resource->getRepository()->getClassMetaData();
+
+        $displayable = $this->hydrateFields($this->extractDisplayableProperties($resource), $metadata);
+        $editable = $this->hydrateFields($this->extractEditableProperties($dtoClasses), $metadata);
+        $creatable = $this->hydrateFields(
+            $createDtoClass !== null ? $this->extractEditableProperties([$createDtoClass]) : [],
+            $metadata,
         );
+
+        return [
+            'displayable' => $this->applySectionConfiguration($displayable, $configuration['displayable'] ?? [], $metadata),
+            'editable' => $this->applySectionConfiguration($editable, $configuration['editable'] ?? [], $metadata),
+            'creatable' => $this->resolveCreatableConfiguration(
+                $creatable,
+                $configuration['creatable'] ?? [
+                    'fields' => $creatable,
+                    'required' => [],
+                ],
+                $metadata,
+            ),
+        ];
     }
 
     /**
@@ -123,24 +145,174 @@ final class ResourceSchemaService
     }
 
     /**
-     * @param array<string, array<string, mixed>> $associations
+     * @param array<int, string> $properties
      *
-     * @return array<string, ResourceSchemaRelationDto>
+     * @return array<int, array<string, string|null>>
      */
-    private function extractRelations(array $associations): array
+    private function hydrateFields(array $properties, ClassMetadata $metadata): array
     {
-        $relations = [];
+        $hydrated = [];
 
-        foreach ($associations as $association => $mapping) {
-            $relations[$association] = new ResourceSchemaRelationDto(
-                is_string($mapping['targetEntity'] ?? null) ? $mapping['targetEntity'] : '',
-                $this->normalizeRelationType(is_int($mapping['type'] ?? null) ? $mapping['type'] : null),
-            );
+        foreach ($properties as $property) {
+            $field = $this->buildFieldFromName($property, $metadata);
+
+            if ($field !== null) {
+                $hydrated[] = $field;
+            }
         }
 
-        ksort($relations);
+        return $hydrated;
+    }
 
-        return $relations;
+    /**
+     * @param array<int, array<string, string|null>> $autoFields
+     * @param array<int, string|array<string, string|null>>|bool $configuration
+     *
+     * @return array<int, array<string, string|null>>|false
+     */
+    private function applySectionConfiguration(array $autoFields, array|bool $configuration, ClassMetadata $metadata): array|false
+    {
+        if (is_bool($configuration)) {
+            return $configuration === false ? false : $autoFields;
+        }
+
+        if ($configuration === []) {
+            return $autoFields;
+        }
+
+        $resolved = [];
+
+        foreach ($configuration as $configuredField) {
+            $normalized = $this->normalizeConfiguredField($configuredField, $autoFields, $metadata);
+
+            if ($normalized !== null) {
+                $resolved[] = $normalized;
+            }
+        }
+
+        return $resolved;
+    }
+
+    /**
+     * @param array<int, array<string, string|null>> $autoFields
+     * @param array{fields?: array<int, string|array<string, string|null>>, required?: array<int, string>}|bool $configuration
+     *
+     * @return array<string, mixed>|false
+     */
+    private function resolveCreatableConfiguration(array $autoFields, array|bool $configuration, ClassMetadata $metadata): array|false
+    {
+        if ($configuration === false) {
+            return false;
+        }
+
+        $fieldsConfig = is_array($configuration) ? ($configuration['fields'] ?? []) : [];
+        $required = is_array($configuration) && is_array($configuration['required'] ?? null)
+            ? array_values(array_unique($configuration['required']))
+            : [];
+
+        return [
+            'fields' => $this->applySectionConfiguration($autoFields, $fieldsConfig, $metadata),
+            'required' => $this->filterRequiredFields($required, $metadata),
+        ];
+    }
+
+    /**
+     * @param array<int, string> $required
+     *
+     * @return array<int, string>
+     */
+    private function filterRequiredFields(array $required, ClassMetadata $metadata): array
+    {
+        $filtered = [];
+
+        foreach ($required as $fieldName) {
+            if (!is_string($fieldName)) {
+                continue;
+            }
+
+            if (isset($metadata->fieldMappings[$fieldName]) || isset($metadata->associationMappings[$fieldName])) {
+                $filtered[] = $fieldName;
+            }
+        }
+
+        return array_values(array_unique($filtered));
+    }
+
+    /**
+     * @param string|array<string, string|null> $configuredField
+     * @param array<int, array<string, string|null>> $autoFields
+     *
+     * @return array<string, string|null>|null
+     */
+    private function normalizeConfiguredField(string|array $configuredField, array $autoFields, ClassMetadata $metadata): ?array
+    {
+        $autoByName = [];
+
+        foreach ($autoFields as $field) {
+            $name = $field['name'] ?? null;
+
+            if (is_string($name)) {
+                $autoByName[$name] = $field;
+            }
+        }
+
+        if (is_string($configuredField)) {
+            return $autoByName[$configuredField] ?? $this->buildFieldFromName($configuredField, $metadata);
+        }
+
+        $name = $configuredField['name'] ?? null;
+
+        if (!is_string($name) || $name === '') {
+            return null;
+        }
+
+        $base = $autoByName[$name] ?? $this->buildFieldFromName($name, $metadata);
+
+        if ($base === null) {
+            return null;
+        }
+
+        foreach (['type', 'targetClass', 'endpoint'] as $key) {
+            if (isset($configuredField[$key])) {
+                $base[$key] = $configuredField[$key];
+            }
+        }
+
+        return $base;
+    }
+
+    /**
+     * @return array<string, string|null>|null
+     */
+    private function buildFieldFromName(string $name, ClassMetadata $metadata): ?array
+    {
+        if (isset($metadata->associationMappings[$name])) {
+            $targetClass = is_string($metadata->associationMappings[$name]['targetEntity'] ?? null)
+                ? $metadata->associationMappings[$name]['targetEntity']
+                : null;
+
+            return [
+                'name' => $name,
+                'type' => 'object',
+                'targetClass' => $targetClass,
+                'endpoint' => $targetClass !== null ? $this->guessEndpointFromEntity($targetClass) : null,
+            ];
+        }
+
+        if (isset($metadata->fieldMappings[$name])) {
+            $doctrineType = is_string($metadata->fieldMappings[$name]['type'] ?? null)
+                ? $metadata->fieldMappings[$name]['type']
+                : null;
+
+            return [
+                'name' => $name,
+                'type' => $this->normalizeFieldType($doctrineType),
+                'targetClass' => null,
+                'endpoint' => null,
+            ];
+        }
+
+        return null;
     }
 
     /**
@@ -168,14 +340,24 @@ final class ResourceSchemaService
         return class_exists($mapperClass) ? $mapperClass : null;
     }
 
-    private function normalizeRelationType(?int $relationType): string
+    private function normalizeFieldType(?string $doctrineType): string
     {
-        return match ($relationType) {
-            ClassMetadata::ONE_TO_ONE => 'oneToOne',
-            ClassMetadata::MANY_TO_ONE => 'manyToOne',
-            ClassMetadata::ONE_TO_MANY => 'oneToMany',
-            ClassMetadata::MANY_TO_MANY => 'manyToMany',
-            default => 'unknown',
-        };
+        if ($doctrineType === null) {
+            return 'normal';
+        }
+
+        return in_array($doctrineType, [Types::BOOLEAN], true) ? 'boolean' : 'normal';
+    }
+
+    /**
+     * @param class-string $entityClass
+     */
+    private function guessEndpointFromEntity(string $entityClass): string
+    {
+        $shortName = substr($entityClass, (int) strrpos($entityClass, '\\') + 1);
+        $snakeCase = (string) preg_replace('/(?<!^)[A-Z]/', '_$0', $shortName);
+        $resource = strtolower(str_replace('__', '_', $snakeCase));
+
+        return '/api/v1/' . $resource . 's';
     }
 }
