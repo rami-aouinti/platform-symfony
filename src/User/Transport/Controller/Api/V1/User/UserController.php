@@ -57,6 +57,41 @@ class UserController extends Controller
         Controller::METHOD_PATCH => UserPatch::class,
     ];
 
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getSchemaFieldConfiguration(): array
+    {
+        return [
+            'displayable' => [
+                'firstName',
+                'lastName',
+                'email',
+            ],
+            'editable' => [
+                'firstName',
+                'lastName',
+            ],
+            'creatable' => [
+                'fields' => [
+                    'username',
+                    'email',
+                    'firstName',
+                    'lastName',
+                    'password',
+                ],
+                'required' => [
+                    'username',
+                    'email',
+                    'firstName',
+                    'lastName',
+                    'password',
+                ],
+            ],
+        ];
+    }
+
     public function __construct(
         UserResource $resource,
     ) {

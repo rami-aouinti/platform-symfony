@@ -39,7 +39,12 @@ trait SchemaMethod
         $data = $this->rememberReadEndpoint(
             $request,
             ['type' => 'schema'],
-            fn () => $this->getResourceSchemaService()->build($resource, $this->resolveSchemaDtoClasses()),
+            fn () => $this->getResourceSchemaService()->build(
+                $resource,
+                $this->resolveSchemaDtoClasses(),
+                $this->resolveCreateDtoClass(),
+                $this->getSchemaFieldConfiguration(),
+            ),
         );
 
         return $this->getResponseHandler()->createResponse($request, $data, $resource); /** @phpstan-ignore-line */
@@ -58,7 +63,13 @@ trait SchemaMethod
      */
     private function resolveSchemaDtoClasses(): array
     {
-        $dtoClasses = [$this->getDtoClass()];
+        $dtoClasses = [];
+
+        try {
+            $dtoClasses[] = $this->getDtoClass();
+        } catch (Throwable) {
+            // Some resources don't have a default DTO class (read-only/list/count split controllers).
+        }
 
         foreach ([Controller::METHOD_CREATE, Controller::METHOD_UPDATE, Controller::METHOD_PATCH] as $method) {
             try {
@@ -70,6 +81,38 @@ trait SchemaMethod
 
         /** @var array<int, class-string> $dtoClasses */
         return array_values(array_unique($dtoClasses));
+    }
+
+    /**
+     * @return class-string|null
+     */
+    private function resolveCreateDtoClass(): ?string
+    {
+        try {
+            return $this->getDtoClass(Controller::METHOD_CREATE);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * Override this in specific controllers when you need manual schema control.
+     *
+     * Supported format:
+     *  [
+     *      'displayable' => false|[...],
+     *      'editable' => false|[...],
+     *      'creatable' => false|[
+     *          'fields' => [...],
+     *          'required' => ['title'],
+     *      ],
+     *  ]
+     *
+     * @return array<string, mixed>
+     */
+    protected function getSchemaFieldConfiguration(): array
+    {
+        return [];
     }
 
     private function getResourceSchemaService(): ResourceSchemaService
