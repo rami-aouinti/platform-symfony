@@ -49,8 +49,8 @@ final class ResourceSchemaService
         );
 
         return [
-            'displayable' => $this->applySectionConfiguration($displayable, $configuration['displayable'] ?? []),
-            'editable' => $this->applySectionConfiguration($editable, $configuration['editable'] ?? []),
+            'displayable' => $this->applySectionConfiguration($displayable, $configuration['displayable'] ?? [], $metadata),
+            'editable' => $this->applySectionConfiguration($editable, $configuration['editable'] ?? [], $metadata),
             'creatable' => $this->resolveCreatableConfiguration(
                 $creatable,
                 $configuration['creatable'] ?? [
@@ -170,7 +170,7 @@ final class ResourceSchemaService
      *
      * @return array<int, array<string, string|null>>|false
      */
-    private function applySectionConfiguration(array $autoFields, array|bool $configuration): array|false
+    private function applySectionConfiguration(array $autoFields, array|bool $configuration, ClassMetadata $metadata): array|false
     {
         if (is_bool($configuration)) {
             return $configuration === false ? false : $autoFields;
@@ -183,7 +183,7 @@ final class ResourceSchemaService
         $resolved = [];
 
         foreach ($configuration as $configuredField) {
-            $normalized = $this->normalizeConfiguredField($configuredField, $autoFields);
+            $normalized = $this->normalizeConfiguredField($configuredField, $autoFields, $metadata);
 
             if ($normalized !== null) {
                 $resolved[] = $normalized;
@@ -211,7 +211,7 @@ final class ResourceSchemaService
             : [];
 
         return [
-            'fields' => $this->applySectionConfiguration($autoFields, $fieldsConfig),
+            'fields' => $this->applySectionConfiguration($autoFields, $fieldsConfig, $metadata),
             'required' => $this->filterRequiredFields($required, $metadata),
         ];
     }
@@ -244,7 +244,7 @@ final class ResourceSchemaService
      *
      * @return array<string, string|null>|null
      */
-    private function normalizeConfiguredField(string|array $configuredField, array $autoFields): ?array
+    private function normalizeConfiguredField(string|array $configuredField, array $autoFields, ClassMetadata $metadata): ?array
     {
         $autoByName = [];
 
@@ -257,7 +257,7 @@ final class ResourceSchemaService
         }
 
         if (is_string($configuredField)) {
-            return $autoByName[$configuredField] ?? null;
+            return $autoByName[$configuredField] ?? $this->buildFieldFromName($configuredField, $metadata);
         }
 
         $name = $configuredField['name'] ?? null;
@@ -266,7 +266,7 @@ final class ResourceSchemaService
             return null;
         }
 
-        $base = $autoByName[$name] ?? null;
+        $base = $autoByName[$name] ?? $this->buildFieldFromName($name, $metadata);
 
         if ($base === null) {
             return null;
