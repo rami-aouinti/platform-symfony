@@ -88,6 +88,33 @@ class SchemaEndpointsTest extends WebTestCase
         self::assertFalse($data['creatable']);
     }
 
+
+    /**
+     * @throws Throwable
+     */
+    public function testUserSchemaSupportsRequestedManualConfiguration(): void
+    {
+        $client = $this->getTestClient('john-admin', 'password-admin');
+        $client->request('GET', self::API_URL_PREFIX . '/v1/user/schema');
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $data = JSON::decode((string)$client->getResponse()->getContent(), true);
+
+        self::assertSame('firstName', $data['displayable'][0]['name'] ?? null);
+        self::assertSame('lastName', $data['displayable'][1]['name'] ?? null);
+        self::assertSame('email', $data['displayable'][2]['name'] ?? null);
+
+        self::assertSame('firstName', $data['editable'][0]['name'] ?? null);
+        self::assertSame('lastName', $data['editable'][1]['name'] ?? null);
+
+        self::assertIsArray($data['creatable']);
+        self::assertSame('username', $data['creatable']['fields'][0]['name'] ?? null);
+        self::assertSame('password', $data['creatable']['fields'][4]['name'] ?? null);
+        self::assertContains('username', $data['creatable']['required']);
+        self::assertContains('password', $data['creatable']['required']);
+    }
+
     /**
      * @return array<string, array{0: string, 1: string, 2: string}>
      */
