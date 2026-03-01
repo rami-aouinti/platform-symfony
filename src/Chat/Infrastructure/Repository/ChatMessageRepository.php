@@ -59,13 +59,13 @@ class ChatMessageRepository extends BaseRepository implements ChatMessageReposit
             ->getResult();
     }
 
-    public function save(Entity $message, ?bool $flush = null): ChatMessageRepositoryInterface
+    public function save(Entity $message, ?bool $flush = null, ?string $entityManagerName = null): ChatMessageRepositoryInterface
     {
-        return parent::save($message, $flush);
+        return parent::save($message, $flush, $entityManagerName);
     }
 
-    public function remove(Entity $message, ?bool $flush = null): ChatMessageRepositoryInterface
+    public function remove(Entity $message, ?bool $flush = null, ?string $entityManagerName = null): ChatMessageRepositoryInterface
     {
-        return parent::remove($message, $flush);
+        return parent::remove($message, $flush, $entityManagerName);
     }
 }

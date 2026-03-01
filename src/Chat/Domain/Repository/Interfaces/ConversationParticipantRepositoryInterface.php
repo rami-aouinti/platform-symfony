@@ -27,7 +27,7 @@ interface ConversationParticipantRepositoryInterface
 
     public function findOneByConversationAndUser(Conversation $conversation, User $user): ?ConversationParticipant;
 
-    public function save(ConversationParticipant $participant, ?bool $flush = null): self;
+    public function save(ConversationParticipant $participant, ?bool $flush = null, ?string $entityManagerName = null): self;
 
-    public function remove(ConversationParticipant $participant, ?bool $flush = null): self;
+    public function remove(ConversationParticipant $participant, ?bool $flush = null, ?string $entityManagerName = null): self;
 }
