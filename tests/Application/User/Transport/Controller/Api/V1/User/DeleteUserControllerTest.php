@@ -18,7 +18,7 @@ use Throwable;
 class DeleteUserControllerTest extends WebTestCase
 {
     private const string USERNAME_FOR_TEST = 'john';
-    private string $baseUrl = self::API_URL_PREFIX . '/v1/user';
+    private string $baseUrl = self::API_URL_PREFIX . '/v1/admin/users';
     private User $user;
     private UserResource $userResource;
 

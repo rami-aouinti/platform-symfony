@@ -45,7 +45,7 @@ class DetachUserGroupController
      * @throws Throwable
      */
     #[Route(
-        path: '/v1/user/{user}/group/{userGroup}',
+        path: '/v1/admin/users/{user}/group/{userGroup}',
         requirements: [
             'user' => Requirement::UUID_V1,
             'userGroup' => Requirement::UUID_V1,

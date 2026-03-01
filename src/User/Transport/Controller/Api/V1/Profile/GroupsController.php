@@ -36,7 +36,7 @@ class GroupsController
      * Get current user user groups, accessible only for 'IS_AUTHENTICATED_FULLY' users.
      */
     #[Route(
-        path: '/v1/profile/groups',
+        path: '/v1/me/profile/groups',
         methods: [Request::METHOD_GET],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]

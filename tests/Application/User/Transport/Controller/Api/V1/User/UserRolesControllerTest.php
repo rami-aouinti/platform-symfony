@@ -20,7 +20,7 @@ use Throwable;
  */
 class UserRolesControllerTest extends WebTestCase
 {
-    private string $baseUrl = self::API_URL_PREFIX . '/v1/user';
+    private string $baseUrl = self::API_URL_PREFIX . '/v1/admin/users';
     private User $userEntity;
 
     /**

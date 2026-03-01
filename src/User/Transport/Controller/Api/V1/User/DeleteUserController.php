@@ -46,7 +46,7 @@ class DeleteUserController extends Controller
      * @throws Throwable
      */
     #[Route(
-        path: '/v1/user/{user}',
+        path: '/v1/admin/users/{user}',
         requirements: [
             'user' => Requirement::UUID_V1,
         ],

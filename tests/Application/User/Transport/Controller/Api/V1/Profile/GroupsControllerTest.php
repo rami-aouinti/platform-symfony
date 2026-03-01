@@ -17,7 +17,7 @@ use Throwable;
  */
 class GroupsControllerTest extends WebTestCase
 {
-    private string $baseUrl = self::API_URL_PREFIX . '/v1/profile';
+    private string $baseUrl = self::API_URL_PREFIX . '/v1/me/profile';
 
     /**
      * @throws Throwable

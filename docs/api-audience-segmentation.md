@@ -144,18 +144,19 @@ Toutes les routes legacy `/api/v1/*` des modules concernés restent actives mais
 
 | Endpoint actuel | Endpoint cible admin | Endpoint cible me/profile | Notes |
 |---|---|---|---|
-| `/api/v1/user` (+ `/{user}`) | `/api/v1/admin/user` | `/api/v1/me/user` | **Mixte à scinder** |
-| `/api/v1/user/{user}/roles` | `/api/v1/admin/user/{user}/roles` | `/api/v1/me/user/{user}/roles` | |
-| `/api/v1/user/{user}/groups` | `/api/v1/admin/user/{user}/groups` | `/api/v1/me/user/{user}/groups` | |
-| `/api/v1/user/{user}/group/{userGroup}` | `/api/v1/admin/user/{user}/group/{userGroup}` | `/api/v1/me/user/{user}/group/{userGroup}` | |
+| `/api/v1/user` (+ `/{user}`) | `/api/v1/admin/users` | `/api/v1/me/user` | **Mixte à scinder** |
+| `/api/v1/user/{user}/roles` | `/api/v1/admin/users/{user}/roles` | `/api/v1/me/user/{user}/roles` | |
+| `/api/v1/user/{user}/groups` | `/api/v1/admin/users/{user}/groups` | `/api/v1/me/user/{user}/groups` | |
+| `/api/v1/user/{user}/group/{userGroup}` | `/api/v1/admin/users/{user}/group/{userGroup}` | `/api/v1/me/user/{user}/group/{userGroup}` | |
 | `/api/v1/user_group` (+ `/{userGroup}`) | `/api/v1/admin/user_group` | `/api/v1/me/user_group` | |
 | `/api/v1/user_group/{userGroup}/users` | `/api/v1/admin/user_group/{userGroup}/users` | `/api/v1/me/user_group/{userGroup}/users` | |
 | `/api/v1/user_group/{userGroup}/user/{user}` | `/api/v1/admin/user_group/{userGroup}/user/{user}` | `/api/v1/me/user_group/{userGroup}/user/{user}` | |
-| `/api/v1/profile` | `/api/v1/admin/profile` | `/api/v1/profile` | Self-service: conserver `/profile` |
-| `/api/v1/profile/avatar` | `/api/v1/admin/profile/avatar` | `/api/v1/profile/avatar` | Self-service: conserver `/profile` |
-| `/api/v1/profile/address` | `/api/v1/admin/profile/address` | `/api/v1/profile/address` | Self-service: conserver `/profile` |
+| `/api/v1/profile` | `/api/v1/admin/profile` | `/api/v1/me/profile` | Self-service consolidé sous `/me/profile` |
+| `/api/v1/profile/avatar` | `/api/v1/admin/profile/avatar` | `/api/v1/me/profile/avatar` | Self-service consolidé sous `/me/profile` |
+| `/api/v1/profile/address` | `/api/v1/admin/profile/address` | `/api/v1/me/profile/addresses` | Remplacé par collection addresses + PATCH/DELETE par `addressId` |
 | `/api/v1/profile/groups` | `/api/v1/admin/profile/groups` | `/api/v1/profile/groups` | Self-service: conserver `/profile` |
 | `/api/v1/profile/roles` | `/api/v1/admin/profile/roles` | `/api/v1/profile/roles` | Self-service: conserver `/profile` |
+| n/a | n/a | `/api/v1/me/social-accounts`, `/api/v1/me/social-accounts/link`, `/api/v1/me/social-accounts/{provider}` | Nouveaux endpoints social self-service |
 
 ## Endpoints explicitement mixtes à scinder
 

@@ -38,7 +38,7 @@ class UserGroupsController
      * Fetch specified user user groups, accessible only for 'IS_USER_HIMSELF' or 'ROLE_ROOT' users.
      */
     #[Route(
-        path: '/v1/user/{user}/groups',
+        path: '/v1/admin/users/{user}/groups',
         requirements: [
             'user' => Requirement::UUID_V1,
         ],

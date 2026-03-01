@@ -21,7 +21,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -49,13 +51,13 @@ class IndexController
      * @throws JsonException
      */
     #[Route(
-        path: '/v1/profile',
+        path: '/v1/me/profile',
         methods: [Request::METHOD_GET],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Get(
         summary: 'Lire le profil courant',
-        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: profil complet de l’utilisateur authentifié uniquement.',
+        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: profil complet de l’utilisateur authentifié uniquement. Champs modifiables via les endpoints /me: username, firstName, lastName, email, timezone, language, locale, userProfile.phone, userProfile.bio, userProfile.contacts, userProfile.birthDate, avatar et addresses. Toute gestion des autres utilisateurs reste sur /api/v1/admin/users/* (ROLE_ADMIN ou ROLE_ROOT).',
         security: [['Bearer' => []], ['ApiKey' => []]],
     )]
     #[OA\Response(
@@ -80,13 +82,13 @@ class IndexController
      * @throws JsonException
      */
     #[Route(
-        path: '/v1/profile',
+        path: '/v1/me/profile',
         methods: [Request::METHOD_PATCH],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Patch(
         summary: 'Mettre à jour partiellement le profil courant',
-        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: uniquement les champs du profil de l’utilisateur authentifié.',
+        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: uniquement les champs du profil de l’utilisateur authentifié. Champs modifiables ici: username, firstName, lastName, email, timezone, language, locale, userProfile.phone, userProfile.bio, userProfile.contacts, userProfile.birthDate. Les champs sensibles admin (rôles, groupes, état global des autres comptes) ne sont modifiables que via /api/v1/admin/users/*.',
         security: [['Bearer' => []], ['ApiKey' => []]],
     )]
     #[OA\RequestBody(
@@ -160,7 +162,7 @@ class IndexController
      * @throws JsonException
      */
     #[Route(
-        path: '/v1/profile/avatar',
+        path: '/v1/me/profile/avatar',
         methods: [Request::METHOD_PUT],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
@@ -191,7 +193,7 @@ class IndexController
      * @throws JsonException
      */
     #[Route(
-        path: '/v1/profile/address',
+        path: '/v1/me/profile/addresses',
         methods: [Request::METHOD_POST],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
@@ -226,6 +228,78 @@ class IndexController
         $this->userResource->save($loggedInUser, true);
 
         return $this->createProfileResponse($loggedInUser);
+    }
+
+    /**
+     * @throws JsonException
+     */
+    #[Route(
+        path: '/v1/me/profile/addresses/{addressId}',
+        requirements: ['addressId' => Requirement::UUID_V1],
+        methods: [Request::METHOD_PATCH],
+    )]
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    public function patchAddressAction(Request $request, User $loggedInUser, string $addressId): JsonResponse
+    {
+        /** @var array<string, mixed> $payload */
+        $payload = JSON::decode($request->getContent() ?: '{}', true);
+
+        $address = $this->getLoggedInUserAddress($loggedInUser, $addressId);
+
+        if (isset($payload['type']) && is_string($payload['type']) && $payload['type'] !== '') {
+            $address->setType(AddressType::from($payload['type']));
+        }
+        if (array_key_exists('streetLine1', $payload) && is_string($payload['streetLine1']) && $payload['streetLine1'] !== '') {
+            $address->setStreetLine1($payload['streetLine1']);
+        }
+        if (array_key_exists('streetLine2', $payload)) {
+            $address->setStreetLine2(is_string($payload['streetLine2']) ? $payload['streetLine2'] : null);
+        }
+        if (array_key_exists('postalCode', $payload) && is_string($payload['postalCode']) && $payload['postalCode'] !== '') {
+            $address->setPostalCode($payload['postalCode']);
+        }
+        if (array_key_exists('city', $payload) && is_string($payload['city']) && $payload['city'] !== '') {
+            $address->setCity($payload['city']);
+        }
+        if (array_key_exists('region', $payload)) {
+            $address->setRegion(is_string($payload['region']) ? $payload['region'] : null);
+        }
+        if (array_key_exists('countryCode', $payload) && is_string($payload['countryCode']) && $payload['countryCode'] !== '') {
+            $address->setCountryCode($payload['countryCode']);
+        }
+
+        $this->userResource->save($loggedInUser, true);
+
+        return $this->createProfileResponse($loggedInUser);
+    }
+
+    /**
+     * @throws JsonException
+     */
+    #[Route(
+        path: '/v1/me/profile/addresses/{addressId}',
+        requirements: ['addressId' => Requirement::UUID_V1],
+        methods: [Request::METHOD_DELETE],
+    )]
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    public function deleteAddressAction(User $loggedInUser, string $addressId): JsonResponse
+    {
+        $address = $this->getLoggedInUserAddress($loggedInUser, $addressId);
+        $loggedInUser->getOrCreateUserProfile()->removeAddress($address);
+        $this->userResource->save($loggedInUser, true);
+
+        return $this->createProfileResponse($loggedInUser);
+    }
+
+    private function getLoggedInUserAddress(User $loggedInUser, string $addressId): Address
+    {
+        foreach ($loggedInUser->getOrCreateUserProfile()->getAddresses() as $address) {
+            if ($address->getId() === $addressId) {
+                return $address;
+            }
+        }
+
+        throw new NotFoundHttpException('Address not found for current user.');
     }
 
     /**
