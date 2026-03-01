@@ -17,7 +17,6 @@ use JsonException;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
-use OpenApi\Attributes\Property;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +33,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'Profile')]
+#[OA\Tag(name: 'Me - Profile')]
 class IndexController
 {
     public function __construct(
@@ -54,6 +53,11 @@ class IndexController
         methods: [Request::METHOD_GET],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[OA\Get(
+        summary: 'Lire le profil courant',
+        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: profil complet de l’utilisateur authentifié uniquement.',
+        security: [['Bearer' => []], ['ApiKey' => []]],
+    )]
     #[OA\Response(
         response: 200,
         description: 'User profile data',
@@ -65,36 +69,8 @@ class IndexController
             type: 'object',
         ),
     )]
-    #[OA\Response(
-        response: 401,
-        description: 'Invalid token (not found or expired)',
-        content: new JsonContent(
-            properties: [
-                new Property(property: 'code', description: 'Error code', type: 'integer'),
-                new Property(property: 'message', description: 'Error description', type: 'string'),
-            ],
-            type: 'object',
-            example: [
-                'code' => 401,
-                'message' => 'JWT Token not found',
-            ],
-        ),
-    )]
-    #[OA\Response(
-        response: 403,
-        description: 'Access denied',
-        content: new JsonContent(
-            properties: [
-                new Property(property: 'code', description: 'Error code', type: 'integer'),
-                new Property(property: 'message', description: 'Error description', type: 'string'),
-            ],
-            type: 'object',
-            example: [
-                'code' => 403,
-                'message' => 'Access denied',
-            ],
-        ),
-    )]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
     public function __invoke(User $loggedInUser): JsonResponse
     {
         return $this->createProfileResponse($loggedInUser);
@@ -108,6 +84,30 @@ class IndexController
         methods: [Request::METHOD_PATCH],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[OA\Patch(
+        summary: 'Mettre à jour partiellement le profil courant',
+        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: uniquement les champs du profil de l’utilisateur authentifié.',
+        security: [['Bearer' => []], ['ApiKey' => []]],
+    )]
+    #[OA\RequestBody(
+        required: true,
+        description: 'Exemple de payload de patch profil',
+        content: new JsonContent(
+            type: 'object',
+            example: [
+                'firstName' => 'Ada',
+                'lastName' => 'Lovelace',
+                'timezone' => 'Europe/Paris',
+                'userProfile' => [
+                    'bio' => 'Senior Backend Engineer',
+                    'phone' => '+33102030405',
+                ],
+            ],
+        ),
+    )]
+    #[OA\Response(response: 200, description: 'Profil mis à jour')]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
     public function patchProfileAction(Request $request, User $loggedInUser): JsonResponse
     {
         /** @var array<string, mixed> $payload */

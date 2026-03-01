@@ -8,7 +8,6 @@ use App\General\Transport\Rest\Traits\Methods\DeleteMethod;
 use App\Role\Domain\Enum\Role;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
-use OpenApi\Attributes\Property;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -41,6 +40,11 @@ trait DeleteAction
         methods: [Request::METHOD_DELETE],
     )]
     #[IsGranted(Role::ADMIN->value)]
+    #[OA\Delete(
+        summary: 'Supprimer une ressource',
+        description: 'Audience cible: administrateurs. Rôle minimal: ROLE_ADMIN. Périmètre des données: suppression d’une ressource si autorisée par les règles métier.',
+        security: [['Bearer' => []], ['ApiKey' => []]],
+    )]
     #[OA\Response(
         response: 200,
         description: 'deleted',
@@ -49,21 +53,9 @@ trait DeleteAction
             example: [],
         ),
     )]
-    #[OA\Response(
-        response: 403,
-        description: 'Access denied',
-        content: new JsonContent(
-            properties: [
-                new Property(property: 'code', description: 'Error code', type: 'integer'),
-                new Property(property: 'message', description: 'Error description', type: 'string'),
-            ],
-            type: 'object',
-            example: [
-                'code' => 403,
-                'message' => 'Access denied',
-            ],
-        ),
-    )]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
+    #[OA\Response(response: 404, ref: '#/components/responses/NotFoundError')]
     public function deleteAction(Request $request, string $id): Response
     {
         return $this->deleteMethod($request, $id);

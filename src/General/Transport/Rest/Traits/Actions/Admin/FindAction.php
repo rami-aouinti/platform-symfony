@@ -8,7 +8,6 @@ use App\General\Transport\Rest\Traits\Methods\FindMethod;
 use App\Role\Domain\Enum\Role;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
-use OpenApi\Attributes\Property;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -37,6 +36,16 @@ trait FindAction
         methods: [Request::METHOD_GET],
     )]
     #[IsGranted(Role::ADMIN->value)]
+    #[OA\Get(
+        summary: 'Lister les ressources',
+        description: 'Audience cible: administrateurs. Rôle minimal: ROLE_ADMIN. Périmètre des données: collection filtrée via where/search/order, limitée aux données autorisées par le module.',
+        security: [['Bearer' => []], ['ApiKey' => []]],
+    )]
+    #[OA\Parameter(name: 'where', in: 'query', required: false, description: 'Critères JSON. Exemple: {"status":"active","owner.id":"0195f7ac-199f-7188-bc2c-fe59f1161b08"}', schema: new OA\Schema(type: 'string'))]
+    #[OA\Parameter(name: 'search', in: 'query', required: false, description: 'Texte libre ou JSON and/or. Exemple: {"or":["backend","symfony"]}', schema: new OA\Schema(type: 'string'))]
+    #[OA\Parameter(name: 'order[createdAt]', in: 'query', required: false, description: 'Tri ASC|DESC', schema: new OA\Schema(type: 'string', example: 'DESC'))]
+    #[OA\Parameter(name: 'limit', in: 'query', required: false, schema: new OA\Schema(type: 'integer', example: 20))]
+    #[OA\Parameter(name: 'offset', in: 'query', required: false, schema: new OA\Schema(type: 'integer', example: 0))]
     #[OA\Response(
         response: 200,
         description: 'success',
@@ -45,21 +54,8 @@ trait FindAction
             items: new OA\Items(type: 'string'),
         ),
     )]
-    #[OA\Response(
-        response: 403,
-        description: 'Access denied',
-        content: new JsonContent(
-            properties: [
-                new Property(property: 'code', description: 'Error code', type: 'integer'),
-                new Property(property: 'message', description: 'Error description', type: 'string'),
-            ],
-            type: 'object',
-            example: [
-                'code' => 403,
-                'message' => 'Access denied',
-            ],
-        ),
-    )]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
     public function findAction(Request $request): Response
     {
         return $this->findMethod($request);

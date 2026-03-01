@@ -9,7 +9,6 @@ use App\User\Domain\Entity\UserGroup;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
-use OpenApi\Attributes\Property;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -25,7 +24,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'Profile')]
+#[OA\Tag(name: 'Me - Profile')]
 class GroupsController
 {
     public function __construct(
@@ -41,6 +40,11 @@ class GroupsController
         methods: [Request::METHOD_GET],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[OA\Get(
+        summary: 'Lister les groupes du profil courant',
+        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: uniquement les groupes du compte authentifié.',
+        security: [['Bearer' => []], ['ApiKey' => []]],
+    )]
     #[OA\Response(
         response: 200,
         description: 'List of logged in user user groups',
@@ -54,36 +58,8 @@ class GroupsController
             ),
         ),
     )]
-    #[OA\Response(
-        response: 401,
-        description: 'Invalid token (not found or expired)',
-        content: new JsonContent(
-            properties: [
-                new Property(property: 'code', description: 'Error code', type: 'integer'),
-                new Property(property: 'message', description: 'Error description', type: 'string'),
-            ],
-            type: 'object',
-            example: [
-                'code' => 401,
-                'message' => 'JWT Token not found',
-            ],
-        ),
-    )]
-    #[OA\Response(
-        response: 403,
-        description: 'Access denied',
-        content: new JsonContent(
-            properties: [
-                new Property(property: 'code', description: 'Error code', type: 'integer'),
-                new Property(property: 'message', description: 'Error description', type: 'string'),
-            ],
-            type: 'object',
-            example: [
-                'code' => 403,
-                'message' => 'Access denied',
-            ],
-        ),
-    )]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
     public function __invoke(User $loggedInUser): JsonResponse
     {
         return new JsonResponse(

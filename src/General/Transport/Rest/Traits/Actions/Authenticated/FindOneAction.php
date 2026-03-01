@@ -7,7 +7,6 @@ namespace App\General\Transport\Rest\Traits\Actions\Authenticated;
 use App\General\Transport\Rest\Traits\Methods\FindOneMethod;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
-use OpenApi\Attributes\Property;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -41,6 +40,11 @@ trait FindOneAction
         methods: [Request::METHOD_GET],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[OA\Get(
+        summary: 'Lire une ressource',
+        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: lecture d’une ressource unique identifiée par UUID.',
+        security: [['Bearer' => []], ['ApiKey' => []]],
+    )]
     #[OA\Response(
         response: 200,
         description: 'success',
@@ -49,21 +53,9 @@ trait FindOneAction
             example: [],
         ),
     )]
-    #[OA\Response(
-        response: 403,
-        description: 'Access denied',
-        content: new JsonContent(
-            properties: [
-                new Property(property: 'code', description: 'Error code', type: 'integer'),
-                new Property(property: 'message', description: 'Error description', type: 'string'),
-            ],
-            type: 'object',
-            example: [
-                'code' => 403,
-                'message' => 'Access denied',
-            ],
-        ),
-    )]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
+    #[OA\Response(response: 404, ref: '#/components/responses/NotFoundError')]
     public function findOneAction(Request $request, string $id): Response
     {
         return $this->findOneMethod($request, $id);
