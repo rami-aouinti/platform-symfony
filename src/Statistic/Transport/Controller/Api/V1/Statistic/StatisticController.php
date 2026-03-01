@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Statistic\Transport\Controller\Api\V1\Statistic;
 
 use App\General\Transport\Rest\ResponseHandler;
+use App\Role\Domain\Enum\Role;
 use App\Statistic\Application\Service\StatisticService;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -23,7 +23,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 #[AsController]
 #[Route(path: '/v1/statistics')]
-#[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+#[IsGranted(Role::ADMIN->value)]
 #[OA\Tag(name: 'Statistics')]
 class StatisticController
 {
