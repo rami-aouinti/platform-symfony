@@ -34,7 +34,7 @@ class RolesController
      * Get current user roles as an array, accessible only for 'IS_AUTHENTICATED_FULLY' users.
      */
     #[Route(
-        path: '/v1/profile/roles',
+        path: '/v1/me/profile/roles',
         methods: [Request::METHOD_GET],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]

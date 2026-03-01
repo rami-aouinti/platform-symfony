@@ -18,7 +18,7 @@ use Throwable;
  */
 class IndexControllerTest extends WebTestCase
 {
-    private string $baseUrl = self::API_URL_PREFIX . '/v1/profile';
+    private string $baseUrl = self::API_URL_PREFIX . '/v1/me/profile';
 
     /**
      * @throws Throwable
@@ -155,7 +155,7 @@ class IndexControllerTest extends WebTestCase
 
         $client->request(
             method: 'POST',
-            uri: $this->baseUrl . '/address',
+            uri: $this->baseUrl . '/addresses',
             content: JSON::encode([
                 'type' => 'home',
                 'streetLine1' => '1 Symfony Street',
@@ -189,4 +189,79 @@ class IndexControllerTest extends WebTestCase
         self::assertSame('FR', $address['countryCode']);
         self::assertSame('Ile-de-France', $address['region']);
     }
+
+    /**
+     * @throws Throwable
+     */
+    #[TestDox('Test that `PATCH /api/v1/me/profile/addresses/{addressId}` updates current user address only.')]
+    public function testThatPatchAddressActionUpdatesAddressForLoggedInUserProfile(): void
+    {
+        $client = $this->getTestClient('john-logged', 'password-logged');
+
+        $client->request(
+            method: 'POST',
+            uri: $this->baseUrl . '/addresses',
+            content: JSON::encode([
+                'streetLine1' => 'Old Street',
+                'postalCode' => '75001',
+                'city' => 'Paris',
+                'countryCode' => 'FR',
+            ]),
+        );
+
+        $createdData = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $address = $createdData['userProfile']['addresses'][array_key_last($createdData['userProfile']['addresses'])];
+
+        $client->request(
+            method: 'PATCH',
+            uri: $this->baseUrl . '/addresses/' . $address['id'],
+            content: JSON::encode([
+                'streetLine1' => 'Updated Street',
+                'city' => 'Lyon',
+            ]),
+        );
+
+        $response = $client->getResponse();
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode(), "Response:
+" . $response);
+        $responseData = JSON::decode((string) $response->getContent(), true);
+        $updated = $responseData['userProfile']['addresses'][array_key_last($responseData['userProfile']['addresses'])];
+
+        self::assertSame('Updated Street', $updated['streetLine1']);
+        self::assertSame('Lyon', $updated['city']);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[TestDox('Test that `DELETE /api/v1/me/profile/addresses/{addressId}` removes current user address.')]
+    public function testThatDeleteAddressActionRemovesAddressFromLoggedInUserProfile(): void
+    {
+        $client = $this->getTestClient('john-logged', 'password-logged');
+
+        $client->request(
+            method: 'POST',
+            uri: $this->baseUrl . '/addresses',
+            content: JSON::encode([
+                'streetLine1' => 'Delete Street',
+                'postalCode' => '75001',
+                'city' => 'Paris',
+                'countryCode' => 'FR',
+            ]),
+        );
+
+        $createdData = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $address = $createdData['userProfile']['addresses'][array_key_last($createdData['userProfile']['addresses'])];
+
+        $client->request(method: 'DELETE', uri: $this->baseUrl . '/addresses/' . $address['id']);
+        $response = $client->getResponse();
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode(), "Response:
+" . $response);
+        $responseData = JSON::decode((string) $response->getContent(), true);
+
+        foreach ($responseData['userProfile']['addresses'] as $remainingAddress) {
+            self::assertNotSame($address['id'], $remainingAddress['id']);
+        }
+    }
+
 }

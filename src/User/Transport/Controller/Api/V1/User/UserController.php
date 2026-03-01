@@ -24,9 +24,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @method ResponseHandler getResponseHandler()
  */
 #[AsController]
-#[Route(path: '/api/v1/admin/user')]
+#[Route(path: '/api/v1/admin/users')]
 #[Route(
-    path: '/v1/user',
+    path: '/v1/admin/users',
 )]
 /**
  * API controller for UserController endpoints.

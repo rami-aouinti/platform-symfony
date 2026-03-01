@@ -122,11 +122,12 @@ Référence transverse (legacy `/api/v1/*`) alignée sur la convention d'audienc
 
 | endpoint | action | audience | rôle requis | règle de ownership | voter/service |
 |---|---|---|---|---|---|
-| `/api/v1/user` | list/count/ids/schema | admin | `ROLE_ADMIN` | n/a | `UserResource` |
-| `/api/v1/user` | create/update/patch/delete | admin | `ROLE_ROOT` | n/a | `UserResource` |
-| `/api/v1/user/{user}/roles`, `/groups` | read lié utilisateur | mixte | `ROLE_ROOT` ou voter `IS_USER_HIMSELF` | user == currentUser sur `me` | `IS_USER_HIMSELF` voter |
+| `/api/v1/admin/users` | list/count/ids/schema | admin | `ROLE_ADMIN` | n/a | `UserResource` |
+| `/api/v1/admin/users` | create/update/patch/delete | admin | `ROLE_ROOT` | n/a | `UserResource` |
+| `/api/v1/admin/users/{user}/roles`, `/groups` | read lié utilisateur | admin | `ROLE_ROOT` ou `ROLE_ADMIN` selon endpoint | n/a | `IS_USER_HIMSELF` non utilisé en admin |
 | `/api/v1/user_group*` | group management | admin | `ROLE_ADMIN`/`ROLE_ROOT` selon mutation | n/a | `UserGroupResource` |
-| `/api/v1/profile*` | self profile | profile | utilisateur connecté | currentUser uniquement | contrôleurs `Profile/*` |
+| `/api/v1/me/profile*` | self profile (profil, avatar, adresses) | profile | utilisateur connecté | currentUser uniquement | contrôleurs `Profile/*` |
+| `/api/v1/me/social-accounts*` | social accounts (list/link/unlink) | profile | utilisateur connecté | currentUser uniquement | `SocialAccountsController` |
 
 ## Auth
 

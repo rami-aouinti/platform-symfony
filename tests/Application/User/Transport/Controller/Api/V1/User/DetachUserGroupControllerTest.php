@@ -20,7 +20,7 @@ use Throwable;
  */
 class DetachUserGroupControllerTest extends WebTestCase
 {
-    private string $baseUrl = self::API_URL_PREFIX . '/v1/user';
+    private string $baseUrl = self::API_URL_PREFIX . '/v1/admin/users';
     private User $user;
     private UserGroup $userGroupForAttachAndDetach;
     private UserResource $userResource;

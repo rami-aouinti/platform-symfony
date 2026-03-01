@@ -36,7 +36,7 @@ class UserRolesController
      * Fetch specified user roles, accessible only for 'IS_USER_HIMSELF' or 'ROLE_ROOT' users.
      */
     #[Route(
-        path: '/v1/user/{user}/roles',
+        path: '/v1/admin/users/{user}/roles',
         requirements: [
             'user' => Requirement::UUID_V1,
         ],
