@@ -20,8 +20,13 @@ use App\User\Domain\Entity\User;
 use DateTimeImmutable;
 use RuntimeException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 use function in_array;
+use function sprintf;
+use function strtolower;
+use function substr;
+use function trim;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
@@ -39,6 +44,7 @@ class CompanyResource extends RestResource implements CompanyResourceInterface
         private readonly UserTypeIdentification $userTypeIdentification,
         private readonly CompanyMembershipRepositoryInterface $companyMembershipRepository,
         private readonly MessageServiceInterface $messageService,
+        private readonly SluggerInterface $slugger,
     ) {
         parent::__construct($repository);
     }
@@ -78,6 +84,17 @@ class CompanyResource extends RestResource implements CompanyResourceInterface
         if ($entity instanceof Entity) {
             $this->assertOwner($entity);
         }
+    }
+
+    public function beforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
+    {
+        if (!$entity instanceof Entity) {
+            return;
+        }
+
+        $legalName = trim($entity->getLegalName());
+        $slugSource = $legalName !== '' ? $legalName : sprintf('company-%s', substr($entity->getId(), 0, 8));
+        $entity->setSlug(strtolower($this->slugger->slug($slugSource)->toString()));
     }
 
     public function afterCreate(RestDtoInterface $restDto, EntityInterface $entity): void

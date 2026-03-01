@@ -22,7 +22,6 @@ class ProfileCompanyControllerTest extends WebTestCase
 
         $client->request('POST', self::BASE_URL, content: JSON::encode([
             'legalName' => 'Profile Company Created',
-            'slug' => 'profile-company-created',
             'status' => 'active',
             'mainAddress' => '10 User Street, Paris',
         ]));
@@ -32,6 +31,7 @@ class ProfileCompanyControllerTest extends WebTestCase
         $createdCompany = JSON::decode((string)$client->getResponse()->getContent(), true);
         self::assertIsArray($createdCompany);
         self::assertArrayHasKey('id', $createdCompany);
+        self::assertSame('profile-company-created', (string)$createdCompany['slug']);
 
         $client->request('GET', self::BASE_URL);
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
@@ -52,7 +52,6 @@ class ProfileCompanyControllerTest extends WebTestCase
 
         $client->request('POST', self::BASE_URL, content: JSON::encode([
             'legalName' => 'Anonymous Company',
-            'slug' => 'anonymous-company',
             'status' => 'active',
             'mainAddress' => 'No Address',
         ]));

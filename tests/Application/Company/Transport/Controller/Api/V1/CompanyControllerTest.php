@@ -32,7 +32,6 @@ class CompanyControllerTest extends WebTestCase
 
         $payload = [
             'legalName' => 'Owner Created Company',
-            'slug' => 'owner-created-company',
             'status' => 'active',
             'mainAddress' => '10 Owner Street, Paris',
         ];
@@ -46,6 +45,7 @@ class CompanyControllerTest extends WebTestCase
         self::assertCount(1, $companyCreatedMessages);
 
         $created = JSON::decode((string)$client->getResponse()->getContent(), true);
+        self::assertSame('owner-created-company', (string)$created['slug']);
         $companyId = (string)$created['id'];
 
         $client->request('GET', self::BASE_URL . '/' . $companyId);
@@ -60,6 +60,26 @@ class CompanyControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
+
+    /**
+     * @throws Throwable
+     */
+    public function testOwnerCanCreateCompanyWithoutLegalName(): void
+    {
+        $client = $this->getTestClient('john-user', 'password-user');
+
+        $client->request('POST', self::BASE_URL, content: JSON::encode([
+            'status' => 'active',
+            'mainAddress' => '11 Owner Street, Paris',
+        ]));
+
+        self::assertSame(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
+
+        $created = JSON::decode((string)$client->getResponse()->getContent(), true);
+        self::assertIsArray($created);
+        self::assertStringStartsWith('company-', (string)$created['slug']);
+    }
+
     /**
      * @throws Throwable
      */
@@ -70,7 +90,6 @@ class CompanyControllerTest extends WebTestCase
 
         $client->request($method, self::BASE_URL . '/' . self::COMPANY_ID, content: JSON::encode([
             'legalName' => 'Blocked update',
-            'slug' => 'blocked-update',
             'status' => 'active',
         ]));
 

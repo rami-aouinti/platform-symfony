@@ -24,14 +24,10 @@ class Company extends RestDto
     protected static array $mappings = [
         'mainAddress' => 'updateMainAddress',
     ];
-    #[Assert\NotBlank]
-    #[Assert\NotNull]
-    #[Assert\Length(min: 2, max: 255)]
+    #[Assert\Length(max: 255)]
     protected string $legalName = '';
 
-    #[Assert\NotBlank]
-    #[Assert\NotNull]
-    #[Assert\Length(min: 2, max: 255)]
+    #[Assert\Length(max: 255)]
     protected string $slug = '';
 
     #[Assert\NotBlank]
