@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Chat\Infrastructure\Repository;
 
+use App\Chat\Domain\Entity\Conversation;
 use App\Chat\Domain\Entity\ConversationParticipant as Entity;
+use App\User\Domain\Entity\User;
 use App\Chat\Domain\Repository\Interfaces\ConversationParticipantRepositoryInterface;
 use App\General\Infrastructure\Repository\BaseRepository;
 use Doctrine\DBAL\LockMode;
@@ -56,5 +58,26 @@ class ConversationParticipantRepository extends BaseRepository implements Conver
             static fn (array $row): string => (string)($row['id'] ?? ''),
             $rows,
         );
+    }
+
+    public function findOneByConversationAndUser(Conversation $conversation, User $user): ?Entity
+    {
+        /** @var Entity|null $participant */
+        $participant = $this->findOneBy([
+            'conversation' => $conversation,
+            'user' => $user,
+        ]);
+
+        return $participant;
+    }
+
+    public function save(Entity $participant, ?bool $flush = null): ConversationParticipantRepositoryInterface
+    {
+        return parent::save($participant, $flush);
+    }
+
+    public function remove(Entity $participant, ?bool $flush = null): ConversationParticipantRepositoryInterface
+    {
+        return parent::remove($participant, $flush);
     }
 }

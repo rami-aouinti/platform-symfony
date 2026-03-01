@@ -19,4 +19,13 @@ interface ChatMessageRepositoryInterface
      * @return ChatMessage[]
      */
     public function findByConversationId(string $conversationId): array;
+
+    /**
+     * @return ChatMessage[]
+     */
+    public function findAllForModeration(): array;
+
+    public function save(ChatMessage $message, ?bool $flush = null): self;
+
+    public function remove(ChatMessage $message, ?bool $flush = null): self;
 }
