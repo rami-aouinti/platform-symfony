@@ -1,0 +1,23 @@
+api_v1_admin_alias:
+    path: /api/v1/admin/{legacyPath}
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        path: /api/v1/{legacyPath}
+        permanent: false
+        keepRequestMethod: true
+        keepQueryParams: true
+        ignoreAttributes: true
+    requirements:
+        legacyPath: '.+'
+
+api_v1_me_alias:
+    path: /api/v1/me/{legacyPath}
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        path: /api/v1/{legacyPath}
+        permanent: false
+        keepRequestMethod: true
+        keepQueryParams: true
+        ignoreAttributes: true
+    requirements:
+        legacyPath: '.+'
