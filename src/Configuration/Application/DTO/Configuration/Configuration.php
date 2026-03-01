@@ -31,8 +31,8 @@ class Configuration extends RestDto
     protected string $keyName = '';
 
     #[Assert\NotNull]
-    #[Assert\Length(max: 65535)]
-    protected string $value = '';
+    #[Assert\Type('array')]
+    protected array $value = [];
 
     #[Assert\NotBlank]
     #[Assert\NotNull]
@@ -65,12 +65,18 @@ class Configuration extends RestDto
         return $this;
     }
 
-    public function getValue(): string
+    /**
+     * @return array<mixed>
+     */
+    public function getValue(): array
     {
         return $this->value;
     }
 
-    public function setValue(string $value): self
+    /**
+     * @param array<mixed> $value
+     */
+    public function setValue(array $value): self
     {
         $this->setVisited('value');
         $this->value = $value;

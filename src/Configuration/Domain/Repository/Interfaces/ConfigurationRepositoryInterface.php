@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Configuration\Domain\Repository\Interfaces;
 
+use App\Configuration\Domain\Entity\Configuration;
+use App\User\Domain\Entity\UserProfile;
+
 /**
  * ConfigurationRepositoryInterface.
  *
@@ -12,4 +15,8 @@ namespace App\Configuration\Domain\Repository\Interfaces;
  */
 interface ConfigurationRepositoryInterface
 {
+    /**
+     * @return Configuration[]
+     */
+    public function findByProfileAndKeyName(UserProfile $profile, ?string $keyName = null): array;
 }
