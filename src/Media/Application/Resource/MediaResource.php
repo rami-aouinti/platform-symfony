@@ -138,9 +138,9 @@ class MediaResource extends RestResource implements MediaResourceInterface
             throw new NotFoundHttpException('Export configuration not found.');
         }
 
-        $decoded = json_decode($configuration->getValue(), true);
+        $decoded = $configuration->getValue();
 
-        if (!is_array($decoded)) {
+        if ($decoded === []) {
             return [
                 'columns' => ['id', 'name', 'mimeType', 'size', 'status', 'createdAt'],
                 'status' => null,
