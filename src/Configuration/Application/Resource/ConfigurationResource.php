@@ -25,6 +25,9 @@ class ConfigurationResource extends RestResource implements ConfigurationResourc
 
     public function findByProfileAndKeyName(UserProfile $profile, ?string $keyName = null): array
     {
-        return $this->repository->findByProfileAndKeyName($profile, $keyName);
+        /** @var RepositoryInterface $repository */
+        $repository = $this->repository;
+
+        return $repository->findByProfileAndKeyName($profile, $keyName);
     }
 }
