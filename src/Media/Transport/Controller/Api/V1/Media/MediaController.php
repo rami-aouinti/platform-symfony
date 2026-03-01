@@ -15,8 +15,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -30,8 +30,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
+#[Route(path: '/api/v1/admin/media')]
 #[Route(path: '/v1/media')]
-#[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+#[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Media Management')]
 class MediaController extends CrudController
 {

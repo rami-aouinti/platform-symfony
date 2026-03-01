@@ -13,8 +13,8 @@ use App\User\Application\DTO\User\UserUpdate;
 use App\User\Application\Resource\UserResource;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -24,6 +24,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @method ResponseHandler getResponseHandler()
  */
 #[AsController]
+#[Route(path: '/api/v1/admin/user')]
 #[Route(
     path: '/v1/user',
 )]
@@ -34,7 +35,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @package App\User\Transport\Controller\Api\V1\User
  */
 
-#[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+#[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Admin - User')]
 class UserController extends Controller
 {

@@ -26,6 +26,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  * @package App\Notification\Transport\Controller\Api\V1\Notification* @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
+#[Route(path: '/api/v1/me/notifications')]
 #[Route(path: '/v1/notifications')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'Notification Management')]
