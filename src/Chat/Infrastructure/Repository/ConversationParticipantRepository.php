@@ -71,12 +71,12 @@ class ConversationParticipantRepository extends BaseRepository implements Conver
         return $participant;
     }
 
-    public function save(Entity $participant, ?bool $flush = null, ?string $entityManagerName = null): ConversationParticipantRepositoryInterface
+    public function save(Entity $participant, ?bool $flush = null, ?string $entityManagerName = null): self
     {
         return parent::save($participant, $flush, $entityManagerName);
     }
 
-    public function remove(Entity $participant, ?bool $flush = null, ?string $entityManagerName = null): ConversationParticipantRepositoryInterface
+    public function remove(Entity $participant, ?bool $flush = null, ?string $entityManagerName = null): self
     {
         return parent::remove($participant, $flush, $entityManagerName);
     }
