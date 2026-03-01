@@ -28,6 +28,61 @@ when@dev: &dev
                         name: Authorization
                         description: 'Value: ApiKey {token}'
                         in: header
+                schemas:
+                    AccessConstraint:
+                        type: object
+                        properties:
+                            audience:
+                                type: string
+                                example: 'Me'
+                            minimumRole:
+                                type: string
+                                example: 'IS_AUTHENTICATED_FULLY'
+                            dataScope:
+                                type: string
+                                example: 'Ressources accessibles à l’utilisateur connecté.'
+                    ErrorEnvelope:
+                        type: object
+                        properties:
+                            code:
+                                type: integer
+                                example: 403
+                            message:
+                                type: string
+                                example: Access denied
+                responses:
+                    UnauthorizedError:
+                        description: 'Authentification requise ou jeton invalide.'
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: '#/components/schemas/ErrorEnvelope'
+                                example:
+                                    code: 401
+                                    message: JWT Token not found
+                    ForbiddenError:
+                        description: 'Accès refusé pour le rôle courant.'
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: '#/components/schemas/ErrorEnvelope'
+                                example:
+                                    code: 403
+                                    message: Access denied
+                    NotFoundError:
+                        description: 'Ressource introuvable.'
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: '#/components/schemas/ErrorEnvelope'
+                                example:
+                                    code: 404
+                                    message: Not found
+            tags:
+                -   name: 'Admin - User'
+                    description: 'Endpoints d’administration du module User.'
+                -   name: 'Me - Profile'
+                    description: 'Endpoints du profil courant (/me) du module User.'
             security:
                 -   Bearer: []
                 -   ApiKey: []

@@ -8,7 +8,6 @@ use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Transport\Rest\Traits\Methods\CreateMethod;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
-use OpenApi\Attributes\Property;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -38,13 +37,19 @@ trait CreateAction
         methods: [Request::METHOD_POST],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[OA\Post(
+        summary: 'Créer une ressource',
+        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: création d’une ressource dans le module sur les champs autorisés.',
+        security: [['Bearer' => []], ['ApiKey' => []]],
+    )]
     #[OA\RequestBody(
         request: 'body',
-        description: 'object',
+        description: 'Exemple de payload de création',
         content: new JsonContent(
             type: 'object',
             example: [
-                'param' => 'value',
+                'name' => 'Example name',
+                'description' => 'Description initiale',
             ],
         ),
     )]
@@ -56,21 +61,8 @@ trait CreateAction
             example: [],
         ),
     )]
-    #[OA\Response(
-        response: 403,
-        description: 'Access denied',
-        content: new JsonContent(
-            properties: [
-                new Property(property: 'code', description: 'Error code', type: 'integer'),
-                new Property(property: 'message', description: 'Error description', type: 'string'),
-            ],
-            type: 'object',
-            example: [
-                'code' => 403,
-                'message' => 'Access denied',
-            ],
-        ),
-    )]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
     public function createAction(Request $request, RestDtoInterface $restDto): Response
     {
         return $this->createMethod($request, $restDto);

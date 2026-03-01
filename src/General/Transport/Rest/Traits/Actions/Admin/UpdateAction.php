@@ -9,7 +9,6 @@ use App\General\Transport\Rest\Traits\Methods\UpdateMethod;
 use App\Role\Domain\Enum\Role;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
-use OpenApi\Attributes\Property;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -42,13 +41,19 @@ trait UpdateAction
         methods: [Request::METHOD_PUT],
     )]
     #[IsGranted(Role::ADMIN->value)]
+    #[OA\Put(
+        summary: 'Remplacer une ressource',
+        description: 'Audience cible: administrateurs. Rôle minimal: ROLE_ADMIN. Périmètre des données: remplacement complet de la ressource ciblée dans le module.',
+        security: [['Bearer' => []], ['ApiKey' => []]],
+    )]
     #[OA\RequestBody(
         request: 'body',
-        description: 'object',
+        description: 'Exemple de payload de mise à jour complète',
         content: new JsonContent(
             type: 'object',
             example: [
-                'param' => 'value',
+                'name' => 'Updated name',
+                'description' => 'Description mise à jour',
             ],
         ),
     )]
@@ -60,21 +65,9 @@ trait UpdateAction
             example: [],
         ),
     )]
-    #[OA\Response(
-        response: 403,
-        description: 'Access denied',
-        content: new JsonContent(
-            properties: [
-                new Property(property: 'code', description: 'Error code', type: 'integer'),
-                new Property(property: 'message', description: 'Error description', type: 'string'),
-            ],
-            type: 'object',
-            example: [
-                'code' => 403,
-                'message' => 'Access denied',
-            ],
-        ),
-    )]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
+    #[OA\Response(response: 404, ref: '#/components/responses/NotFoundError')]
     public function updateAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
         return $this->updateMethod($request, $restDto, $id);

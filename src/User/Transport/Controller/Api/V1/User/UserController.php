@@ -35,7 +35,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-#[OA\Tag(name: 'User Management')]
+#[OA\Tag(name: 'Admin - User')]
 class UserController extends Controller
 {
     private const string READ_CACHE_SCOPE = 'user';
