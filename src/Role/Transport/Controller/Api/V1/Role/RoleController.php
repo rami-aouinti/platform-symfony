@@ -21,6 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @method ResponseHandler getResponseHandler()
  */
 #[AsController]
+#[Route(path: '/api/v1/admin/role')]
 #[Route(
     path: '/v1/role',
 )]

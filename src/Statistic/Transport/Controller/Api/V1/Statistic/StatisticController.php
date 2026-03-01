@@ -22,6 +22,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 #[AsController]
+#[Route(path: '/api/v1/admin/statistics')]
 #[Route(path: '/v1/statistics')]
 #[IsGranted(Role::ADMIN->value)]
 #[OA\Tag(name: 'Statistics')]

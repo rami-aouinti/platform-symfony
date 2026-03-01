@@ -162,3 +162,40 @@ Toutes les routes legacy `/api/v1/*` des modules concernés restent actives mais
 - `GET` global/listing en `admin`: vision transverse (toutes entités).
 - `GET` restreint en `me`/`profile`: uniquement les entités liées à l'utilisateur connecté.
 - Endpoints concernés en priorité: `tasks`, `task-requests`, `blog-posts`, `chat/conversations`, `companies`, `media`, `quizzes`, `statistics`, `job-offers`, `job-applications`, `user`.
+
+## Matrice par contrôleur (routes implémentées)
+
+| Contrôleur | Route actuelle | Route cible |
+|---|---|---|
+| `src/Blog/Transport/Controller/Api/V1/BlogComment/BlogCommentController.php` | `/v1/blog-comments` | `/api/v1/admin/blog-comments` |
+| `src/Blog/Transport/Controller/Api/V1/BlogPost/BlogPostController.php` | `/v1/blog-posts` | `/api/v1/admin/blog-posts` |
+| `src/Blog/Transport/Controller/Api/V1/BlogPostLink/BlogPostLinkController.php` | `/v1/blog-post-links` | `/api/v1/admin/blog-post-links` |
+| `src/Blog/Transport/Controller/Api/V1/BlogTag/BlogTagController.php` | `/v1/blog-tags` | `/api/v1/admin/blog-tags` |
+| `src/Blog/Transport/Controller/Api/V1/Task/TaskBlogPostsController.php` | `/v1/tasks` | `/api/v1/admin/tasks` |
+| `src/Blog/Transport/Controller/Api/V1/TaskRequest/TaskRequestBlogPostsController.php` | `/v1/task-requests` | `/api/v1/admin/task-requests` |
+| `src/Calendar/Transport/Controller/Api/V1/Event/EventController.php` | `/v1/calendar/events` | `/api/v1/admin/calendar/events` |
+| `src/Chat/Transport/Controller/Api/V1/Chat/ConversationController.php` | `/v1/chat/conversations` | `/api/v1/me/chat/conversations` |
+| `src/Company/Transport/Controller/Api/V1/Company/CompanyController.php` | `/v1/companies` | `/api/v1/admin/companies` |
+| `src/Company/Transport/Controller/Api/V1/Company/CompanyMembersController.php` | `/v1/companies` | `/api/v1/admin/companies` |
+| `src/Company/Transport/Controller/Api/V1/Company/CompanyProjectsController.php` | `/v1/companies` | `/api/v1/admin/companies` |
+| `src/Company/Transport/Controller/Api/V1/Company/CompanySprintsController.php` | `/v1/companies` | `/api/v1/admin/companies` |
+| `src/Configuration/Transport/Controller/Api/V1/Configuration/ConfigurationController.php` | `/v1/configuration` | `/api/v1/admin/configuration` |
+| `src/Media/Transport/Controller/Api/V1/Media/MediaController.php` | `/v1/media` | `/api/v1/admin/media` |
+| `src/Notification/Transport/Controller/Api/V1/Notification/NotificationController.php` | `/v1/notifications` | `/api/v1/me/notifications` |
+| `src/Quiz/Transport/Controller/Api/V1/Quiz/QuizController.php` | `/v1/quizzes` | `/api/v1/admin/quizzes` |
+| `src/Recruit/Transport/Controller/Api/V1/Candidate/CandidateController.php` | `/v1/candidates` | `/api/v1/admin/candidates` |
+| `src/Recruit/Transport/Controller/Api/V1/JobApplication/JobApplicationController.php` | `/v1/job-applications` | `/api/v1/admin/job-applications` |
+| `src/Recruit/Transport/Controller/Api/V1/JobApplication/OfferApplicationController.php` | `/v1/job-offers` | `/api/v1/admin/job-offers` |
+| `src/Recruit/Transport/Controller/Api/V1/JobOffer/JobOfferController.php` | `/v1/job-offers` | `/api/v1/admin/job-offers` |
+| `src/Recruit/Transport/Controller/Api/V1/Offer/OfferController.php` | `/v1/offers` | `/api/v1/admin/offers` |
+| `src/Recruit/Transport/Controller/Api/V1/Resume/ResumeController.php` | `/v1/resumes` | `/api/v1/admin/resumes` |
+| `src/Recruit/Transport/Controller/Api/V1/Resume/ResumeEducationController.php` | `/v1/resume-education` | `/api/v1/admin/resume-education` |
+| `src/Recruit/Transport/Controller/Api/V1/Resume/ResumeExperienceController.php` | `/v1/resume-experiences` | `/api/v1/admin/resume-experiences` |
+| `src/Recruit/Transport/Controller/Api/V1/Resume/ResumeSkillController.php` | `/v1/resume-skills` | `/api/v1/admin/resume-skills` |
+| `src/Statistic/Transport/Controller/Api/V1/Statistic/StatisticController.php` | `/v1/statistics` | `/api/v1/admin/statistics` |
+| `src/Task/Transport/Controller/Api/V1/Project/ProjectController.php` | `/v1/projects` | `/api/v1/admin/projects` |
+| `src/Task/Transport/Controller/Api/V1/Project/ProjectTasksController.php` | `/v1/projects` | `/api/v1/admin/projects` |
+| `src/Task/Transport/Controller/Api/V1/Sprint/SprintController.php` | `/v1/sprints` | `/api/v1/admin/sprints` |
+| `src/Task/Transport/Controller/Api/V1/Task/TaskController.php` | `/v1/tasks` | `/api/v1/admin/tasks` |
+| `src/Task/Transport/Controller/Api/V1/Task/TaskRequestsController.php` | `/v1/tasks` | `/api/v1/admin/tasks` |
+| `src/Task/Transport/Controller/Api/V1/TaskRequest/TaskRequestController.php` | `/v1/task-requests` | `/api/v1/admin/task-requests` |

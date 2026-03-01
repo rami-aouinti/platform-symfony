@@ -24,6 +24,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @method ResponseHandler getResponseHandler()
  */
 #[AsController]
+#[Route(path: '/api/v1/me/api_key')]
 #[Route(
     path: '/v1/api_key',
 )]

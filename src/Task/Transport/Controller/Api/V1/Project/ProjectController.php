@@ -12,8 +12,8 @@ use App\Task\Application\DTO\Project\ProjectUpdate;
 use App\Task\Application\Resource\Interfaces\ProjectResourceInterface;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -23,8 +23,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 #[AsController]
+#[Route(path: '/api/v1/admin/projects')]
 #[Route(path: '/v1/projects')]
-#[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+#[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Project Management')]
 class ProjectController extends Controller
 {

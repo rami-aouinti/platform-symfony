@@ -14,8 +14,8 @@ use App\Recruit\Application\Resource\Interfaces\ResumeEducationResourceInterface
 use App\Recruit\Application\Resource\ResumeEducationResource;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -27,8 +27,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
+#[Route(path: '/api/v1/admin/resume-education')]
 #[Route(path: '/v1/resume-education')]
-#[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+#[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Resume Education Management')]
 class ResumeEducationController extends Controller
 {
