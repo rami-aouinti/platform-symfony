@@ -52,6 +52,7 @@ trait PatchAction
             ],
         ),
     )]
+    #[OA\Patch(summary: 'Endpoint patch', description: 'Documentation standardisée de endpoint.', security: [['Bearer' => []], ['ApiKey' => []]])]
     #[OA\Response(
         response: 200,
         description: 'success',
@@ -75,6 +76,10 @@ trait PatchAction
             ],
         ),
     )]
+    #[OA\Response(response: 400, ref: '#/components/responses/BadRequestError')]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 404, ref: '#/components/responses/NotFoundError')]
+    #[OA\Response(response: 422, ref: '#/components/responses/ValidationError')]
     public function patchAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
         return $this->patchMethod($request, $restDto, $id);

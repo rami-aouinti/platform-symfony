@@ -37,6 +37,7 @@ trait DeleteAction
         ],
         methods: [Request::METHOD_DELETE],
     )]
+    #[OA\Delete(summary: 'Endpoint delete', description: 'Documentation standardisée de endpoint.', security: [['Bearer' => []], ['ApiKey' => []]])]
     #[OA\Response(
         response: 200,
         description: 'deleted',
@@ -45,6 +46,11 @@ trait DeleteAction
             example: [],
         ),
     )]
+    #[OA\Response(response: 400, ref: '#/components/responses/BadRequestError')]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
+    #[OA\Response(response: 404, ref: '#/components/responses/NotFoundError')]
+    #[OA\Response(response: 422, ref: '#/components/responses/ValidationError')]
     public function deleteAction(Request $request, string $id): Response
     {
         return $this->deleteMethod($request, $id);
