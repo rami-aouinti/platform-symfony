@@ -29,7 +29,7 @@ class ConfigurationControllerTest extends WebTestCase
         $payload = [
             'code' => 'cfg-' . uniqid(),
             'keyName' => 'feature.toggle.' . uniqid(),
-            'value' => 'enabled',
+            'value' => ['enabled' => true],
             'status' => 'active',
         ];
 
@@ -60,7 +60,7 @@ class ConfigurationControllerTest extends WebTestCase
         $updatePayload = [
             'code' => 'cfg-updated-' . uniqid(),
             'keyName' => 'feature.toggle.updated.' . uniqid(),
-            'value' => 'disabled',
+            'value' => ['enabled' => false],
             'status' => 'inactive',
         ];
 
@@ -74,7 +74,7 @@ class ConfigurationControllerTest extends WebTestCase
         self::assertSame($updatePayload['status'], $updated['status']);
 
         $patchPayload = [
-            'value' => 'partially-updated',
+            'value' => ['enabled' => 'partial'],
         ];
 
         $client->request('PATCH', self::BASE_URL . '/' . $configurationId, content: JSON::encode($patchPayload));
@@ -140,7 +140,7 @@ class ConfigurationControllerTest extends WebTestCase
         $createPayload = [
             'code' => 'cfg-to-update-' . uniqid(),
             'keyName' => 'required.fields.' . uniqid(),
-            'value' => 'initial',
+            'value' => ['initial' => true],
             'status' => 'active',
         ];
 

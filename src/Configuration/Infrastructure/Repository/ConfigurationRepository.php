@@ -7,6 +7,7 @@ namespace App\Configuration\Infrastructure\Repository;
 use App\Configuration\Domain\Entity\Configuration as Entity;
 use App\Configuration\Domain\Repository\Interfaces\ConfigurationRepositoryInterface;
 use App\General\Infrastructure\Repository\BaseRepository;
+use App\User\Domain\Entity\UserProfile;
 use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,11 +19,32 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ConfigurationRepository extends BaseRepository implements ConfigurationRepositoryInterface
 {
-    protected static array $searchColumns = ['code', 'keyName', 'value', 'status'];
+    protected static array $searchColumns = ['code', 'keyName', 'status'];
     protected static string $entityName = Entity::class;
 
     public function __construct(
         protected ManagerRegistry $managerRegistry,
     ) {
+    }
+
+    public function findByProfileAndKeyName(UserProfile $profile, ?string $keyName = null): array
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('c')
+            ->from(Entity::class, 'c')
+            ->where('c.profile = :profile')
+            ->setParameter('profile', $profile)
+            ->orderBy('c.keyName', 'ASC');
+
+        if (is_string($keyName) && $keyName !== '') {
+            $qb
+                ->andWhere('LOWER(c.keyName) LIKE :keyName')
+                ->setParameter('keyName', '%' . mb_strtolower($keyName) . '%');
+        }
+
+        /** @var Entity[] $result */
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
     }
 }

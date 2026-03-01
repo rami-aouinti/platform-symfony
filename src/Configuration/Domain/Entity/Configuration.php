@@ -7,6 +7,7 @@ namespace App\Configuration\Domain\Entity;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
+use App\User\Domain\Entity\UserProfile;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
@@ -21,8 +22,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'configuration')]
-#[ORM\UniqueConstraint(name: 'uq_configuration_key', columns: ['key_name'])]
+#[ORM\UniqueConstraint(name: 'uq_configuration_profile_key', columns: ['profile_id', 'key_name'])]
 #[ORM\Index(name: 'idx_configuration_status', columns: ['status'])]
+#[ORM\Index(name: 'idx_configuration_profile', columns: ['profile_id'])]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class Configuration implements EntityInterface
 {
@@ -42,9 +44,13 @@ class Configuration implements EntityInterface
     #[Groups(['Configuration', 'Configuration.keyName', 'Configuration.create', 'Configuration.show', 'Configuration.edit'])]
     private string $keyName = '';
 
-    #[ORM\Column(name: 'value', type: Types::TEXT, nullable: false)]
+    #[ORM\Column(name: 'value', type: Types::JSON, nullable: false)]
     #[Groups(['Configuration', 'Configuration.value', 'Configuration.create', 'Configuration.show', 'Configuration.edit'])]
-    private string $value = '';
+    private array $value = [];
+
+    #[ORM\ManyToOne(targetEntity: UserProfile::class)]
+    #[ORM\JoinColumn(name: 'profile_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?UserProfile $profile = null;
 
     #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
     #[Groups(['Configuration', 'Configuration.status', 'Configuration.create', 'Configuration.show', 'Configuration.edit'])]
@@ -84,12 +90,18 @@ class Configuration implements EntityInterface
         return $this;
     }
 
-    public function getValue(): string
+    /**
+     * @return array<mixed>
+     */
+    public function getValue(): array
     {
         return $this->value;
     }
 
-    public function setValue(string $value): self
+    /**
+     * @param array<mixed> $value
+     */
+    public function setValue(array $value): self
     {
         $this->value = $value;
 
@@ -104,6 +116,18 @@ class Configuration implements EntityInterface
     public function setStatus(string $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getProfile(): ?UserProfile
+    {
+        return $this->profile;
+    }
+
+    public function setProfile(?UserProfile $profile): self
+    {
+        $this->profile = $profile;
 
         return $this;
     }
