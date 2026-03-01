@@ -6,6 +6,7 @@ namespace App\Chat\Infrastructure\Repository;
 
 use App\Chat\Domain\Entity\ChatMessage as Entity;
 use App\Chat\Domain\Repository\Interfaces\ChatMessageRepositoryInterface;
+use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Infrastructure\Repository\BaseRepository;
 use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
@@ -59,12 +60,12 @@ class ChatMessageRepository extends BaseRepository implements ChatMessageReposit
             ->getResult();
     }
 
-    public function save(Entity $message, ?bool $flush = null, ?string $entityManagerName = null): self
+    public function save(EntityInterface $message, ?bool $flush = null, ?string $entityManagerName = null): self
     {
         return parent::save($message, $flush, $entityManagerName);
     }
 
-    public function remove(Entity $message, ?bool $flush = null, ?string $entityManagerName = null): self
+    public function remove(EntityInterface $message, ?bool $flush = null, ?string $entityManagerName = null): self
     {
         return parent::remove($message, $flush, $entityManagerName);
     }
