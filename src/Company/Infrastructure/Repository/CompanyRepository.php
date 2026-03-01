@@ -25,4 +25,16 @@ class CompanyRepository extends BaseRepository implements CompanyRepositoryInter
         protected ManagerRegistry $managerRegistry
     ) {
     }
+
+    public function find(
+        string $id,
+        LockMode|int|null $lockMode = null,
+        ?int $lockVersion = null,
+        ?string $entityManagerName = null
+    ): ?Entity {
+        $company = parent::find($id, $lockMode, $lockVersion, $entityManagerName);
+
+        return $company instanceof Entity ? $company : null;
+    }
+
 }
