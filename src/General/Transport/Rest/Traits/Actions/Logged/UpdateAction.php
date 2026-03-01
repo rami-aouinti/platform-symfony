@@ -52,6 +52,7 @@ trait UpdateAction
             ],
         ),
     )]
+    #[OA\Put(summary: 'Endpoint update', description: 'Documentation standardisée de endpoint.', security: [['Bearer' => []], ['ApiKey' => []]])]
     #[OA\Response(
         response: 200,
         description: 'success',
@@ -75,6 +76,10 @@ trait UpdateAction
             ],
         ),
     )]
+    #[OA\Response(response: 400, ref: '#/components/responses/BadRequestError')]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 404, ref: '#/components/responses/NotFoundError')]
+    #[OA\Response(response: 422, ref: '#/components/responses/ValidationError')]
     public function updateAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
         return $this->updateMethod($request, $restDto, $id);

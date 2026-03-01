@@ -51,6 +51,15 @@ when@dev: &dev
                                 type: string
                                 example: Access denied
                 responses:
+                    BadRequestError:
+                        description: 'La requête est invalide (paramètres ou payload).'
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: '#/components/schemas/ErrorEnvelope'
+                                example:
+                                    code: 400
+                                    message: Invalid request payload
                     UnauthorizedError:
                         description: 'Authentification requise ou jeton invalide.'
                         content:
@@ -78,7 +87,20 @@ when@dev: &dev
                                 example:
                                     code: 404
                                     message: Not found
+                    ValidationError:
+                        description: 'Erreur de validation métier (contrainte fonctionnelle).'
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: '#/components/schemas/ErrorEnvelope'
+                                example:
+                                    code: 422
+                                    message: Validation failed
             tags:
+                -   name: 'Admin - {Module}'
+                    description: 'Convention: endpoints d’administration par module (ex: Admin - User, Admin - Company).'
+                -   name: 'Me - {Module}'
+                    description: 'Convention: endpoints self-service de l’utilisateur connecté (ex: Me - Profile).'
                 -   name: 'Admin - User'
                     description: 'Endpoints d’administration du module User.'
                 -   name: 'Me - Profile'

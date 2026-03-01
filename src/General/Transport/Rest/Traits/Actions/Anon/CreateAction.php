@@ -44,6 +44,7 @@ trait CreateAction
             ],
         ),
     )]
+    #[OA\Post(summary: 'Endpoint create', description: 'Documentation standardisée de endpoint.', security: [['Bearer' => []], ['ApiKey' => []]])]
     #[OA\Response(
         response: 201,
         description: 'created',
@@ -52,6 +53,11 @@ trait CreateAction
             example: [],
         ),
     )]
+    #[OA\Response(response: 400, ref: '#/components/responses/BadRequestError')]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
+    #[OA\Response(response: 404, ref: '#/components/responses/NotFoundError')]
+    #[OA\Response(response: 422, ref: '#/components/responses/ValidationError')]
     public function createAction(Request $request, RestDtoInterface $restDto): Response
     {
         return $this->createMethod($request, $restDto);
