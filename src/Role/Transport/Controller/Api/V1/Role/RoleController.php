@@ -8,10 +8,10 @@ use App\General\Transport\Rest\Controller;
 use App\General\Transport\Rest\ResponseHandler;
 use App\General\Transport\Rest\Traits\Actions;
 use App\Role\Application\Resource\RoleResource;
+use App\Role\Domain\Enum\Role as RoleEnum;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -31,7 +31,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @package App\Role\Transport\Controller\Api\V1\Role
  */
 
-#[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+#[IsGranted(RoleEnum::ADMIN->value)]
 #[OA\Tag(name: 'Role Management')]
 class RoleController extends Controller
 {
