@@ -18,7 +18,7 @@ use App\User\Domain\Entity\UserProfile;
 class ConfigurationResource extends RestResource implements ConfigurationResourceInterface
 {
     public function __construct(
-        RepositoryInterface $repository,
+        protected readonly RepositoryInterface $repository,
     ) {
         parent::__construct($repository);
     }
