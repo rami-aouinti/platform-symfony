@@ -10,6 +10,9 @@ use App\General\Domain\Repository\Interfaces\BaseRepositoryInterface;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Recruit\Domain\Entity\ResumeEducation;
 use App\Recruit\Domain\Entity\ResumeExperience;
+use App\Recruit\Domain\Entity\ResumeLanguage;
+use App\Recruit\Domain\Entity\ResumeProject;
+use App\Recruit\Domain\Entity\ResumeReference;
 use App\Recruit\Domain\Entity\ResumeSkill;
 use App\User\Application\Security\Permission;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -52,7 +55,14 @@ abstract class AbstractResumeChildResource extends RestResource
 
     protected function assertCanEdit(EntityInterface $entity): void
     {
-        if ($entity instanceof ResumeExperience || $entity instanceof ResumeEducation || $entity instanceof ResumeSkill) {
+        if (
+            $entity instanceof ResumeExperience
+            || $entity instanceof ResumeEducation
+            || $entity instanceof ResumeSkill
+            || $entity instanceof ResumeLanguage
+            || $entity instanceof ResumeReference
+            || $entity instanceof ResumeProject
+        ) {
             if (!$this->authorizationChecker->isGranted(Permission::RESUME_EDIT->value, $entity->getResume())) {
                 throw new AccessDeniedHttpException('Only resume owner can edit this resume.');
             }

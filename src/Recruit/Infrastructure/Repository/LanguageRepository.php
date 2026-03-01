@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Recruit\Infrastructure\Repository;
+
+use App\General\Infrastructure\Repository\BaseRepository;
+use App\Recruit\Domain\Entity\Language as Entity;
+use App\Recruit\Domain\Repository\Interfaces\LanguageRepositoryInterface;
+use Doctrine\DBAL\LockMode;
+use Doctrine\Persistence\ManagerRegistry;
+
+/**
+ * @method Entity|null find(string $id, LockMode|int|null $lockMode = null, ?int $lockVersion = null, ?string $entityManagerName = null)
+ * @method Entity[] findBy(array $criteria, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?string $entityManagerName = null)
+ */
+class LanguageRepository extends BaseRepository implements LanguageRepositoryInterface
+{
+    protected static array $searchColumns = ['name', 'code'];
+    protected static string $entityName = Entity::class;
+
+    public function __construct(
+        protected ManagerRegistry $managerRegistry,
+    ) {
+    }
+}
