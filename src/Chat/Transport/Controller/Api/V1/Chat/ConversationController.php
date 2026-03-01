@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Chat\Transport\Controller\Api\V1\Chat;
 
-use App\Chat\Application\DTO\Chat\ChatMessageSend;
 use App\Chat\Application\Resource\Interfaces\ChatResourceInterface;
-use App\General\Domain\Utils\JSON;
 use App\General\Transport\Rest\ResponseHandler;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
@@ -18,7 +16,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 
 /**
@@ -37,7 +34,6 @@ class ConversationController extends AbstractController
     public function __construct(
         private readonly ChatResourceInterface $resource,
         private readonly ResponseHandler $responseHandler,
-        private readonly ValidatorInterface $validator,
     ) {
     }
 
@@ -71,40 +67,6 @@ class ConversationController extends AbstractController
         return $this->responseHandler->createResponse(
             $request,
             $this->resource->getConversation($id),
-            $this->resource,
-        );
-    }
-
-    /**
-     * @throws Throwable
-     */
-    #[Route(path: '/{id}/messages', requirements: [
-        'id' => Requirement::UUID_V1,
-    ], methods: [Request::METHOD_POST])]
-    #[OA\Post(summary: 'Send message in conversation')]
-    #[OA\RequestBody(required: true, content: new JsonContent(
-        required: ['content'],
-        properties: [new OA\Property(property: 'content', type: 'string', maxLength: 10000, example: 'Bonjour, je confirme ma disponibilité cette semaine.')],
-        type: 'object',
-    ))]
-    #[OA\Response(response: 200, description: 'Conversation with sent message', content: new JsonContent(type: 'object'))]
-    #[OA\Response(response: 403, description: 'Forbidden: current user cannot post in this conversation.')]
-    #[OA\Response(response: 404, description: 'Conversation not found.')]
-    public function sendMessageAction(Request $request, string $id): Response
-    {
-        /** @var array<string, mixed> $payload */
-        $payload = JSON::decode($request->getContent() ?: '{}', true);
-
-        $dto = (new ChatMessageSend())->setContent((string)($payload['content'] ?? ''));
-        $violations = $this->validator->validate($dto);
-
-        if ($violations->count() > 0) {
-            return $this->responseHandler->getValidationErrorResponse($request, $violations);
-        }
-
-        return $this->responseHandler->createResponse(
-            $request,
-            $this->resource->sendMessage($id, $dto->getContent()),
             $this->resource,
         );
     }

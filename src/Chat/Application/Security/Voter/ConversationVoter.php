@@ -27,6 +27,7 @@ class ConversationVoter extends Voter
             !in_array($attribute, [
                 Permission::CHAT_VIEW->value,
                 Permission::CHAT_POST->value,
+                Permission::CHAT_PARTICIPANT_MANAGE->value,
             ], true)
         ) {
             return false;
@@ -56,7 +57,10 @@ class ConversationVoter extends Voter
             return false;
         }
 
-        if ($attribute === Permission::CHAT_POST->value) {
+        if (
+            $attribute === Permission::CHAT_POST->value
+            || $attribute === Permission::CHAT_PARTICIPANT_MANAGE->value
+        ) {
             return $this->isActiveParticipant($participant, $user->getUserIdentifier());
         }
 

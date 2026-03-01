@@ -42,4 +42,8 @@ enum Permission: string
 
     case CHAT_VIEW = 'chat.view';
     case CHAT_POST = 'chat.post';
+    case CHAT_EDIT = 'chat.edit';
+    case CHAT_DELETE = 'chat.delete';
+    case CHAT_PARTICIPANT_MANAGE = 'chat.participant.manage';
+    case CHAT_MODERATE = 'chat.moderate';
 }

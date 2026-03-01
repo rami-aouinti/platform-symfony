@@ -46,4 +46,26 @@ class ChatMessageRepository extends BaseRepository implements ChatMessageReposit
             ->getQuery()
             ->getResult();
     }
+
+    public function findAllForModeration(): array
+    {
+        return $this->createQueryBuilder('message')
+            ->addSelect('sender')
+            ->leftJoin('message.sender', 'sender')
+            ->addSelect('conversation')
+            ->join('message.conversation', 'conversation')
+            ->orderBy('message.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function save(Entity $message, ?bool $flush = null): ChatMessageRepositoryInterface
+    {
+        return parent::save($message, $flush);
+    }
+
+    public function remove(Entity $message, ?bool $flush = null): ChatMessageRepositoryInterface
+    {
+        return parent::remove($message, $flush);
+    }
 }
