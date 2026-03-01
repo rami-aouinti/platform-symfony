@@ -6,6 +6,7 @@ namespace App\Company\Domain\Repository\Interfaces;
 
 use App\Company\Domain\Entity\CompanyMembership;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\General\Domain\Repository\Interfaces\BaseRepositoryInterface;
 
 /**
  * @package App\Company\Domain\Repository\Interfaces
@@ -25,7 +26,7 @@ interface CompanyMembershipRepositoryInterface
      */
     public function findBy(array $criteria): array;
 
-    public function save(EntityInterface $entity, ?bool $flush = null, ?string $entityManagerName = null): self;
+    public function save(EntityInterface $entity, ?bool $flush = null, ?string $entityManagerName = null): BaseRepositoryInterface;
 
-    public function remove(EntityInterface $entity, ?bool $flush = null, ?string $entityManagerName = null): self;
+    public function remove(EntityInterface $entity, ?bool $flush = null, ?string $entityManagerName = null): BaseRepositoryInterface;
 }
