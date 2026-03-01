@@ -25,7 +25,7 @@ interface ChatMessageRepositoryInterface
      */
     public function findAllForModeration(): array;
 
-    public function save(ChatMessage $message, ?bool $flush = null): self;
+    public function save(ChatMessage $message, ?bool $flush = null, ?string $entityManagerName = null): self;
 
-    public function remove(ChatMessage $message, ?bool $flush = null): self;
+    public function remove(ChatMessage $message, ?bool $flush = null, ?string $entityManagerName = null): self;
 }
