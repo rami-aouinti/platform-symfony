@@ -8,6 +8,7 @@ use App\Chat\Domain\Entity\Conversation;
 use App\Chat\Domain\Entity\ConversationParticipant as Entity;
 use App\User\Domain\Entity\User;
 use App\Chat\Domain\Repository\Interfaces\ConversationParticipantRepositoryInterface;
+use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Infrastructure\Repository\BaseRepository;
 use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
@@ -71,13 +72,13 @@ class ConversationParticipantRepository extends BaseRepository implements Conver
         return $participant;
     }
 
-    public function save(Entity $participant, ?bool $flush = null): ConversationParticipantRepositoryInterface
+    public function save(EntityInterface $participant, ?bool $flush = null, ?string $entityManagerName = null): self
     {
-        return parent::save($participant, $flush);
+        return parent::save($participant, $flush, $entityManagerName);
     }
 
-    public function remove(Entity $participant, ?bool $flush = null): ConversationParticipantRepositoryInterface
+    public function remove(EntityInterface $participant, ?bool $flush = null, ?string $entityManagerName = null): self
     {
-        return parent::remove($participant, $flush);
+        return parent::remove($participant, $flush, $entityManagerName);
     }
 }
