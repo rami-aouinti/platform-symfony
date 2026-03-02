@@ -9,7 +9,7 @@ use App\Notification\Domain\Entity\Notification;
 use App\Notification\Domain\Enum\NotificationType;
 use App\Tests\Utils\PhpUnitUtil;
 use App\User\Domain\Entity\User;
-use DateTimeImmutable;
+use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -36,7 +36,7 @@ final class LoadNotificationData extends Fixture implements OrderedFixtureInterf
                 ->setTitle('New application submitted')
                 ->setMessage('A candidate submitted an application for PHP Backend Engineer.')
                 ->setType(NotificationType::JOB_APPLICATION_SUBMITTED->value)
-                ->setReadAt(new DateTimeImmutable('2026-02-22 08:15:00')),
+                ->setReadAt(new DateTime('2026-02-22 08:15:00')),
             'Notification-john-root-application-decided-unread' => (new Notification($johnRoot))
                 ->setTitle('Application decision published')
                 ->setMessage('A decision has been published for Platform SRE application.')
