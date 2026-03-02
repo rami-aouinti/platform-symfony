@@ -31,7 +31,7 @@ class ResumeReference implements EntityInterface
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
     private UuidInterface $id;
 
-    #[ORM\ManyToOne(targetEntity: Resume::class)]
+    #[ORM\ManyToOne(targetEntity: Resume::class, inversedBy: 'resumeReferences')]
     #[ORM\JoinColumn(name: 'resume_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private ?Resume $resume = null;
 

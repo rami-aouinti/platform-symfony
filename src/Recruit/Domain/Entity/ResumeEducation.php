@@ -34,7 +34,7 @@ class ResumeEducation implements EntityInterface
     #[Groups(['ResumeEducation', 'ResumeEducation.id', 'ResumeEducation.show', 'ResumeEducation.edit'])]
     private UuidInterface $id;
 
-    #[ORM\ManyToOne(targetEntity: Resume::class)]
+    #[ORM\ManyToOne(targetEntity: Resume::class, inversedBy: 'resumeEducation')]
     #[ORM\JoinColumn(name: 'resume_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     #[Groups(['ResumeEducation', 'ResumeEducation.resume', 'ResumeEducation.create', 'ResumeEducation.show', 'ResumeEducation.edit'])]
     private ?Resume $resume = null;
