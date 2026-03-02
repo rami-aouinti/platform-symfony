@@ -14,8 +14,6 @@ use App\Chat\Domain\Entity\Conversation;
 class ConversationView
 {
     private string $id;
-    private string $jobApplicationId;
-
     /**
      * @var string[]
      */
@@ -32,7 +30,6 @@ class ConversationView
     public function __construct(Conversation $conversation, array $messages)
     {
         $this->id = $conversation->getId();
-        $this->jobApplicationId = $conversation->getJobApplication()?->getId() ?? '';
         $this->participantUserIds = $conversation->getParticipants()
             ->map(static fn ($participant): string => $participant->getUser()?->getId() ?? '')
             ->filter(static fn (string $userId): bool => $userId !== '')
@@ -43,11 +40,6 @@ class ConversationView
     public function getId(): string
     {
         return $this->id;
-    }
-
-    public function getJobApplicationId(): string
-    {
-        return $this->jobApplicationId;
     }
 
     /**

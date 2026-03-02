@@ -224,7 +224,7 @@ class ChatResource implements ChatResourceInterface
     {
         $conversation = $this->conversationRepository->find($conversationId);
 
-        if (!$conversation instanceof Conversation || $conversation->getJobApplication() === null) {
+        if (!$conversation instanceof Conversation) {
             throw new NotFoundHttpException('Conversation not found.');
         }
 
@@ -274,7 +274,7 @@ class ChatResource implements ChatResourceInterface
     {
         $conversation = $this->conversationRepository->find($conversationId);
 
-        if (!$conversation instanceof Conversation || $conversation->getJobApplication() === null) {
+        if (!$conversation instanceof Conversation) {
             return null;
         }
 

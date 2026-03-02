@@ -6,7 +6,6 @@ namespace App\Chat\Application\Security\Voter;
 
 use App\Chat\Domain\Entity\Conversation;
 use App\Chat\Domain\Entity\ConversationParticipant;
-use App\Recruit\Domain\Enum\JobApplicationStatus;
 use App\User\Application\Security\Permission;
 use App\User\Application\Security\SecurityUser;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -41,11 +40,6 @@ class ConversationVoter extends Voter
         $user = $token->getUser();
 
         if (!$user instanceof SecurityUser || !$subject instanceof Conversation) {
-            return false;
-        }
-
-        $jobApplication = $subject->getJobApplication();
-        if ($jobApplication === null || $jobApplication->getStatus() !== JobApplicationStatus::ACCEPTED) {
             return false;
         }
 
