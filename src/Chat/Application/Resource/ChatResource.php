@@ -5,19 +5,17 @@ declare(strict_types=1);
 namespace App\Chat\Application\Resource;
 
 use App\Chat\Application\DTO\Chat\ChatMessageView;
-use App\Chat\Application\DTO\Chat\ConversationCreate;
 use App\Chat\Application\DTO\Chat\ConversationView;
 use App\Chat\Application\Resource\Interfaces\ChatResourceInterface;
 use App\Chat\Domain\Entity\ChatMessage;
 use App\Chat\Domain\Entity\ChatMessageReaction;
 use App\Chat\Domain\Entity\Conversation;
+use App\Chat\Application\Service\Realtime\Interfaces\ChatRealtimePublisherInterface;
 use App\Chat\Domain\Entity\ConversationParticipant;
-use App\Chat\Domain\Message\ChatMessageRealtimePublishMessage;
 use App\Chat\Domain\Repository\Interfaces\ChatMessageReactionRepositoryInterface;
 use App\Chat\Domain\Repository\Interfaces\ChatMessageRepositoryInterface;
 use App\Chat\Domain\Repository\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Chat\Domain\Repository\Interfaces\ConversationRepositoryInterface;
-use App\General\Domain\Service\Interfaces\MessageServiceInterface;
 use App\User\Application\Security\Permission;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
@@ -46,12 +44,12 @@ readonly class ChatResource implements ChatResourceInterface
         private ChatMessageReactionRepositoryInterface $reactionRepository,
         private UserRepositoryInterface $userRepository,
         private UserTypeIdentification $userTypeIdentification,
-        private MessageServiceInterface $messageService,
+        private ChatRealtimePublisherInterface $chatRealtimePublisher,
         private AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
-    public function createConversation(ConversationCreate $dto, User $sender, User $receiver): ConversationView
+    public function createConversation(User $sender, User $receiver): ConversationView
     {
         $conversation = (new Conversation());
 
@@ -85,7 +83,7 @@ readonly class ChatResource implements ChatResourceInterface
             return $this->getConversation($existingConversationId);
         }
 
-        return $this->createConversation(new ConversationCreate(), $currentUser, $receiver);
+        return $this->createConversation($currentUser, $receiver);
     }
 
     public function listConversationsForCurrentUser(): array
@@ -137,7 +135,7 @@ readonly class ChatResource implements ChatResourceInterface
             ->setAttachments($attachments);
 
         $this->messageRepository->save($message);
-        $this->messageService->sendMessage(new ChatMessageRealtimePublishMessage($message->getId()));
+        $this->chatRealtimePublisher->publish($message);
 
         return new ChatMessageView($message, $this->getCurrentUser()->getId());
     }

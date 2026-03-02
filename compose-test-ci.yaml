@@ -176,7 +176,7 @@ services:
         ports:
             - "${MERCURE_PORT}:80"
         volumes:
-            - ./var/mercure-data:/data
+            - ./var/mercure-data/caddy:/data/caddy
             - ./var/mercure-config:/config
         networks:
             - symfony

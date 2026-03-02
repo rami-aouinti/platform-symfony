@@ -9,6 +9,11 @@ reports/*
 /public/bundles/
 /var/*
 !/var/elasticsearch-data/.gitkeep
+!/var/mercure-data/
+!/var/mercure-data/caddy/
+!/var/mercure-data/caddy/.gitkeep
+!/var/mercure-config/
+!/var/mercure-config/.gitkeep
 /vendor/
 /tools/**/vendor
 ###< symfony/framework-bundle ###
