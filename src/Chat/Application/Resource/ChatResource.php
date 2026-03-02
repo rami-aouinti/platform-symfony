@@ -69,6 +69,24 @@ readonly class ChatResource implements ChatResourceInterface
         return $this->toView($conversation);
     }
 
+
+    public function createConversationForCurrentUser(string $userId): ConversationView
+    {
+        $currentUser = $this->getCurrentUser();
+        $receiver = $this->findUser($userId);
+
+        if ($currentUser->getId() === $receiver->getId()) {
+            throw new AccessDeniedHttpException('Cannot create a conversation with yourself.');
+        }
+
+        $existingConversationId = $this->findSharedConversationId($currentUser->getId(), $receiver->getId());
+        if ($existingConversationId !== null) {
+            return $this->getConversation($existingConversationId);
+        }
+
+        return $this->createConversation(new ConversationCreate(), $currentUser, $receiver);
+    }
+
     public function listConversationsForCurrentUser(): array
     {
         $currentUser = $this->getCurrentUser();
@@ -225,6 +243,21 @@ readonly class ChatResource implements ChatResourceInterface
 
         $message = $this->findMessage($messageId);
         $this->messageRepository->remove($message);
+    }
+
+
+    private function findSharedConversationId(string $firstUserId, string $secondUserId): ?string
+    {
+        $firstConversationIds = $this->participantRepository->findConversationIdsByUserId($firstUserId);
+        $secondConversationIds = $this->participantRepository->findConversationIdsByUserId($secondUserId);
+
+        foreach ($firstConversationIds as $conversationId) {
+            if ($conversationId !== '' && in_array($conversationId, $secondConversationIds, true)) {
+                return $conversationId;
+            }
+        }
+
+        return null;
     }
 
     private function normalizeReaction(string $reaction): string
