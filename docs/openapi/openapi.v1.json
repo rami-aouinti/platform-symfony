@@ -1,0 +1,9 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Symfony Api",
+    "description": "Generated via NelmioApiDocBundle. Run `make openapi-export` to refresh.",
+    "version": "v1"
+  },
+  "paths": {}
+}

@@ -13,6 +13,9 @@ HOST_GID := $(shell id -g)
 PHP_USER := -u www-data
 PROJECT_NAME := -p ${COMPOSE_PROJECT_NAME}
 OPENSSL_BIN := $(shell which openssl)
+OPENAPI_OUTPUT_DIR := docs/openapi
+OPENAPI_VERSION ?= v1
+OPENAPI_FILE := $(OPENAPI_OUTPUT_DIR)/openapi.$(OPENAPI_VERSION).json
 INTERACTIVE := $(shell [ -t 0 ] && echo 1)
 ERROR_ONLY_FOR_HOST = @printf "\033[33mThis command for host machine\033[39m\n"
 .DEFAULT_GOAL := help
@@ -361,6 +364,14 @@ messenger-setup-transports: ## Initializes transports for Symfony Messenger bund
 
 elastic-create-or-update-template: ## Creates or updates elastic templates
 	@make exec cmd="php bin/console elastic:create-or-update-template"
+
+openapi-export: ## Exports OpenAPI JSON artifact from Nelmio (default: docs/openapi/openapi.v1.json)
+	@mkdir -p $(OPENAPI_OUTPUT_DIR)
+	@make exec-bash cmd="php bin/console nelmio:apidoc:dump --format=json > $(OPENAPI_FILE)"
+
+openapi-check: ## Fails if generated OpenAPI artifact is not in sync
+	@make openapi-export
+	@git diff --exit-code -- $(OPENAPI_FILE)
 
 phpunit: ## Runs PhpUnit tests
 	@make exec-bash cmd="rm -rf ./var/cache/test* && bin/console cache:warmup --env=test && ./vendor/bin/phpunit -c phpunit.xml.dist --coverage-html reports/coverage $(PHPUNIT_OPTIONS) --coverage-clover reports/clover.xml --log-junit reports/junit.xml"

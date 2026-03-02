@@ -4,6 +4,47 @@ Ce document explique comment utiliser [Swagger](https://swagger.io/) dans le pro
 ## Utiliser Swagger en local
 * [Service Swagger local](http://localhost/api/doc) - Ouvrir l’URL `http://localhost/api/doc`.
 
+## Export OpenAPI versionné
+
+L’artefact OpenAPI versionné est stocké dans `docs/openapi/`.
+
+Convention de nommage:
+* `openapi.v1.json` pour l’API V1 ;
+* `openapi.v2.json` pour l’API V2 ;
+* etc.
+
+Commande dédiée:
+
+```bash
+make openapi-export
+```
+
+Par défaut, cette commande génère `docs/openapi/openapi.v1.json` depuis Nelmio/OpenAPI.
+
+Pour changer de version:
+
+```bash
+make openapi-export OPENAPI_VERSION=v2
+```
+
+## Contrôle de dérive (CI)
+
+Le pipeline exécute:
+
+```bash
+make openapi-check
+```
+
+Cette commande:
+1. régénère `docs/openapi/openapi.v1.json` ;
+2. échoue si `git diff` détecte une dérive non committée sur l’artefact attendu.
+
+## Historique minimal
+
+| Version | Fichier | Notes |
+| --- | --- | --- |
+| v1 | `docs/openapi/openapi.v1.json` | Initialisation de l’artefact OpenAPI versionné et du contrôle de dérive CI. |
+
 ## Convention de tags
 Les tags doivent être normalisés pour rendre l’API lisible par audience:
 
