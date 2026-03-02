@@ -34,7 +34,7 @@ class ResumeExperience implements EntityInterface
     #[Groups(['ResumeExperience', 'ResumeExperience.id', 'ResumeExperience.show', 'ResumeExperience.edit'])]
     private UuidInterface $id;
 
-    #[ORM\ManyToOne(targetEntity: Resume::class)]
+    #[ORM\ManyToOne(targetEntity: Resume::class, inversedBy: 'resumeExperiences')]
     #[ORM\JoinColumn(name: 'resume_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     #[Groups(['ResumeExperience', 'ResumeExperience.resume', 'ResumeExperience.create', 'ResumeExperience.show', 'ResumeExperience.edit'])]
     private ?Resume $resume = null;
