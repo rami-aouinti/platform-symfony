@@ -68,11 +68,12 @@ readonly class FriendController
      * @return JsonResponse
      */
     #[Route(path: '/requests', methods: [Request::METHOD_POST])]
-    public function addFriendAction(Request $request, User $loggedInUser): JsonResponse
+    #[Route(path: '/requests/{userId}', methods: [Request::METHOD_POST])]
+    public function addFriendAction(Request $request, User $loggedInUser, ?string $userId = null): JsonResponse
     {
         /** @var array<string, mixed> $payload */
         $payload = JSON::decode($request->getContent() ?: '{}', true);
-        $targetUserId = $payload['userId'] ?? null;
+        $targetUserId = $userId ?? $payload['userId'] ?? null;
 
         if (!is_string($targetUserId) || $targetUserId === '') {
             return new JsonResponse(['message' => 'Field "userId" is required.'], Response::HTTP_BAD_REQUEST);
