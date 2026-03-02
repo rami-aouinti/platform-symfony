@@ -19,6 +19,8 @@ use function array_map;
 class ConversationControllerTest extends WebTestCase
 {
     private const string BASE_URL = self::API_URL_PREFIX . '/v1/chat/conversations';
+    private const string JOHN_USER_ID = '20000000-0000-1000-8000-000000000004';
+    private const string BOB_ADMIN_ID = '20000000-0000-1000-8000-000000000008';
     private const string ACCEPTED_APPLICATION_ID = '50000000-0000-1000-8000-000000000002';
     private const string WITHDRAWN_APPLICATION_ID = '50000000-0000-1000-8000-000000000004';
 
@@ -120,6 +122,37 @@ class ConversationControllerTest extends WebTestCase
             ]),
         );
         self::assertSame(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testFindOrCreateByUserIdReturnsExistingConversation(): void
+    {
+        $client = $this->getTestClient('hugo-user', 'password-user');
+
+        $client->request('GET', self::BASE_URL . '/by-user/' . self::JOHN_USER_ID);
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $conversation = JSON::decode((string) $client->getResponse()->getContent(), true);
+        self::assertIsArray($conversation);
+        self::assertSame($this->acceptedConversationId, (string) ($conversation['id'] ?? ''));
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testFindOrCreateByUserIdCreatesConversationWhenMissing(): void
+    {
+        $client = $this->getTestClient('hugo-user', 'password-user');
+
+        $client->request('GET', self::BASE_URL . '/by-user/' . self::BOB_ADMIN_ID);
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $conversation = JSON::decode((string) $client->getResponse()->getContent(), true);
+        self::assertIsArray($conversation);
+        self::assertNotSame('', (string) ($conversation['id'] ?? ''));
+        self::assertNotSame($this->acceptedConversationId, (string) ($conversation['id'] ?? ''));
     }
 
     private function ensureConversation(EntityManagerInterface $entityManager, string $applicationId, array $participantUsernames): string

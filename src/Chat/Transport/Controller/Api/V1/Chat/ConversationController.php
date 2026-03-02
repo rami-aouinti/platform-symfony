@@ -59,6 +59,20 @@ class ConversationController extends AbstractController
         );
     }
 
+    #[Route(path: '/by-user/{userId}', requirements: [
+        'userId' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_GET])]
+    #[OA\Get(summary: 'Find or create a one-to-one conversation with a user id')]
+    #[OA\Parameter(name: 'userId', in: 'path', required: true, schema: new OA\Schema(type: 'string', format: 'uuid'))]
+    #[OA\Response(response: 200, description: 'Conversation detail', content: new JsonContent(type: 'object'))]
+    public function findOrCreateByUserIdAction(Request $request, string $userId): Response
+    {
+        return $this->responseHandler->createResponse(
+            $request,
+            $this->resource->createConversationForCurrentUser($userId),
+        );
+    }
+
     /**
      * @throws Throwable
      */
