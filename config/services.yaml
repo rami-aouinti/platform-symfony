@@ -152,6 +152,9 @@ services:
     App\Chat\Application\Service\Realtime\Interfaces\ChatRealtimePublisherInterface:
         alias: App\Chat\Application\Service\Realtime\ChatRealtimePublisher
 
+    App\Chat\Domain\Repository\Interfaces\ChatMessageReactionRepositoryInterface:
+        class: App\Chat\Infrastructure\Repository\ChatMessageReactionRepository
+
     App\Notification\Application\Service\Channel\EmailNotification:
         arguments:
             $senderEmail: '%env(resolve:APP_SENDER_EMAIL)%'

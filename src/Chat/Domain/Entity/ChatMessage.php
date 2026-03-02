@@ -8,6 +8,8 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use App\User\Domain\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
@@ -44,9 +46,25 @@ class ChatMessage implements EntityInterface
     #[ORM\Column(name: 'content', type: Types::TEXT, nullable: false)]
     private string $content = '';
 
+    #[ORM\Column(name: 'read_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $readAt = null;
+
+    /**
+     * @var array<int, array<string, mixed>>
+     */
+    #[ORM\Column(name: 'attachments', type: Types::JSON, nullable: false)]
+    private array $attachments = [];
+
+    /**
+     * @var Collection<int, ChatMessageReaction>
+     */
+    #[ORM\OneToMany(targetEntity: ChatMessageReaction::class, mappedBy: 'message', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $reactions;
+
     public function __construct()
     {
         $this->id = $this->createUuid();
+        $this->reactions = new ArrayCollection();
     }
 
     public function getId(): string
@@ -86,6 +104,54 @@ class ChatMessage implements EntityInterface
     public function setContent(string $content): self
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function getReadAt(): ?\DateTimeImmutable
+    {
+        return $this->readAt;
+    }
+
+    public function setReadAt(?\DateTimeImmutable $readAt): self
+    {
+        $this->readAt = $readAt;
+
+        return $this;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function getAttachments(): array
+    {
+        return $this->attachments;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $attachments
+     */
+    public function setAttachments(array $attachments): self
+    {
+        $this->attachments = $attachments;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ChatMessageReaction>
+     */
+    public function getReactions(): Collection
+    {
+        return $this->reactions;
+    }
+
+    public function addReaction(ChatMessageReaction $reaction): self
+    {
+        if (!$this->reactions->contains($reaction)) {
+            $this->reactions->add($reaction);
+            $reaction->setMessage($this);
+        }
 
         return $this;
     }
