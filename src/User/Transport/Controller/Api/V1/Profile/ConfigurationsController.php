@@ -28,9 +28,11 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Throwable;
 
 use function array_key_exists;
+use function is_scalar;
 use function is_array;
 use function is_string;
 use function sprintf;
+use function trim;
 
 /**
  *
@@ -99,7 +101,7 @@ readonly class ConfigurationsController
 
         $items = $this->configurationResource->findByProfileAndKeyName(
             $profile,
-            $request->query->getString('keyName') ?: null,
+            $this->resolveKeyNameFilter($request),
         );
 
         return $this->jsonResponse($items);
@@ -306,6 +308,19 @@ readonly class ConfigurationsController
         $payload = JSON::decode($request->getContent() ?: '{}', true);
 
         return $payload;
+    }
+
+    private function resolveKeyNameFilter(Request $request): ?string
+    {
+        $keyName = $request->query->get('keyName');
+
+        if (!is_scalar($keyName)) {
+            return null;
+        }
+
+        $normalizedKeyName = trim((string)$keyName);
+
+        return $normalizedKeyName !== '' ? $normalizedKeyName : null;
     }
 
     /**
