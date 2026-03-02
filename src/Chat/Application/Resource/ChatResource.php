@@ -11,6 +11,7 @@ use App\Chat\Domain\Entity\ChatMessage;
 use App\Chat\Domain\Entity\ChatMessageReaction;
 use App\Chat\Domain\Entity\Conversation;
 use App\Chat\Application\Service\Realtime\Interfaces\ChatRealtimePublisherInterface;
+use App\Chat\Application\Support\Utf8Sanitizer;
 use App\Chat\Domain\Entity\ConversationParticipant;
 use App\Chat\Domain\Repository\Interfaces\ChatMessageReactionRepositoryInterface;
 use App\Chat\Domain\Repository\Interfaces\ChatMessageRepositoryInterface;
@@ -128,6 +129,9 @@ readonly class ChatResource implements ChatResourceInterface
     {
         $conversation = $this->findAllowedConversation($conversationId, Permission::CHAT_POST);
 
+        $content = Utf8Sanitizer::sanitizeString($content);
+        $attachments = Utf8Sanitizer::sanitizeArray($attachments);
+
         $message = (new ChatMessage())
             ->setConversation($conversation)
             ->setSender($this->getCurrentUser())
@@ -148,7 +152,8 @@ readonly class ChatResource implements ChatResourceInterface
             throw new AccessDeniedHttpException('Only the author can edit this message.');
         }
 
-        $message->setContent($content)->setAttachments($attachments);
+        $message->setContent(Utf8Sanitizer::sanitizeString($content))
+            ->setAttachments(Utf8Sanitizer::sanitizeArray($attachments));
         $this->messageRepository->save($message);
 
         return new ChatMessageView($message, $this->getCurrentUser()->getId());

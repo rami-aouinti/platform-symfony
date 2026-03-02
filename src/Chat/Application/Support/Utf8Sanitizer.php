@@ -6,6 +6,7 @@ namespace App\Chat\Application\Support;
 
 use function iconv;
 use function is_array;
+use function is_int;
 use function is_string;
 use function mb_check_encoding;
 
@@ -29,18 +30,29 @@ final class Utf8Sanitizer
      */
     public static function sanitizeArray(array $value): array
     {
+        $sanitized = [];
+
         foreach ($value as $key => $item) {
+            $sanitizedKey = is_string($key) ? self::sanitizeString($key) : $key;
+
+            if (!is_string($sanitizedKey) && !is_int($sanitizedKey)) {
+                continue;
+            }
+
             if (is_string($item)) {
-                $value[$key] = self::sanitizeString($item);
+                $sanitized[$sanitizedKey] = self::sanitizeString($item);
                 continue;
             }
 
             if (is_array($item)) {
-                $value[$key] = self::sanitizeArray($item);
+                $sanitized[$sanitizedKey] = self::sanitizeArray($item);
+                continue;
             }
+
+            $sanitized[$sanitizedKey] = $item;
         }
 
-        return $value;
+        return $sanitized;
     }
 }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Chat\Application\DTO\Chat;
 
+use App\Chat\Application\Support\Utf8Sanitizer;
 use App\Chat\Domain\Entity\ChatMessageReaction;
 use DateTimeImmutable;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -29,7 +30,7 @@ class ChatReactionView
             throw new \RuntimeException('Reaction user is required.');
         }
 
-        $this->reaction = $reaction->getReaction();
+        $this->reaction = Utf8Sanitizer::sanitizeString($reaction->getReaction());
         $this->user = new ChatUserView($user, $currentUserId);
         $this->isCurrentUser = $user->getId() === $currentUserId;
         $this->createdAt = $reaction->getCreatedAt();
