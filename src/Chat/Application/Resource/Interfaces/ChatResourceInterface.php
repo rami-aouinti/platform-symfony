@@ -7,6 +7,7 @@ namespace App\Chat\Application\Resource\Interfaces;
 use App\Chat\Application\DTO\Chat\ChatMessageView;
 use App\Chat\Application\DTO\Chat\ConversationCreate;
 use App\Chat\Application\DTO\Chat\ConversationView;
+use App\User\Domain\Entity\User;
 
 /**
  * @package App\Chat\Application\Resource\Interfaces
@@ -15,7 +16,7 @@ use App\Chat\Application\DTO\Chat\ConversationView;
 
 interface ChatResourceInterface
 {
-    public function createConversation(ConversationCreate $dto): ConversationView;
+    public function createConversation(ConversationCreate $dto, User $sender, User $receiver): ConversationView;
 
     /**
      * @return ConversationView[]

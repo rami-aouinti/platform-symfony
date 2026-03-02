@@ -30,6 +30,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+use Throwable;
+
 use function array_filter;
 use function array_map;
 use function array_values;
@@ -55,41 +57,18 @@ readonly class ChatResource implements ChatResourceInterface
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    public function createConversation(ConversationCreate $dto): ConversationView
+    public function createConversation(ConversationCreate $dto, User $sender, User $receiver): ConversationView
     {
-        $jobApplication = $dto->getJobApplication();
-
-        if (!$jobApplication instanceof JobApplication) {
-            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Job application is required.');
-        }
-
-        if ($jobApplication->getStatus() !== JobApplicationStatus::ACCEPTED) {
-            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Conversation is available only for accepted applications.');
-        }
-
-        $existing = $this->conversationRepository->findOneBy([
-            'jobApplication' => $jobApplication,
-        ]);
-        if ($existing instanceof Conversation) {
-            return $this->toView($existing);
-        }
-
-        $candidate = $jobApplication->getCandidate();
-        $offerOwner = $jobApplication->getJobOffer()?->getCompany()?->getOwner() ?? $jobApplication->getJobOffer()?->getCreatedBy();
-
-        if (!$candidate instanceof User || !$offerOwner instanceof User) {
-            throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, 'Conversation participants are missing for this application.');
-        }
 
         $conversation = (new Conversation());
 
         $candidateParticipant = new ConversationParticipant()
             ->setConversation($conversation)
-            ->setUser($candidate);
+            ->setUser($sender);
 
         $ownerParticipant = new ConversationParticipant()
             ->setConversation($conversation)
-            ->setUser($offerOwner);
+            ->setUser($receiver);
 
         $this->conversationRepository->save($conversation, false);
         $this->participantRepository->save($candidateParticipant, false);
@@ -138,6 +117,9 @@ readonly class ChatResource implements ChatResourceInterface
         return $this->toMessageViews($this->messageRepository->findByConversationId($conversation->getId()));
     }
 
+    /**
+     * @throws Throwable
+     */
     public function createMessage(string $conversationId, string $content): ChatMessageView
     {
         $conversation = $this->findAllowedConversation($conversationId, Permission::CHAT_POST);
