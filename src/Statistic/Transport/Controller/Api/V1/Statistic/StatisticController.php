@@ -25,7 +25,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route(path: '/v1/admin/statistics')]
 #[Route(path: '/v1/statistics')]
 #[IsGranted(Role::ADMIN->value)]
-#[OA\Tag(name: 'Statistics')]
+#[OA\Tag(name: 'Admin - Statistics')]
 class StatisticController
 {
     public function __construct(

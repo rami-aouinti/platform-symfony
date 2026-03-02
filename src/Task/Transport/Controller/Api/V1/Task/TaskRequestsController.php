@@ -28,7 +28,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 #[Route(path: '/v1/admin/tasks')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
-#[OA\Tag(name: 'Task Management')]
+#[OA\Tag(name: 'Admin - Task Management')]
 class TaskRequestsController extends Controller
 {
     public function __construct(TaskRequestResourceInterface $resource)

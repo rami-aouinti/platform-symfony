@@ -23,7 +23,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route(path: '/v1/admin/calendar/events')]
 #[Route(path: '/v1/calendar/events')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
-#[OA\Tag(name: 'Calendar Event Management')]
+#[OA\Tag(name: 'Admin - Calendar Event Management')]
 class EventController extends CrudController
 {
     protected static string $dtoBaseClass = Event::class;

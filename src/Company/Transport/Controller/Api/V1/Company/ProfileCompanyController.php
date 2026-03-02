@@ -12,6 +12,7 @@ use App\Company\Application\Resource\Interfaces\CompanyResourceInterface;
 use App\General\Transport\Rest\Controller;
 use App\General\Transport\Rest\ResponseHandler;
 use App\General\Transport\Rest\Traits\Actions;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -27,6 +28,7 @@ use Throwable;
  */
 #[AsController]
 #[Route(path: '/v1/me/profile/companies')]
+#[OA\Tag(name: 'Me/Profile - Company Management')]
 #[IsGranted('ROLE_LOGGED')]
 class ProfileCompanyController extends Controller
 {

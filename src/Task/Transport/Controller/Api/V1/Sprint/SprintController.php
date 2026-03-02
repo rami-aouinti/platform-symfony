@@ -27,7 +27,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 #[Route(path: '/v1/admin/sprints')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
-#[OA\Tag(name: 'Sprint Management')]
+#[OA\Tag(name: 'Admin - Sprint Management')]
 class SprintController extends Controller
 {
     use Actions\Authenticated\CreateAction;

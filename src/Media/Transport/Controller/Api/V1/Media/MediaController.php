@@ -33,7 +33,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route(path: '/v1/admin/media')]
 #[Route(path: '/v1/media')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
-#[OA\Tag(name: 'Media Management')]
+#[OA\Tag(name: 'Admin - Media Management')]
 class MediaController extends CrudController
 {
     protected static string $dtoBaseClass = Media::class;

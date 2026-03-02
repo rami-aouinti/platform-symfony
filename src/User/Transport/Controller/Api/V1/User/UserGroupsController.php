@@ -26,7 +26,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'User Management')]
+#[OA\Tag(name: 'Admin - User Management')]
 class UserGroupsController
 {
     public function __construct(

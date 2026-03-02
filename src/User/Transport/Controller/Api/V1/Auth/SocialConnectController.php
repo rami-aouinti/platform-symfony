@@ -35,7 +35,7 @@ use function is_string;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'Authentication')]
+#[OA\Tag(name: 'Frontend - Authentication')]
 class SocialConnectController
 {
     public function __construct(

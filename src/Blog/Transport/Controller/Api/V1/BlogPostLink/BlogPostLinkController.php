@@ -29,7 +29,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 #[Route(path: '/v1/admin/blog-post-links')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
-#[OA\Tag(name: 'Blog')]
+#[OA\Tag(name: 'Admin - Blog')]
 class BlogPostLinkController extends Controller
 {
     use Actions\Authenticated\CreateAction;

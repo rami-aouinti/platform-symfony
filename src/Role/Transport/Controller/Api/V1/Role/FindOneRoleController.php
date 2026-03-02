@@ -28,7 +28,7 @@ use Throwable;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'Role Management')]
+#[OA\Tag(name: 'Admin - Role Management')]
 class FindOneRoleController extends Controller
 {
     use Methods\FindOneMethod;

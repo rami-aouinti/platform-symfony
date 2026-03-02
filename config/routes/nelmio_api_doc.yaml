@@ -5,11 +5,31 @@ when@dev: &dev
         methods: GET
         defaults: { _controller: nelmio_api_doc.controller.swagger }
 
+    app.swagger.admin:
+        path: /api/doc/admin.json
+        methods: GET
+        defaults: { _controller: nelmio_api_doc.controller.swagger, area: admin }
+
+    app.swagger.frontend:
+        path: /api/doc/frontend.json
+        methods: GET
+        defaults: { _controller: nelmio_api_doc.controller.swagger, area: frontend }
+
     ## Requires the Asset component and the Twig bundle
     ## $ composer require twig asset
     app.swagger_ui:
         path: /api/doc
         methods: GET
         defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+
+    app.swagger_ui.admin:
+        path: /api/doc/admin
+        methods: GET
+        defaults: { _controller: nelmio_api_doc.controller.swagger_ui, area: admin }
+
+    app.swagger_ui.frontend:
+        path: /api/doc/frontend
+        methods: GET
+        defaults: { _controller: nelmio_api_doc.controller.swagger_ui, area: frontend }
 
 when@test: *dev

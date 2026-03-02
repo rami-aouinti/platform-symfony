@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'Localization')]
+#[OA\Tag(name: 'Frontend - Localization')]
 class LanguageController
 {
     public function __construct(

@@ -32,7 +32,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route(path: '/v1/admin/configurations')]
 #[Route(path: '/v1/configurations')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
-#[OA\Tag(name: 'Configuration Management')]
+#[OA\Tag(name: 'Admin - Configuration Management')]
 class ConfigurationController extends Controller
 {
     use Actions\Authenticated\CountAction;

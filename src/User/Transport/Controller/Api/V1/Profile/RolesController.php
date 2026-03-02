@@ -22,7 +22,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'Me - Profile')]
+#[OA\Tag(name: 'Me/Profile - Profile')]
 class RolesController
 {
     public function __construct(

@@ -33,7 +33,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-#[OA\Tag(name: 'ApiKey Management v2')]
+#[OA\Tag(name: 'Admin - ApiKey Management v2')]
 class ApiKeyDeleteController extends Controller
 {
     use Actions\Root\DeleteAction;

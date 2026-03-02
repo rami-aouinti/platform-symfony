@@ -24,7 +24,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'Role Management')]
+#[OA\Tag(name: 'Admin - Role Management')]
 class InheritedRolesController
 {
     public function __construct(

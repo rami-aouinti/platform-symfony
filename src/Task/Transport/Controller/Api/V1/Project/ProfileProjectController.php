@@ -21,7 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 #[Route(path: '/v1/me/profile/projects')]
 #[IsGranted('ROLE_LOGGED')]
-#[OA\Tag(name: 'Me - Project')]
+#[OA\Tag(name: 'Me/Profile - Project')]
 class ProfileProjectController extends Controller
 {
     use Actions\Authenticated\CreateAction;

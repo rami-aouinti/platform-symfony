@@ -22,7 +22,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsController]
-#[OA\Tag(name: 'Chat')]
+#[OA\Tag(name: 'Frontend - Chat')]
 class MessageController extends AbstractController
 {
     public function __construct(

@@ -26,7 +26,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 #[Route(path: '/v1/admin/blog-posts')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
-#[OA\Tag(name: 'Blog')]
+#[OA\Tag(name: 'Admin - Blog')]
 class BlogPostController extends CrudController
 {
     private const string READ_CACHE_SCOPE = 'blog';

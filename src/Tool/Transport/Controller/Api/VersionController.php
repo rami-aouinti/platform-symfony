@@ -21,7 +21,7 @@ use Throwable;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'Tools')]
+#[OA\Tag(name: 'Frontend - Tools')]
 class VersionController
 {
     public function __construct(

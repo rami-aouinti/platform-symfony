@@ -20,7 +20,7 @@ use Throwable;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'Localization')]
+#[OA\Tag(name: 'Frontend - Localization')]
 class TimeZoneController
 {
     public function __construct(

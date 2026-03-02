@@ -35,7 +35,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'Me - Profile')]
+#[OA\Tag(name: 'Me/Profile - Profile')]
 class IndexController
 {
     public function __construct(
