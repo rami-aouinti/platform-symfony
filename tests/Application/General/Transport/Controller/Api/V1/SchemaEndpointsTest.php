@@ -61,7 +61,7 @@ class SchemaEndpointsTest extends WebTestCase
 
         self::assertSame('normal', $displayableByName['title']['type'] ?? null);
         self::assertSame('object', $displayableByName['project']['type'] ?? null);
-        self::assertSame('/api/v1/projects', $displayableByName['project']['endpoint'] ?? null);
+        self::assertSame('/api/v1/admin/projects', $displayableByName['project']['endpoint'] ?? null);
         self::assertSame('object', $editableByName['project']['type'] ?? null);
         self::assertIsArray($data['creatable']);
         self::assertArrayHasKey('fields', $data['creatable']);
@@ -120,13 +120,13 @@ class SchemaEndpointsTest extends WebTestCase
     {
         return [
             'api-key-v1' => ['/v1/api_key', 'john-admin', 'password-admin'],
-            'blog-tag' => ['/v1/blog-tags', 'john-user', 'password-user'],
+            'blog-tag' => ['/v1/admin/blog-tags', 'john-admin', 'password-admin'],
             'company' => ['/v1/companies', 'john-user', 'password-user'],
             'configuration' => ['/v1/configuration', 'john-user', 'password-user'],
-            'quiz' => ['/v1/quizzes', 'john-user', 'password-user'],
-            'offer' => ['/v1/offers', 'john-user', 'password-user'],
+            'quiz' => ['/v1/admin/quizzes', 'john-admin', 'password-admin'],
+            'offer' => ['/v1/admin/offers', 'john-admin', 'password-admin'],
             'role' => ['/v1/role', 'john-admin', 'password-admin'],
-            'task' => ['/v1/tasks', 'john-user', 'password-user'],
+            'task' => ['/v1/admin/tasks', 'john-admin', 'password-admin'],
             'user' => ['/v1/user', 'john-admin', 'password-admin'],
         ];
     }

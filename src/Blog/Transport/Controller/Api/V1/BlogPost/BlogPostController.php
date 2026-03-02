@@ -25,7 +25,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 #[AsController]
 #[Route(path: '/v1/admin/blog-posts')]
-#[Route(path: '/v1/blog-posts')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Blog')]
 class BlogPostController extends CrudController

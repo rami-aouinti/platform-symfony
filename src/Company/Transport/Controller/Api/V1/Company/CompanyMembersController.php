@@ -26,7 +26,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[Route(path: '/v1/admin/companies')]
 #[Route(path: '/v1/companies')]
 #[IsGranted('ROLE_LOGGED')]
 #[OA\Tag(name: 'Company Management')]

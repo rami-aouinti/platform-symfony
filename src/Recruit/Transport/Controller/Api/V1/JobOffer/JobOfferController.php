@@ -54,7 +54,6 @@ use function trim;
  */
 #[AsController]
 #[Route(path: '/v1/admin/job-offers')]
-#[Route(path: '/v1/job-offers')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Job Offer Management')]
 class JobOfferController extends Controller
