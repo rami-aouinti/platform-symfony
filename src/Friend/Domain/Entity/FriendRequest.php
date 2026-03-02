@@ -8,9 +8,11 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
 use App\User\Domain\Entity\User;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
+use Throwable;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'friend_request')]
@@ -41,8 +43,11 @@ class FriendRequest implements EntityInterface
     private string $status = self::STATUS_PENDING;
 
     #[ORM\Column(name: 'accepted_at', type: 'datetime_immutable', nullable: true)]
-    private ?\DateTimeImmutable $acceptedAt = null;
+    private ?DateTimeImmutable $acceptedAt = null;
 
+    /**
+     * @throws Throwable
+     */
     public function __construct(User $requester, User $addressee)
     {
         $this->id = $this->createUuid();
@@ -83,7 +88,7 @@ class FriendRequest implements EntityInterface
     public function accept(): self
     {
         $this->status = self::STATUS_ACCEPTED;
-        $this->acceptedAt = new \DateTimeImmutable();
+        $this->acceptedAt = new DateTimeImmutable();
 
         return $this;
     }

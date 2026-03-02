@@ -299,6 +299,10 @@ when@dev:
 
         App\Calendar\Infrastructure\DataFixtures\:
             resource: '../src/Calendar/Infrastructure/DataFixtures/*'
+
+        App\Friend\Infrastructure\DataFixtures\:
+            resource: '../src/Friend/Infrastructure/DataFixtures/*'
+
         App\Tests\TestCase\:
             resource: '../tests/TestCase/*'
 

@@ -9,6 +9,8 @@ use App\Friend\Infrastructure\Repository\FriendRequestRepository;
 use App\General\Domain\Utils\JSON;
 use App\User\Domain\Entity\User;
 use App\User\Infrastructure\Repository\UserRepository;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use JsonException;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,16 +20,23 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Throwable;
 
+use function array_map;
+use function is_string;
+
+/**
+ *
+ */
 #[AsController]
 #[Route(path: '/v1/me/friends')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'Me/Friends')]
-class FriendController
+readonly class FriendController
 {
     public function __construct(
-        private readonly FriendRequestRepository $friendRequestRepository,
-        private readonly UserRepository $userRepository,
+        private FriendRequestRepository $friendRequestRepository,
+        private UserRepository $userRepository,
     ) {
     }
 
@@ -48,7 +57,16 @@ class FriendController
         return new JsonResponse(['items' => $friends]);
     }
 
-    /** @throws JsonException */
+    /**
+     * @param Request $request
+     * @param User    $loggedInUser
+     *
+     * @throws JsonException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws Throwable
+     * @return JsonResponse
+     */
     #[Route(path: '/requests', methods: [Request::METHOD_POST])]
     public function addFriendAction(Request $request, User $loggedInUser): JsonResponse
     {
@@ -91,6 +109,14 @@ class FriendController
         return new JsonResponse(['id' => $friendRequest->getId(), 'message' => 'Friend request sent.'], Response::HTTP_CREATED);
     }
 
+    /**
+     * @param string $id
+     * @param User   $loggedInUser
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @return JsonResponse
+     */
     #[Route(path: '/requests/{id}/accept', methods: [Request::METHOD_POST])]
     public function acceptFriendRequestAction(string $id, User $loggedInUser): JsonResponse
     {
