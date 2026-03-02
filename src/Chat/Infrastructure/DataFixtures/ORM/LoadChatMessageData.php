@@ -32,27 +32,26 @@ final class LoadChatMessageData extends Fixture implements OrderedFixtureInterfa
         /** @var JobApplication $jobApplication */
         $jobApplication = $this->getReference('JobApplication-carol-on-php-backend-engineer', JobApplication::class);
 
-        $conversation = (new Conversation())
-            ->setJobApplication($jobApplication);
+        $conversation = (new Conversation());
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('71000000-0000-1000-8000-000000000001'), $conversation);
 
-        $johnParticipant = (new ConversationParticipant())
+        $johnParticipant = new ConversationParticipant()
             ->setConversation($conversation)
             ->setUser($johnRoot);
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('71000000-0000-1000-8000-000000000002'), $johnParticipant);
 
-        $carolParticipant = (new ConversationParticipant())
+        $carolParticipant = new ConversationParticipant()
             ->setConversation($conversation)
             ->setUser($carolUser);
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('71000000-0000-1000-8000-000000000003'), $carolParticipant);
 
-        $message1 = (new ChatMessage())
+        $message1 = new ChatMessage()
             ->setConversation($conversation)
             ->setSender($johnRoot)
             ->setContent('Hello Carol, thank you for applying. Could you share your availability this week?');
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('71000000-0000-1000-8000-000000000004'), $message1);
 
-        $message2 = (new ChatMessage())
+        $message2 = new ChatMessage()
             ->setConversation($conversation)
             ->setSender($johnRoot)
             ->setContent('We can schedule a technical call on Thursday afternoon if that works for you.');

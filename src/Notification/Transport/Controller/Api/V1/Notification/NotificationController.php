@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Notification\Transport\Controller\Api\V1\Notification;
 
+use App\General\Transport\ValueResolver\LoggedInUserValueResolver;
 use App\Notification\Application\Service\Interfaces\NotificationServiceInterface;
 use App\Notification\Domain\Entity\Notification;
 use App\User\Domain\Entity\User;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
 use OpenApi\Attributes\Property;
-use App\General\Transport\ValueResolver\LoggedInUserValueResolver;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;

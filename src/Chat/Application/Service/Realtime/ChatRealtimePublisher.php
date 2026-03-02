@@ -7,10 +7,12 @@ namespace App\Chat\Application\Service\Realtime;
 use App\Chat\Application\Service\Realtime\Interfaces\ChatRealtimePublisherInterface;
 use App\Chat\Domain\Entity\ChatMessage;
 
+use Symfony\Component\Mercure\Update;
 use function class_exists;
 use function is_object;
 use function json_encode;
 use function method_exists;
+
 use function sprintf;
 
 /**
@@ -25,6 +27,9 @@ readonly class ChatRealtimePublisher implements ChatRealtimePublisherInterface
     ) {
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function publish(ChatMessage $message): void
     {
         $conversationId = $message->getConversation()?->getId();
@@ -41,13 +46,13 @@ readonly class ChatRealtimePublisher implements ChatRealtimePublisherInterface
             'senderId' => $senderId,
             'body' => $message->getContent(),
             'createdAt' => $createdAt->format(DATE_ATOM),
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         if ($payload === false || !$this->canPublish()) {
             return;
         }
 
-        $updateClass = 'Symfony\\Component\\Mercure\\Update';
+        $updateClass = Update::class;
 
         $this->hub->publish(new $updateClass(
             sprintf('/conversations/%s', $conversationId),
@@ -58,7 +63,7 @@ readonly class ChatRealtimePublisher implements ChatRealtimePublisherInterface
     private function canPublish(): bool
     {
         return is_object($this->hub)
-            && class_exists('Symfony\\Component\\Mercure\\Update')
+            && class_exists(Update::class)
             && method_exists($this->hub, 'publish');
     }
 }

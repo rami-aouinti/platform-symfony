@@ -7,7 +7,6 @@ namespace App\Chat\Domain\Entity;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
-use App\Recruit\Domain\Entity\JobApplication;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,8 +20,6 @@ use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'chat_conversation')]
-#[ORM\UniqueConstraint(name: 'uq_chat_conversation_job_application', columns: ['job_application_id'])]
-#[ORM\Index(name: 'idx_chat_conversation_job_application_id', columns: ['job_application_id'])]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class Conversation implements EntityInterface
 {
@@ -32,10 +29,6 @@ class Conversation implements EntityInterface
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: UuidBinaryOrderedTimeType::NAME, unique: true, nullable: false)]
     private UuidInterface $id;
-
-    #[ORM\OneToOne(targetEntity: JobApplication::class, inversedBy: 'conversation')]
-    #[ORM\JoinColumn(name: 'job_application_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    private ?JobApplication $jobApplication = null;
 
     /**
      * @var Collection<int, ConversationParticipant>
@@ -62,18 +55,6 @@ class Conversation implements EntityInterface
     public function getId(): string
     {
         return $this->id->toString();
-    }
-
-    public function getJobApplication(): ?JobApplication
-    {
-        return $this->jobApplication;
-    }
-
-    public function setJobApplication(?JobApplication $jobApplication): self
-    {
-        $this->jobApplication = $jobApplication;
-
-        return $this;
     }
 
     /**

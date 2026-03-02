@@ -22,6 +22,8 @@ use App\User\Application\Security\Permission;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Repository\Interfaces\UserRepositoryInterface;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -36,19 +38,23 @@ use function array_values;
  * @package App\Chat\Application\Resource
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
-class ChatResource implements ChatResourceInterface
+readonly class ChatResource implements ChatResourceInterface
 {
     public function __construct(
-        private readonly ConversationRepositoryInterface $conversationRepository,
-        private readonly ConversationParticipantRepositoryInterface $participantRepository,
-        private readonly ChatMessageRepositoryInterface $messageRepository,
-        private readonly UserRepositoryInterface $userRepository,
-        private readonly UserTypeIdentification $userTypeIdentification,
-        private readonly MessageServiceInterface $messageService,
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private ConversationRepositoryInterface $conversationRepository,
+        private ConversationParticipantRepositoryInterface $participantRepository,
+        private ChatMessageRepositoryInterface $messageRepository,
+        private UserRepositoryInterface $userRepository,
+        private UserTypeIdentification $userTypeIdentification,
+        private MessageServiceInterface $messageService,
+        private AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function createConversation(ConversationCreate $dto): ConversationView
     {
         $jobApplication = $dto->getJobApplication();
@@ -75,14 +81,13 @@ class ChatResource implements ChatResourceInterface
             throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, 'Conversation participants are missing for this application.');
         }
 
-        $conversation = (new Conversation())
-            ->setJobApplication($jobApplication);
+        $conversation = (new Conversation());
 
-        $candidateParticipant = (new ConversationParticipant())
+        $candidateParticipant = new ConversationParticipant()
             ->setConversation($conversation)
             ->setUser($candidate);
 
-        $ownerParticipant = (new ConversationParticipant())
+        $ownerParticipant = new ConversationParticipant()
             ->setConversation($conversation)
             ->setUser($offerOwner);
 
@@ -134,7 +139,7 @@ class ChatResource implements ChatResourceInterface
     {
         $conversation = $this->findAllowedConversation($conversationId, Permission::CHAT_POST);
 
-        $message = (new ChatMessage())
+        $message = new ChatMessage()
             ->setConversation($conversation)
             ->setSender($this->getCurrentUser())
             ->setContent($content);
@@ -179,7 +184,7 @@ class ChatResource implements ChatResourceInterface
 
         $existingParticipant = $this->participantRepository->findOneByConversationAndUser($conversation, $user);
         if (!$existingParticipant instanceof ConversationParticipant) {
-            $participant = (new ConversationParticipant())
+            $participant = new ConversationParticipant()
                 ->setConversation($conversation)
                 ->setUser($user);
 
@@ -270,6 +275,10 @@ class ChatResource implements ChatResourceInterface
         }
     }
 
+    /**
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
     private function tryBuildAllowedConversationView(string $conversationId): ?ConversationView
     {
         $conversation = $this->conversationRepository->find($conversationId);

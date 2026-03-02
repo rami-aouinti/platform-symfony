@@ -14,6 +14,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
+use function array_map;
+
 class ConversationControllerTest extends WebTestCase
 {
     private const string BASE_URL = self::API_URL_PREFIX . '/v1/chat/conversations';
@@ -132,7 +134,7 @@ class ConversationControllerTest extends WebTestCase
             return $existing->getId();
         }
 
-        $conversation = (new Conversation())->setJobApplication($application);
+        $conversation = (new Conversation());
         $entityManager->persist($conversation);
 
         foreach ($participantUsernames as $username) {
