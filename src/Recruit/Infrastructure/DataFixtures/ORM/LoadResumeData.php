@@ -34,24 +34,24 @@ final class LoadResumeData extends Fixture implements OrderedFixtureInterface
     #[Override]
     public function load(ObjectManager $manager): void
     {
-        /** @var User $bob */
-        $bob = $this->getReference('User-bob-admin', User::class);
+        /** @var User $john */
+        $john = $this->getReference('User-john-root', User::class);
         /** @var User $carol */
         $carol = $this->getReference('User-carol-user', User::class);
 
-        $bobPublicResume = (new Resume())
-            ->setOwner($bob)
-            ->setTitle('Bob - Public Resume')
-            ->setSummary('Public profile for Bob.')
+        $johnPublicResume = (new Resume())
+            ->setOwner($john)
+            ->setTitle('John - Public Resume')
+            ->setSummary('Public profile for John.')
             ->setIsPublic(true);
-        PhpUnitUtil::setProperty('id', UuidHelper::fromString('60000000-0000-1000-8000-000000000001'), $bobPublicResume);
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString('60000000-0000-1000-8000-000000000001'), $johnPublicResume);
 
-        $bobPrivateResume = (new Resume())
-            ->setOwner($bob)
-            ->setTitle('Bob - Private Resume')
-            ->setSummary('Private profile for Bob.')
+        $johnPrivateResume = (new Resume())
+            ->setOwner($john)
+            ->setTitle('John - Private Resume')
+            ->setSummary('Private profile for John.')
             ->setIsPublic(false);
-        PhpUnitUtil::setProperty('id', UuidHelper::fromString('60000000-0000-1000-8000-000000000002'), $bobPrivateResume);
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString('60000000-0000-1000-8000-000000000002'), $johnPrivateResume);
 
         $carolPrivateResume = (new Resume())
             ->setOwner($carol)
@@ -60,13 +60,13 @@ final class LoadResumeData extends Fixture implements OrderedFixtureInterface
             ->setIsPublic(false);
         PhpUnitUtil::setProperty('id', UuidHelper::fromString('60000000-0000-1000-8000-000000000003'), $carolPrivateResume);
 
-        foreach ([$bobPublicResume, $bobPrivateResume, $carolPrivateResume] as $resume) {
+        foreach ([$johnPublicResume, $johnPrivateResume, $carolPrivateResume] as $resume) {
             $manager->persist($resume);
         }
 
         $resumeEntries = [
             (new ResumeExperience())
-                ->setResume($bobPublicResume)
+                ->setResume($johnPublicResume)
                 ->setTitle('Backend Engineer')
                 ->setCompanyName('Acme')
                 ->setEmploymentType(ResumeEmploymentType::FULL_TIME)
@@ -75,7 +75,7 @@ final class LoadResumeData extends Fixture implements OrderedFixtureInterface
                 ->setDescription('Build and maintain Symfony APIs.')
                 ->setSortOrder(1),
             (new ResumeEducation())
-                ->setResume($bobPublicResume)
+                ->setResume($johnPublicResume)
                 ->setSchoolName('Tech University')
                 ->setDegree('MSc Computer Science')
                 ->setLevel(ResumeEducationLevel::MASTER)
@@ -83,32 +83,32 @@ final class LoadResumeData extends Fixture implements OrderedFixtureInterface
                 ->setEndDate(new DateTimeImmutable('2019-06-30'))
                 ->setSortOrder(1),
             (new ResumeSkill())
-                ->setResume($bobPublicResume)
+                ->setResume($johnPublicResume)
                 ->setName('Symfony')
                 ->setLevel(ResumeSkillLevel::ADVANCED)
                 ->setYearsExperience(6)
                 ->setSortOrder(1),
             (new ResumeReference())
-                ->setResume($bobPublicResume)
+                ->setResume($johnPublicResume)
                 ->setName('Alice Martin')
                 ->setRelationName('Engineering Manager')
                 ->setContactEmail('alice@example.test')
                 ->setSortOrder(1),
             (new ResumeProject())
-                ->setResume($bobPublicResume)
+                ->setResume($johnPublicResume)
                 ->setName('Recruitment Platform')
                 ->setDescription('End-to-end recruiting workflow application.')
                 ->setProjectUrl('https://example.test/projects/recruitment-platform')
                 ->setStartDate(new DateTimeImmutable('2022-03-01'))
                 ->setSortOrder(1),
             (new ResumeLanguage())
-                ->setResume($bobPublicResume)
+                ->setResume($johnPublicResume)
                 ->setName('French')
                 ->setLevel('Native')
                 ->setSortOrder(1),
 
             (new ResumeExperience())
-                ->setResume($bobPrivateResume)
+                ->setResume($johnPrivateResume)
                 ->setTitle('Staff Engineer')
                 ->setCompanyName('Globex')
                 ->setEmploymentType(ResumeEmploymentType::FULL_TIME)
@@ -116,7 +116,7 @@ final class LoadResumeData extends Fixture implements OrderedFixtureInterface
                 ->setIsCurrent(true)
                 ->setSortOrder(1),
             (new ResumeEducation())
-                ->setResume($bobPrivateResume)
+                ->setResume($johnPrivateResume)
                 ->setSchoolName('Engineering School')
                 ->setDegree('BSc Software Engineering')
                 ->setLevel(ResumeEducationLevel::BACHELOR)
@@ -124,24 +124,24 @@ final class LoadResumeData extends Fixture implements OrderedFixtureInterface
                 ->setEndDate(new DateTimeImmutable('2016-06-30'))
                 ->setSortOrder(1),
             (new ResumeSkill())
-                ->setResume($bobPrivateResume)
+                ->setResume($johnPrivateResume)
                 ->setName('DDD')
                 ->setLevel(ResumeSkillLevel::EXPERT)
                 ->setYearsExperience(8)
                 ->setSortOrder(1),
             (new ResumeReference())
-                ->setResume($bobPrivateResume)
+                ->setResume($johnPrivateResume)
                 ->setName('David Ross')
                 ->setRelationName('CTO')
                 ->setContactEmail('david@example.test')
                 ->setSortOrder(1),
             (new ResumeProject())
-                ->setResume($bobPrivateResume)
+                ->setResume($johnPrivateResume)
                 ->setName('Legacy Modernization')
                 ->setDescription('Refactoring monolith into modular architecture.')
                 ->setSortOrder(1),
             (new ResumeLanguage())
-                ->setResume($bobPrivateResume)
+                ->setResume($johnPrivateResume)
                 ->setName('English')
                 ->setLevel('Professional')
                 ->setSortOrder(1),
@@ -192,8 +192,8 @@ final class LoadResumeData extends Fixture implements OrderedFixtureInterface
 
         $manager->flush();
 
-        $this->addReference('Resume-bob-public', $bobPublicResume);
-        $this->addReference('Resume-bob-private', $bobPrivateResume);
+        $this->addReference('Resume-john-root-public', $johnPublicResume);
+        $this->addReference('Resume-john-root-private', $johnPrivateResume);
         $this->addReference('Resume-carol-private', $carolPrivateResume);
     }
 
