@@ -6,13 +6,12 @@ namespace App\Chat\Application\Service\Realtime;
 
 use App\Chat\Application\Service\Realtime\Interfaces\ChatRealtimePublisherInterface;
 use App\Chat\Domain\Entity\ChatMessage;
-
 use Symfony\Component\Mercure\Update;
+
 use function class_exists;
 use function is_object;
 use function json_encode;
 use function method_exists;
-
 use function sprintf;
 
 /**

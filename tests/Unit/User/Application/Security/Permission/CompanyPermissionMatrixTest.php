@@ -87,7 +87,7 @@ class CompanyPermissionMatrixTest extends TestCase
 
     private function createSecurityUser(array $roles, ?string $companyId = null, ?string $membershipRole = null): SecurityUser
     {
-        return new class(new User(), $roles, $companyId, $membershipRole) extends SecurityUser {
+        return new class (new User(), $roles, $companyId, $membershipRole) extends SecurityUser {
             public function __construct(
                 User $user,
                 array $roles,

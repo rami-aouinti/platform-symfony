@@ -58,7 +58,7 @@ class ResumeVoterTest extends TestCase
 
     private function createToken(SecurityUser $user): TokenInterface
     {
-        return new class($user) implements TokenInterface {
+        return new class ($user) implements TokenInterface {
             public function __construct(
                 private readonly SecurityUser $user
             ) {

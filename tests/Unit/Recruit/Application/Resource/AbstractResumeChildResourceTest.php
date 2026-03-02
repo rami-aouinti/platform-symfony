@@ -108,7 +108,7 @@ class AbstractResumeChildResourceTest extends TestCase
 
     private function createResource(AuthorizationCheckerInterface $authorizationChecker): AbstractResumeChildResource
     {
-        return new class($authorizationChecker, $this->createMock(BaseRepositoryInterface::class)) extends AbstractResumeChildResource {
+        return new class ($authorizationChecker, $this->createMock(BaseRepositoryInterface::class)) extends AbstractResumeChildResource {
         };
     }
 }
