@@ -8,11 +8,6 @@ use App\Chat\Domain\Entity\ChatMessage;
 use DateTimeImmutable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @package App\Chat\Application\DTO\Chat
- * @author  Rami Aouinti <rami.aouinti@gmail.com>
- */
-
 class ChatMessageView
 {
     #[Groups(['default'])]
@@ -22,37 +17,41 @@ class ChatMessageView
     private ?ChatUserView $sender;
 
     #[Groups(['default'])]
+    private bool $isFromCurrentUser;
+
+    #[Groups(['default'])]
     private string $content;
 
     #[Groups(['default'])]
     private ?DateTimeImmutable $createdAt;
 
-    public function __construct(ChatMessage $message)
+    #[Groups(['default'])]
+    private ?DateTimeImmutable $readAt;
+
+    /**
+     * @var array<int, array<string, mixed>>
+     */
+    #[Groups(['default'])]
+    private array $attachments;
+
+    /**
+     * @var ChatReactionView[]
+     */
+    #[Groups(['default'])]
+    private array $reactions;
+
+    public function __construct(ChatMessage $message, string $currentUserId)
     {
         $this->id = $message->getId();
         $sender = $message->getSender();
-        $this->sender = $sender !== null ? new ChatUserView($sender) : null;
+        $this->sender = $sender !== null ? new ChatUserView($sender, $currentUserId) : null;
+        $this->isFromCurrentUser = $sender !== null && $sender->getId() === $currentUserId;
         $this->content = $message->getContent();
         $this->createdAt = $message->getCreatedAt();
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getSender(): ?ChatUserView
-    {
-        return $this->sender;
-    }
-
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
-    public function getCreatedAt(): ?DateTimeImmutable
-    {
-        return $this->createdAt;
+        $this->readAt = $message->getReadAt();
+        $this->attachments = $message->getAttachments();
+        $this->reactions = $message->getReactions()->map(
+            static fn ($reaction): ChatReactionView => new ChatReactionView($reaction, $currentUserId),
+        )->toArray();
     }
 }

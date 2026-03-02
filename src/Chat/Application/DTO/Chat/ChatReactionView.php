@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Chat\Application\DTO\Chat;
+
+use App\Chat\Domain\Entity\ChatMessageReaction;
+use DateTimeImmutable;
+use Symfony\Component\Serializer\Annotation\Groups;
+
+class ChatReactionView
+{
+    #[Groups(['default'])]
+    private string $reaction;
+
+    #[Groups(['default'])]
+    private ChatUserView $user;
+
+    #[Groups(['default'])]
+    private bool $isCurrentUser;
+
+    #[Groups(['default'])]
+    private ?DateTimeImmutable $createdAt;
+
+    public function __construct(ChatMessageReaction $reaction, string $currentUserId)
+    {
+        $user = $reaction->getUser();
+        if ($user === null) {
+            throw new \RuntimeException('Reaction user is required.');
+        }
+
+        $this->reaction = $reaction->getReaction();
+        $this->user = new ChatUserView($user, $currentUserId);
+        $this->isCurrentUser = $user->getId() === $currentUserId;
+        $this->createdAt = $reaction->getCreatedAt();
+    }
+}

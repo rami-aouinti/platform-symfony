@@ -48,8 +48,10 @@ class MessageController extends AbstractController
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Post(summary: 'Create message in a conversation for current user')]
     #[OA\RequestBody(required: true, content: new JsonContent(
-        required: ['content'],
-        properties: [new OA\Property(property: 'content', type: 'string', maxLength: 10000)],
+        properties: [
+            new OA\Property(property: 'content', type: 'string', maxLength: 10000),
+            new OA\Property(property: 'attachments', type: 'array', items: new OA\Items(type: 'object')),
+        ],
         type: 'object',
     ))]
     public function createAction(Request $request, string $id): Response
@@ -57,14 +59,16 @@ class MessageController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = JSON::decode($request->getContent() ?: '{}', true);
 
-        $dto = (new ChatMessageSend())->setContent((string)($payload['content'] ?? ''));
+        $dto = (new ChatMessageSend())
+            ->setContent((string)($payload['content'] ?? ''))
+            ->setAttachments(isset($payload['attachments']) && is_array($payload['attachments']) ? $payload['attachments'] : []);
         $violations = $this->validator->validate($dto);
 
         if ($violations->count() > 0) {
             return $this->responseHandler->getValidationErrorResponse($request, $violations);
         }
 
-        return $this->responseHandler->createResponse($request, $this->resource->createMessage($id, $dto->getContent()));
+        return $this->responseHandler->createResponse($request, $this->resource->createMessage($id, $dto->getContent(), $dto->getAttachments()));
     }
 
     #[Route(path: '/v1/me/chat/messages/{messageId}', requirements: [
@@ -77,14 +81,16 @@ class MessageController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = JSON::decode($request->getContent() ?: '{}', true);
 
-        $dto = (new ChatMessageSend())->setContent((string)($payload['content'] ?? ''));
+        $dto = (new ChatMessageSend())
+            ->setContent((string)($payload['content'] ?? ''))
+            ->setAttachments(isset($payload['attachments']) && is_array($payload['attachments']) ? $payload['attachments'] : []);
         $violations = $this->validator->validate($dto);
 
         if ($violations->count() > 0) {
             return $this->responseHandler->getValidationErrorResponse($request, $violations);
         }
 
-        return $this->responseHandler->createResponse($request, $this->resource->updateMessage($messageId, $dto->getContent()));
+        return $this->responseHandler->createResponse($request, $this->resource->updateMessage($messageId, $dto->getContent(), $dto->getAttachments()));
     }
 
     #[Route(path: '/v1/me/chat/messages/{messageId}', requirements: [
@@ -99,6 +105,36 @@ class MessageController extends AbstractController
         return $this->responseHandler->createResponse($request, [
             'deleted' => true,
         ]);
+    }
+
+    #[Route(path: '/v1/me/chat/messages/{messageId}/reactions', requirements: [
+        'messageId' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_POST])]
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    public function addReactionAction(Request $request, string $messageId): Response
+    {
+        /** @var array<string, mixed> $payload */
+        $payload = JSON::decode($request->getContent() ?: '{}', true);
+
+        return $this->responseHandler->createResponse(
+            $request,
+            $this->resource->addReaction($messageId, (string)($payload['reaction'] ?? '')),
+        );
+    }
+
+    #[Route(path: '/v1/me/chat/messages/{messageId}/reactions', requirements: [
+        'messageId' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_DELETE])]
+    #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    public function removeReactionAction(Request $request, string $messageId): Response
+    {
+        /** @var array<string, mixed> $payload */
+        $payload = JSON::decode($request->getContent() ?: '{}', true);
+
+        return $this->responseHandler->createResponse(
+            $request,
+            $this->resource->removeReaction($messageId, (string)($payload['reaction'] ?? '')),
+        );
     }
 
     #[Route(path: '/v1/admin/chat/messages', methods: [Request::METHOD_GET])]

@@ -9,43 +9,40 @@ use App\Chat\Application\DTO\Chat\ConversationCreate;
 use App\Chat\Application\DTO\Chat\ConversationView;
 use App\Chat\Application\Resource\Interfaces\ChatResourceInterface;
 use App\Chat\Domain\Entity\ChatMessage;
+use App\Chat\Domain\Entity\ChatMessageReaction;
 use App\Chat\Domain\Entity\Conversation;
 use App\Chat\Domain\Entity\ConversationParticipant;
 use App\Chat\Domain\Message\ChatMessageRealtimePublishMessage;
+use App\Chat\Domain\Repository\Interfaces\ChatMessageReactionRepositoryInterface;
 use App\Chat\Domain\Repository\Interfaces\ChatMessageRepositoryInterface;
 use App\Chat\Domain\Repository\Interfaces\ConversationParticipantRepositoryInterface;
 use App\Chat\Domain\Repository\Interfaces\ConversationRepositoryInterface;
 use App\General\Domain\Service\Interfaces\MessageServiceInterface;
-use App\Recruit\Domain\Entity\JobApplication;
-use App\Recruit\Domain\Enum\JobApplicationStatus;
 use App\User\Application\Security\Permission;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use App\User\Domain\Repository\Interfaces\UserRepositoryInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
 use Throwable;
 
 use function array_filter;
 use function array_map;
 use function array_values;
+use function in_array;
 
-/**
- * @package App\Chat\Application\Resource
- * @author  Rami Aouinti <rami.aouinti@gmail.com>
- */
 readonly class ChatResource implements ChatResourceInterface
 {
+    private const array ALLOWED_REACTIONS = ['heart', 'thumbs_up', 'sad', 'surprised', 'laugh', 'fire'];
+
     public function __construct(
         private ConversationRepositoryInterface $conversationRepository,
         private ConversationParticipantRepositoryInterface $participantRepository,
         private ChatMessageRepositoryInterface $messageRepository,
+        private ChatMessageReactionRepositoryInterface $reactionRepository,
         private UserRepositoryInterface $userRepository,
         private UserTypeIdentification $userTypeIdentification,
         private MessageServiceInterface $messageService,
@@ -53,20 +50,15 @@ readonly class ChatResource implements ChatResourceInterface
     ) {
     }
 
-    /**
-     * @throws OptimisticLockException
-     * @throws ORMException
-     */
     public function createConversation(ConversationCreate $dto, User $sender, User $receiver): ConversationView
     {
-
         $conversation = (new Conversation());
 
-        $candidateParticipant = new ConversationParticipant()
+        $candidateParticipant = (new ConversationParticipant())
             ->setConversation($conversation)
             ->setUser($sender);
 
-        $ownerParticipant = new ConversationParticipant()
+        $ownerParticipant = (new ConversationParticipant())
             ->setConversation($conversation)
             ->setUser($receiver);
 
@@ -84,10 +76,7 @@ readonly class ChatResource implements ChatResourceInterface
         $conversationIds = array_values(array_filter($conversationIds, static fn (string $id): bool => $id !== ''));
 
         $conversations = array_map(
-        /**
-         * @throws OptimisticLockException
-         * @throws ORMException
-         */ fn (string $conversationId): ?ConversationView => $this->tryBuildAllowedConversationView($conversationId),
+            fn (string $conversationId): ?ConversationView => $this->tryBuildAllowedConversationView($conversationId),
             $conversationIds,
         );
 
@@ -97,6 +86,7 @@ readonly class ChatResource implements ChatResourceInterface
     public function getConversation(string $conversationId): ConversationView
     {
         $conversation = $this->findAllowedConversation($conversationId, Permission::CHAT_VIEW);
+        $this->markConversationMessagesAsRead($conversation);
 
         return $this->toView($conversation);
     }
@@ -104,7 +94,6 @@ readonly class ChatResource implements ChatResourceInterface
     public function sendMessage(string $conversationId, string $content): ConversationView
     {
         $this->createMessage($conversationId, $content);
-
         $conversation = $this->findAllowedConversation($conversationId, Permission::CHAT_VIEW);
 
         return $this->toView($conversation);
@@ -113,30 +102,28 @@ readonly class ChatResource implements ChatResourceInterface
     public function listMessages(string $conversationId): array
     {
         $conversation = $this->findAllowedConversation($conversationId, Permission::CHAT_VIEW);
+        $this->markConversationMessagesAsRead($conversation);
 
         return $this->toMessageViews($this->messageRepository->findByConversationId($conversation->getId()));
     }
 
-    /**
-     * @throws Throwable
-     */
-    public function createMessage(string $conversationId, string $content): ChatMessageView
+    public function createMessage(string $conversationId, string $content, array $attachments = []): ChatMessageView
     {
         $conversation = $this->findAllowedConversation($conversationId, Permission::CHAT_POST);
 
-        $message = new ChatMessage()
+        $message = (new ChatMessage())
             ->setConversation($conversation)
             ->setSender($this->getCurrentUser())
-            ->setContent($content);
+            ->setContent($content)
+            ->setAttachments($attachments);
 
         $this->messageRepository->save($message);
-
         $this->messageService->sendMessage(new ChatMessageRealtimePublishMessage($message->getId()));
 
-        return new ChatMessageView($message);
+        return new ChatMessageView($message, $this->getCurrentUser()->getId());
     }
 
-    public function updateMessage(string $messageId, string $content): ChatMessageView
+    public function updateMessage(string $messageId, string $content, array $attachments = []): ChatMessageView
     {
         $message = $this->findMessage($messageId);
 
@@ -144,11 +131,10 @@ readonly class ChatResource implements ChatResourceInterface
             throw new AccessDeniedHttpException('Only the author can edit this message.');
         }
 
-        $message->setContent($content);
-
+        $message->setContent($content)->setAttachments($attachments);
         $this->messageRepository->save($message);
 
-        return new ChatMessageView($message);
+        return new ChatMessageView($message, $this->getCurrentUser()->getId());
     }
 
     public function deleteMessage(string $messageId): void
@@ -162,6 +148,37 @@ readonly class ChatResource implements ChatResourceInterface
         $this->messageRepository->remove($message);
     }
 
+    public function addReaction(string $messageId, string $reaction): ChatMessageView
+    {
+        $message = $this->findMessage($messageId);
+        $currentUser = $this->getCurrentUser();
+        $normalized = $this->normalizeReaction($reaction);
+
+        if ($this->reactionRepository->findOneByMessageUserReaction($message, $currentUser, $normalized) === null) {
+            $entity = (new ChatMessageReaction())
+                ->setMessage($message)
+                ->setUser($currentUser)
+                ->setReaction($normalized);
+            $this->reactionRepository->save($entity);
+        }
+
+        return new ChatMessageView($message, $currentUser->getId());
+    }
+
+    public function removeReaction(string $messageId, string $reaction): ChatMessageView
+    {
+        $message = $this->findMessage($messageId);
+        $currentUser = $this->getCurrentUser();
+        $normalized = $this->normalizeReaction($reaction);
+        $entity = $this->reactionRepository->findOneByMessageUserReaction($message, $currentUser, $normalized);
+
+        if ($entity !== null) {
+            $this->reactionRepository->remove($entity);
+        }
+
+        return new ChatMessageView($message, $currentUser->getId());
+    }
+
     public function addParticipant(string $conversationId, string $userId): ConversationView
     {
         $conversation = $this->findAllowedConversation($conversationId, Permission::CHAT_PARTICIPANT_MANAGE);
@@ -169,7 +186,7 @@ readonly class ChatResource implements ChatResourceInterface
 
         $existingParticipant = $this->participantRepository->findOneByConversationAndUser($conversation, $user);
         if (!$existingParticipant instanceof ConversationParticipant) {
-            $participant = new ConversationParticipant()
+            $participant = (new ConversationParticipant())
                 ->setConversation($conversation)
                 ->setUser($user);
 
@@ -208,6 +225,16 @@ readonly class ChatResource implements ChatResourceInterface
 
         $message = $this->findMessage($messageId);
         $this->messageRepository->remove($message);
+    }
+
+    private function normalizeReaction(string $reaction): string
+    {
+        $normalized = strtolower(trim($reaction));
+        if (!in_array($normalized, self::ALLOWED_REACTIONS, true)) {
+            throw new NotFoundHttpException('Unsupported reaction.');
+        }
+
+        return $normalized;
     }
 
     private function findAllowedConversation(string $conversationId, Permission $permission): Conversation
@@ -260,10 +287,6 @@ readonly class ChatResource implements ChatResourceInterface
         }
     }
 
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
     private function tryBuildAllowedConversationView(string $conversationId): ?ConversationView
     {
         $conversation = $this->conversationRepository->find($conversationId);
@@ -281,7 +304,13 @@ readonly class ChatResource implements ChatResourceInterface
 
     private function toView(Conversation $conversation): ConversationView
     {
-        return new ConversationView($conversation, $this->toMessageViews($this->messageRepository->findByConversationId($conversation->getId())));
+        $currentUser = $this->getCurrentUser();
+
+        return new ConversationView(
+            $conversation,
+            $this->toMessageViews($this->messageRepository->findByConversationId($conversation->getId())),
+            $currentUser->getId(),
+        );
     }
 
     /**
@@ -291,10 +320,34 @@ readonly class ChatResource implements ChatResourceInterface
      */
     private function toMessageViews(array $messages): array
     {
+        $currentUser = $this->getCurrentUser();
+
         return array_map(
-            static fn (ChatMessage $message): ChatMessageView => new ChatMessageView($message),
+            static fn (ChatMessage $message): ChatMessageView => new ChatMessageView($message, $currentUser->getId()),
             $messages,
         );
+    }
+
+    private function markConversationMessagesAsRead(Conversation $conversation): void
+    {
+        $currentUser = $this->getCurrentUser();
+        $messages = $this->messageRepository->findByConversationId($conversation->getId());
+        $hasChanges = false;
+
+        foreach ($messages as $message) {
+            $sender = $message->getSender();
+            if ($sender !== null && $sender->getId() !== $currentUser->getId() && $message->getReadAt() === null) {
+                $message->setReadAt(new \DateTimeImmutable());
+                $hasChanges = true;
+            }
+        }
+
+        if ($hasChanges) {
+            foreach ($messages as $message) {
+                $this->messageRepository->save($message, false);
+            }
+            $this->messageRepository->save($messages[0], true);
+        }
     }
 
     private function getCurrentUser(): User

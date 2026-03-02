@@ -32,9 +32,15 @@ interface ChatResourceInterface
      */
     public function listMessages(string $conversationId): array;
 
-    public function createMessage(string $conversationId, string $content): ChatMessageView;
+    /**
+     * @param array<int, array<string, mixed>> $attachments
+     */
+    public function createMessage(string $conversationId, string $content, array $attachments = []): ChatMessageView;
 
-    public function updateMessage(string $messageId, string $content): ChatMessageView;
+    /**
+     * @param array<int, array<string, mixed>> $attachments
+     */
+    public function updateMessage(string $messageId, string $content, array $attachments = []): ChatMessageView;
 
     public function deleteMessage(string $messageId): void;
 
@@ -48,4 +54,8 @@ interface ChatResourceInterface
     public function listMessagesForModeration(): array;
 
     public function deleteMessageForModeration(string $messageId): void;
+
+    public function addReaction(string $messageId, string $reaction): ChatMessageView;
+
+    public function removeReaction(string $messageId, string $reaction): ChatMessageView;
 }
