@@ -39,7 +39,7 @@ use function strtolower;
  * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 #[AsController]
-#[Route(path: '/api/v1/admin/task-requests')]
+#[Route(path: '/v1/admin/task-requests')]
 #[Route(path: '/v1/task-requests')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Task Request Management')]

@@ -43,7 +43,7 @@ use function implode;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[Route(path: '/api/v1/admin/job-applications')]
+#[Route(path: '/v1/admin/job-applications')]
 #[Route(path: '/v1/job-applications')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Job Application Management')]

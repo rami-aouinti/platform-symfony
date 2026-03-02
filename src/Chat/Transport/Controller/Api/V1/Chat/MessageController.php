@@ -32,7 +32,7 @@ class MessageController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/api/v1/me/chat/conversations/{id}/messages', requirements: [
+    #[Route(path: '/v1/me/chat/conversations/{id}/messages', requirements: [
         'id' => Requirement::UUID_V1,
     ], methods: [Request::METHOD_GET])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
@@ -42,7 +42,7 @@ class MessageController extends AbstractController
         return $this->responseHandler->createResponse($request, $this->resource->listMessages($id), $this->resource);
     }
 
-    #[Route(path: '/api/v1/me/chat/conversations/{id}/messages', requirements: [
+    #[Route(path: '/v1/me/chat/conversations/{id}/messages', requirements: [
         'id' => Requirement::UUID_V1,
     ], methods: [Request::METHOD_POST])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
@@ -67,7 +67,7 @@ class MessageController extends AbstractController
         return $this->responseHandler->createResponse($request, $this->resource->createMessage($id, $dto->getContent()), $this->resource);
     }
 
-    #[Route(path: '/api/v1/me/chat/messages/{messageId}', requirements: [
+    #[Route(path: '/v1/me/chat/messages/{messageId}', requirements: [
         'messageId' => Requirement::UUID_V1,
     ], methods: [Request::METHOD_PATCH])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
@@ -87,7 +87,7 @@ class MessageController extends AbstractController
         return $this->responseHandler->createResponse($request, $this->resource->updateMessage($messageId, $dto->getContent()), $this->resource);
     }
 
-    #[Route(path: '/api/v1/me/chat/messages/{messageId}', requirements: [
+    #[Route(path: '/v1/me/chat/messages/{messageId}', requirements: [
         'messageId' => Requirement::UUID_V1,
     ], methods: [Request::METHOD_DELETE])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
@@ -101,7 +101,7 @@ class MessageController extends AbstractController
         ], $this->resource);
     }
 
-    #[Route(path: '/api/v1/admin/chat/messages', methods: [Request::METHOD_GET])]
+    #[Route(path: '/v1/admin/chat/messages', methods: [Request::METHOD_GET])]
     #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
     #[OA\Get(summary: 'List chat messages for moderation/audit')]
     public function adminListAction(Request $request): Response
@@ -109,7 +109,7 @@ class MessageController extends AbstractController
         return $this->responseHandler->createResponse($request, $this->resource->listMessagesForModeration(), $this->resource);
     }
 
-    #[Route(path: '/api/v1/admin/chat/messages/{id}', requirements: [
+    #[Route(path: '/v1/admin/chat/messages/{id}', requirements: [
         'id' => Requirement::UUID_V1,
     ], methods: [Request::METHOD_DELETE])]
     #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]

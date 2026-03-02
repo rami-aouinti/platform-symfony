@@ -33,7 +33,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Throwable;
 
 #[AsController]
-#[Route(path: '/api/v1/me/resumes/{resumeId}/languages', requirements: [
+#[Route(path: '/v1/me/resumes/{resumeId}/languages', requirements: [
     'resumeId' => Requirement::UUID_V1,
 ])]
 #[IsGranted(new Expression("is_granted('IS_AUTHENTICATED_FULLY')"))]

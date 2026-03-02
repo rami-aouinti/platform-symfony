@@ -19,7 +19,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * API controller for authenticated user project endpoints.
  */
 #[AsController]
-#[Route(path: '/api/v1/me/profile/projects')]
+#[Route(path: '/v1/me/profile/projects')]
 #[IsGranted('ROLE_LOGGED')]
 #[OA\Tag(name: 'Me - Project')]
 class ProfileProjectController extends Controller

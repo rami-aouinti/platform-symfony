@@ -29,7 +29,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 #[AsController]
-#[Route(path: '/api/v1/admin/companies')]
+#[Route(path: '/v1/admin/companies')]
 #[Route(path: '/v1/companies')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'Company Management')]
