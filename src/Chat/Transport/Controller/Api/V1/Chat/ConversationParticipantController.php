@@ -49,7 +49,7 @@ class ConversationParticipantController extends AbstractController
             throw new HttpException(Response::HTTP_BAD_REQUEST, 'Field "userId" is required.');
         }
 
-        return $this->responseHandler->createResponse($request, $this->resource->addParticipant($id, $userId), $this->resource);
+        return $this->responseHandler->createResponse($request, $this->resource->addParticipant($id, $userId));
     }
 
     #[Route(path: '/v1/me/chat/conversations/{id}/participants/{userId}', requirements: [
@@ -60,6 +60,6 @@ class ConversationParticipantController extends AbstractController
     #[OA\Delete(summary: 'Remove participant from a conversation for current user')]
     public function removeAction(Request $request, string $id, string $userId): Response
     {
-        return $this->responseHandler->createResponse($request, $this->resource->removeParticipant($id, $userId), $this->resource);
+        return $this->responseHandler->createResponse($request, $this->resource->removeParticipant($id, $userId));
     }
 }
