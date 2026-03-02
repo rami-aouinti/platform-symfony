@@ -27,7 +27,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 #[AsController]
-#[Route(path: '/api/v1/admin/blog-comments')]
+#[Route(path: '/v1/admin/blog-comments')]
 #[Route(path: '/v1/blog-comments')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Blog')]

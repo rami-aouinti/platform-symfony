@@ -32,7 +32,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @method ResponseHandler getResponseHandler()
  */
 #[AsController]
-#[Route(path: '/api/v1/me/profile/resumes')]
+#[Route(path: '/v1/me/profile/resumes')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
 #[OA\Tag(name: 'Me - Resume')]
 class ProfileResumeController extends Controller

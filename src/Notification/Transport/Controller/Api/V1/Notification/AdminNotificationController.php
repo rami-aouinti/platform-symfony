@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
-#[Route(path: '/api/v1/admin/notifications')]
+#[Route(path: '/v1/admin/notifications')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Notification Management')]
 readonly class AdminNotificationController

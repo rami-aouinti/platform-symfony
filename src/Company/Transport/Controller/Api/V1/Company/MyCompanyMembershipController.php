@@ -21,7 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @method ResponseHandler getResponseHandler()
  */
 #[AsController]
-#[Route(path: '/api/v1/me/companies')]
+#[Route(path: '/v1/me/companies')]
 #[IsGranted('ROLE_LOGGED')]
 #[OA\Tag(name: 'Company Management')]
 class MyCompanyMembershipController extends Controller
