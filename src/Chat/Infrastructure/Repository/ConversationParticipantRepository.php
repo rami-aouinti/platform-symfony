@@ -13,6 +13,8 @@ use App\User\Domain\Entity\User;
 use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 
+use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
+
 use function array_map;
 
 /**
@@ -51,7 +53,7 @@ class ConversationParticipantRepository extends BaseRepository implements Conver
             ->join('participant.conversation', 'conversation')
             ->join('participant.user', 'user')
             ->where('user.id = :userId')
-            ->setParameter('userId', $userId)
+            ->setParameter('userId', $userId, UuidBinaryOrderedTimeType::NAME)
             ->getQuery()
             ->getArrayResult();
 

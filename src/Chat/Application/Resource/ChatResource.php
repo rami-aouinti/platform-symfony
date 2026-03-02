@@ -105,7 +105,10 @@ readonly class ChatResource implements ChatResourceInterface
         $conversationIds = array_values(array_filter($conversationIds, static fn (string $id): bool => $id !== ''));
 
         $conversations = array_map(
-            fn (string $conversationId): ?ConversationView => $this->tryBuildAllowedConversationView($conversationId),
+        /**
+         * @throws OptimisticLockException
+         * @throws ORMException
+         */ fn (string $conversationId): ?ConversationView => $this->tryBuildAllowedConversationView($conversationId),
             $conversationIds,
         );
 
