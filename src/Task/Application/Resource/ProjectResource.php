@@ -19,6 +19,7 @@ use App\Task\Domain\Repository\Interfaces\ProjectRepositoryInterface as Reposito
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Throwable;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
@@ -38,6 +39,10 @@ class ProjectResource extends AbstractOwnedResource implements ProjectResourceIn
     }
 
     /**
+     * @param string $companyId
+     * @param User   $currentUser
+     *
+     * @throws Throwable
      * @return array<int, Entity>
      */
     public function findProjectsForMyCompanyAccess(string $companyId, User $currentUser): array
