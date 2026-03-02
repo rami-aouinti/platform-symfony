@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Chat\Application\DTO\Chat;
 
+use App\Chat\Application\Support\Utf8Sanitizer;
 use App\Chat\Domain\Entity\ChatMessage;
 use DateTimeImmutable;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -49,11 +50,11 @@ class ChatMessageView
         $sender = $message->getSender();
         $this->sender = $sender !== null ? new ChatUserView($sender, $currentUserId) : null;
         $this->isFromCurrentUser = $sender !== null && $sender->getId() === $currentUserId;
-        $this->content = $message->getContent();
+        $this->content = Utf8Sanitizer::sanitizeString($message->getContent());
         $this->createdAt = $message->getCreatedAt();
         $this->readAt = $message->getReadAt();
         $this->isRead = $this->isFromCurrentUser || $this->readAt !== null;
-        $this->attachments = $message->getAttachments();
+        $this->attachments = Utf8Sanitizer::sanitizeArray($message->getAttachments());
         $this->reactions = $message->getReactions()->map(
             static fn ($reaction): ChatReactionView => new ChatReactionView($reaction, $currentUserId),
         )->toArray();
