@@ -23,7 +23,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 #[Route(path: '/v1/me/companies')]
 #[IsGranted('ROLE_LOGGED')]
-#[OA\Tag(name: 'Me/Profile - Company Management')]
 class MyCompanyMembershipController extends Controller
 {
     public function __construct(CompanyMembershipResourceInterface $resource)
@@ -32,6 +31,7 @@ class MyCompanyMembershipController extends Controller
     }
 
     #[Route(path: '', methods: [Request::METHOD_GET])]
+    #[OA\Get(tags: ['Me/Profile - Company Management'])]
     public function companiesAction(Request $request): Response
     {
         return $this->getResponseHandler()->createResponse(
@@ -44,6 +44,7 @@ class MyCompanyMembershipController extends Controller
     #[Route(path: '/{companyId}/membership', requirements: [
         'companyId' => Requirement::UUID_V1,
     ], methods: [Request::METHOD_GET])]
+    #[OA\Get(tags: ['Me/Profile - Company Management'])]
     public function membershipAction(Request $request, string $companyId): Response
     {
         return $this->getResponseHandler()->createResponse(
