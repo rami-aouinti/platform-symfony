@@ -111,6 +111,13 @@ class MessageController extends AbstractController
         'messageId' => Requirement::UUID_V1,
     ], methods: [Request::METHOD_POST])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[OA\Post(summary: 'Add reaction to a message')]
+    #[OA\RequestBody(required: true, content: new JsonContent(
+        properties: [
+            new OA\Property(property: 'reaction', type: 'string', example: 'heart'),
+        ],
+        type: 'object',
+    ))]
     public function addReactionAction(Request $request, string $messageId): Response
     {
         /** @var array<string, mixed> $payload */
@@ -126,6 +133,13 @@ class MessageController extends AbstractController
         'messageId' => Requirement::UUID_V1,
     ], methods: [Request::METHOD_DELETE])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[OA\Delete(summary: 'Remove reaction from a message')]
+    #[OA\RequestBody(required: true, content: new JsonContent(
+        properties: [
+            new OA\Property(property: 'reaction', type: 'string', example: 'heart'),
+        ],
+        type: 'object',
+    ))]
     public function removeReactionAction(Request $request, string $messageId): Response
     {
         /** @var array<string, mixed> $payload */

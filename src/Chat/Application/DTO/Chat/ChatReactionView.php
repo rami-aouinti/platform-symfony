@@ -34,4 +34,24 @@ class ChatReactionView
         $this->isCurrentUser = $user->getId() === $currentUserId;
         $this->createdAt = $reaction->getCreatedAt();
     }
+
+    public function getReaction(): string
+    {
+        return $this->reaction;
+    }
+
+    public function getUser(): ChatUserView
+    {
+        return $this->user;
+    }
+
+    public function isCurrentUser(): bool
+    {
+        return $this->isCurrentUser;
+    }
+
+    public function getCreatedAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
 }
