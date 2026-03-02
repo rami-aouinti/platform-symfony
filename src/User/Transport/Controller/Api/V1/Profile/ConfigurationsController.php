@@ -33,6 +33,9 @@ use function is_string;
 use function sprintf;
 use function trim;
 
+/**
+ *
+ */
 #[AsController]
 #[OA\Tag(name: 'Me/Profile - Profile')]
 readonly class ConfigurationsController

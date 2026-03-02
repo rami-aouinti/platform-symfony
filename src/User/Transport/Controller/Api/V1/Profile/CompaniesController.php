@@ -20,7 +20,10 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+
+use function array_values;
 
 /**
  * API controller for profile companies and projects endpoints.
@@ -39,14 +42,17 @@ class CompaniesController
     ) {
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route(
         path: '/v1/me/profile/companies',
         methods: [Request::METHOD_GET],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Get(
-        summary: 'Lister les companies du profil courant',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Retourne les companies liées à l’utilisateur authentifié via ses memberships.',
+        summary: 'Lister les companies du profil courant',
         security: [[
             'Bearer' => [],
         ], [
@@ -66,8 +72,8 @@ class CompaniesController
             ),
         ),
     )]
-    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
-    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
+    #[OA\Response(ref: '#/components/responses/UnauthorizedError', response: 401)]
+    #[OA\Response(ref: '#/components/responses/ForbiddenError', response: 403)]
     public function companiesAction(): JsonResponse
     {
         $this->getCurrentUserOrDeny();
@@ -92,14 +98,18 @@ class CompaniesController
         );
     }
 
+    /**
+     * @throws ExceptionInterface
+     * @throws \Throwable
+     */
     #[Route(
         path: '/v1/me/profile/projects',
         methods: [Request::METHOD_GET],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Get(
-        summary: 'Lister les projets du profil courant',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Retourne les projets possédés par l’utilisateur authentifié (et donc accessibles côté profil).',
+        summary: 'Lister les projets du profil courant',
         security: [[
             'Bearer' => [],
         ], [
@@ -119,8 +129,8 @@ class CompaniesController
             ),
         ),
     )]
-    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
-    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
+    #[OA\Response(ref: '#/components/responses/UnauthorizedError', response: 401)]
+    #[OA\Response(ref: '#/components/responses/ForbiddenError', response: 403)]
     public function projectsAction(): JsonResponse
     {
         $currentUser = $this->getCurrentUserOrDeny();
