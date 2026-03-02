@@ -36,4 +36,34 @@ class ChatUserView
         $this->photo = $user->getPhoto();
         $this->isCurrentUser = $user->getId() === $currentUserId;
     }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getUsername(): string
+    {
+        return $this->username;
+    }
+
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
+
+    public function getPhoto(): string
+    {
+        return $this->photo;
+    }
+
+    public function isCurrentUser(): bool
+    {
+        return $this->isCurrentUser;
+    }
 }

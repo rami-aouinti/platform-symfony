@@ -18,6 +18,8 @@ interface ChatResourceInterface
 {
     public function createConversation(ConversationCreate $dto, User $sender, User $receiver): ConversationView;
 
+    public function createConversationForCurrentUser(string $userId): ConversationView;
+
     /**
      * @return ConversationView[]
      */
