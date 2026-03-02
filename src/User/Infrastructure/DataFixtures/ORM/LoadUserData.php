@@ -46,6 +46,9 @@ final class LoadUserData extends Fixture implements OrderedFixtureInterface
         'alice-user' => '20000000-0000-1000-8000-000000000007',
         'bob-admin' => '20000000-0000-1000-8000-000000000008',
         'carol-user' => '20000000-0000-1000-8000-000000000009',
+        'dave-user' => '20000000-0000-1000-8000-000000000010',
+        'emma-user' => '20000000-0000-1000-8000-000000000011',
+        'frank-admin' => '20000000-0000-1000-8000-000000000012',
     ];
 
     public function __construct(
@@ -81,6 +84,15 @@ final class LoadUserData extends Fixture implements OrderedFixtureInterface
         $this->createNamedUser($manager, 'carol', 'user', [
             [SocialProvider::FACEBOOK, 'carol-facebook-id'],
             [SocialProvider::INSTAGRAM, 'carol-instagram-id'],
+        ]);
+        $this->createNamedUser($manager, 'dave', 'user', [
+            [SocialProvider::GITLAB, 'dave-gitlab-id'],
+        ]);
+        $this->createNamedUser($manager, 'emma', 'user', [
+            [SocialProvider::LINKEDIN, 'emma-linkedin-id'],
+        ]);
+        $this->createNamedUser($manager, 'frank', 'admin', [
+            [SocialProvider::GITHUB, 'frank-github-id'],
         ]);
 
         $manager->flush();
