@@ -99,6 +99,56 @@ when@dev: &dev
             security:
                 -   Bearer: []
                 -   ApiKey: []
+        models:
+            names:
+                - { alias: ApiKey, type: App\ApiKey\Domain\Entity\ApiKey }
+                - { alias: BlogComment, type: App\Blog\Domain\Entity\BlogComment }
+                - { alias: BlogPost, type: App\Blog\Domain\Entity\BlogPost }
+                - { alias: BlogPostLink, type: App\Blog\Domain\Entity\BlogPostLink }
+                - { alias: BlogTag, type: App\Blog\Domain\Entity\BlogTag }
+                - { alias: Event, type: App\Calendar\Domain\Entity\Event }
+                - { alias: ChatMessage, type: App\Chat\Domain\Entity\ChatMessage }
+                - { alias: Conversation, type: App\Chat\Domain\Entity\Conversation }
+                - { alias: ConversationParticipant, type: App\Chat\Domain\Entity\ConversationParticipant }
+                - { alias: Company, type: App\Company\Domain\Entity\Company }
+                - { alias: CompanyMembership, type: App\Company\Domain\Entity\CompanyMembership }
+                - { alias: Configuration, type: App\Configuration\Domain\Entity\Configuration }
+                - { alias: DateDimension, type: App\DateDimension\Domain\Entity\DateDimension }
+                - { alias: GeneralAddress, type: App\General\Domain\Entity\Address }
+                - { alias: City, type: App\General\Domain\Entity\City }
+                - { alias: Region, type: App\General\Domain\Entity\Region }
+                - { alias: LogLogin, type: App\Log\Domain\Entity\LogLogin }
+                - { alias: LogLoginFailure, type: App\Log\Domain\Entity\LogLoginFailure }
+                - { alias: LogRequest, type: App\Log\Domain\Entity\LogRequest }
+                - { alias: Media, type: App\Media\Domain\Entity\Media }
+                - { alias: Notification, type: App\Notification\Domain\Entity\Notification }
+                - { alias: Quiz, type: App\Quiz\Domain\Entity\Quiz }
+                - { alias: CandidateProfile, type: App\Recruit\Domain\Entity\CandidateProfile }
+                - { alias: JobApplication, type: App\Recruit\Domain\Entity\JobApplication }
+                - { alias: JobCategory, type: App\Recruit\Domain\Entity\JobCategory }
+                - { alias: JobOffer, type: App\Recruit\Domain\Entity\JobOffer }
+                - { alias: Language, type: App\Recruit\Domain\Entity\Language }
+                - { alias: Offer, type: App\Recruit\Domain\Entity\Offer }
+                - { alias: Resume, type: App\Recruit\Domain\Entity\Resume }
+                - { alias: ResumeEducation, type: App\Recruit\Domain\Entity\ResumeEducation }
+                - { alias: ResumeExperience, type: App\Recruit\Domain\Entity\ResumeExperience }
+                - { alias: ResumeLanguage, type: App\Recruit\Domain\Entity\ResumeLanguage }
+                - { alias: ResumeProject, type: App\Recruit\Domain\Entity\ResumeProject }
+                - { alias: ResumeReference, type: App\Recruit\Domain\Entity\ResumeReference }
+                - { alias: ResumeSkill, type: App\Recruit\Domain\Entity\ResumeSkill }
+                - { alias: Skill, type: App\Recruit\Domain\Entity\Skill }
+                - { alias: Role, type: App\Role\Domain\Entity\Role }
+                - { alias: Project, type: App\Task\Domain\Entity\Project }
+                - { alias: Sprint, type: App\Task\Domain\Entity\Sprint }
+                - { alias: Task, type: App\Task\Domain\Entity\Task }
+                - { alias: TaskRequest, type: App\Task\Domain\Entity\TaskRequest }
+                - { alias: Health, type: App\Tool\Domain\Entity\Health }
+                - { alias: UserAddress, type: App\User\Domain\Entity\Address }
+                - { alias: SocialAccount, type: App\User\Domain\Entity\SocialAccount }
+                - { alias: User, type: App\User\Domain\Entity\User }
+                - { alias: UserAvatar, type: App\User\Domain\Entity\UserAvatar }
+                - { alias: UserGroup, type: App\User\Domain\Entity\UserGroup }
+                - { alias: UserProfile, type: App\User\Domain\Entity\UserProfile }
         areas: # to filter documented areas
             path_patterns:
                 - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
