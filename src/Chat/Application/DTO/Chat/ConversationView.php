@@ -7,7 +7,7 @@ namespace App\Chat\Application\DTO\Chat;
 use App\Chat\Domain\Entity\Conversation;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-class ConversationView
+final class ConversationView
 {
     #[Groups(['default'])]
     private string $id;
@@ -65,26 +65,5 @@ class ConversationView
     public function getUnreadMessagesCount(): int
     {
         return $this->unreadMessagesCount;
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    /**
-     * @return ChatUserView[]
-     */
-    public function getParticipants(): array
-    {
-        return $this->participants;
-    }
-
-    /**
-     * @return ChatMessageView[]
-     */
-    public function getMessages(): array
-    {
-        return $this->messages;
     }
 }
