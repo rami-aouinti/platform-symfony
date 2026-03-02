@@ -13,9 +13,12 @@ use App\General\Transport\Rest\Controller;
 use App\General\Transport\Rest\ResponseHandler;
 use App\General\Transport\Rest\Traits\Actions;
 use OpenApi\Attributes as OA;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Throwable;
 
 /**
  * API controller for authenticated user company endpoints.
@@ -49,5 +52,15 @@ class ProfileCompanyController extends Controller
     public function __construct(CompanyResourceInterface $resource)
     {
         parent::__construct($resource);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '', methods: [Request::METHOD_GET])]
+    #[IsGranted('ROLE_LOGGED')]
+    public function findAction(Request $request): Response
+    {
+        return $this->findMethod($request);
     }
 }
