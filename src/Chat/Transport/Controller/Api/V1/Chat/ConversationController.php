@@ -48,7 +48,6 @@ class ConversationController extends AbstractController
         return $this->responseHandler->createResponse(
             $request,
             $this->resource->listConversationsForCurrentUser(),
-            $this->resource,
         );
     }
 
@@ -67,7 +66,6 @@ class ConversationController extends AbstractController
         return $this->responseHandler->createResponse(
             $request,
             $this->resource->getConversation($id),
-            $this->resource,
         );
     }
 }
