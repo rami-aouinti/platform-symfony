@@ -156,18 +156,11 @@ when@dev: &dev
             admin:
                 path_patterns:
                     - ^/api(?!/doc$)
-                documentation:
-                    tags:
-                        - name: Admin
                 with_attribute: false
                 cache: { }
             frontend:
                 path_patterns:
                     - ^/api(?!/doc$)
-                documentation:
-                    tags:
-                        - name: Frontend
-                        - name: Me/Profile
                 with_attribute: false
                 cache: { }
 
