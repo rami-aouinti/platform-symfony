@@ -8,6 +8,7 @@ use App\Chat\Application\Service\Realtime\Interfaces\ChatRealtimePublisherInterf
 use App\Chat\Application\Support\Utf8Sanitizer;
 use App\Chat\Domain\Entity\ChatMessage;
 use Symfony\Component\Mercure\Update;
+use Throwable;
 
 use function class_exists;
 use function is_object;
@@ -54,10 +55,14 @@ readonly class ChatRealtimePublisher implements ChatRealtimePublisherInterface
 
         $updateClass = Update::class;
 
-        $this->hub->publish(new $updateClass(
-            sprintf('/conversations/%s', $conversationId),
-            $payload,
-        ));
+        try {
+            $this->hub->publish(new $updateClass(
+                sprintf('/conversations/%s', $conversationId),
+                $payload,
+            ));
+        } catch (Throwable) {
+            // Mercure delivery issues should not break message creation.
+        }
     }
 
     private function canPublish(): bool
