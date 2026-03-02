@@ -11,12 +11,12 @@ use Throwable;
 
 class TaskControllerSecurityTest extends WebTestCase
 {
-    private const string COUNT_ENDPOINT = self::API_URL_PREFIX . '/v1/tasks/count';
+    private const string COUNT_ENDPOINT = self::API_URL_PREFIX . '/v1/admin/tasks/count';
 
     /**
      * @throws Throwable
      */
-    #[TestDox('`GET /api/v1/tasks/count` returns 401 for anonymous users.')]
+    #[TestDox('`GET /api/v1/admin/tasks/count` returns 401 for anonymous users.')]
     public function testCountReturns401ForAnonymousUser(): void
     {
         $client = $this->getTestClient();
@@ -29,7 +29,7 @@ class TaskControllerSecurityTest extends WebTestCase
     /**
      * @throws Throwable
      */
-    #[TestDox('`GET /api/v1/tasks/count` returns 200 for logged users in me audience.')]
+    #[TestDox('`GET /api/v1/me/tasks/count` returns 200 for logged users in me audience.')]
     public function testCountReturns200ForLoggedUser(): void
     {
         $client = $this->getTestClient('john-user', 'password-user');
@@ -42,7 +42,7 @@ class TaskControllerSecurityTest extends WebTestCase
     /**
      * @throws Throwable
      */
-    #[TestDox('`GET /api/v1/tasks/count` returns 200 for admin users in admin audience.')]
+    #[TestDox('`GET /api/v1/admin/tasks/count` returns 200 for admin users in admin audience.')]
     public function testCountReturns200ForAdminInAdminAudience(): void
     {
         $client = $this->getTestClient('john-admin', 'password-admin');

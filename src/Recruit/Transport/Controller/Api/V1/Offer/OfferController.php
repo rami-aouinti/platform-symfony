@@ -28,7 +28,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 #[AsController]
 #[Route(path: '/v1/admin/offers')]
-#[Route(path: '/v1/offers')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Offer Management')]
 class OfferController extends Controller

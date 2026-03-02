@@ -40,7 +40,6 @@ use function strtolower;
  */
 #[AsController]
 #[Route(path: '/v1/admin/task-requests')]
-#[Route(path: '/v1/task-requests')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Task Request Management')]
 class TaskRequestController extends Controller

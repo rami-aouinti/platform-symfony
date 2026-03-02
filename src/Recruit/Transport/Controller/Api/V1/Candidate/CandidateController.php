@@ -25,7 +25,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 #[AsController]
 #[Route(path: '/v1/admin/candidates')]
-#[Route(path: '/v1/candidates')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Candidate Management')]
 class CandidateController extends Controller
