@@ -11,6 +11,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationFailureEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Override;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
 /**
@@ -56,7 +57,7 @@ class AuthenticationFailureSubscriber implements EventSubscriberInterface
         $user = $token?->getUser();
 
         // Fetch user entity
-        if ($token !== null && $user !== null) {
+        if ($token !== null && $user instanceof UserInterface) {
             $identifier = $user->getUserIdentifier();
             $this->loginLoggerService->setUser($this->userRepository->loadUserByIdentifier($identifier, false));
         }
