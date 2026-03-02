@@ -66,4 +66,25 @@ class ConversationView
     {
         return $this->unreadMessagesCount;
     }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return ChatUserView[]
+     */
+    public function getParticipants(): array
+    {
+        return $this->participants;
+    }
+
+    /**
+     * @return ChatMessageView[]
+     */
+    public function getMessages(): array
+    {
+        return $this->messages;
+    }
 }
