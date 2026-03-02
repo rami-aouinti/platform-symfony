@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Chat\Application\Service\Realtime;
 
 use App\Chat\Application\Service\Realtime\Interfaces\ChatRealtimePublisherInterface;
+use App\Chat\Application\Support\Utf8Sanitizer;
 use App\Chat\Domain\Entity\ChatMessage;
 use Symfony\Component\Mercure\Update;
 
@@ -43,7 +44,7 @@ readonly class ChatRealtimePublisher implements ChatRealtimePublisherInterface
             'messageId' => $message->getId(),
             'conversationId' => $conversationId,
             'senderId' => $senderId,
-            'body' => $message->getContent(),
+            'body' => Utf8Sanitizer::sanitizeString($message->getContent()),
             'createdAt' => $createdAt->format(DATE_ATOM),
         ], JSON_THROW_ON_ERROR);
 
