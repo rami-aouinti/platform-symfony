@@ -44,3 +44,6 @@ Pour les contrôleurs basés sur les traits REST génériques (`Actions\Admin\*`
 * annoter les méthodes exposées directement dans les traits pour propager une documentation homogène à tous les contrôleurs consommateurs ;
 * inclure des exemples de payload pour `create`, `update`, `patch` ;
 * inclure des exemples de critères de filtrage (`where`, `search`, `order`, `limit`, `offset`) sur les endpoints de liste.
+
+## Exemple complet
+Pour un exemple guidé de documentation d'un endpoint réel (Route + OpenAPI + security + paramètres + réponses + curl), voir [Exemple complet d'endpoint API](./api-endpoint-example.md).
