@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Chat\Transport\Controller\Api\V1\Chat;
 
 use App\Chat\Application\Resource\Interfaces\ChatResourceInterface;
+use App\General\Domain\Utils\JSON;
 use App\General\Transport\Rest\ResponseHandler;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
@@ -35,6 +36,27 @@ class ConversationController extends AbstractController
         private readonly ChatResourceInterface $resource,
         private readonly ResponseHandler $responseHandler,
     ) {
+    }
+
+
+    #[Route(path: '', methods: [Request::METHOD_POST])]
+    #[OA\Post(summary: 'Create or return a one-to-one conversation with another user')]
+    #[OA\RequestBody(required: true, content: new JsonContent(
+        properties: [
+            new OA\Property(property: 'userId', type: 'string', format: 'uuid'),
+        ],
+        type: 'object',
+    ))]
+    #[OA\Response(response: 200, description: 'Conversation detail', content: new JsonContent(type: 'object'))]
+    public function createAction(Request $request): Response
+    {
+        /** @var array<string, mixed> $payload */
+        $payload = JSON::decode($request->getContent() ?: '{}', true);
+
+        return $this->responseHandler->createResponse(
+            $request,
+            $this->resource->createConversationForCurrentUser((string) ($payload['userId'] ?? '')),
+        );
     }
 
     /**

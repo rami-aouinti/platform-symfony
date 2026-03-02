@@ -28,6 +28,9 @@ class ChatMessageView
     #[Groups(['default'])]
     private ?DateTimeImmutable $readAt;
 
+    #[Groups(['default'])]
+    private bool $isRead;
+
     /**
      * @var array<int, array<string, mixed>>
      */
@@ -49,9 +52,61 @@ class ChatMessageView
         $this->content = $message->getContent();
         $this->createdAt = $message->getCreatedAt();
         $this->readAt = $message->getReadAt();
+        $this->isRead = $this->isFromCurrentUser || $this->readAt !== null;
         $this->attachments = $message->getAttachments();
         $this->reactions = $message->getReactions()->map(
             static fn ($reaction): ChatReactionView => new ChatReactionView($reaction, $currentUserId),
         )->toArray();
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getSender(): ?ChatUserView
+    {
+        return $this->sender;
+    }
+
+    public function isFromCurrentUser(): bool
+    {
+        return $this->isFromCurrentUser;
+    }
+
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    public function getCreatedAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function getReadAt(): ?DateTimeImmutable
+    {
+        return $this->readAt;
+    }
+
+    public function isRead(): bool
+    {
+        return $this->isRead;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function getAttachments(): array
+    {
+        return $this->attachments;
+    }
+
+    /**
+     * @return ChatReactionView[]
+     */
+    public function getReactions(): array
+    {
+        return $this->reactions;
     }
 }
