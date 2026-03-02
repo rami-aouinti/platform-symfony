@@ -34,7 +34,7 @@ final class LoadJobApplicationData extends Fixture implements OrderedFixtureInte
         $dataOffer = $this->getReference('JobOffer-data-engineer-external', JobOffer::class);
 
         /** @var User $john */
-        $john = $this->getReference('User-john-user', User::class);
+        $john = $this->getReference('User-john-root', User::class);
         /** @var User $alice */
         $alice = $this->getReference('User-alice-user', User::class);
         /** @var User $carol */

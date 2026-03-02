@@ -29,7 +29,7 @@ final class LoadCompanyData extends Fixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager): void
     {
         /** @var User $owner */
-        $owner = $this->getReference('User-john-user', User::class);
+        $owner = $this->getReference('User-john-root', User::class);
         /** @var User $managerUser */
         $managerUser = $this->getReference('User-alice-user', User::class);
         /** @var User $externalUser */
