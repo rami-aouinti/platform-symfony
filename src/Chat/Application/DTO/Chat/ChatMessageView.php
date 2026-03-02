@@ -6,6 +6,7 @@ namespace App\Chat\Application\DTO\Chat;
 
 use App\Chat\Domain\Entity\ChatMessage;
 use DateTimeImmutable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @package App\Chat\Application\DTO\Chat
@@ -14,15 +15,23 @@ use DateTimeImmutable;
 
 class ChatMessageView
 {
+    #[Groups(['default'])]
     private string $id;
-    private string $senderId;
+
+    #[Groups(['default'])]
+    private ?ChatUserView $sender;
+
+    #[Groups(['default'])]
     private string $content;
+
+    #[Groups(['default'])]
     private ?DateTimeImmutable $createdAt;
 
     public function __construct(ChatMessage $message)
     {
         $this->id = $message->getId();
-        $this->senderId = $message->getSender()?->getId() ?? '';
+        $sender = $message->getSender();
+        $this->sender = $sender !== null ? new ChatUserView($sender) : null;
         $this->content = $message->getContent();
         $this->createdAt = $message->getCreatedAt();
     }
@@ -32,9 +41,9 @@ class ChatMessageView
         return $this->id;
     }
 
-    public function getSenderId(): string
+    public function getSender(): ?ChatUserView
     {
-        return $this->senderId;
+        return $this->sender;
     }
 
     public function getContent(): string

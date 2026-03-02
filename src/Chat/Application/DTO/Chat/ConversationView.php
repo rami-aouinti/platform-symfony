@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Chat\Application\DTO\Chat;
 
 use App\Chat\Domain\Entity\Conversation;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @package App\Chat\Application\DTO\Chat
@@ -13,15 +14,19 @@ use App\Chat\Domain\Entity\Conversation;
 
 class ConversationView
 {
+    #[Groups(['default'])]
     private string $id;
+
     /**
-     * @var string[]
+     * @var ChatUserView[]
      */
-    private array $participantUserIds;
+    #[Groups(['default'])]
+    private array $participants;
 
     /**
      * @var ChatMessageView[]
      */
+    #[Groups(['default'])]
     private array $messages;
 
     /**
@@ -30,9 +35,9 @@ class ConversationView
     public function __construct(Conversation $conversation, array $messages)
     {
         $this->id = $conversation->getId();
-        $this->participantUserIds = $conversation->getParticipants()
-            ->map(static fn ($participant): string => $participant->getUser()?->getId() ?? '')
-            ->filter(static fn (string $userId): bool => $userId !== '')
+        $this->participants = $conversation->getParticipants()
+            ->map(static fn ($participant): ?ChatUserView => $participant->getUser() !== null ? new ChatUserView($participant->getUser()) : null)
+            ->filter(static fn (?ChatUserView $user): bool => $user instanceof ChatUserView)
             ->toArray();
         $this->messages = $messages;
     }
@@ -43,11 +48,11 @@ class ConversationView
     }
 
     /**
-     * @return string[]
+     * @return ChatUserView[]
      */
-    public function getParticipantUserIds(): array
+    public function getParticipants(): array
     {
-        return $this->participantUserIds;
+        return $this->participants;
     }
 
     /**
