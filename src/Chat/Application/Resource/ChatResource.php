@@ -32,6 +32,7 @@ use Throwable;
 use function array_filter;
 use function array_map;
 use function array_values;
+use function count;
 use function in_array;
 
 readonly class ChatResource implements ChatResourceInterface
@@ -338,10 +339,12 @@ readonly class ChatResource implements ChatResourceInterface
     private function toView(Conversation $conversation): ConversationView
     {
         $currentUser = $this->getCurrentUser();
+        $messages = $this->messageRepository->findByConversationId($conversation->getId());
 
         return new ConversationView(
             $conversation,
-            $this->toMessageViews($this->messageRepository->findByConversationId($conversation->getId())),
+            $this->toMessageViews($messages),
+            $this->countUnreadMessagesForCurrentUser($messages, $currentUser->getId()),
             $currentUser->getId(),
         );
     }
@@ -359,6 +362,18 @@ readonly class ChatResource implements ChatResourceInterface
             static fn (ChatMessage $message): ChatMessageView => new ChatMessageView($message, $currentUser->getId()),
             $messages,
         );
+    }
+
+
+    /**
+     * @param ChatMessage[] $messages
+     */
+    private function countUnreadMessagesForCurrentUser(array $messages, string $currentUserId): int
+    {
+        return count(array_filter(
+            $messages,
+            static fn (ChatMessage $message): bool => $message->getSender()?->getId() !== $currentUserId && $message->getReadAt() === null,
+        ));
     }
 
     private function markConversationMessagesAsRead(Conversation $conversation): void
