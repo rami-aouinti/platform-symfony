@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Chat\Application\Resource\Interfaces;
 
 use App\Chat\Application\DTO\Chat\ChatMessageView;
-use App\Chat\Application\DTO\Chat\ConversationCreate;
 use App\Chat\Application\DTO\Chat\ConversationView;
 use App\User\Domain\Entity\User;
 
@@ -16,7 +15,7 @@ use App\User\Domain\Entity\User;
 
 interface ChatResourceInterface
 {
-    public function createConversation(ConversationCreate $dto, User $sender, User $receiver): ConversationView;
+    public function createConversation(User $sender, User $receiver): ConversationView;
 
     public function createConversationForCurrentUser(string $userId): ConversationView;
 

@@ -171,9 +171,12 @@ class JobApplicationResource extends RestResource implements JobApplicationResou
                 status: $status->value,
             ));
 
-            if ($status === JobApplicationStatus::ACCEPTED) {
+            $offerOwner = $jobOffer->getCreatedBy();
+
+            if ($status === JobApplicationStatus::ACCEPTED && $offerOwner instanceof User) {
                 $this->messageService->sendMessage(new ConversationEnsureForAcceptedApplicationMessage(
-                    applicationId: $application->getId(),
+                    senderUserId: $candidate->getId(),
+                    receiverUserId: $offerOwner->getId(),
                 ));
             }
         }

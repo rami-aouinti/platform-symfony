@@ -26,10 +26,4 @@ class ConversationRepository extends BaseRepository implements ConversationRepos
     ) {
     }
 
-    public function findOneByJobApplicationId(string $jobApplicationId): ?Entity
-    {
-        return $this->createQueryBuilder('conversation')
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
 }

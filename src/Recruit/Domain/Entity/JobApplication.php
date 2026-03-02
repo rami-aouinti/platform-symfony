@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Recruit\Domain\Entity;
 
-use App\Chat\Domain\Entity\Conversation;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
@@ -78,8 +77,6 @@ class JobApplication implements EntityInterface
     #[Groups(['JobApplication.decidedAt', 'JobApplication.show', 'JobOffer'])]
     private ?DateTimeImmutable $decidedAt = null;
 
-    #[ORM\OneToOne(targetEntity: Conversation::class, mappedBy: 'jobApplication')]
-    private ?Conversation $conversation = null;
 
     public function __construct()
     {
@@ -205,15 +202,4 @@ class JobApplication implements EntityInterface
         return $this;
     }
 
-    public function getConversation(): ?Conversation
-    {
-        return $this->conversation;
-    }
-
-    public function setConversation(?Conversation $conversation): self
-    {
-        $this->conversation = $conversation;
-
-        return $this;
-    }
 }

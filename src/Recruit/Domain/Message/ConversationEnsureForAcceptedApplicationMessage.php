@@ -14,7 +14,8 @@ use App\General\Domain\Message\Interfaces\MessageHighInterface;
 readonly class ConversationEnsureForAcceptedApplicationMessage implements MessageHighInterface
 {
     public function __construct(
-        public string $applicationId,
+        public string $senderUserId,
+        public string $receiverUserId,
     ) {
     }
 }
