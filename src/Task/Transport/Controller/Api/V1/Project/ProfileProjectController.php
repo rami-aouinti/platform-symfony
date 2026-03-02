@@ -26,7 +26,6 @@ class ProfileProjectController extends Controller
 {
     use Actions\Authenticated\CreateAction;
     use Actions\Authenticated\DeleteAction;
-    use Actions\Authenticated\FindAction;
     use Actions\Authenticated\FindOneAction;
     use Actions\Authenticated\PatchAction;
     use Actions\Authenticated\UpdateAction;
