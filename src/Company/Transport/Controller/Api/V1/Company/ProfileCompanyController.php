@@ -28,7 +28,7 @@ use Throwable;
  */
 #[AsController]
 #[Route(path: '/v1/me/profile/companies')]
-#[OA\Tag(name: 'Me/Profile - Company Management')]
+#[OA\Tag(name: 'Me/Profile - Profile')]
 #[IsGranted('ROLE_LOGGED')]
 class ProfileCompanyController extends Controller
 {
