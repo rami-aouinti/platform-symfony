@@ -96,15 +96,6 @@ when@dev: &dev
                                 example:
                                     code: 422
                                     message: Validation failed
-            tags:
-                -   name: 'Admin - {Module}'
-                    description: 'Convention: endpoints d’administration par module (ex: Admin - User, Admin - Company).'
-                -   name: 'Me - {Module}'
-                    description: 'Convention: endpoints self-service de l’utilisateur connecté (ex: Me - Profile).'
-                -   name: 'Admin - User'
-                    description: 'Endpoints d’administration du module User.'
-                -   name: 'Me - Profile'
-                    description: 'Endpoints du profil courant (/me) du module User.'
             security:
                 -   Bearer: []
                 -   ApiKey: []
