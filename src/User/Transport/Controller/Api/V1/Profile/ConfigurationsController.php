@@ -24,19 +24,15 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
-
 use Throwable;
 
 use function array_key_exists;
-use function is_scalar;
 use function is_array;
+use function is_scalar;
 use function is_string;
 use function sprintf;
 use function trim;
 
-/**
- *
- */
 #[AsController]
 #[OA\Tag(name: 'Me - Profile')]
 readonly class ConfigurationsController

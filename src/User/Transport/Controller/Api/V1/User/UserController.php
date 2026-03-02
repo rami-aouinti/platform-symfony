@@ -47,6 +47,7 @@ class UserController extends Controller
     use Actions\Root\PatchAction;
     use Actions\Root\UpdateAction;
     use Actions\Admin\SchemaAction;
+
     private const string READ_CACHE_SCOPE = 'user';
 
     /**

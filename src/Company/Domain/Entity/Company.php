@@ -19,6 +19,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Throwable;
+
+use function rawurlencode;
+use function sprintf;
 
 /**
  * @package App\Company\Domain\Entity
@@ -77,6 +81,9 @@ class Company implements EntityInterface
     #[Groups(['Company', 'Company.photoMediaId', 'Company.create', 'Company.show', 'Company.edit'])]
     private ?string $photoMediaId = null;
 
+    /**
+     * @throws Throwable
+     */
     public function __construct()
     {
         $this->id = $this->createUuid();

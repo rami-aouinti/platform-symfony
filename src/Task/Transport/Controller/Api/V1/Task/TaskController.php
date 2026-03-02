@@ -43,6 +43,7 @@ class TaskController extends Controller
     use Actions\Authenticated\PatchAction;
     use Actions\Authenticated\UpdateAction;
     use Actions\Authenticated\SchemaAction;
+
     private const string READ_CACHE_SCOPE = 'task';
 
     /**
