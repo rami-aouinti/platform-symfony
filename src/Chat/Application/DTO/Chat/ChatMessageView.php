@@ -19,7 +19,7 @@ class ChatMessageView
     private string $id;
 
     #[Groups(['default'])]
-    private string $senderId;
+    private ?ChatUserView $sender;
 
     #[Groups(['default'])]
     private string $content;
@@ -30,7 +30,8 @@ class ChatMessageView
     public function __construct(ChatMessage $message)
     {
         $this->id = $message->getId();
-        $this->senderId = $message->getSender()?->getId() ?? '';
+        $sender = $message->getSender();
+        $this->sender = $sender !== null ? new ChatUserView($sender) : null;
         $this->content = $message->getContent();
         $this->createdAt = $message->getCreatedAt();
     }
@@ -40,9 +41,9 @@ class ChatMessageView
         return $this->id;
     }
 
-    public function getSenderId(): string
+    public function getSender(): ?ChatUserView
     {
-        return $this->senderId;
+        return $this->sender;
     }
 
     public function getContent(): string

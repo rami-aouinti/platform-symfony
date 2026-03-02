@@ -18,10 +18,10 @@ class ConversationView
     private string $id;
 
     /**
-     * @var string[]
+     * @var ChatUserView[]
      */
     #[Groups(['default'])]
-    private array $participantUserIds;
+    private array $participants;
 
     /**
      * @var ChatMessageView[]
@@ -35,9 +35,9 @@ class ConversationView
     public function __construct(Conversation $conversation, array $messages)
     {
         $this->id = $conversation->getId();
-        $this->participantUserIds = $conversation->getParticipants()
-            ->map(static fn ($participant): string => $participant->getUser()?->getId() ?? '')
-            ->filter(static fn (string $userId): bool => $userId !== '')
+        $this->participants = $conversation->getParticipants()
+            ->map(static fn ($participant): ?ChatUserView => $participant->getUser() !== null ? new ChatUserView($participant->getUser()) : null)
+            ->filter(static fn (?ChatUserView $user): bool => $user instanceof ChatUserView)
             ->toArray();
         $this->messages = $messages;
     }
@@ -48,11 +48,11 @@ class ConversationView
     }
 
     /**
-     * @return string[]
+     * @return ChatUserView[]
      */
-    public function getParticipantUserIds(): array
+    public function getParticipants(): array
     {
-        return $this->participantUserIds;
+        return $this->participants;
     }
 
     /**
