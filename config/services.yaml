@@ -276,6 +276,18 @@ when@dev:
         App\Blog\Infrastructure\DataFixtures\:
             resource: '../src/Blog/Infrastructure/DataFixtures/*'
 
+        App\Quiz\Infrastructure\DataFixtures\:
+            resource: '../src/Quiz/Infrastructure/DataFixtures/*'
+
+        App\Notification\Infrastructure\DataFixtures\:
+            resource: '../src/Notification/Infrastructure/DataFixtures/*'
+
+        App\Configuration\Infrastructure\DataFixtures\:
+            resource: '../src/Configuration/Infrastructure/DataFixtures/*'
+
+        App\Chat\Infrastructure\DataFixtures\:
+            resource: '../src/Chat/Infrastructure/DataFixtures/*'
+
         App\Recruit\Infrastructure\DataFixtures\:
             resource: '../src/Recruit/Infrastructure/DataFixtures/*'
 
