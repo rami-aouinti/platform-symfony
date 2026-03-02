@@ -52,7 +52,7 @@ class ChatMessage implements EntityInterface
     /**
      * @var array<int, array<string, mixed>>
      */
-    #[ORM\Column(name: 'attachments', type: Types::JSON, nullable: false, options: ['default' => '[]'])]
+    #[ORM\Column(name: 'attachments', type: Types::JSON, nullable: false)]
     private array $attachments = [];
 
     /**
