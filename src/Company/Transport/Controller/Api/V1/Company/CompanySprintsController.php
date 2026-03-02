@@ -28,7 +28,7 @@ use function filter_var;
  * @author Dmitry Kravtsov <dmytro.kravtsov@systemsdk.com>
  */
 #[AsController]
-#[Route(path: '/api/v1/admin/companies')]
+#[Route(path: '/v1/admin/companies')]
 #[Route(path: '/v1/companies')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Company Management')]

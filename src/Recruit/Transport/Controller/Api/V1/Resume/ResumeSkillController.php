@@ -27,7 +27,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[Route(path: '/api/v1/admin/resume-skills')]
+#[Route(path: '/v1/admin/resume-skills')]
 #[Route(path: '/v1/resume-skills')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Resume Skill Management')]
