@@ -20,7 +20,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
-#[OA\Tag(name: 'Chat')]
+#[OA\Tag(name: 'Frontend - Chat')]
 class ConversationParticipantController extends AbstractController
 {
     public function __construct(

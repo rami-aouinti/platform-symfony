@@ -29,7 +29,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 #[Route(path: '/v1/admin/resume-education')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
-#[OA\Tag(name: 'Resume Education Management')]
+#[OA\Tag(name: 'Admin - Resume Education Management')]
 class ResumeEducationController extends Controller
 {
     use Actions\Authenticated\CreateAction;

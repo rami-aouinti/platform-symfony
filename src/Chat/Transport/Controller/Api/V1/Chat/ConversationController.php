@@ -28,7 +28,7 @@ use Throwable;
 #[Route(path: '/v1/me/chat/conversations')]
 #[Route(path: '/v1/chat/conversations')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-#[OA\Tag(name: 'Chat')]
+#[OA\Tag(name: 'Frontend - Chat')]
 class ConversationController extends AbstractController
 {
     public function __construct(

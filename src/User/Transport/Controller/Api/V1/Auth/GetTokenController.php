@@ -26,7 +26,7 @@ use function sprintf;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'Authentication')]
+#[OA\Tag(name: 'Frontend - Authentication')]
 class GetTokenController
 {
     /**

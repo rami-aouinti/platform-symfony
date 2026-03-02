@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route(path: '/v1/me/notifications')]
 #[Route(path: '/v1/notifications')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-#[OA\Tag(name: 'Notification Management')]
+#[OA\Tag(name: 'Frontend - Notification Management')]
 readonly class NotificationController
 {
     public function __construct(

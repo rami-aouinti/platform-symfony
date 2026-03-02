@@ -24,7 +24,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'User Management')]
+#[OA\Tag(name: 'Admin - User Management')]
 class UserRolesController
 {
     public function __construct(

@@ -28,7 +28,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 #[Route(path: '/v1/companies')]
 #[IsGranted('ROLE_LOGGED')]
-#[OA\Tag(name: 'Company Management')]
+#[OA\Tag(name: 'Admin - Company Management')]
 class CompanyMembersController extends Controller
 {
     public function __construct(CompanyMembershipResourceInterface $resource)

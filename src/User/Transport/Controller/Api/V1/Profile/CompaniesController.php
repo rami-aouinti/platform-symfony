@@ -28,7 +28,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  * @package App\User\Transport\Controller\Api\V1\Profile
  */
 #[AsController]
-#[OA\Tag(name: 'Me - Profile')]
+#[OA\Tag(name: 'Me/Profile - Profile')]
 class CompaniesController
 {
     public function __construct(

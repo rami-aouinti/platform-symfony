@@ -33,7 +33,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 
 #[IsGranted(RoleEnum::ADMIN->value)]
-#[OA\Tag(name: 'Role Management')]
+#[OA\Tag(name: 'Admin - Role Management')]
 class RoleController extends Controller
 {
     use Actions\Admin\CountAction;

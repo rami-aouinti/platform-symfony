@@ -30,7 +30,7 @@ use function filter_var;
 #[AsController]
 #[Route(path: '/v1/admin/companies')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
-#[OA\Tag(name: 'Company Management')]
+#[OA\Tag(name: 'Admin - Company Management')]
 class CompanySprintsController extends Controller
 {
     public function __construct(SprintResourceInterface $resource)

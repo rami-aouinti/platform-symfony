@@ -31,7 +31,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 #[Route(path: '/v1/companies')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-#[OA\Tag(name: 'Company Management')]
+#[OA\Tag(name: 'Admin - Company Management')]
 class CompanyProjectsController extends Controller
 {
     public function __construct(

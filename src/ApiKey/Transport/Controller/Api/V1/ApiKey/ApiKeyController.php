@@ -36,7 +36,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-#[OA\Tag(name: 'ApiKey Management v1')]
+#[OA\Tag(name: 'Admin - ApiKey Management v1')]
 class ApiKeyController extends Controller
 {
     use Actions\Root\CountAction;

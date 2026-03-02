@@ -34,7 +34,7 @@ use function sprintf;
 use function trim;
 
 #[AsController]
-#[OA\Tag(name: 'Me - Profile')]
+#[OA\Tag(name: 'Me/Profile - Profile')]
 readonly class ConfigurationsController
 {
     public function __construct(

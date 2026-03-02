@@ -29,7 +29,7 @@ use Throwable;
  * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
-#[OA\Tag(name: 'UserGroup Management')]
+#[OA\Tag(name: 'Admin - UserGroup Management')]
 class DetachUserController
 {
     public function __construct(

@@ -45,7 +45,7 @@ use function implode;
 #[AsController]
 #[Route(path: '/v1/admin/job-applications')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
-#[OA\Tag(name: 'Job Application Management')]
+#[OA\Tag(name: 'Admin - Job Application Management')]
 class JobApplicationController extends Controller
 {
     use CreateMethod;

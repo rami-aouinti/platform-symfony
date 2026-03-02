@@ -37,7 +37,7 @@ use Throwable;
     'resumeId' => Requirement::UUID_V1,
 ])]
 #[IsGranted(new Expression("is_granted('IS_AUTHENTICATED_FULLY')"))]
-#[OA\Tag(name: 'ResumeReference Management')]
+#[OA\Tag(name: 'Admin - ResumeReference Management')]
 class ResumeReferenceController extends Controller
 {
     use FindOneMethod;

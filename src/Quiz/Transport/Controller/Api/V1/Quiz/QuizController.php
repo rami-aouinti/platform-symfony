@@ -25,7 +25,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 #[Route(path: '/v1/admin/quizzes')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
-#[OA\Tag(name: 'Quiz Management')]
+#[OA\Tag(name: 'Admin - Quiz Management')]
 class QuizController extends Controller
 {
     use Actions\Authenticated\CreateAction;

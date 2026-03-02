@@ -21,7 +21,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
-#[OA\Tag(name: 'Me - Profile')]
+#[OA\Tag(name: 'Me/Profile - Profile')]
 class SocialAccountsController
 {
     public function __construct(

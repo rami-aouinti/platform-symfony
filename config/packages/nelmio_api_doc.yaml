@@ -150,7 +150,25 @@ when@dev: &dev
                 - { alias: UserGroup, type: App\User\Domain\Entity\UserGroup }
                 - { alias: UserProfile, type: App\User\Domain\Entity\UserProfile }
         areas: # to filter documented areas
-            path_patterns:
-                - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            default:
+                path_patterns:
+                    - ^/api(?!/doc$)
+            admin:
+                path_patterns:
+                    - ^/api(?!/doc$)
+                documentation:
+                    tags:
+                        - name: Admin
+                with_attribute: false
+                cache: { }
+            frontend:
+                path_patterns:
+                    - ^/api(?!/doc$)
+                documentation:
+                    tags:
+                        - name: Frontend
+                        - name: Me/Profile
+                with_attribute: false
+                cache: { }
 
 when@test: *dev

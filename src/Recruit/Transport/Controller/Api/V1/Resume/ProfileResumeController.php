@@ -34,7 +34,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 #[Route(path: '/v1/me/profile/resumes')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-#[OA\Tag(name: 'Me - Resume')]
+#[OA\Tag(name: 'Me/Profile - Resume')]
 class ProfileResumeController extends Controller
 {
     use CreateMethod;

@@ -16,7 +16,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsController]
 #[Route(path: '/v1/catalog/languages')]
 #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-#[OA\Tag(name: 'Catalog Language')]
+#[OA\Tag(name: 'Frontend - Catalog Language')]
 class LanguageCatalogController extends Controller
 {
     use Actions\Authenticated\FindAction;

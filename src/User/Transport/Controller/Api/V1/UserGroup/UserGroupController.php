@@ -36,7 +36,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  */
 
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
-#[OA\Tag(name: 'UserGroup Management')]
+#[OA\Tag(name: 'Admin - UserGroup Management')]
 class UserGroupController extends Controller
 {
     use Actions\Admin\CountAction;
