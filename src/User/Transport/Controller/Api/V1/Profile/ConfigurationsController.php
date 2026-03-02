@@ -22,21 +22,33 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
+use Throwable;
+
+use function array_key_exists;
+use function is_array;
+use function is_string;
+use function sprintf;
+
+/**
+ *
+ */
 #[AsController]
 #[OA\Tag(name: 'Me - Profile')]
-class ConfigurationsController
+readonly class ConfigurationsController
 {
     public function __construct(
-        private readonly SerializerInterface $serializer,
-        private readonly UserTypeIdentification $userTypeIdentification,
-        private readonly ConfigurationResourceInterface $configurationResource,
+        private SerializerInterface $serializer,
+        private UserTypeIdentification $userTypeIdentification,
+        private ConfigurationResourceInterface $configurationResource,
     ) {
     }
 
     /**
      * @throws JsonException
+     * @throws ExceptionInterface
      */
     #[Route(
         path: '/v1/me/profile/configurations',
@@ -95,6 +107,8 @@ class ConfigurationsController
 
     /**
      * @throws JsonException
+     * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         path: '/v1/me/profile/configurations',
@@ -116,10 +130,10 @@ class ConfigurationsController
             properties: [
                 new OA\Property(property: 'code', type: 'string', example: 'ui.preferences'),
                 new OA\Property(property: 'keyName', type: 'string', example: 'dashboard.widgets'),
-                new OA\Property(property: 'value', type: 'object', additionalProperties: true, example: [
+                new OA\Property(property: 'value', type: 'object', example: [
                     'theme' => 'dark',
                     'widgets' => ['tasks', 'calendar'],
-                ]),
+                ], additionalProperties: true),
                 new OA\Property(property: 'status', type: 'string', example: 'active'),
             ],
             type: 'object',
@@ -127,14 +141,14 @@ class ConfigurationsController
     )]
     #[OA\Response(response: 201, description: 'Configuration created')]
     #[OA\Response(response: 400, description: 'Invalid payload')]
-    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
-    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
+    #[OA\Response(ref: '#/components/responses/UnauthorizedError', response: 401)]
+    #[OA\Response(ref: '#/components/responses/ForbiddenError', response: 403)]
     public function createAction(Request $request): JsonResponse
     {
         $user = $this->getCurrentUserOrDeny();
         $payload = $this->decodePayload($request);
 
-        $configuration = (new Configuration())
+        $configuration = new Configuration()
             ->setProfile($user->getOrCreateUserProfile());
 
         $this->applyPayload($configuration, $payload, true);
@@ -145,6 +159,8 @@ class ConfigurationsController
 
     /**
      * @throws JsonException
+     * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         path: '/v1/me/profile/configurations/{configurationId}',
@@ -167,10 +183,10 @@ class ConfigurationsController
             properties: [
                 new OA\Property(property: 'code', type: 'string', example: 'ui.preferences'),
                 new OA\Property(property: 'keyName', type: 'string', example: 'dashboard.widgets'),
-                new OA\Property(property: 'value', type: 'object', additionalProperties: true, example: [
+                new OA\Property(property: 'value', type: 'object', example: [
                     'theme' => 'light',
                     'widgets' => ['calendar'],
-                ]),
+                ], additionalProperties: true),
                 new OA\Property(property: 'status', type: 'string', example: 'active'),
             ],
             type: 'object',
@@ -193,6 +209,8 @@ class ConfigurationsController
 
     /**
      * @throws JsonException
+     * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         path: '/v1/me/profile/configurations/{configurationId}',
@@ -214,9 +232,9 @@ class ConfigurationsController
             properties: [
                 new OA\Property(property: 'code', type: 'string', example: 'ui.preferences'),
                 new OA\Property(property: 'keyName', type: 'string', example: 'dashboard.widgets'),
-                new OA\Property(property: 'value', type: 'object', additionalProperties: true, example: [
+                new OA\Property(property: 'value', type: 'object', example: [
                     'theme' => 'dark',
-                ]),
+                ], additionalProperties: true),
                 new OA\Property(property: 'status', type: 'string', example: 'archived'),
             ],
             type: 'object',
@@ -237,6 +255,9 @@ class ConfigurationsController
         return $this->jsonResponse($configuration);
     }
 
+    /**
+     * @throws Throwable
+     */
     #[Route(
         path: '/v1/me/profile/configurations/{configurationId}',
         requirements: [
@@ -345,6 +366,9 @@ class ConfigurationsController
         return $configuration;
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     private function jsonResponse(mixed $data, int $status = Response::HTTP_OK): JsonResponse
     {
         return new JsonResponse(
