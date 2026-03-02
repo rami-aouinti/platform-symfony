@@ -39,7 +39,7 @@ class MessageController extends AbstractController
     #[OA\Get(summary: 'List conversation messages for current user')]
     public function listAction(Request $request, string $id): Response
     {
-        return $this->responseHandler->createResponse($request, $this->resource->listMessages($id), $this->resource);
+        return $this->responseHandler->createResponse($request, $this->resource->listMessages($id));
     }
 
     #[Route(path: '/v1/me/chat/conversations/{id}/messages', requirements: [
@@ -64,7 +64,7 @@ class MessageController extends AbstractController
             return $this->responseHandler->getValidationErrorResponse($request, $violations);
         }
 
-        return $this->responseHandler->createResponse($request, $this->resource->createMessage($id, $dto->getContent()), $this->resource);
+        return $this->responseHandler->createResponse($request, $this->resource->createMessage($id, $dto->getContent()));
     }
 
     #[Route(path: '/v1/me/chat/messages/{messageId}', requirements: [
@@ -84,7 +84,7 @@ class MessageController extends AbstractController
             return $this->responseHandler->getValidationErrorResponse($request, $violations);
         }
 
-        return $this->responseHandler->createResponse($request, $this->resource->updateMessage($messageId, $dto->getContent()), $this->resource);
+        return $this->responseHandler->createResponse($request, $this->resource->updateMessage($messageId, $dto->getContent()));
     }
 
     #[Route(path: '/v1/me/chat/messages/{messageId}', requirements: [
@@ -98,7 +98,7 @@ class MessageController extends AbstractController
 
         return $this->responseHandler->createResponse($request, [
             'deleted' => true,
-        ], $this->resource);
+        ]);
     }
 
     #[Route(path: '/v1/admin/chat/messages', methods: [Request::METHOD_GET])]
@@ -106,7 +106,7 @@ class MessageController extends AbstractController
     #[OA\Get(summary: 'List chat messages for moderation/audit')]
     public function adminListAction(Request $request): Response
     {
-        return $this->responseHandler->createResponse($request, $this->resource->listMessagesForModeration(), $this->resource);
+        return $this->responseHandler->createResponse($request, $this->resource->listMessagesForModeration());
     }
 
     #[Route(path: '/v1/admin/chat/messages/{id}', requirements: [
@@ -120,6 +120,6 @@ class MessageController extends AbstractController
 
         return $this->responseHandler->createResponse($request, [
             'deleted' => true,
-        ], $this->resource);
+        ]);
     }
 }
