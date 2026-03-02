@@ -10,9 +10,11 @@ use App\User\Domain\Entity\User;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
 use OpenApi\Attributes\Property;
+use App\General\Transport\ValueResolver\LoggedInUserValueResolver;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Attribute\ValueResolver;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
@@ -42,7 +44,7 @@ readonly class NotificationController
      * @throws ExceptionInterface
      */
     #[Route(path: '', methods: [Request::METHOD_GET])]
-    public function findAction(User $loggedInUser): JsonResponse
+    public function findAction(#[ValueResolver(LoggedInUserValueResolver::class)] User $loggedInUser): JsonResponse
     {
         $notifications = $this->notificationService->findByUser($loggedInUser);
 
@@ -70,7 +72,7 @@ readonly class NotificationController
             type: 'object',
         ),
     )]
-    public function findOneAction(string $id, User $loggedInUser): JsonResponse
+    public function findOneAction(string $id, #[ValueResolver(LoggedInUserValueResolver::class)] User $loggedInUser): JsonResponse
     {
         $notification = $this->notificationService->findOneByUser($id, $loggedInUser);
 
@@ -94,7 +96,7 @@ readonly class NotificationController
         ],
         methods: [Request::METHOD_PATCH],
     )]
-    public function markAsReadAction(string $id, User $loggedInUser): JsonResponse
+    public function markAsReadAction(string $id, #[ValueResolver(LoggedInUserValueResolver::class)] User $loggedInUser): JsonResponse
     {
         $notification = $this->notificationService->markAsRead($id, $loggedInUser);
 
@@ -109,7 +111,7 @@ readonly class NotificationController
     }
 
     #[Route(path: '/read-all', methods: [Request::METHOD_PATCH])]
-    public function markAllAsReadAction(User $loggedInUser): JsonResponse
+    public function markAllAsReadAction(#[ValueResolver(LoggedInUserValueResolver::class)] User $loggedInUser): JsonResponse
     {
         $updated = $this->notificationService->markAllAsRead($loggedInUser);
 
@@ -119,7 +121,7 @@ readonly class NotificationController
     }
 
     #[Route(path: '/unread-count', methods: [Request::METHOD_GET])]
-    public function unreadCountAction(User $loggedInUser): JsonResponse
+    public function unreadCountAction(#[ValueResolver(LoggedInUserValueResolver::class)] User $loggedInUser): JsonResponse
     {
         return new JsonResponse([
             'unread' => $this->notificationService->countUnread($loggedInUser),
