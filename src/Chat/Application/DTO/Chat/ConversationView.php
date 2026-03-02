@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Chat\Application\DTO\Chat;
 
 use App\Chat\Domain\Entity\Conversation;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @package App\Chat\Application\DTO\Chat
@@ -13,15 +14,19 @@ use App\Chat\Domain\Entity\Conversation;
 
 class ConversationView
 {
+    #[Groups(['default'])]
     private string $id;
+
     /**
      * @var string[]
      */
+    #[Groups(['default'])]
     private array $participantUserIds;
 
     /**
      * @var ChatMessageView[]
      */
+    #[Groups(['default'])]
     private array $messages;
 
     /**
