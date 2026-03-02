@@ -1,5 +1,7 @@
 # API Catalog v1
 
+> Guide contributeurs: voir [Exemple complet de documentation d'un endpoint](./api-endpoint-example.md) et [Swagger](./swagger.md).
+
 | Méthode | Endpoint complet | Module | Contrôleur::méthode | Audience | Permission minimale | Notes |
 |---|---|---|---|---|---|---|
 | `ANY` | `/api` | ApiKey | `ApiKeyCountController::(inherited)` | auth | `IS_AUTHENTICATED_FULLY` | legacy/non exposé: suffixe de méthode hérité (non défini dans ce contrôleur) |
