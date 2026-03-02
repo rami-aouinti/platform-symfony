@@ -31,7 +31,8 @@ final class LoadNotificationData extends Fixture implements OrderedFixtureInterf
             'Notification-john-root-company-created-unread' => (new Notification($johnRoot))
                 ->setTitle('New company profile created')
                 ->setMessage('Your company profile "Acme Industries" has been created successfully.')
-                ->setType(NotificationType::COMPANY_CREATED->value),
+                ->setType(NotificationType::COMPANY_CREATED->value)
+                ->setReadAt(new DateTime('2026-02-22 08:15:00')),
             'Notification-john-root-application-submitted-read' => (new Notification($johnRoot))
                 ->setTitle('New application submitted')
                 ->setMessage('A candidate submitted an application for PHP Backend Engineer.')
@@ -40,7 +41,8 @@ final class LoadNotificationData extends Fixture implements OrderedFixtureInterf
             'Notification-john-root-application-decided-unread' => (new Notification($johnRoot))
                 ->setTitle('Application decision published')
                 ->setMessage('A decision has been published for Platform SRE application.')
-                ->setType(NotificationType::JOB_APPLICATION_DECIDED->value),
+                ->setType(NotificationType::JOB_APPLICATION_DECIDED->value)
+                ->setReadAt(new DateTime('2026-02-22 08:15:00')),
         ];
 
         $uuids = [
