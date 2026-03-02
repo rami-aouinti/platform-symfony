@@ -44,30 +44,35 @@ class ConfigurationsController
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Get(
-        summary: 'Lister les configurations liées au profil courant',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Retourne les configurations rattachées au profil de l’utilisateur authentifié. Filtre optionnel par keyName (recherche partielle insensible à la casse).',
+        summary: 'Lister les configurations liées au profil courant',
         security: [['Bearer' => []], ['ApiKey' => []]],
     )]
-    #[OA\Parameter(name: 'keyName', in: 'query', required: false, description: 'Filtre partiel sur keyName (contains, case-insensitive).', schema: new OA\Schema(type: 'string', example: 'dashboard'))]
+    #[OA\Parameter(name: 'keyName', description: 'Filtre partiel sur keyName (contains, case-insensitive).', in: 'query', required: false, schema: new OA\Schema(type: 'string', example: 'dashboard'))]
     #[OA\Response(
         response: 200,
         description: 'List of profile configurations',
         content: new OA\JsonContent(
             type: 'array',
             items: new OA\Items(
-                type: 'object',
                 properties: [
                     new OA\Property(property: 'id', type: 'string', format: 'uuid', example: '018f7a5a-9f30-7b24-8e7d-12d8d9792d7e'),
                     new OA\Property(property: 'code', type: 'string', example: 'ui.preferences'),
                     new OA\Property(property: 'keyName', type: 'string', example: 'dashboard.widgets'),
-                    new OA\Property(property: 'value', type: 'object', additionalProperties: true, example: ['theme' => 'dark', 'widgets' => ['tasks', 'calendar']]),
+                    new OA\Property(
+                        property: 'value',
+                        type: 'object',
+                        example: ['theme' => 'dark', 'widgets' => ['tasks', 'calendar']],
+                        additionalProperties: true
+                    ),
                     new OA\Property(property: 'status', type: 'string', example: 'active'),
                 ],
+                type: 'object',
             ),
         ),
     )]
-    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
-    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
+    #[OA\Response(ref: '#/components/responses/UnauthorizedError', response: 401)]
+    #[OA\Response(ref: '#/components/responses/ForbiddenError', response: 403)]
     public function __invoke(Request $request): JsonResponse
     {
         $currentUser = $this->getCurrentUserOrDeny();
