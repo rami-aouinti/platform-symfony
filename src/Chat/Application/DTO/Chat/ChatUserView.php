@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Chat\Application\DTO\Chat;
 
+use App\Chat\Application\Support\Utf8Sanitizer;
 use App\User\Domain\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -30,10 +31,10 @@ class ChatUserView
     public function __construct(User $user, string $currentUserId)
     {
         $this->id = $user->getId();
-        $this->username = $user->getUsername();
-        $this->firstName = $user->getFirstName();
-        $this->lastName = $user->getLastName();
-        $this->photo = $user->getPhoto();
+        $this->username = Utf8Sanitizer::sanitizeString($user->getUsername());
+        $this->firstName = Utf8Sanitizer::sanitizeString($user->getFirstName());
+        $this->lastName = Utf8Sanitizer::sanitizeString($user->getLastName());
+        $this->photo = Utf8Sanitizer::sanitizeString($user->getPhoto());
         $this->isCurrentUser = $user->getId() === $currentUserId;
     }
 
