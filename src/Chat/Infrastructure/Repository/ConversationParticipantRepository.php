@@ -40,7 +40,7 @@ class ConversationParticipantRepository extends BaseRepository implements Conver
             ->addSelect('user')
             ->join('participant.user', 'user')
             ->where('conversation.id = :conversationId')
-            ->setParameter('conversationId', $conversationId)
+            ->setParameter('conversationId', $conversationId, UuidBinaryOrderedTimeType::NAME)
             ->orderBy('participant.createdAt', 'ASC')
             ->getQuery()
             ->getResult();
