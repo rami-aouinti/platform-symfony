@@ -194,6 +194,7 @@ readonly class FriendController
             'firstName' => $user->getFirstName(),
             'lastName' => $user->getLastName(),
             'email' => $user->getEmail(),
+            'photo' => $user->getPhoto(),
         ];
     }
 }
