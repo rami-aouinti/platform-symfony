@@ -40,7 +40,7 @@ final class LoadJobOfferData extends Fixture implements OrderedFixtureInterface
         ];
 
         $users = [
-            'john' => $this->getReference('User-john-user', User::class),
+            'john' => $this->getReference('User-john-root', User::class),
             'alice' => $this->getReference('User-alice-user', User::class),
             'carol' => $this->getReference('User-carol-user', User::class),
         ];

@@ -19,7 +19,7 @@ final class LoadConfigurationData extends Fixture implements OrderedFixtureInter
     public function load(ObjectManager $manager): void
     {
         /** @var User $johnUser */
-        $johnUser = $this->getReference('User-john-user', User::class);
+        $johnUser = $this->getReference('User-john-root', User::class);
         $johnProfile = $johnUser->getOrCreateUserProfile();
 
         $notificationConfiguration = (new Configuration())

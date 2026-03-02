@@ -30,7 +30,7 @@ final class LoadOfferData extends Fixture implements OrderedFixtureInterface
         /** @var Company $external */
         $external = $this->getReference('Company-external-corp', Company::class);
         /** @var User $john */
-        $john = $this->getReference('User-john-user', User::class);
+        $john = $this->getReference('User-john-root', User::class);
         /** @var User $alice */
         $alice = $this->getReference('User-alice-user', User::class);
         /** @var User $carol */

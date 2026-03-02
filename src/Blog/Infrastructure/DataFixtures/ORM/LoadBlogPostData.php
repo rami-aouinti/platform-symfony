@@ -27,7 +27,7 @@ final class LoadBlogPostData extends Fixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager): void
     {
         /** @var User $john */
-        $john = $this->getReference('User-john-user', User::class);
+        $john = $this->getReference('User-john-root', User::class);
         /** @var User $alice */
         $alice = $this->getReference('User-alice-user', User::class);
         /** @var User $carol */
