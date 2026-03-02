@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\User\Domain\Repository\Interfaces;
 
 use App\General\Domain\Entity\Interfaces\EntityInterface;
-use App\User\Domain\Entity\UserGroup;
 use App\User\Domain\Entity\User as Entity;
+use App\User\Domain\Entity\UserGroup;
 use Doctrine\ORM\NonUniqueResultException;
 
 /**

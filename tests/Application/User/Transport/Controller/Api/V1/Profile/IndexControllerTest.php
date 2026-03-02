@@ -209,7 +209,7 @@ class IndexControllerTest extends WebTestCase
             ]),
         );
 
-        $createdData = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $createdData = JSON::decode((string)$client->getResponse()->getContent(), true);
         $address = $createdData['userProfile']['addresses'][array_key_last($createdData['userProfile']['addresses'])];
 
         $client->request(
@@ -222,9 +222,9 @@ class IndexControllerTest extends WebTestCase
         );
 
         $response = $client->getResponse();
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode(), "Response:
-" . $response);
-        $responseData = JSON::decode((string) $response->getContent(), true);
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode(), 'Response:
+' . $response);
+        $responseData = JSON::decode((string)$response->getContent(), true);
         $updated = $responseData['userProfile']['addresses'][array_key_last($responseData['userProfile']['addresses'])];
 
         self::assertSame('Updated Street', $updated['streetLine1']);
@@ -250,18 +250,17 @@ class IndexControllerTest extends WebTestCase
             ]),
         );
 
-        $createdData = JSON::decode((string) $client->getResponse()->getContent(), true);
+        $createdData = JSON::decode((string)$client->getResponse()->getContent(), true);
         $address = $createdData['userProfile']['addresses'][array_key_last($createdData['userProfile']['addresses'])];
 
         $client->request(method: 'DELETE', uri: $this->baseUrl . '/addresses/' . $address['id']);
         $response = $client->getResponse();
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode(), "Response:
-" . $response);
-        $responseData = JSON::decode((string) $response->getContent(), true);
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode(), 'Response:
+' . $response);
+        $responseData = JSON::decode((string)$response->getContent(), true);
 
         foreach ($responseData['userProfile']['addresses'] as $remainingAddress) {
             self::assertNotSame($address['id'], $remainingAddress['id']);
         }
     }
-
 }

@@ -34,18 +34,53 @@ use OpenApi\Attributes as OA;
     ],
     example: [
         'displayable' => [
-            ['name' => 'id', 'type' => 'normal', 'targetClass' => null, 'endpoint' => null],
-            ['name' => 'title', 'type' => 'normal', 'targetClass' => null, 'endpoint' => null],
-            ['name' => 'project', 'type' => 'object', 'targetClass' => 'App\\Task\\Domain\\Entity\\Project', 'endpoint' => '/api/v1/projects'],
+            [
+                'name' => 'id',
+                'type' => 'normal',
+                'targetClass' => null,
+                'endpoint' => null,
+            ],
+            [
+                'name' => 'title',
+                'type' => 'normal',
+                'targetClass' => null,
+                'endpoint' => null,
+            ],
+            [
+                'name' => 'project',
+                'type' => 'object',
+                'targetClass' => 'App\\Task\\Domain\\Entity\\Project',
+                'endpoint' => '/api/v1/projects',
+            ],
         ],
         'editable' => [
-            ['name' => 'title', 'type' => 'normal', 'targetClass' => null, 'endpoint' => null],
-            ['name' => 'project', 'type' => 'object', 'targetClass' => 'App\\Task\\Domain\\Entity\\Project', 'endpoint' => '/api/v1/projects'],
+            [
+                'name' => 'title',
+                'type' => 'normal',
+                'targetClass' => null,
+                'endpoint' => null,
+            ],
+            [
+                'name' => 'project',
+                'type' => 'object',
+                'targetClass' => 'App\\Task\\Domain\\Entity\\Project',
+                'endpoint' => '/api/v1/projects',
+            ],
         ],
         'creatable' => [
             'fields' => [
-                ['name' => 'title', 'type' => 'normal', 'targetClass' => null, 'endpoint' => null],
-                ['name' => 'project', 'type' => 'object', 'targetClass' => 'App\\Task\\Domain\\Entity\\Project', 'endpoint' => '/api/v1/projects'],
+                [
+                    'name' => 'title',
+                    'type' => 'normal',
+                    'targetClass' => null,
+                    'endpoint' => null,
+                ],
+                [
+                    'name' => 'project',
+                    'type' => 'object',
+                    'targetClass' => 'App\\Task\\Domain\\Entity\\Project',
+                    'endpoint' => '/api/v1/projects',
+                ],
             ],
             'required' => ['title'],
         ],

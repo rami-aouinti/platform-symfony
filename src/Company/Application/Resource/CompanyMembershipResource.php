@@ -117,14 +117,18 @@ class CompanyMembershipResource extends RestSmallResource implements CompanyMemb
         $company = $this->getCompany($companyId);
         $this->assertCanReadCompany($company);
 
-        return $this->find(criteria: ['company' => $company]);
+        return $this->find(criteria: [
+            'company' => $company,
+        ]);
     }
 
     public function findMyCompanies(): array
     {
         $currentUser = $this->getCurrentUser();
 
-        return $this->find(criteria: ['user' => $currentUser]);
+        return $this->find(criteria: [
+            'user' => $currentUser,
+        ]);
     }
 
     public function findMyMembership(string $companyId): ?Entity

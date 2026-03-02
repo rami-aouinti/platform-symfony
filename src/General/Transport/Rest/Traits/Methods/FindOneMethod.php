@@ -38,7 +38,9 @@ trait FindOneMethod
             $data = $this->rememberReadEndpoint(
                 $request,
                 [
-                    'criteria' => ['id' => $id],
+                    'criteria' => [
+                        'id' => $id,
+                    ],
                     'tenant' => $entityManagerName,
                 ],
                 fn (): mixed => $resource->findOne($id, true, $entityManagerName),

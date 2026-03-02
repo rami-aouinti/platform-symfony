@@ -8,9 +8,9 @@ use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\AbstractOwnedResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Task\Application\Resource\Interfaces\TaskResourceInterface;
+use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
 use App\Task\Application\UseCase\AssertTaskManageAccess;
 use App\Task\Application\UseCase\ChangeTaskStatus;
-use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
 use App\Task\Application\UseCase\PrepareTaskForCreate;
 use App\Task\Domain\Entity\Task as Entity;
 use App\Task\Domain\Enum\TaskStatus;
@@ -50,6 +50,15 @@ class TaskResource extends AbstractOwnedResource implements TaskResourceInterfac
         }
     }
 
+    public function changeStatus(string $id, TaskStatus $status): Entity
+    {
+        try {
+            return $this->changeTaskStatus->execute($id, $status);
+        } catch (InvalidTaskStatusTransition $exception) {
+            throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, $exception->getMessage(), $exception);
+        }
+    }
+
     protected function onBeforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
@@ -75,15 +84,6 @@ class TaskResource extends AbstractOwnedResource implements TaskResourceInterfac
     {
         if ($entity instanceof Entity) {
             $this->assertTaskManageAccess->execute($entity);
-        }
-    }
-
-    public function changeStatus(string $id, TaskStatus $status): Entity
-    {
-        try {
-            return $this->changeTaskStatus->execute($id, $status);
-        } catch (InvalidTaskStatusTransition $exception) {
-            throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, $exception->getMessage(), $exception);
         }
     }
 }

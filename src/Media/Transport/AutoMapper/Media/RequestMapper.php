@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Media\Transport\AutoMapper\Media;
 
-use App\General\Transport\AutoMapper\RestRequestMapper;
 use App\General\Transport\AutoMapper\PropertiesConventionTrait;
+use App\General\Transport\AutoMapper\RestRequestMapper;
 
 /**
  * RequestMapper.

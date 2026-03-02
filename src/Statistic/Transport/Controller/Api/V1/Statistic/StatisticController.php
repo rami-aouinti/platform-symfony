@@ -52,7 +52,7 @@ class StatisticController
     #[OA\Get(summary: 'Global created entities grouped by day')]
     public function timeSeries(Request $request): Response
     {
-        $days = (int) $request->query->get('days', 30);
+        $days = (int)$request->query->get('days', 30);
 
         return $this->responseHandler->createResponse($request, $this->statisticService->getTimeSeries($days));
     }
@@ -61,7 +61,7 @@ class StatisticController
     #[OA\Get(summary: 'Created entities grouped by day for one entity')]
     public function timeSeriesByEntity(Request $request, string $entity): Response
     {
-        $days = (int) $request->query->get('days', 30);
+        $days = (int)$request->query->get('days', 30);
 
         try {
             $data = $this->statisticService->getTimeSeriesByEntity($entity, $days);

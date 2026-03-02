@@ -43,7 +43,11 @@ class GroupsController
     #[OA\Get(
         summary: 'Lister les groupes du profil courant',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: uniquement les groupes du compte authentifié.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\Response(
         response: 200,

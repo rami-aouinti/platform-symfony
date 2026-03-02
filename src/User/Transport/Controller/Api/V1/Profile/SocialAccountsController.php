@@ -37,7 +37,9 @@ class SocialAccountsController
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     public function listAction(User $loggedInUser): JsonResponse
     {
-        $accounts = $this->socialAccountRepository->findBy(['user' => $loggedInUser]);
+        $accounts = $this->socialAccountRepository->findBy([
+            'user' => $loggedInUser,
+        ]);
 
         return new JsonResponse([
             'items' => array_map(
@@ -62,19 +64,28 @@ class SocialAccountsController
         $payload = JSON::decode($request->getContent() ?: '{}', true);
 
         if (!isset($payload['provider']) || !is_string($payload['provider']) || $payload['provider'] === '') {
-            return new JsonResponse(['message' => 'Field "provider" is required.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse([
+                'message' => 'Field "provider" is required.',
+            ], Response::HTTP_BAD_REQUEST);
         }
         if (!isset($payload['providerUserId']) || !is_string($payload['providerUserId']) || $payload['providerUserId'] === '') {
-            return new JsonResponse(['message' => 'Field "providerUserId" is required.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse([
+                'message' => 'Field "providerUserId" is required.',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $provider = SocialProvider::tryFrom($payload['provider']);
         if (!$provider instanceof SocialProvider) {
-            return new JsonResponse(['message' => 'Unsupported social provider.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse([
+                'message' => 'Unsupported social provider.',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         /** @var SocialAccount|null $existing */
-        $existing = $this->socialAccountRepository->findOneBy(['user' => $loggedInUser, 'provider' => $provider]);
+        $existing = $this->socialAccountRepository->findOneBy([
+            'user' => $loggedInUser,
+            'provider' => $provider,
+        ]);
         if ($existing instanceof SocialAccount) {
             $existing->setProviderUserId($payload['providerUserId']);
             $existing->setProviderEmail(isset($payload['providerEmail']) && is_string($payload['providerEmail']) ? $payload['providerEmail'] : null);
@@ -95,14 +106,21 @@ class SocialAccountsController
     {
         $providerEnum = SocialProvider::tryFrom($provider);
         if (!$providerEnum instanceof SocialProvider) {
-            return new JsonResponse(['message' => 'Unsupported social provider.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse([
+                'message' => 'Unsupported social provider.',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         /** @var SocialAccount|null $account */
-        $account = $this->socialAccountRepository->findOneBy(['user' => $loggedInUser, 'provider' => $providerEnum]);
+        $account = $this->socialAccountRepository->findOneBy([
+            'user' => $loggedInUser,
+            'provider' => $providerEnum,
+        ]);
 
         if (!$account instanceof SocialAccount) {
-            return new JsonResponse(['message' => 'Social account not found for current user.'], Response::HTTP_NOT_FOUND);
+            return new JsonResponse([
+                'message' => 'Social account not found for current user.',
+            ], Response::HTTP_NOT_FOUND);
         }
 
         $loggedInUser->removeSocialAccount($account);

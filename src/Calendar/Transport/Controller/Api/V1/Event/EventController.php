@@ -8,8 +8,8 @@ use App\Calendar\Application\DTO\Event\Event;
 use App\Calendar\Application\Resource\Interfaces\EventResourceInterface;
 use App\General\Transport\Rest\CrudController;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 

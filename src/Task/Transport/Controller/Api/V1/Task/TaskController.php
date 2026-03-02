@@ -14,10 +14,10 @@ use App\Task\Application\Resource\Interfaces\TaskResourceInterface;
 use App\Task\Application\Resource\TaskResource;
 use App\Task\Domain\Enum\TaskStatus;
 use OpenApi\Attributes as OA;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -36,7 +36,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[OA\Tag(name: 'Task Management')]
 class TaskController extends Controller
 {
-    private const string READ_CACHE_SCOPE = 'task';
     use Actions\Authenticated\CreateAction;
     use Actions\Authenticated\DeleteAction;
     use Actions\Authenticated\FindAction;
@@ -44,6 +43,7 @@ class TaskController extends Controller
     use Actions\Authenticated\PatchAction;
     use Actions\Authenticated\UpdateAction;
     use Actions\Authenticated\SchemaAction;
+    private const string READ_CACHE_SCOPE = 'task';
 
     /**
      * @var array<string, string>
@@ -57,11 +57,6 @@ class TaskController extends Controller
     public function __construct(TaskResourceInterface $resource)
     {
         parent::__construct($resource);
-    }
-
-    protected function getReadCacheScope(): ?string
-    {
-        return self::READ_CACHE_SCOPE;
     }
 
     #[Route(path: '/{id}/start', methods: [Request::METHOD_PATCH])]
@@ -86,6 +81,11 @@ class TaskController extends Controller
     public function reopenAction(Request $request, string $id): Response
     {
         return $this->changeStatusAction($request, $id, TaskStatus::TODO);
+    }
+
+    protected function getReadCacheScope(): ?string
+    {
+        return self::READ_CACHE_SCOPE;
     }
 
     private function changeStatusAction(Request $request, string $id, TaskStatus $status): Response

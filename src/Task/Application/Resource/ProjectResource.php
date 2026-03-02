@@ -37,7 +37,6 @@ class ProjectResource extends AbstractOwnedResource implements ProjectResourceIn
         parent::__construct($repository, $userTypeIdentification);
     }
 
-
     /**
      * @return array<int, Entity>
      */
@@ -53,7 +52,9 @@ class ProjectResource extends AbstractOwnedResource implements ProjectResourceIn
             throw new AccessDeniedHttpException('You are not allowed to access projects for this company.');
         }
 
-        return $this->find(criteria: ['company' => $company]);
+        return $this->find(criteria: [
+            'company' => $company,
+        ]);
     }
 
     public function beforeFind(array &$criteria, array &$orderBy, ?int &$limit, ?int &$offset, array &$search): void

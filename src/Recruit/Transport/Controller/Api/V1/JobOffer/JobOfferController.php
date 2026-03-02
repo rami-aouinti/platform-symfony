@@ -25,10 +25,10 @@ use DateInterval;
 use DateTimeImmutable;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
@@ -490,7 +490,6 @@ class JobOfferController extends Controller
             ...$this->getQueryList($request, 'languages'),
         ]);
 
-
         $mappedInFilters = [
             'remoteMode' => 'remoteMode',
             'remotePolicy' => 'remoteMode',
@@ -565,7 +564,6 @@ class JobOfferController extends Controller
         $limit ??= self::DEFAULT_LIMIT;
         $offset ??= self::DEFAULT_OFFSET;
     }
-
 
     /**
      * @param array<int, string> $values

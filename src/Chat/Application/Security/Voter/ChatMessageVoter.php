@@ -20,10 +20,12 @@ class ChatMessageVoter extends Voter
 {
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [
-            Permission::CHAT_EDIT->value,
-            Permission::CHAT_DELETE->value,
-        ], true)) {
+        if (
+            !in_array($attribute, [
+                Permission::CHAT_EDIT->value,
+                Permission::CHAT_DELETE->value,
+            ], true)
+        ) {
             return false;
         }
 

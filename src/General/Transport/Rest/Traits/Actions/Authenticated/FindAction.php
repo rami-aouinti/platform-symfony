@@ -39,7 +39,11 @@ trait FindAction
     #[OA\Get(
         summary: 'Lister les ressources',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: collection filtrée via where/search/order, limitée aux données autorisées par le module.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\Parameter(name: 'where', in: 'query', required: false, description: 'Critères JSON. Exemple: {"status":"active","owner.id":"0195f7ac-199f-7188-bc2c-fe59f1161b08"}', schema: new OA\Schema(type: 'string'))]
     #[OA\Parameter(name: 'search', in: 'query', required: false, description: 'Texte libre ou JSON and/or. Exemple: {"or":["backend","symfony"]}', schema: new OA\Schema(type: 'string'))]

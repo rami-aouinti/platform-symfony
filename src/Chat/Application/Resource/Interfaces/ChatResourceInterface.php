@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Chat\Application\Resource\Interfaces;
 
+use App\Chat\Application\DTO\Chat\ChatMessageView;
 use App\Chat\Application\DTO\Chat\ConversationCreate;
 use App\Chat\Application\DTO\Chat\ConversationView;
-use App\Chat\Application\DTO\Chat\ChatMessageView;
 
 /**
  * @package App\Chat\Application\Resource\Interfaces

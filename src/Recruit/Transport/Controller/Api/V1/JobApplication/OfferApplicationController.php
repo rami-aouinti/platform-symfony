@@ -11,11 +11,11 @@ use App\Recruit\Application\Resource\Interfaces\JobApplicationResourceInterface;
 use App\Recruit\Application\Resource\JobApplicationResource;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -98,7 +98,6 @@ class OfferApplicationController extends Controller
             Response::HTTP_CREATED,
         );
     }
-
 
     /**
      * @throws BadRequestHttpException

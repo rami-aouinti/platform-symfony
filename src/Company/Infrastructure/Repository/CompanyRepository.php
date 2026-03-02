@@ -36,5 +36,4 @@ class CompanyRepository extends BaseRepository implements CompanyRepositoryInter
 
         return $company instanceof Entity ? $company : null;
     }
-
 }

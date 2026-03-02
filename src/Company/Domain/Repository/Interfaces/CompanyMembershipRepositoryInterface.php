@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Company\Domain\Repository\Interfaces;
 
-use App\Company\Domain\Entity\CompanyMembership;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Repository\Interfaces\BaseRepositoryInterface;
 

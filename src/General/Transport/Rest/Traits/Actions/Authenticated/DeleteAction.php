@@ -43,7 +43,11 @@ trait DeleteAction
     #[OA\Delete(
         summary: 'Supprimer une ressource',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: suppression d’une ressource si autorisée par les règles métier.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\Response(
         response: 200,

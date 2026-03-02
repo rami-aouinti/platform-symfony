@@ -29,11 +29,15 @@ class TaskAccessServiceTest extends TestCase
     {
         $service = new TaskAccessService();
         $admin = (new User())->setEmail('admin@example.com')->setRoles(['ROLE_ADMIN']);
-        $criteria = ['existing' => 'value'];
+        $criteria = [
+            'existing' => 'value',
+        ];
 
         $service->scopeTaskRequestsQuery($admin, $criteria);
 
-        self::assertSame(['existing' => 'value'], $criteria);
+        self::assertSame([
+            'existing' => 'value',
+        ], $criteria);
     }
 
     public function testCanViewTaskRequestAllowsReviewer(): void

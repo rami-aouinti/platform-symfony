@@ -40,7 +40,11 @@ trait CreateAction
     #[OA\Post(
         summary: 'Créer une ressource',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: création d’une ressource dans le module sur les champs autorisés.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\RequestBody(
         request: 'body',

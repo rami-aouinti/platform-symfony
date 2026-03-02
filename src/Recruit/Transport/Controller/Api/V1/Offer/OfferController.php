@@ -13,8 +13,8 @@ use App\Recruit\Application\DTO\Offer\OfferUpdate;
 use App\Recruit\Application\Resource\Interfaces\OfferResourceInterface;
 use App\Recruit\Application\Resource\OfferResource;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 

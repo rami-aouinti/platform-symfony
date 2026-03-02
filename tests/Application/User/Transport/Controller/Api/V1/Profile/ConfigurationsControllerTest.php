@@ -37,14 +37,18 @@ class ConfigurationsControllerTest extends WebTestCase
         $configA = (new Configuration())
             ->setCode('me-cfg-a-' . uniqid())
             ->setKeyName('profile.notifications.email.' . uniqid())
-            ->setValue(['enabled' => true])
+            ->setValue([
+                'enabled' => true,
+            ])
             ->setStatus('active')
             ->setProfile($profile);
 
         $configB = (new Configuration())
             ->setCode('me-cfg-b-' . uniqid())
             ->setKeyName('profile.theme.' . uniqid())
-            ->setValue(['theme' => 'dark'])
+            ->setValue([
+                'theme' => 'dark',
+            ])
             ->setStatus('active')
             ->setProfile($profile);
 
@@ -78,7 +82,6 @@ class ConfigurationsControllerTest extends WebTestCase
         $em->remove($configB);
         $em->flush();
     }
-
 
     /**
      * @throws Throwable

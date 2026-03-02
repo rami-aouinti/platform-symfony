@@ -32,7 +32,9 @@ class MessageController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/api/v1/me/chat/conversations/{id}/messages', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
+    #[Route(path: '/api/v1/me/chat/conversations/{id}/messages', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_GET])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Get(summary: 'List conversation messages for current user')]
     public function listAction(Request $request, string $id): Response
@@ -40,7 +42,9 @@ class MessageController extends AbstractController
         return $this->responseHandler->createResponse($request, $this->resource->listMessages($id), $this->resource);
     }
 
-    #[Route(path: '/api/v1/me/chat/conversations/{id}/messages', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_POST])]
+    #[Route(path: '/api/v1/me/chat/conversations/{id}/messages', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_POST])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Post(summary: 'Create message in a conversation for current user')]
     #[OA\RequestBody(required: true, content: new JsonContent(
@@ -63,7 +67,9 @@ class MessageController extends AbstractController
         return $this->responseHandler->createResponse($request, $this->resource->createMessage($id, $dto->getContent()), $this->resource);
     }
 
-    #[Route(path: '/api/v1/me/chat/messages/{messageId}', requirements: ['messageId' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
+    #[Route(path: '/api/v1/me/chat/messages/{messageId}', requirements: [
+        'messageId' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_PATCH])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Patch(summary: 'Update current user message')]
     public function patchAction(Request $request, string $messageId): Response
@@ -81,14 +87,18 @@ class MessageController extends AbstractController
         return $this->responseHandler->createResponse($request, $this->resource->updateMessage($messageId, $dto->getContent()), $this->resource);
     }
 
-    #[Route(path: '/api/v1/me/chat/messages/{messageId}', requirements: ['messageId' => Requirement::UUID_V1], methods: [Request::METHOD_DELETE])]
+    #[Route(path: '/api/v1/me/chat/messages/{messageId}', requirements: [
+        'messageId' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_DELETE])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Delete(summary: 'Delete current user message')]
     public function deleteAction(Request $request, string $messageId): Response
     {
         $this->resource->deleteMessage($messageId);
 
-        return $this->responseHandler->createResponse($request, ['deleted' => true], $this->resource);
+        return $this->responseHandler->createResponse($request, [
+            'deleted' => true,
+        ], $this->resource);
     }
 
     #[Route(path: '/api/v1/admin/chat/messages', methods: [Request::METHOD_GET])]
@@ -99,13 +109,17 @@ class MessageController extends AbstractController
         return $this->responseHandler->createResponse($request, $this->resource->listMessagesForModeration(), $this->resource);
     }
 
-    #[Route(path: '/api/v1/admin/chat/messages/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_DELETE])]
+    #[Route(path: '/api/v1/admin/chat/messages/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_DELETE])]
     #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
     #[OA\Delete(summary: 'Delete a message for moderation/audit')]
     public function adminDeleteAction(Request $request, string $id): Response
     {
         $this->resource->deleteMessageForModeration($id);
 
-        return $this->responseHandler->createResponse($request, ['deleted' => true], $this->resource);
+        return $this->responseHandler->createResponse($request, [
+            'deleted' => true,
+        ], $this->resource);
     }
 }

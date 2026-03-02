@@ -21,7 +21,7 @@ class AdminNotificationControllerTest extends WebTestCase
         $client->request('GET', self::BASE_URL . '/' . $userId . '/unread-count');
 
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
-        self::assertJson((string) $client->getResponse()->getContent());
+        self::assertJson((string)$client->getResponse()->getContent());
     }
 
     public function testNonAdminGetsForbidden(): void

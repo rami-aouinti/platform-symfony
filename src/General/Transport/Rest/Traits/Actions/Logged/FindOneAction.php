@@ -41,7 +41,11 @@ trait FindOneAction
         methods: [Request::METHOD_GET],
     )]
     #[IsGranted(Role::LOGGED->value)]
-    #[OA\Get(summary: 'Endpoint findone', description: 'Documentation standardisée de endpoint.', security: [['Bearer' => []], ['ApiKey' => []]])]
+    #[OA\Get(summary: 'Endpoint findone', description: 'Documentation standardisée de endpoint.', security: [[
+        'Bearer' => [],
+    ], [
+        'ApiKey' => [],
+    ]])]
     #[OA\Response(
         response: 200,
         description: 'success',

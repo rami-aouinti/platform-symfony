@@ -97,7 +97,7 @@ class UsersControllerTest extends WebTestCase
         self::assertIsArray($responseData);
 
         $usernames = array_map(
-            static fn (array $user): string => (string) $user['username'],
+            static fn (array $user): string => (string)$user['username'],
             $responseData,
         );
 

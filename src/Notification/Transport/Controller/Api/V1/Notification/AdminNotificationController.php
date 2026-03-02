@@ -21,8 +21,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[OA\Tag(name: 'Notification Management')]
 readonly class AdminNotificationController
 {
-    public function __construct(private NotificationServiceInterface $notificationService)
-    {
+    public function __construct(
+        private NotificationServiceInterface $notificationService
+    ) {
     }
 
     #[Route(

@@ -33,7 +33,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Throwable;
 
 #[AsController]
-#[Route(path: '/api/v1/me/resumes/{resumeId}/projects', requirements: ['resumeId' => Requirement::UUID_V1])]
+#[Route(path: '/api/v1/me/resumes/{resumeId}/projects', requirements: [
+    'resumeId' => Requirement::UUID_V1,
+])]
 #[IsGranted(new Expression("is_granted('IS_AUTHENTICATED_FULLY')"))]
 #[OA\Tag(name: 'ResumeProject Management')]
 class ResumeProjectController extends Controller
@@ -94,7 +96,9 @@ class ResumeProjectController extends Controller
         return $this->createMethod($request, $restDto);
     }
 
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_GET])]
     #[OA\Get(summary: 'Get one resume projects item')]
     #[OA\Response(response: 200, description: 'Item', content: new JsonContent(type: 'object'))]
     #[OA\Response(response: 403, description: 'Forbidden')]
@@ -106,7 +110,9 @@ class ResumeProjectController extends Controller
         return $this->findOneMethod($request, $id);
     }
 
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PUT])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_PUT])]
     #[OA\Put(summary: 'Update resume projects item')]
     #[OA\RequestBody(required: true, content: new JsonContent(type: 'object'))]
     #[OA\Response(response: 200, description: 'Updated', content: new JsonContent(type: 'object'))]
@@ -119,7 +125,9 @@ class ResumeProjectController extends Controller
         return $this->updateMethod($request, $restDto, $id);
     }
 
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_PATCH])]
     #[OA\Patch(summary: 'Patch resume projects item')]
     #[OA\RequestBody(required: true, content: new JsonContent(type: 'object'))]
     #[OA\Response(response: 200, description: 'Patched', content: new JsonContent(type: 'object'))]
@@ -132,7 +140,9 @@ class ResumeProjectController extends Controller
         return $this->patchMethod($request, $restDto, $id);
     }
 
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_DELETE])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_DELETE])]
     #[OA\Delete(summary: 'Delete resume projects item')]
     #[OA\Response(response: 200, description: 'Deleted', content: new JsonContent(type: 'object'))]
     #[OA\Response(response: 403, description: 'Forbidden')]

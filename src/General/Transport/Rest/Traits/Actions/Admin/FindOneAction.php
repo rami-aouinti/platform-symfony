@@ -43,7 +43,11 @@ trait FindOneAction
     #[OA\Get(
         summary: 'Lire une ressource',
         description: 'Audience cible: administrateurs. Rôle minimal: ROLE_ADMIN. Périmètre des données: lecture d’une ressource unique identifiée par UUID.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\Response(
         response: 200,

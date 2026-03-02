@@ -43,7 +43,11 @@ trait FindOneAction
     #[OA\Get(
         summary: 'Lire une ressource',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: lecture d’une ressource unique identifiée par UUID.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\Response(
         response: 200,

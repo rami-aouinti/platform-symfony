@@ -39,6 +39,13 @@ class QuizResource extends AbstractOwnedResource implements QuizResourceInterfac
         $criteria['owner'] = $currentUser;
     }
 
+    public function afterFindOne(string &$id, ?EntityInterface $entity = null): void
+    {
+        if ($entity instanceof Entity) {
+            $this->assertCanManageQuiz($entity);
+        }
+    }
+
     protected function onBeforeCreate(RestDtoInterface $restDto, EntityInterface $entity): void
     {
         if ($entity instanceof Entity) {
@@ -61,13 +68,6 @@ class QuizResource extends AbstractOwnedResource implements QuizResourceInterfac
     }
 
     protected function authorizeBeforeDelete(string &$id, EntityInterface $entity): void
-    {
-        if ($entity instanceof Entity) {
-            $this->assertCanManageQuiz($entity);
-        }
-    }
-
-    public function afterFindOne(string &$id, ?EntityInterface $entity = null): void
     {
         if ($entity instanceof Entity) {
             $this->assertCanManageQuiz($entity);

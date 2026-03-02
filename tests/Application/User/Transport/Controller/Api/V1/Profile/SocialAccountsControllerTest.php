@@ -38,7 +38,7 @@ class SocialAccountsControllerTest extends WebTestCase
         $response = $client->getResponse();
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
 
-        $responseData = JSON::decode((string) $response->getContent(), true);
+        $responseData = JSON::decode((string)$response->getContent(), true);
         self::assertIsArray($responseData);
         self::assertArrayHasKey('items', $responseData);
         self::assertIsArray($responseData['items']);

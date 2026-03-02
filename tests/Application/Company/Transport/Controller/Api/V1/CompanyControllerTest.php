@@ -60,7 +60,6 @@ class CompanyControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
     }
 
-
     /**
      * @throws Throwable
      */

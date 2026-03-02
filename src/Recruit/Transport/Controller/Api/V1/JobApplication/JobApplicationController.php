@@ -19,15 +19,15 @@ use App\Recruit\Domain\Enum\JobApplicationStatus;
 use App\Tool\Application\Service\Rest\ReadEndpointCache;
 use OpenApi\Attributes as OA;
 use OpenApi\Attributes\JsonContent;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Throwable;
 
 use function array_intersect;
@@ -292,20 +292,6 @@ class JobApplicationController extends Controller
         return $response;
     }
 
-    /**
-     * @throws BadRequestHttpException
-     */
-    private function assertNoCandidateManagedFields(Request $request): void
-    {
-        $forbiddenFields = ['candidate', 'status', 'decidedBy', 'decidedAt'];
-        $submittedFields = array_keys($request->request->all());
-        $invalidFields = array_intersect($forbiddenFields, $submittedFields);
-
-        if ($invalidFields !== []) {
-            throw new BadRequestHttpException('Fields not allowed in candidate flow: ' . implode(', ', $invalidFields) . '.');
-        }
-    }
-
     #[Route(path: '/{id}/accept', requirements: [
         'id' => Requirement::UUID_V1,
     ], methods: [Request::METHOD_PATCH])]
@@ -361,5 +347,19 @@ class JobApplicationController extends Controller
             $data,
             $this->getResource(),
         );
+    }
+
+    /**
+     * @throws BadRequestHttpException
+     */
+    private function assertNoCandidateManagedFields(Request $request): void
+    {
+        $forbiddenFields = ['candidate', 'status', 'decidedBy', 'decidedAt'];
+        $submittedFields = array_keys($request->request->all());
+        $invalidFields = array_intersect($forbiddenFields, $submittedFields);
+
+        if ($invalidFields !== []) {
+            throw new BadRequestHttpException('Fields not allowed in candidate flow: ' . implode(', ', $invalidFields) . '.');
+        }
     }
 }

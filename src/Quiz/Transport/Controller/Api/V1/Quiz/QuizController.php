@@ -11,8 +11,8 @@ use App\Quiz\Application\DTO\Quiz\QuizPatch;
 use App\Quiz\Application\DTO\Quiz\QuizUpdate;
 use App\Quiz\Application\Resource\Interfaces\QuizResourceInterface;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 

@@ -12,8 +12,8 @@ use App\User\Application\DTO\User\UserPatch;
 use App\User\Application\DTO\User\UserUpdate;
 use App\User\Application\Resource\UserResource;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -39,7 +39,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[OA\Tag(name: 'Admin - User')]
 class UserController extends Controller
 {
-    private const string READ_CACHE_SCOPE = 'user';
     use Actions\Admin\CountAction;
     use Actions\Admin\FindAction;
     use Actions\Admin\FindOneAction;
@@ -48,6 +47,7 @@ class UserController extends Controller
     use Actions\Root\PatchAction;
     use Actions\Root\UpdateAction;
     use Actions\Admin\SchemaAction;
+    private const string READ_CACHE_SCOPE = 'user';
 
     /**
      * @var array<string, string>
@@ -58,6 +58,11 @@ class UserController extends Controller
         Controller::METHOD_PATCH => UserPatch::class,
     ];
 
+    public function __construct(
+        UserResource $resource,
+    ) {
+        parent::__construct($resource);
+    }
 
     /**
      * @return array<string, mixed>
@@ -91,12 +96,6 @@ class UserController extends Controller
                 ],
             ],
         ];
-    }
-
-    public function __construct(
-        UserResource $resource,
-    ) {
-        parent::__construct($resource);
     }
 
     protected function getReadCacheScope(): ?string

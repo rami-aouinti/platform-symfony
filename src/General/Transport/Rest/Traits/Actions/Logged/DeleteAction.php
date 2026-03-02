@@ -41,7 +41,11 @@ trait DeleteAction
         methods: [Request::METHOD_DELETE],
     )]
     #[IsGranted(Role::LOGGED->value)]
-    #[OA\Delete(summary: 'Endpoint delete', description: 'Documentation standardisée de endpoint.', security: [['Bearer' => []], ['ApiKey' => []]])]
+    #[OA\Delete(summary: 'Endpoint delete', description: 'Documentation standardisée de endpoint.', security: [[
+        'Bearer' => [],
+    ], [
+        'ApiKey' => [],
+    ]])]
     #[OA\Response(
         response: 200,
         description: 'deleted',

@@ -65,7 +65,9 @@ class Quiz implements EntityInterface
     #[Groups(['Quiz', 'Quiz.timeLimit', 'Quiz.create', 'Quiz.show', 'Quiz.edit'])]
     private ?int $timeLimit = null;
 
-    #[ORM\Column(name: 'is_published', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ORM\Column(name: 'is_published', type: Types::BOOLEAN, options: [
+        'default' => false,
+    ])]
     #[Groups(['Quiz', 'Quiz.isPublished', 'Quiz.create', 'Quiz.show', 'Quiz.edit'])]
     private bool $isPublished = false;
 

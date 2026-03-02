@@ -68,7 +68,6 @@ class SchemaEndpointsTest extends WebTestCase
         self::assertArrayHasKey('required', $data['creatable']);
     }
 
-
     /**
      * @throws Throwable
      */
@@ -87,7 +86,6 @@ class SchemaEndpointsTest extends WebTestCase
         self::assertFalse($data['editable']);
         self::assertFalse($data['creatable']);
     }
-
 
     /**
      * @throws Throwable

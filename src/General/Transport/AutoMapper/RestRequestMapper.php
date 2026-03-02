@@ -37,14 +37,6 @@ abstract class RestRequestMapper implements MapperInterface
     /**
      * @return array<int, non-empty-string>
      */
-    protected static function properties(): array
-    {
-        return static::$properties;
-    }
-
-    /**
-     * @return array<int, non-empty-string>
-     */
     public static function getEditableProperties(): array
     {
         return static::properties();
@@ -118,6 +110,14 @@ abstract class RestRequestMapper implements MapperInterface
         }
 
         return $this->getObject($source, $destination);
+    }
+
+    /**
+     * @return array<int, non-empty-string>
+     */
+    protected static function properties(): array
+    {
+        return static::$properties;
     }
 
     /**

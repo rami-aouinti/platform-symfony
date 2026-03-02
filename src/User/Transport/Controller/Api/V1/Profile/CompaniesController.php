@@ -47,7 +47,11 @@ class CompaniesController
     #[OA\Get(
         summary: 'Lister les companies du profil courant',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Retourne les companies liées à l’utilisateur authentifié via ses memberships.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\Response(
         response: 200,
@@ -80,7 +84,9 @@ class CompaniesController
             $this->serializer->serialize(
                 array_values($companies),
                 'json',
-                ['groups' => ['Company.id', 'Company.legalName', 'Company.status', 'Company.photoUrl']],
+                [
+                    'groups' => ['Company.id', 'Company.legalName', 'Company.status', 'Company.photoUrl'],
+                ],
             ),
             json: true,
         );
@@ -94,7 +100,11 @@ class CompaniesController
     #[OA\Get(
         summary: 'Lister les projets du profil courant',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Retourne les projets possédés par l’utilisateur authentifié (et donc accessibles côté profil).',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\Response(
         response: 200,
@@ -116,15 +126,21 @@ class CompaniesController
         $currentUser = $this->getCurrentUserOrDeny();
 
         $projects = $this->projectResource->find(
-            criteria: ['owner' => $currentUser],
-            orderBy: ['name' => 'ASC'],
+            criteria: [
+                'owner' => $currentUser,
+            ],
+            orderBy: [
+                'name' => 'ASC',
+            ],
         );
 
         return new JsonResponse(
             $this->serializer->serialize(
                 $projects,
                 'json',
-                ['groups' => ['Project.id', 'Project.name', 'Project.description', 'Project.status', 'Project.photoUrl']],
+                [
+                    'groups' => ['Project.id', 'Project.name', 'Project.description', 'Project.status', 'Project.photoUrl'],
+                ],
             ),
             json: true,
         );

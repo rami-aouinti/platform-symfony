@@ -354,8 +354,8 @@ final class ResourceSchemaService
      */
     private function guessEndpointFromEntity(string $entityClass): string
     {
-        $shortName = substr($entityClass, (int) strrpos($entityClass, '\\') + 1);
-        $snakeCase = (string) preg_replace('/(?<!^)[A-Z]/', '_$0', $shortName);
+        $shortName = substr($entityClass, (int)strrpos($entityClass, '\\') + 1);
+        $snakeCase = (string)preg_replace('/(?<!^)[A-Z]/', '_$0', $shortName);
         $resource = strtolower(str_replace('__', '_', $snakeCase));
 
         return '/api/v1/' . $resource . 's';

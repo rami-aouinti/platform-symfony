@@ -10,8 +10,8 @@ use App\General\Transport\Rest\Traits\Actions;
 use App\Recruit\Application\Resource\CandidateProfileResource;
 use App\Recruit\Application\Resource\Interfaces\CandidateProfileResourceInterface;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 

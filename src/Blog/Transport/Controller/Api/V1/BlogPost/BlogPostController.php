@@ -10,8 +10,8 @@ use App\Blog\Application\Resource\Interfaces\BlogPostResourceInterface;
 use App\General\Transport\Rest\CrudController;
 use App\General\Transport\Rest\ResponseHandler;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 

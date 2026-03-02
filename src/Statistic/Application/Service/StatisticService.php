@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Statistic\Application\Service;
 
+use BackedEnum;
 use DateInterval;
 use DatePeriod;
 use DateTimeImmutable;
@@ -12,10 +13,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
+use RuntimeException;
 use Throwable;
 use UnitEnum;
-use BackedEnum;
-use RuntimeException;
 
 use function array_filter;
 use function array_map;
@@ -40,10 +40,22 @@ class StatisticService
      * @var array<string, array{class: class-string, field: string}>
      */
     private const STATUS_DISTRIBUTION_TARGETS = [
-        'tasks' => ['class' => 'App\Task\Domain\Entity\Task', 'field' => 'status'],
-        'jobApplications' => ['class' => 'App\Recruit\Domain\Entity\JobApplication', 'field' => 'status'],
-        'jobOffers' => ['class' => 'App\Recruit\Domain\Entity\JobOffer', 'field' => 'status'],
-        'offers' => ['class' => 'App\Recruit\Domain\Entity\Offer', 'field' => 'status'],
+        'tasks' => [
+            'class' => 'App\Task\Domain\Entity\Task',
+            'field' => 'status',
+        ],
+        'jobApplications' => [
+            'class' => 'App\Recruit\Domain\Entity\JobApplication',
+            'field' => 'status',
+        ],
+        'jobOffers' => [
+            'class' => 'App\Recruit\Domain\Entity\JobOffer',
+            'field' => 'status',
+        ],
+        'offers' => [
+            'class' => 'App\Recruit\Domain\Entity\Offer',
+            'field' => 'status',
+        ],
     ];
 
     public function __construct(
@@ -124,7 +136,7 @@ class StatisticService
             }
 
             try {
-                $count = (int) $entityManager->createQueryBuilder()
+                $count = (int)$entityManager->createQueryBuilder()
                     ->select('COUNT(entityAlias)')
                     ->from($metadata->getName(), 'entityAlias')
                     ->getQuery()
@@ -187,14 +199,14 @@ class StatisticService
             }
 
             foreach ($rows as $row) {
-                $day = (string) ($row['day'] ?? '');
+                $day = (string)($row['day'] ?? '');
 
                 if (!str_contains($day, '-')) {
                     continue;
                 }
 
                 $normalizedDay = (new DateTimeImmutable($day))->format('Y-m-d');
-                $points[$normalizedDay] = ($points[$normalizedDay] ?? 0) + (int) ($row['total'] ?? 0);
+                $points[$normalizedDay] = ($points[$normalizedDay] ?? 0) + (int)($row['total'] ?? 0);
             }
         }
 
@@ -204,7 +216,10 @@ class StatisticService
             'days' => $days,
             'entity' => 'all',
             'series' => array_map(
-                static fn (string $day, int $total): array => ['date' => $day, 'value' => $total],
+                static fn (string $day, int $total): array => [
+                    'date' => $day,
+                    'value' => $total,
+                ],
                 array_keys($points),
                 array_values($points),
             ),
@@ -248,14 +263,14 @@ class StatisticService
         }
 
         foreach ($rows as $row) {
-            $day = (string) ($row['day'] ?? '');
+            $day = (string)($row['day'] ?? '');
 
             if (!str_contains($day, '-')) {
                 continue;
             }
 
             $normalizedDay = (new DateTimeImmutable($day))->format('Y-m-d');
-            $points[$normalizedDay] = (int) ($row['total'] ?? 0);
+            $points[$normalizedDay] = (int)($row['total'] ?? 0);
         }
 
         return [
@@ -264,7 +279,10 @@ class StatisticService
             'days' => $days,
             'entity' => $metadata->getReflectionClass()->getShortName(),
             'series' => array_map(
-                static fn (string $day, int $total): array => ['date' => $day, 'value' => $total],
+                static fn (string $day, int $total): array => [
+                    'date' => $day,
+                    'value' => $total,
+                ],
                 array_keys($points),
                 array_values($points),
             ),
@@ -303,7 +321,7 @@ class StatisticService
             $payload[$key] = array_map(
                 fn (array $row): array => [
                     'label' => $this->normalizeLabel($row['label'] ?? ''),
-                    'value' => (int) ($row['value'] ?? 0),
+                    'value' => (int)($row['value'] ?? 0),
                 ],
                 $rows,
             );
@@ -321,7 +339,7 @@ class StatisticService
         $map = [];
 
         foreach ($rows as $row) {
-            $map[(string) $row['entity']] = (int) $row['count'];
+            $map[(string)$row['entity']] = (int)$row['count'];
         }
 
         return $map;
@@ -348,7 +366,8 @@ class StatisticService
                 continue;
             }
 
-            if (strtolower($metadata->getName()) === $normalized
+            if (
+                strtolower($metadata->getName()) === $normalized
                 || strtolower($metadata->getReflectionClass()->getShortName()) === $normalized
             ) {
                 return $metadata;
@@ -402,7 +421,7 @@ class StatisticService
 
         return array_map(
             static fn (array $row): array => [
-                'day' => (string) ($row['day'] ?? ''),
+                'day' => (string)($row['day'] ?? ''),
                 'total' => $row['total'] ?? 0,
             ],
             $rows,
@@ -422,13 +441,13 @@ class StatisticService
     private function normalizeLabel(mixed $label): string
     {
         if ($label instanceof BackedEnum) {
-            return (string) $label->value;
+            return (string)$label->value;
         }
 
         if ($label instanceof UnitEnum) {
             return $label->name;
         }
 
-        return (string) $label;
+        return (string)$label;
     }
 }

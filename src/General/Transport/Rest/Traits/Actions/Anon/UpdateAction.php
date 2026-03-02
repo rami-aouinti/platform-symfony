@@ -48,7 +48,11 @@ trait UpdateAction
             ],
         ),
     )]
-    #[OA\Put(summary: 'Endpoint update', description: 'Documentation standardisée de endpoint.', security: [['Bearer' => []], ['ApiKey' => []]])]
+    #[OA\Put(summary: 'Endpoint update', description: 'Documentation standardisée de endpoint.', security: [[
+        'Bearer' => [],
+    ], [
+        'ApiKey' => [],
+    ]])]
     #[OA\Response(
         response: 200,
         description: 'success',

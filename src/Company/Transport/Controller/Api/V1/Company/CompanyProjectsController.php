@@ -48,7 +48,11 @@ class CompanyProjectsController extends Controller
     #[OA\Get(
         summary: 'Lister les projets d\'une company accessible',
         description: 'Audience cible: utilisateur authentifié (ROLE_LOGGED / IS_AUTHENTICATED_FULLY). Autorisé si l\'utilisateur courant est owner de la company ou membre actif de cette company. Retourne 403 sinon.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\Parameter(
         name: 'id',

@@ -73,7 +73,7 @@ class AbstractResumeChildResourceTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
         $this->expectExceptionMessage('Only resume owner can edit this resume.');
 
-        if ('beforeCreate' === $method) {
+        if ($method === 'beforeCreate') {
             $resource->beforeCreate($this->createMock(RestDtoInterface::class), $entity);
 
             return;

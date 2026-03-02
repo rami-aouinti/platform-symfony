@@ -48,7 +48,11 @@ trait PatchAction
             ],
         ),
     )]
-    #[OA\Patch(summary: 'Endpoint patch', description: 'Documentation standardisée de endpoint.', security: [['Bearer' => []], ['ApiKey' => []]])]
+    #[OA\Patch(summary: 'Endpoint patch', description: 'Documentation standardisée de endpoint.', security: [[
+        'Bearer' => [],
+    ], [
+        'ApiKey' => [],
+    ]])]
     #[OA\Response(
         response: 200,
         description: 'success',

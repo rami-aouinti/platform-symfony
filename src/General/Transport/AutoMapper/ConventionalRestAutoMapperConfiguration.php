@@ -20,18 +20,18 @@ abstract class ConventionalRestAutoMapperConfiguration extends RestAutoMapperCon
      */
     protected static string $dtoBaseClass;
 
+    public function configure(AutoMapperConfigInterface $config): void
+    {
+        static::$requestMapperClasses = static::requestMapperClasses();
+
+        parent::configure($config);
+    }
+
     /**
      * @return array<int, class-string>
      */
     protected static function requestMapperClasses(): array
     {
         return CrudDtoClassResolver::all(static::$dtoBaseClass);
-    }
-
-    public function configure(AutoMapperConfigInterface $config): void
-    {
-        static::$requestMapperClasses = static::requestMapperClasses();
-
-        parent::configure($config);
     }
 }

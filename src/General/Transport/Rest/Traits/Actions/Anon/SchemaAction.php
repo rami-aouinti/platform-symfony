@@ -19,7 +19,11 @@ trait SchemaAction
      * @throws Throwable
      */
     #[Route(path: '/schema', methods: [Request::METHOD_GET])]
-    #[OA\Get(summary: 'Endpoint schema', description: 'Documentation standardisée de endpoint.', security: [['Bearer' => []], ['ApiKey' => []]])]
+    #[OA\Get(summary: 'Endpoint schema', description: 'Documentation standardisée de endpoint.', security: [[
+        'Bearer' => [],
+    ], [
+        'ApiKey' => [],
+    ]])]
     #[OA\Response(response: 400, ref: '#/components/responses/BadRequestError')]
     #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
     #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]

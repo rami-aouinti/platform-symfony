@@ -40,7 +40,11 @@ trait CreateAction
     #[OA\Post(
         summary: 'Créer une ressource',
         description: 'Audience cible: administrateurs. Rôle minimal: ROLE_ADMIN. Périmètre des données: création d’une ressource dans le module sur les champs autorisés.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\RequestBody(
         request: 'body',

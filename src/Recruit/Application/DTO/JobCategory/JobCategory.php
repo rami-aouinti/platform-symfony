@@ -14,8 +14,14 @@ class JobCategory extends RestDto
     protected string $name = '';
     protected string $code = '';
 
-    public function getName(): string { return $this->name; }
-    public function getCode(): string { return $this->code; }
+    public function getName(): string
+    {
+        return $this->name;
+    }
+    public function getCode(): string
+    {
+        return $this->code;
+    }
 
     #[Override]
     public function load(EntityInterface $entity): self

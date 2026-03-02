@@ -295,7 +295,6 @@ class JobApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_NOT_FOUND, $outsiderClient->getResponse()->getStatusCode());
     }
 
-
     /**
      * @throws Throwable
      */

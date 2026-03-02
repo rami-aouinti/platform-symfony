@@ -34,7 +34,11 @@ trait CountAction
         path: '/count',
         methods: [Request::METHOD_GET],
     )]
-    #[OA\Get(summary: 'Endpoint count', description: 'Documentation standardisée de endpoint.', security: [['Bearer' => []], ['ApiKey' => []]])]
+    #[OA\Get(summary: 'Endpoint count', description: 'Documentation standardisée de endpoint.', security: [[
+        'Bearer' => [],
+    ], [
+        'ApiKey' => [],
+    ]])]
     #[OA\Parameter(name: 'where', in: 'query', required: false, schema: new OA\Schema(type: 'string'))]
     #[OA\Parameter(name: 'search', in: 'query', required: false, schema: new OA\Schema(type: 'string'))]
     #[OA\Parameter(name: 'limit', in: 'query', required: false, schema: new OA\Schema(type: 'integer', example: 20))]

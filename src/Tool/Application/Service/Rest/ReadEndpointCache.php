@@ -6,9 +6,9 @@ namespace App\Tool\Application\Service\Rest;
 
 use App\ApiKey\Application\Security\ApiKeyUser;
 use App\User\Application\Security\SecurityUser;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;

@@ -44,7 +44,11 @@ trait PatchAction
     #[OA\Patch(
         summary: 'Modifier partiellement une ressource',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: mise à jour partielle des champs autorisés de la ressource.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\RequestBody(
         request: 'body',

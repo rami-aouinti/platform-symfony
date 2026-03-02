@@ -12,8 +12,8 @@ use App\Task\Application\DTO\Sprint\SprintUpdate;
 use App\Task\Application\Resource\Interfaces\SprintResourceInterface;
 use App\Task\Application\Resource\SprintResource;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 

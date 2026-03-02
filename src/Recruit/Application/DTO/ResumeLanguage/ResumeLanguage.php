@@ -24,14 +24,50 @@ class ResumeLanguage extends RestDto
     protected ?string $level = null;
     protected int $sortOrder = 0;
 
-    public function getResume(): ?Resume { return $this->resume; }
-    public function setResume(?Resume $resume): self { $this->setVisited('resume'); $this->resume = $resume; return $this; }
-    public function getName(): string { return $this->name; }
-    public function setName(string $name): self { $this->setVisited('name'); $this->name = $name; return $this; }
-    public function getLevel(): ?string { return $this->level; }
-    public function setLevel(?string $level): self { $this->setVisited('level'); $this->level = $level; return $this; }
-    public function getSortOrder(): int { return $this->sortOrder; }
-    public function setSortOrder(int $sortOrder): self { $this->setVisited('sortOrder'); $this->sortOrder = $sortOrder; return $this; }
+    public function getResume(): ?Resume
+    {
+        return $this->resume;
+    }
+    public function setResume(?Resume $resume): self
+    {
+        $this->setVisited('resume');
+        $this->resume = $resume;
+
+        return $this;
+    }
+    public function getName(): string
+    {
+        return $this->name;
+    }
+    public function setName(string $name): self
+    {
+        $this->setVisited('name');
+        $this->name = $name;
+
+        return $this;
+    }
+    public function getLevel(): ?string
+    {
+        return $this->level;
+    }
+    public function setLevel(?string $level): self
+    {
+        $this->setVisited('level');
+        $this->level = $level;
+
+        return $this;
+    }
+    public function getSortOrder(): int
+    {
+        return $this->sortOrder;
+    }
+    public function setSortOrder(int $sortOrder): self
+    {
+        $this->setVisited('sortOrder');
+        $this->sortOrder = $sortOrder;
+
+        return $this;
+    }
 
     #[Override]
     public function load(EntityInterface $entity): self

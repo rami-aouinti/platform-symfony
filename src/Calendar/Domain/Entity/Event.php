@@ -64,7 +64,9 @@ class Event implements EntityInterface
     #[Groups(['Event', 'Event.endAt', 'Event.create', 'Event.show', 'Event.edit'])]
     private DateTimeImmutable $endAt;
 
-    #[ORM\Column(name: 'is_all_day', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ORM\Column(name: 'is_all_day', type: Types::BOOLEAN, options: [
+        'default' => false,
+    ])]
     #[Groups(['Event', 'Event.isAllDay', 'Event.create', 'Event.show', 'Event.edit'])]
     private bool $isAllDay = false;
 
@@ -72,15 +74,21 @@ class Event implements EntityInterface
     #[Groups(['Event', 'Event.timezone', 'Event.create', 'Event.show', 'Event.edit'])]
     private ?string $timezone = null;
 
-    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, options: ['default' => 'confirmed'])]
+    #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false, options: [
+        'default' => 'confirmed',
+    ])]
     #[Groups(['Event', 'Event.status', 'Event.create', 'Event.show', 'Event.edit'])]
     private string $status = 'confirmed';
 
-    #[ORM\Column(name: 'visibility', type: Types::STRING, length: 32, nullable: false, options: ['default' => 'public'])]
+    #[ORM\Column(name: 'visibility', type: Types::STRING, length: 32, nullable: false, options: [
+        'default' => 'public',
+    ])]
     #[Groups(['Event', 'Event.visibility', 'Event.create', 'Event.show', 'Event.edit'])]
     private string $visibility = 'public';
 
-    #[ORM\Column(name: 'is_cancelled', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ORM\Column(name: 'is_cancelled', type: Types::BOOLEAN, options: [
+        'default' => false,
+    ])]
     #[Groups(['Event', 'Event.isCancelled', 'Event.create', 'Event.show', 'Event.edit'])]
     private bool $isCancelled = false;
 
@@ -152,54 +160,254 @@ class Event implements EntityInterface
         return $this->id->toString();
     }
 
-    public function getTitle(): string { return $this->title; }
-    public function setTitle(string $title): self { $this->title = $title; return $this; }
-    public function getUser(): ?User { return $this->user; }
-    public function setUser(?User $user): self { $this->user = $user; return $this; }
-    public function getDescription(): ?string { return $this->description; }
-    public function setDescription(?string $description): self { $this->description = $description; return $this; }
-    public function getLocation(): ?string { return $this->location; }
-    public function setLocation(?string $location): self { $this->location = $location; return $this; }
-    public function getStartAt(): DateTimeImmutable { return $this->startAt; }
-    public function setStartAt(DateTimeImmutable $startAt): self { $this->startAt = $startAt; return $this; }
-    public function getEndAt(): DateTimeImmutable { return $this->endAt; }
-    public function setEndAt(DateTimeImmutable $endAt): self { $this->endAt = $endAt; return $this; }
-    public function isAllDay(): bool { return $this->isAllDay; }
-    public function setIsAllDay(bool $isAllDay): self { $this->isAllDay = $isAllDay; return $this; }
-    public function getTimezone(): ?string { return $this->timezone; }
-    public function setTimezone(?string $timezone): self { $this->timezone = $timezone; return $this; }
-    public function getStatus(): string { return $this->status; }
-    public function setStatus(string $status): self { $this->status = $status; return $this; }
-    public function getVisibility(): string { return $this->visibility; }
-    public function setVisibility(string $visibility): self { $this->visibility = $visibility; return $this; }
-    public function isCancelled(): bool { return $this->isCancelled; }
-    public function setIsCancelled(bool $isCancelled): self { $this->isCancelled = $isCancelled; return $this; }
-    public function getUrl(): ?string { return $this->url; }
-    public function setUrl(?string $url): self { $this->url = $url; return $this; }
-    public function getColor(): ?string { return $this->color; }
-    public function setColor(?string $color): self { $this->color = $color; return $this; }
-    public function getBackgroundColor(): ?string { return $this->backgroundColor; }
-    public function setBackgroundColor(?string $backgroundColor): self { $this->backgroundColor = $backgroundColor; return $this; }
-    public function getBorderColor(): ?string { return $this->borderColor; }
-    public function setBorderColor(?string $borderColor): self { $this->borderColor = $borderColor; return $this; }
-    public function getTextColor(): ?string { return $this->textColor; }
-    public function setTextColor(?string $textColor): self { $this->textColor = $textColor; return $this; }
-    public function getOrganizerName(): ?string { return $this->organizerName; }
-    public function setOrganizerName(?string $organizerName): self { $this->organizerName = $organizerName; return $this; }
-    public function getOrganizerEmail(): ?string { return $this->organizerEmail; }
-    public function setOrganizerEmail(?string $organizerEmail): self { $this->organizerEmail = $organizerEmail; return $this; }
-    public function getAttendees(): ?array { return $this->attendees; }
-    public function setAttendees(?array $attendees): self { $this->attendees = $attendees; return $this; }
-    public function getRrule(): ?string { return $this->rrule; }
-    public function setRrule(?string $rrule): self { $this->rrule = $rrule; return $this; }
-    public function getRecurrenceExceptions(): ?array { return $this->recurrenceExceptions; }
-    public function setRecurrenceExceptions(?array $recurrenceExceptions): self { $this->recurrenceExceptions = $recurrenceExceptions; return $this; }
-    public function getRecurrenceEndAt(): ?DateTimeImmutable { return $this->recurrenceEndAt; }
-    public function setRecurrenceEndAt(?DateTimeImmutable $recurrenceEndAt): self { $this->recurrenceEndAt = $recurrenceEndAt; return $this; }
-    public function getRecurrenceCount(): ?int { return $this->recurrenceCount; }
-    public function setRecurrenceCount(?int $recurrenceCount): self { $this->recurrenceCount = $recurrenceCount; return $this; }
-    public function getReminders(): ?array { return $this->reminders; }
-    public function setReminders(?array $reminders): self { $this->reminders = $reminders; return $this; }
-    public function getMetadata(): ?array { return $this->metadata; }
-    public function setMetadata(?array $metadata): self { $this->metadata = $metadata; return $this; }
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+    public function setLocation(?string $location): self
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+    public function getStartAt(): DateTimeImmutable
+    {
+        return $this->startAt;
+    }
+    public function setStartAt(DateTimeImmutable $startAt): self
+    {
+        $this->startAt = $startAt;
+
+        return $this;
+    }
+    public function getEndAt(): DateTimeImmutable
+    {
+        return $this->endAt;
+    }
+    public function setEndAt(DateTimeImmutable $endAt): self
+    {
+        $this->endAt = $endAt;
+
+        return $this;
+    }
+    public function isAllDay(): bool
+    {
+        return $this->isAllDay;
+    }
+    public function setIsAllDay(bool $isAllDay): self
+    {
+        $this->isAllDay = $isAllDay;
+
+        return $this;
+    }
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
+    }
+    public function setTimezone(?string $timezone): self
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+    public function getVisibility(): string
+    {
+        return $this->visibility;
+    }
+    public function setVisibility(string $visibility): self
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+    public function isCancelled(): bool
+    {
+        return $this->isCancelled;
+    }
+    public function setIsCancelled(bool $isCancelled): self
+    {
+        $this->isCancelled = $isCancelled;
+
+        return $this;
+    }
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+    public function setUrl(?string $url): self
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+    public function setColor(?string $color): self
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+    public function getBackgroundColor(): ?string
+    {
+        return $this->backgroundColor;
+    }
+    public function setBackgroundColor(?string $backgroundColor): self
+    {
+        $this->backgroundColor = $backgroundColor;
+
+        return $this;
+    }
+    public function getBorderColor(): ?string
+    {
+        return $this->borderColor;
+    }
+    public function setBorderColor(?string $borderColor): self
+    {
+        $this->borderColor = $borderColor;
+
+        return $this;
+    }
+    public function getTextColor(): ?string
+    {
+        return $this->textColor;
+    }
+    public function setTextColor(?string $textColor): self
+    {
+        $this->textColor = $textColor;
+
+        return $this;
+    }
+    public function getOrganizerName(): ?string
+    {
+        return $this->organizerName;
+    }
+    public function setOrganizerName(?string $organizerName): self
+    {
+        $this->organizerName = $organizerName;
+
+        return $this;
+    }
+    public function getOrganizerEmail(): ?string
+    {
+        return $this->organizerEmail;
+    }
+    public function setOrganizerEmail(?string $organizerEmail): self
+    {
+        $this->organizerEmail = $organizerEmail;
+
+        return $this;
+    }
+    public function getAttendees(): ?array
+    {
+        return $this->attendees;
+    }
+    public function setAttendees(?array $attendees): self
+    {
+        $this->attendees = $attendees;
+
+        return $this;
+    }
+    public function getRrule(): ?string
+    {
+        return $this->rrule;
+    }
+    public function setRrule(?string $rrule): self
+    {
+        $this->rrule = $rrule;
+
+        return $this;
+    }
+    public function getRecurrenceExceptions(): ?array
+    {
+        return $this->recurrenceExceptions;
+    }
+    public function setRecurrenceExceptions(?array $recurrenceExceptions): self
+    {
+        $this->recurrenceExceptions = $recurrenceExceptions;
+
+        return $this;
+    }
+    public function getRecurrenceEndAt(): ?DateTimeImmutable
+    {
+        return $this->recurrenceEndAt;
+    }
+    public function setRecurrenceEndAt(?DateTimeImmutable $recurrenceEndAt): self
+    {
+        $this->recurrenceEndAt = $recurrenceEndAt;
+
+        return $this;
+    }
+    public function getRecurrenceCount(): ?int
+    {
+        return $this->recurrenceCount;
+    }
+    public function setRecurrenceCount(?int $recurrenceCount): self
+    {
+        $this->recurrenceCount = $recurrenceCount;
+
+        return $this;
+    }
+    public function getReminders(): ?array
+    {
+        return $this->reminders;
+    }
+    public function setReminders(?array $reminders): self
+    {
+        $this->reminders = $reminders;
+
+        return $this;
+    }
+    public function getMetadata(): ?array
+    {
+        return $this->metadata;
+    }
+    public function setMetadata(?array $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
 }

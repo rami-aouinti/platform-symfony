@@ -21,7 +21,6 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use function in_array;
-use function is_array;
 use function is_string;
 
 /**

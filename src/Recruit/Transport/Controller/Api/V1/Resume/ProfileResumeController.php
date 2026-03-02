@@ -44,7 +44,9 @@ class ProfileResumeController extends Controller
     use UpdateMethod;
     use SchemaMethod;
 
-    /** @var array<string, string> */
+    /**
+     * @var array<string, string>
+     */
     protected static array $dtoClasses = [
         Controller::METHOD_CREATE => ResumeCreate::class,
         Controller::METHOD_UPDATE => ResumeUpdate::class,
@@ -82,25 +84,33 @@ class ProfileResumeController extends Controller
         return $this->schemaMethod($request, $method);
     }
 
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_GET])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_GET])]
     public function findOneAction(Request $request, string $id): Response
     {
         return $this->findOneMethod($request, $id);
     }
 
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PUT])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_PUT])]
     public function updateAction(Request $request, ResumeUpdate $restDto, string $id): Response
     {
         return $this->updateMethod($request, $restDto, $id);
     }
 
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_PATCH])]
     public function patchAction(Request $request, ResumePatch $restDto, string $id): Response
     {
         return $this->patchMethod($request, $restDto, $id);
     }
 
-    #[Route(path: '/{id}', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_DELETE])]
+    #[Route(path: '/{id}', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_DELETE])]
     public function deleteAction(Request $request, string $id): Response
     {
         return $this->deleteMethod($request, $id);

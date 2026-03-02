@@ -44,7 +44,11 @@ trait UpdateAction
     #[OA\Put(
         summary: 'Remplacer une ressource',
         description: 'Audience cible: administrateurs. Rôle minimal: ROLE_ADMIN. Périmètre des données: remplacement complet de la ressource ciblée dans le module.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\RequestBody(
         request: 'body',

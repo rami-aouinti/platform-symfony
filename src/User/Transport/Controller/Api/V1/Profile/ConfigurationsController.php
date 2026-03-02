@@ -46,7 +46,11 @@ class ConfigurationsController
     #[OA\Get(
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Retourne les configurations rattachées au profil de l’utilisateur authentifié. Filtre optionnel par keyName (recherche partielle insensible à la casse).',
         summary: 'Lister les configurations liées au profil courant',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\Parameter(name: 'keyName', description: 'Filtre partiel sur keyName (contains, case-insensitive).', in: 'query', required: false, schema: new OA\Schema(type: 'string', example: 'dashboard'))]
     #[OA\Response(
@@ -62,7 +66,10 @@ class ConfigurationsController
                     new OA\Property(
                         property: 'value',
                         type: 'object',
-                        example: ['theme' => 'dark', 'widgets' => ['tasks', 'calendar']],
+                        example: [
+                            'theme' => 'dark',
+                            'widgets' => ['tasks', 'calendar'],
+                        ],
                         additionalProperties: true
                     ),
                     new OA\Property(property: 'status', type: 'string', example: 'active'),
@@ -96,7 +103,11 @@ class ConfigurationsController
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Post(
         summary: 'Ajouter une configuration au profil courant',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\RequestBody(
         required: true,
@@ -105,7 +116,10 @@ class ConfigurationsController
             properties: [
                 new OA\Property(property: 'code', type: 'string', example: 'ui.preferences'),
                 new OA\Property(property: 'keyName', type: 'string', example: 'dashboard.widgets'),
-                new OA\Property(property: 'value', type: 'object', additionalProperties: true, example: ['theme' => 'dark', 'widgets' => ['tasks', 'calendar']]),
+                new OA\Property(property: 'value', type: 'object', additionalProperties: true, example: [
+                    'theme' => 'dark',
+                    'widgets' => ['tasks', 'calendar'],
+                ]),
                 new OA\Property(property: 'status', type: 'string', example: 'active'),
             ],
             type: 'object',
@@ -134,11 +148,17 @@ class ConfigurationsController
      */
     #[Route(
         path: '/v1/me/profile/configurations/{configurationId}',
-        requirements: ['configurationId' => Requirement::UUID_V1],
+        requirements: [
+            'configurationId' => Requirement::UUID_V1,
+        ],
         methods: [Request::METHOD_PUT],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-    #[OA\Put(summary: 'Mettre à jour une configuration du profil courant', security: [['Bearer' => []], ['ApiKey' => []]])]
+    #[OA\Put(summary: 'Mettre à jour une configuration du profil courant', security: [[
+        'Bearer' => [],
+    ], [
+        'ApiKey' => [],
+    ]])]
     #[OA\Parameter(name: 'configurationId', in: 'path', required: true, schema: new OA\Schema(type: 'string', format: 'uuid', example: '018f7a5a-9f30-7b24-8e7d-12d8d9792d7e'))]
     #[OA\RequestBody(
         required: true,
@@ -147,7 +167,10 @@ class ConfigurationsController
             properties: [
                 new OA\Property(property: 'code', type: 'string', example: 'ui.preferences'),
                 new OA\Property(property: 'keyName', type: 'string', example: 'dashboard.widgets'),
-                new OA\Property(property: 'value', type: 'object', additionalProperties: true, example: ['theme' => 'light', 'widgets' => ['calendar']]),
+                new OA\Property(property: 'value', type: 'object', additionalProperties: true, example: [
+                    'theme' => 'light',
+                    'widgets' => ['calendar'],
+                ]),
                 new OA\Property(property: 'status', type: 'string', example: 'active'),
             ],
             type: 'object',
@@ -173,11 +196,17 @@ class ConfigurationsController
      */
     #[Route(
         path: '/v1/me/profile/configurations/{configurationId}',
-        requirements: ['configurationId' => Requirement::UUID_V1],
+        requirements: [
+            'configurationId' => Requirement::UUID_V1,
+        ],
         methods: [Request::METHOD_PATCH],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-    #[OA\Patch(summary: 'Mettre à jour partiellement une configuration du profil courant', security: [['Bearer' => []], ['ApiKey' => []]])]
+    #[OA\Patch(summary: 'Mettre à jour partiellement une configuration du profil courant', security: [[
+        'Bearer' => [],
+    ], [
+        'ApiKey' => [],
+    ]])]
     #[OA\Parameter(name: 'configurationId', in: 'path', required: true, schema: new OA\Schema(type: 'string', format: 'uuid', example: '018f7a5a-9f30-7b24-8e7d-12d8d9792d7e'))]
     #[OA\RequestBody(
         required: true,
@@ -185,7 +214,9 @@ class ConfigurationsController
             properties: [
                 new OA\Property(property: 'code', type: 'string', example: 'ui.preferences'),
                 new OA\Property(property: 'keyName', type: 'string', example: 'dashboard.widgets'),
-                new OA\Property(property: 'value', type: 'object', additionalProperties: true, example: ['theme' => 'dark']),
+                new OA\Property(property: 'value', type: 'object', additionalProperties: true, example: [
+                    'theme' => 'dark',
+                ]),
                 new OA\Property(property: 'status', type: 'string', example: 'archived'),
             ],
             type: 'object',
@@ -208,11 +239,17 @@ class ConfigurationsController
 
     #[Route(
         path: '/v1/me/profile/configurations/{configurationId}',
-        requirements: ['configurationId' => Requirement::UUID_V1],
+        requirements: [
+            'configurationId' => Requirement::UUID_V1,
+        ],
         methods: [Request::METHOD_DELETE],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-    #[OA\Delete(summary: 'Supprimer une configuration du profil courant', security: [['Bearer' => []], ['ApiKey' => []]])]
+    #[OA\Delete(summary: 'Supprimer une configuration du profil courant', security: [[
+        'Bearer' => [],
+    ], [
+        'ApiKey' => [],
+    ]])]
     #[OA\Parameter(name: 'configurationId', in: 'path', required: true, schema: new OA\Schema(type: 'string', format: 'uuid', example: '018f7a5a-9f30-7b24-8e7d-12d8d9792d7e'))]
     #[OA\Response(response: 204, description: 'Configuration deleted')]
     #[OA\Response(response: 404, description: 'Configuration not found for current user')]
@@ -314,7 +351,9 @@ class ConfigurationsController
             $this->serializer->serialize(
                 $data,
                 'json',
-                ['groups' => ['Configuration.show']],
+                [
+                    'groups' => ['Configuration.show'],
+                ],
             ),
             $status,
             json: true,

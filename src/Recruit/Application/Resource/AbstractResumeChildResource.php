@@ -6,8 +6,8 @@ namespace App\Recruit\Application\Resource;
 
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
-use App\General\Domain\Repository\Interfaces\BaseRepositoryInterface;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\General\Domain\Repository\Interfaces\BaseRepositoryInterface;
 use App\Recruit\Domain\Entity\ResumeEducation;
 use App\Recruit\Domain\Entity\ResumeExperience;
 use App\Recruit\Domain\Entity\ResumeLanguage;

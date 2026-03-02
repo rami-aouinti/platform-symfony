@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\User\Transport\Controller\Api\V1\Profile;
 
-use App\General\Domain\Utils\JSON;
 use App\General\Domain\Enum\Language;
 use App\General\Domain\Enum\Locale;
+use App\General\Domain\Utils\JSON;
 use App\Role\Application\Security\Interfaces\RolesServiceInterface;
 use App\User\Application\Resource\UserResource;
 use App\User\Domain\Entity\Address;
@@ -58,7 +58,11 @@ class IndexController
     #[OA\Get(
         summary: 'Lire le profil courant',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: profil complet de l’utilisateur authentifié uniquement. Champs modifiables via les endpoints /me: username, firstName, lastName, email, timezone, language, locale, userProfile.phone, userProfile.bio, userProfile.contacts, userProfile.birthDate, avatar et addresses. Toute gestion des autres utilisateurs reste sur /api/v1/admin/users/* (ROLE_ADMIN ou ROLE_ROOT).',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\Response(
         response: 200,
@@ -89,7 +93,11 @@ class IndexController
     #[OA\Patch(
         summary: 'Mettre à jour partiellement le profil courant',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: uniquement les champs du profil de l’utilisateur authentifié. Champs modifiables ici: username, firstName, lastName, email, timezone, language, locale, userProfile.phone, userProfile.bio, userProfile.contacts, userProfile.birthDate. Les champs sensibles admin (rôles, groupes, état global des autres comptes) ne sont modifiables que via /api/v1/admin/users/*.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\RequestBody(
         required: true,
@@ -172,7 +180,9 @@ class IndexController
         $payload = JSON::decode($request->getContent() ?: '{}', true);
 
         if (!isset($payload['url']) || !is_string($payload['url']) || $payload['url'] === '') {
-            return new JsonResponse(['message' => 'Field "url" is required.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse([
+                'message' => 'Field "url" is required.',
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $profile = $loggedInUser->getOrCreateUserProfile();
@@ -204,7 +214,9 @@ class IndexController
 
         foreach (['streetLine1', 'postalCode', 'city', 'countryCode'] as $requiredField) {
             if (!isset($payload[$requiredField]) || !is_string($payload[$requiredField]) || $payload[$requiredField] === '') {
-                return new JsonResponse(['message' => sprintf('Field "%s" is required.', $requiredField)], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse([
+                    'message' => sprintf('Field "%s" is required.', $requiredField),
+                ], Response::HTTP_BAD_REQUEST);
             }
         }
 
@@ -235,7 +247,9 @@ class IndexController
      */
     #[Route(
         path: '/v1/me/profile/addresses/{addressId}',
-        requirements: ['addressId' => Requirement::UUID_V1],
+        requirements: [
+            'addressId' => Requirement::UUID_V1,
+        ],
         methods: [Request::METHOD_PATCH],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
@@ -278,7 +292,9 @@ class IndexController
      */
     #[Route(
         path: '/v1/me/profile/addresses/{addressId}',
-        requirements: ['addressId' => Requirement::UUID_V1],
+        requirements: [
+            'addressId' => Requirement::UUID_V1,
+        ],
         methods: [Request::METHOD_DELETE],
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]

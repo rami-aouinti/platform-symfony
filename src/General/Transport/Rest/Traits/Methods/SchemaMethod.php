@@ -38,7 +38,9 @@ trait SchemaMethod
 
         $data = $this->rememberReadEndpoint(
             $request,
-            ['type' => 'schema'],
+            [
+                'type' => 'schema',
+            ],
             fn () => $this->getResourceSchemaService()->build(
                 $resource,
                 $this->resolveSchemaDtoClasses(),
@@ -56,6 +58,26 @@ trait SchemaMethod
         $this->resourceSchemaService = $resourceSchemaService;
 
         return $this;
+    }
+
+    /**
+     * Override this in specific controllers when you need manual schema control.
+     *
+     * Supported format:
+     *  [
+     *      'displayable' => false|[...],
+     *      'editable' => false|[...],
+     *      'creatable' => false|[
+     *          'fields' => [...],
+     *          'required' => ['title'],
+     *      ],
+     *  ]
+     *
+     * @return array<string, mixed>
+     */
+    protected function getSchemaFieldConfiguration(): array
+    {
+        return [];
     }
 
     /**
@@ -93,26 +115,6 @@ trait SchemaMethod
         } catch (Throwable) {
             return null;
         }
-    }
-
-    /**
-     * Override this in specific controllers when you need manual schema control.
-     *
-     * Supported format:
-     *  [
-     *      'displayable' => false|[...],
-     *      'editable' => false|[...],
-     *      'creatable' => false|[
-     *          'fields' => [...],
-     *          'required' => ['title'],
-     *      ],
-     *  ]
-     *
-     * @return array<string, mixed>
-     */
-    protected function getSchemaFieldConfiguration(): array
-    {
-        return [];
     }
 
     private function getResourceSchemaService(): ResourceSchemaService

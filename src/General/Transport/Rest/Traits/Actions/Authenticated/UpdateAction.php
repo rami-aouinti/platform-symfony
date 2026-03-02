@@ -44,7 +44,11 @@ trait UpdateAction
     #[OA\Put(
         summary: 'Remplacer une ressource',
         description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Périmètre des données: remplacement complet de la ressource ciblée dans le module.',
-        security: [['Bearer' => []], ['ApiKey' => []]],
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
     )]
     #[OA\RequestBody(
         request: 'body',

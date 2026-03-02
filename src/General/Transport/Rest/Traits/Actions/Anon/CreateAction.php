@@ -44,7 +44,11 @@ trait CreateAction
             ],
         ),
     )]
-    #[OA\Post(summary: 'Endpoint create', description: 'Documentation standardisée de endpoint.', security: [['Bearer' => []], ['ApiKey' => []]])]
+    #[OA\Post(summary: 'Endpoint create', description: 'Documentation standardisée de endpoint.', security: [[
+        'Bearer' => [],
+    ], [
+        'ApiKey' => [],
+    ]])]
     #[OA\Response(
         response: 201,
         description: 'created',

@@ -6,10 +6,10 @@ namespace App\Chat\Infrastructure\Repository;
 
 use App\Chat\Domain\Entity\Conversation;
 use App\Chat\Domain\Entity\ConversationParticipant as Entity;
-use App\User\Domain\Entity\User;
 use App\Chat\Domain\Repository\Interfaces\ConversationParticipantRepositoryInterface;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Infrastructure\Repository\BaseRepository;
+use App\User\Domain\Entity\User;
 use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 

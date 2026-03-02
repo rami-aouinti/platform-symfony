@@ -41,6 +41,11 @@ class RoleController extends Controller
     use Actions\Admin\IdsAction;
     use Actions\Admin\SchemaAction;
 
+    public function __construct(
+        RoleResource $resource,
+    ) {
+        parent::__construct($resource);
+    }
 
     /**
      * Example of manual and intelligent schema control for this module.
@@ -62,11 +67,5 @@ class RoleController extends Controller
             'creatable' => false,
             'editable' => false,
         ];
-    }
-
-    public function __construct(
-        RoleResource $resource,
-    ) {
-        parent::__construct($resource);
     }
 }

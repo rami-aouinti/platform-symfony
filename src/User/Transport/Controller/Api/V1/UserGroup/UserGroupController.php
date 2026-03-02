@@ -12,8 +12,8 @@ use App\User\Application\DTO\UserGroup\UserGroupPatch;
 use App\User\Application\DTO\UserGroup\UserGroupUpdate;
 use App\User\Application\Resource\UserGroupResource;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 

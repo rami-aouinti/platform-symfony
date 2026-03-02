@@ -135,14 +135,29 @@ final class LoadEventData extends Fixture implements OrderedFixtureInterface
                 ->setOrganizerName('Platform Team')
                 ->setOrganizerEmail('platform@test.com')
                 ->setAttendees([
-                    ['name' => 'John', 'email' => 'john.user@test.com'],
-                    ['name' => 'Alice', 'email' => 'alice.user@test.com'],
+                    [
+                        'name' => 'John',
+                        'email' => 'john.user@test.com',
+                    ],
+                    [
+                        'name' => 'Alice',
+                        'email' => 'alice.user@test.com',
+                    ],
                 ])
                 ->setReminders([
-                    ['type' => 'email', 'minutesBefore' => 30],
-                    ['type' => 'popup', 'minutesBefore' => 10],
+                    [
+                        'type' => 'email',
+                        'minutesBefore' => 30,
+                    ],
+                    [
+                        'type' => 'popup',
+                        'minutesBefore' => 10,
+                    ],
                 ])
-                ->setMetadata(['source' => 'fixtures', 'version' => 1]);
+                ->setMetadata([
+                    'source' => 'fixtures',
+                    'version' => 1,
+                ]);
 
             if ($reference === 'Event-recurring-daily-standup') {
                 $event

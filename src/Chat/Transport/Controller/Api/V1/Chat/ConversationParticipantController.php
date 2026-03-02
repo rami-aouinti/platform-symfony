@@ -29,7 +29,9 @@ class ConversationParticipantController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/api/v1/me/chat/conversations/{id}/participants', requirements: ['id' => Requirement::UUID_V1], methods: [Request::METHOD_POST])]
+    #[Route(path: '/api/v1/me/chat/conversations/{id}/participants', requirements: [
+        'id' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_POST])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Post(summary: 'Add participant to a conversation for current user')]
     #[OA\RequestBody(required: true, content: new JsonContent(
@@ -50,7 +52,10 @@ class ConversationParticipantController extends AbstractController
         return $this->responseHandler->createResponse($request, $this->resource->addParticipant($id, $userId), $this->resource);
     }
 
-    #[Route(path: '/api/v1/me/chat/conversations/{id}/participants/{userId}', requirements: ['id' => Requirement::UUID_V1, 'userId' => Requirement::UUID_V1], methods: [Request::METHOD_DELETE])]
+    #[Route(path: '/api/v1/me/chat/conversations/{id}/participants/{userId}', requirements: [
+        'id' => Requirement::UUID_V1,
+        'userId' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_DELETE])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Delete(summary: 'Remove participant from a conversation for current user')]
     public function removeAction(Request $request, string $id, string $userId): Response
