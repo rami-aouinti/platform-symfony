@@ -10,6 +10,7 @@ use App\Task\Domain\Repository\Interfaces\SprintRepositoryInterface;
 use DateTimeImmutable;
 use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
+use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 
 /**
  * @method Entity|null find(string $id, LockMode|int|null $lockMode = null, ?int $lockVersion = null, ?string $entityManagerName = null)
@@ -31,7 +32,7 @@ class SprintRepository extends BaseRepository implements SprintRepositoryInterfa
         $qb = $this->createQueryBuilder('s')
             ->join('s.company', 'company')
             ->andWhere('company.id = :companyId')
-            ->setParameter('companyId', $companyId)
+            ->setParameter('companyId', $companyId, UuidBinaryOrderedTimeType::NAME)
             ->orderBy('s.startDate', 'DESC');
 
         if ($active !== null) {

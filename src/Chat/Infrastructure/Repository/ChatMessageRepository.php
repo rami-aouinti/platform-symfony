@@ -10,6 +10,7 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Infrastructure\Repository\BaseRepository;
 use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
+use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 
 /**
  * @method Entity|null find(string $id, LockMode|int|null $lockMode = null, ?int $lockVersion = null, ?string $entityManagerName = null)
@@ -42,7 +43,7 @@ class ChatMessageRepository extends BaseRepository implements ChatMessageReposit
             ->addSelect('sender')
             ->join('message.sender', 'sender')
             ->where('conversation.id = :conversationId')
-            ->setParameter('conversationId', $conversationId)
+            ->setParameter('conversationId', $conversationId, UuidBinaryOrderedTimeType::NAME)
             ->orderBy('message.createdAt', 'ASC')
             ->getQuery()
             ->getResult();

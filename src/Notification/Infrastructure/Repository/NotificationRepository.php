@@ -10,6 +10,7 @@ use App\Notification\Domain\Repository\Interfaces\NotificationRepositoryInterfac
 use DateTimeInterface;
 use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
+use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 
 /**
  * @method Entity|null find(string $id, LockMode|int|null $lockMode = null, ?int $lockVersion = null, ?string $entityManagerName = null)
@@ -33,7 +34,7 @@ class NotificationRepository extends BaseRepository implements NotificationRepos
             ->select('COUNT(notification.id)')
             ->where('notification.user = :userId')
             ->andWhere('notification.readAt IS NULL')
-            ->setParameter('userId', $userId)
+            ->setParameter('userId', $userId, UuidBinaryOrderedTimeType::NAME)
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -46,7 +47,7 @@ class NotificationRepository extends BaseRepository implements NotificationRepos
             ->where('notification.user = :userId')
             ->andWhere('notification.readAt IS NULL')
             ->setParameter('readAt', $readAt)
-            ->setParameter('userId', $userId)
+            ->setParameter('userId', $userId, UuidBinaryOrderedTimeType::NAME)
             ->getQuery()
             ->execute();
     }

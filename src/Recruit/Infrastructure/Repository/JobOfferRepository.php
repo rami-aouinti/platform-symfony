@@ -15,6 +15,7 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
 
 use function assert;
 use function usort;
@@ -336,17 +337,47 @@ class JobOfferRepository extends BaseRepository implements JobOfferRepositoryInt
     ): void {
         if ($skills !== []) {
             $queryBuilder
-                ->innerJoin('entity.skills', $parameterPrefix . 'Skill')
-                ->andWhere($parameterPrefix . 'Skill.id IN (:' . $parameterPrefix . 'Skills)')
-                ->setParameter($parameterPrefix . 'Skills', $skills);
+                ->innerJoin('entity.skills', $parameterPrefix . 'Skill');
+
+            $this->addUuidInCondition(
+                $queryBuilder,
+                $parameterPrefix . 'Skill.id',
+                $skills,
+                $parameterPrefix . 'Skills',
+            );
         }
 
         if ($languages !== []) {
             $queryBuilder
-                ->innerJoin('entity.languages', $parameterPrefix . 'Language')
-                ->andWhere($parameterPrefix . 'Language.id IN (:' . $parameterPrefix . 'Languages)')
-                ->setParameter($parameterPrefix . 'Languages', $languages);
+                ->innerJoin('entity.languages', $parameterPrefix . 'Language');
+
+            $this->addUuidInCondition(
+                $queryBuilder,
+                $parameterPrefix . 'Language.id',
+                $languages,
+                $parameterPrefix . 'Languages',
+            );
         }
+    }
+
+    /**
+     * @param array<int, string> $uuids
+     */
+    private function addUuidInCondition(
+        QueryBuilder $queryBuilder,
+        string $field,
+        array $uuids,
+        string $parameterPrefix,
+    ): void {
+        $placeholders = [];
+
+        foreach ($uuids as $index => $uuid) {
+            $parameter = $parameterPrefix . $index;
+            $placeholders[] = ':' . $parameter;
+            $queryBuilder->setParameter($parameter, $uuid, UuidBinaryOrderedTimeType::NAME);
+        }
+
+        $queryBuilder->andWhere($field . ' IN (' . implode(', ', $placeholders) . ')');
     }
 
     /**
