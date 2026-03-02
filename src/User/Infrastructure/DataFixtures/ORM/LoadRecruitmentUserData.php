@@ -38,7 +38,7 @@ final class LoadRecruitmentUserData extends Fixture implements OrderedFixtureInt
             ->setPlainPassword('password-user')
             ->addUserGroup($group);
 
-        PhpUnitUtil::setProperty('id', UuidHelper::fromString('20000000-0000-1000-8000-000000000010'), $user);
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString('20000000-0000-1000-8000-000000000013'), $user);
 
         $manager->persist($user);
         $manager->flush();
