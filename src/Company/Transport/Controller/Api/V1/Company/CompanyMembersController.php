@@ -66,9 +66,11 @@ class CompanyMembersController extends Controller
     public function inviteOrAttachAction(Request $request, string $companyId): Response
     {
         $payload = $request->toArray();
+        $userId = (string)($payload['id'] ?? $payload['userId'] ?? '');
+
         $membership = $this->getResource()->inviteOrAttach(
             $companyId,
-            (string)($payload['userId'] ?? ''),
+            $userId,
             isset($payload['role']) ? (string)$payload['role'] : null,
             isset($payload['status']) ? (string)$payload['status'] : null,
         );
