@@ -9,11 +9,13 @@ use App\Calendar\Application\Resource\Interfaces\EventResourceInterface;
 use App\Calendar\Domain\Entity\Event as EventEntity;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Transport\Rest\CrudController;
+use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
@@ -30,15 +32,19 @@ class MeEventController extends CrudController
 
     private ?string $currentUserId = null;
 
-    public function __construct(EventResourceInterface $resource)
+    public function __construct(
+        EventResourceInterface $resource,
+        private readonly UserTypeIdentification $userTypeIdentification,
+    )
     {
         parent::__construct($resource);
     }
 
     /** @throws Throwable */
     #[Route(path: '', methods: [Request::METHOD_GET])]
-    public function findAction(Request $request, User $loggedInUser): Response
+    public function findAction(Request $request): Response
     {
+        $loggedInUser = $this->getCurrentUserOrDeny();
         $this->currentUserId = $loggedInUser->getId();
 
         return $this->findMethod($request);
@@ -46,8 +52,9 @@ class MeEventController extends CrudController
 
     /** @throws Throwable */
     #[Route(path: '/{id}', methods: [Request::METHOD_GET])]
-    public function findOneAction(Request $request, string $id, User $loggedInUser): Response
+    public function findOneAction(Request $request, string $id): Response
     {
+        $loggedInUser = $this->getCurrentUserOrDeny();
         $this->assertOwnedEvent($id, $loggedInUser);
 
         return $this->findOneMethod($request, $id);
@@ -55,8 +62,10 @@ class MeEventController extends CrudController
 
     /** @throws Throwable */
     #[Route(path: '', methods: [Request::METHOD_POST])]
-    public function createAction(Request $request, RestDtoInterface $restDto, User $loggedInUser): Response
+    public function createAction(Request $request, RestDtoInterface $restDto): Response
     {
+        $loggedInUser = $this->getCurrentUserOrDeny();
+
         if ($restDto instanceof Event) {
             $restDto->setUser($loggedInUser);
         }
@@ -66,8 +75,9 @@ class MeEventController extends CrudController
 
     /** @throws Throwable */
     #[Route(path: '/{id}', methods: [Request::METHOD_PUT])]
-    public function updateAction(Request $request, string $id, RestDtoInterface $restDto, User $loggedInUser): Response
+    public function updateAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
+        $loggedInUser = $this->getCurrentUserOrDeny();
         $this->assertOwnedEvent($id, $loggedInUser);
 
         if ($restDto instanceof Event) {
@@ -79,8 +89,9 @@ class MeEventController extends CrudController
 
     /** @throws Throwable */
     #[Route(path: '/{id}', methods: [Request::METHOD_PATCH])]
-    public function patchAction(Request $request, string $id, RestDtoInterface $restDto, User $loggedInUser): Response
+    public function patchAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
+        $loggedInUser = $this->getCurrentUserOrDeny();
         $this->assertOwnedEvent($id, $loggedInUser);
 
         if ($restDto instanceof Event) {
@@ -92,8 +103,9 @@ class MeEventController extends CrudController
 
     /** @throws Throwable */
     #[Route(path: '/{id}', methods: [Request::METHOD_DELETE])]
-    public function deleteAction(Request $request, string $id, User $loggedInUser): Response
+    public function deleteAction(Request $request, string $id): Response
     {
+        $loggedInUser = $this->getCurrentUserOrDeny();
         $this->assertOwnedEvent($id, $loggedInUser);
 
         return $this->deleteMethod($request, $id);
@@ -114,5 +126,16 @@ class MeEventController extends CrudController
         if (!$event instanceof EventEntity || $event->getUser()?->getId() !== $loggedInUser->getId()) {
             throw new NotFoundHttpException('Event not found.');
         }
+    }
+
+    private function getCurrentUserOrDeny(): User
+    {
+        $user = $this->userTypeIdentification->getUser();
+
+        if (!$user instanceof User) {
+            throw new AccessDeniedHttpException('Authenticated user not found.');
+        }
+
+        return $user;
     }
 }
