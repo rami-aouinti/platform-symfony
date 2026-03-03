@@ -29,10 +29,12 @@ final class LoadUserApplicationData extends Fixture implements OrderedFixtureInt
         foreach ($activations as $applicationName => $active) {
             $application = $this->getReference('Application-' . $applicationName, Application::class);
 
-            $manager->persist(
-                (new UserApplication($johnRoot, $application))
-                    ->setActive($active),
-            );
+            $userApplication = (new UserApplication($johnRoot, $application))
+                ->setActive($active);
+
+            $this->addReference('UserApplication-john-root-' . mb_strtolower($applicationName), $userApplication);
+
+            $manager->persist($userApplication);
         }
 
         $manager->flush();

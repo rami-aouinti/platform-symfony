@@ -13,6 +13,8 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Override;
 
+use function mb_strtoupper;
+
 final class LoadConfigurationData extends Fixture implements OrderedFixtureInterface
 {
     #[Override]
@@ -66,6 +68,102 @@ final class LoadConfigurationData extends Fixture implements OrderedFixtureInter
 
         $manager->persist($notificationConfiguration);
         $this->addReference('Configuration-profile-notification-settings', $notificationConfiguration);
+
+        $appConfigurations = [
+            'crm' => [
+                [
+                    'code' => 'crm-pipeline-default',
+                    'keyName' => 'pipeline-default',
+                    'status' => 'active',
+                    'value' => ['stage' => 'lead', 'autoAssign' => true, 'currency' => 'EUR'],
+                ],
+                [
+                    'code' => 'crm-notifications',
+                    'keyName' => 'notifications',
+                    'status' => 'active',
+                    'value' => ['dailyDigest' => true, 'dealWonEmail' => true, 'slaWarningPush' => true],
+                ],
+                [
+                    'code' => 'crm-views',
+                    'keyName' => 'views',
+                    'status' => 'active',
+                    'value' => ['default' => 'kanban', 'compactCards' => false, 'showRevenue' => true],
+                ],
+            ],
+            'shop' => [
+                [
+                    'code' => 'shop-catalog-defaults',
+                    'keyName' => 'catalog-defaults',
+                    'status' => 'active',
+                    'value' => ['currency' => 'EUR', 'taxMode' => 'TTC', 'inventoryTracking' => true],
+                ],
+                [
+                    'code' => 'shop-checkout',
+                    'keyName' => 'checkout',
+                    'status' => 'active',
+                    'value' => ['guestCheckout' => false, 'minOrderAmount' => 20, 'allowCoupons' => true],
+                ],
+                [
+                    'code' => 'shop-shipping',
+                    'keyName' => 'shipping',
+                    'status' => 'active',
+                    'value' => ['defaultCarrier' => 'colissimo', 'freeOver' => 80, 'expediteEnabled' => true],
+                ],
+            ],
+            'recruit' => [
+                [
+                    'code' => 'recruit-pipeline',
+                    'keyName' => 'pipeline',
+                    'status' => 'active',
+                    'value' => ['defaultStep' => 'screening', 'autoArchiveDays' => 90, 'anonymizeRejected' => true],
+                ],
+                [
+                    'code' => 'recruit-interviews',
+                    'keyName' => 'interviews',
+                    'status' => 'active',
+                    'value' => ['timezone' => 'Europe/Paris', 'defaultDurationMinutes' => 45, 'reminderHours' => 24],
+                ],
+                [
+                    'code' => 'recruit-offer',
+                    'keyName' => 'offer',
+                    'status' => 'active',
+                    'value' => ['approvalRequired' => true, 'signatureProvider' => 'internal', 'offerExpiryDays' => 10],
+                ],
+            ],
+            'school' => [
+                [
+                    'code' => 'school-calendar',
+                    'keyName' => 'calendar',
+                    'status' => 'inactive',
+                    'value' => ['weekStartsOn' => 'monday', 'defaultView' => 'month', 'publicHolidays' => 'FR'],
+                ],
+                [
+                    'code' => 'school-grading',
+                    'keyName' => 'grading',
+                    'status' => 'inactive',
+                    'value' => ['scale' => 'A-F', 'passGrade' => 'C', 'roundHalfUp' => true],
+                ],
+            ],
+        ];
+
+        foreach ($appConfigurations as $application => $items) {
+            foreach ($items as $index => $item) {
+                $configuration = (new Configuration())
+                    ->setCode($item['code'])
+                    ->setKeyName('app-' . $application . '-' . $item['keyName'])
+                    ->setStatus($item['status'])
+                    ->setProfile($johnProfile)
+                    ->setValue([
+                        'application' => mb_strtoupper($application),
+                        'owner' => 'john-root',
+                        'scope' => 'user-application',
+                        'settings' => $item['value'],
+                    ]);
+
+                $manager->persist($configuration);
+                $this->addReference('Configuration-john-root-' . $application . '-' . ($index + 1), $configuration);
+            }
+        }
 
         $manager->flush();
     }
