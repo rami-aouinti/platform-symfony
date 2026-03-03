@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Configuration\Domain\Entity;
 
+use App\ApplicationCatalog\Domain\Entity\UserApplication;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
@@ -23,8 +24,10 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity]
 #[ORM\Table(name: 'configuration')]
 #[ORM\UniqueConstraint(name: 'uq_configuration_profile_key', columns: ['profile_id', 'key_name'])]
+#[ORM\UniqueConstraint(name: 'uq_configuration_user_application_key', columns: ['user_application_id', 'key_name'])]
 #[ORM\Index(name: 'idx_configuration_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_configuration_profile', columns: ['profile_id'])]
+#[ORM\Index(name: 'idx_configuration_user_application', columns: ['user_application_id'])]
 #[ORM\ChangeTrackingPolicy('DEFERRED_EXPLICIT')]
 class Configuration implements EntityInterface
 {
@@ -48,9 +51,16 @@ class Configuration implements EntityInterface
     #[Groups(['Configuration', 'Configuration.value', 'Configuration.create', 'Configuration.show', 'Configuration.edit'])]
     private array $value = [];
 
+    /**
+     * Transitional scope: use either profile or userApplication, never both at once.
+     */
     #[ORM\ManyToOne(targetEntity: UserProfile::class)]
     #[ORM\JoinColumn(name: 'profile_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?UserProfile $profile = null;
+
+    #[ORM\ManyToOne(targetEntity: UserApplication::class)]
+    #[ORM\JoinColumn(name: 'user_application_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?UserApplication $userApplication = null;
 
     #[ORM\Column(name: 'status', type: Types::STRING, length: 64, nullable: false)]
     #[Groups(['Configuration', 'Configuration.status', 'Configuration.create', 'Configuration.show', 'Configuration.edit'])]
@@ -128,6 +138,26 @@ class Configuration implements EntityInterface
     public function setProfile(?UserProfile $profile): self
     {
         $this->profile = $profile;
+
+        if ($profile instanceof UserProfile) {
+            $this->userApplication = null;
+        }
+
+        return $this;
+    }
+
+    public function getUserApplication(): ?UserApplication
+    {
+        return $this->userApplication;
+    }
+
+    public function setUserApplication(?UserApplication $userApplication): self
+    {
+        $this->userApplication = $userApplication;
+
+        if ($userApplication instanceof UserApplication) {
+            $this->profile = null;
+        }
 
         return $this;
     }
