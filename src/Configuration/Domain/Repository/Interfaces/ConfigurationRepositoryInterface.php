@@ -18,5 +18,12 @@ interface ConfigurationRepositoryInterface
     /**
      * @return Configuration[]
      */
+    public function findByUserApplication(UserApplication $userApplication): array;
+
+    /**
+     * @return Configuration[]
+     */
     public function findByUserApplicationAndKeyName(UserApplication $userApplication, ?string $keyName = null): array;
+
+    public function findOneByUserApplicationAndKeyName(UserApplication $userApplication, string $keyName): ?Configuration;
 }

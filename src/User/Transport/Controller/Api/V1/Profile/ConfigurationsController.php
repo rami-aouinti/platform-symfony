@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\User\Transport\Controller\Api\V1\Profile;
 
+use App\ApplicationCatalog\Domain\Entity\Application;
 use App\ApplicationCatalog\Domain\Entity\UserApplication;
+use App\ApplicationCatalog\Infrastructure\Repository\ApplicationRepository;
 use App\Configuration\Application\Resource\Interfaces\ConfigurationResourceInterface;
 use App\Configuration\Domain\Entity\Configuration;
 use App\General\Domain\Utils\JSON;
@@ -28,15 +30,13 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Throwable;
 
 use function array_key_exists;
+use function in_array;
 use function is_array;
 use function is_scalar;
 use function is_string;
 use function sprintf;
 use function trim;
 
-/**
- *
- */
 #[AsController]
 #[OA\Tag(name: 'Me/Profile - Profile')]
 readonly class ConfigurationsController
@@ -45,6 +45,7 @@ readonly class ConfigurationsController
         private SerializerInterface $serializer,
         private UserTypeIdentification $userTypeIdentification,
         private ConfigurationResourceInterface $configurationResource,
+        private ApplicationRepository $applicationRepository,
     ) {
     }
 
@@ -52,52 +53,12 @@ readonly class ConfigurationsController
      * @throws JsonException
      * @throws ExceptionInterface
      */
-    #[Route(
-        path: '/v1/me/profile/configurations',
-        methods: [Request::METHOD_GET],
-    )]
+    #[Route(path: '/v1/me/profile/configurations', methods: [Request::METHOD_GET])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-    #[OA\Get(
-        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Retourne les configurations rattachées au profil de l’utilisateur authentifié. Filtre optionnel par keyName (recherche partielle insensible à la casse).',
-        summary: 'Lister les configurations liées au profil courant',
-        security: [[
-            'Bearer' => [],
-        ], [
-            'ApiKey' => [],
-        ]],
-    )]
-    #[OA\Parameter(name: 'keyName', description: 'Filtre partiel sur keyName (contains, case-insensitive).', in: 'query', required: false, schema: new OA\Schema(type: 'string', example: 'dashboard'))]
-    #[OA\Response(
-        response: 200,
-        description: 'List of profile configurations',
-        content: new OA\JsonContent(
-            type: 'array',
-            items: new OA\Items(
-                properties: [
-                    new OA\Property(property: 'id', type: 'string', format: 'uuid', example: '018f7a5a-9f30-7b24-8e7d-12d8d9792d7e'),
-                    new OA\Property(property: 'code', type: 'string', example: 'ui.preferences'),
-                    new OA\Property(property: 'keyName', type: 'string', example: 'dashboard.widgets'),
-                    new OA\Property(
-                        property: 'value',
-                        type: 'object',
-                        example: [
-                            'theme' => 'dark',
-                            'widgets' => ['tasks', 'calendar'],
-                        ],
-                        additionalProperties: true
-                    ),
-                    new OA\Property(property: 'status', type: 'string', example: 'active'),
-                ],
-                type: 'object',
-            ),
-        ),
-    )]
-    #[OA\Response(ref: '#/components/responses/UnauthorizedError', response: 401)]
-    #[OA\Response(ref: '#/components/responses/ForbiddenError', response: 403)]
     public function __invoke(Request $request): JsonResponse
     {
         $currentUser = $this->getCurrentUserOrDeny();
-        $userApplication = $this->getActiveUserApplicationOr404($currentUser);
+        $userApplication = $this->resolveUserApplicationFromRequest($request, $currentUser);
 
         $items = $this->configurationResource->findByUserApplicationAndKeyName(
             $userApplication,
@@ -112,46 +73,30 @@ readonly class ConfigurationsController
      * @throws ExceptionInterface
      * @throws Throwable
      */
-    #[Route(
-        path: '/v1/me/profile/configurations',
-        methods: [Request::METHOD_POST],
-    )]
+    #[Route(path: '/v1/me/profile/configurations', methods: [Request::METHOD_POST])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-    #[OA\Post(
-        summary: 'Ajouter une configuration au profil courant',
-        security: [[
-            'Bearer' => [],
-        ], [
-            'ApiKey' => [],
-        ]],
-    )]
-    #[OA\RequestBody(
-        required: true,
-        content: new OA\JsonContent(
-            required: ['code', 'keyName', 'value'],
-            properties: [
-                new OA\Property(property: 'code', type: 'string', example: 'ui.preferences'),
-                new OA\Property(property: 'keyName', type: 'string', example: 'dashboard.widgets'),
-                new OA\Property(property: 'value', type: 'object', example: [
-                    'theme' => 'dark',
-                    'widgets' => ['tasks', 'calendar'],
-                ], additionalProperties: true),
-                new OA\Property(property: 'status', type: 'string', example: 'active'),
-            ],
-            type: 'object',
-        ),
-    )]
-    #[OA\Response(response: 201, description: 'Configuration created')]
-    #[OA\Response(response: 400, description: 'Invalid payload')]
-    #[OA\Response(ref: '#/components/responses/UnauthorizedError', response: 401)]
-    #[OA\Response(ref: '#/components/responses/ForbiddenError', response: 403)]
     public function createAction(Request $request): JsonResponse
     {
         $user = $this->getCurrentUserOrDeny();
         $payload = $this->decodePayload($request);
+        $userApplication = $this->resolveUserApplicationFromPayload($payload, $user);
 
-        $configuration = new Configuration()
-            ->setUserApplication($this->getActiveUserApplicationOr404($user));
+        if (!array_key_exists('keyName', $payload) || !is_string($payload['keyName']) || $payload['keyName'] === '') {
+            throw new BadRequestHttpException('Field "keyName" is required and must be a non-empty string.');
+        }
+
+        $existing = $this->configurationResource->findOneByUserApplicationAndKeyName($userApplication, $payload['keyName']);
+
+        if ($existing instanceof Configuration) {
+            $this->applyPayload($existing, $payload, false);
+            $existing->setUserApplication($userApplication);
+            $this->configurationResource->save($existing, true);
+
+            return $this->jsonResponse($existing);
+        }
+
+        $configuration = new Configuration();
+        $configuration->setUserApplication($userApplication);
 
         $this->applyPayload($configuration, $payload, true);
         $this->configurationResource->save($configuration, true);
@@ -164,39 +109,8 @@ readonly class ConfigurationsController
      * @throws ExceptionInterface
      * @throws Throwable
      */
-    #[Route(
-        path: '/v1/me/profile/configurations/{configurationId}',
-        requirements: [
-            'configurationId' => Requirement::UUID_V1,
-        ],
-        methods: [Request::METHOD_PUT],
-    )]
+    #[Route(path: '/v1/me/profile/configurations/{configurationId}', requirements: ['configurationId' => Requirement::UUID_V1], methods: [Request::METHOD_PUT])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-    #[OA\Put(summary: 'Mettre à jour une configuration du profil courant', security: [[
-        'Bearer' => [],
-    ], [
-        'ApiKey' => [],
-    ]])]
-    #[OA\Parameter(name: 'configurationId', in: 'path', required: true, schema: new OA\Schema(type: 'string', format: 'uuid', example: '018f7a5a-9f30-7b24-8e7d-12d8d9792d7e'))]
-    #[OA\RequestBody(
-        required: true,
-        content: new OA\JsonContent(
-            required: ['code', 'keyName', 'value'],
-            properties: [
-                new OA\Property(property: 'code', type: 'string', example: 'ui.preferences'),
-                new OA\Property(property: 'keyName', type: 'string', example: 'dashboard.widgets'),
-                new OA\Property(property: 'value', type: 'object', example: [
-                    'theme' => 'light',
-                    'widgets' => ['calendar'],
-                ], additionalProperties: true),
-                new OA\Property(property: 'status', type: 'string', example: 'active'),
-            ],
-            type: 'object',
-        ),
-    )]
-    #[OA\Response(response: 200, description: 'Configuration updated')]
-    #[OA\Response(response: 400, description: 'Invalid payload')]
-    #[OA\Response(response: 404, description: 'Configuration not found for current user')]
     public function updateAction(Request $request, string $configurationId): JsonResponse
     {
         $user = $this->getCurrentUserOrDeny();
@@ -214,37 +128,8 @@ readonly class ConfigurationsController
      * @throws ExceptionInterface
      * @throws Throwable
      */
-    #[Route(
-        path: '/v1/me/profile/configurations/{configurationId}',
-        requirements: [
-            'configurationId' => Requirement::UUID_V1,
-        ],
-        methods: [Request::METHOD_PATCH],
-    )]
+    #[Route(path: '/v1/me/profile/configurations/{configurationId}', requirements: ['configurationId' => Requirement::UUID_V1], methods: [Request::METHOD_PATCH])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-    #[OA\Patch(summary: 'Mettre à jour partiellement une configuration du profil courant', security: [[
-        'Bearer' => [],
-    ], [
-        'ApiKey' => [],
-    ]])]
-    #[OA\Parameter(name: 'configurationId', in: 'path', required: true, schema: new OA\Schema(type: 'string', format: 'uuid', example: '018f7a5a-9f30-7b24-8e7d-12d8d9792d7e'))]
-    #[OA\RequestBody(
-        required: true,
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(property: 'code', type: 'string', example: 'ui.preferences'),
-                new OA\Property(property: 'keyName', type: 'string', example: 'dashboard.widgets'),
-                new OA\Property(property: 'value', type: 'object', example: [
-                    'theme' => 'dark',
-                ], additionalProperties: true),
-                new OA\Property(property: 'status', type: 'string', example: 'archived'),
-            ],
-            type: 'object',
-        ),
-    )]
-    #[OA\Response(response: 200, description: 'Configuration patched')]
-    #[OA\Response(response: 400, description: 'Invalid payload')]
-    #[OA\Response(response: 404, description: 'Configuration not found for current user')]
     public function patchAction(Request $request, string $configurationId): JsonResponse
     {
         $user = $this->getCurrentUserOrDeny();
@@ -260,22 +145,8 @@ readonly class ConfigurationsController
     /**
      * @throws Throwable
      */
-    #[Route(
-        path: '/v1/me/profile/configurations/{configurationId}',
-        requirements: [
-            'configurationId' => Requirement::UUID_V1,
-        ],
-        methods: [Request::METHOD_DELETE],
-    )]
+    #[Route(path: '/v1/me/profile/configurations/{configurationId}', requirements: ['configurationId' => Requirement::UUID_V1], methods: [Request::METHOD_DELETE])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
-    #[OA\Delete(summary: 'Supprimer une configuration du profil courant', security: [[
-        'Bearer' => [],
-    ], [
-        'ApiKey' => [],
-    ]])]
-    #[OA\Parameter(name: 'configurationId', in: 'path', required: true, schema: new OA\Schema(type: 'string', format: 'uuid', example: '018f7a5a-9f30-7b24-8e7d-12d8d9792d7e'))]
-    #[OA\Response(response: 204, description: 'Configuration deleted')]
-    #[OA\Response(response: 404, description: 'Configuration not found for current user')]
     public function deleteAction(string $configurationId): JsonResponse
     {
         $user = $this->getCurrentUserOrDeny();
@@ -297,11 +168,7 @@ readonly class ConfigurationsController
         return $user;
     }
 
-    /**
-     * @return array<string, mixed>
-     *
-     * @throws JsonException
-     */
+    /** @return array<string, mixed> */
     private function decodePayload(Request $request): array
     {
         /** @var array<string, mixed> $payload */
@@ -323,9 +190,7 @@ readonly class ConfigurationsController
         return $normalizedKeyName !== '' ? $normalizedKeyName : null;
     }
 
-    /**
-     * @param array<string, mixed> $payload
-     */
+    /** @param array<string, mixed> $payload */
     private function applyPayload(Configuration $configuration, array $payload, bool $strict): void
     {
         if ($strict) {
@@ -374,23 +239,87 @@ readonly class ConfigurationsController
         }
 
         $userApplication = $configuration->getUserApplication();
-        if (!$userApplication instanceof UserApplication || $userApplication->getUser()->getId() !== $user->getId()) {
+        if (
+            !$userApplication instanceof UserApplication
+            || (!$this->isAdminOrRoot($user) && $userApplication->getUser()->getId() !== $user->getId())
+        ) {
             throw new NotFoundHttpException('Configuration not found for current user.');
         }
 
         return $configuration;
     }
 
-
-    private function getActiveUserApplicationOr404(User $user): UserApplication
+    private function resolveUserApplicationFromRequest(Request $request, User $currentUser): UserApplication
     {
-        foreach ($user->getUserApplications() as $userApplication) {
-            if ($userApplication->isActive()) {
+        $applicationId = $request->query->get('applicationId');
+        $userApplicationId = $request->query->get('userApplicationId');
+
+        return $this->resolveUserApplication(
+            is_scalar($applicationId) ? trim((string)$applicationId) : null,
+            is_scalar($userApplicationId) ? trim((string)$userApplicationId) : null,
+            $currentUser,
+        );
+    }
+
+    /** @param array<string, mixed> $payload */
+    private function resolveUserApplicationFromPayload(array $payload, User $currentUser): UserApplication
+    {
+        $applicationId = $payload['applicationId'] ?? null;
+        $userApplicationId = $payload['userApplicationId'] ?? null;
+
+        return $this->resolveUserApplication(
+            is_scalar($applicationId) ? trim((string)$applicationId) : null,
+            is_scalar($userApplicationId) ? trim((string)$userApplicationId) : null,
+            $currentUser,
+        );
+    }
+
+    private function resolveUserApplication(?string $applicationId, ?string $userApplicationId, User $currentUser): UserApplication
+    {
+        if ($applicationId === null && $userApplicationId === null) {
+            throw new BadRequestHttpException('Either "applicationId" or "userApplicationId" must be provided.');
+        }
+
+        if (is_string($userApplicationId) && $userApplicationId !== '') {
+            foreach ($currentUser->getUserApplications() as $userApplication) {
+                if ($userApplication->getId() === $userApplicationId) {
+                    if (!$userApplication->isActive()) {
+                        throw new AccessDeniedHttpException('Application is not active for current user.');
+                    }
+
+                    return $userApplication;
+                }
+            }
+
+            throw new NotFoundHttpException('User application not found for current user.');
+        }
+
+        if (!is_string($applicationId) || $applicationId === '') {
+            throw new BadRequestHttpException('Field "applicationId" must be a non-empty string when provided.');
+        }
+
+        $application = $this->applicationRepository->find($applicationId);
+
+        if (!$application instanceof Application) {
+            throw new NotFoundHttpException('Application not found.');
+        }
+
+        foreach ($currentUser->getUserApplications() as $userApplication) {
+            if ($userApplication->getApplication()->getId() === $application->getId()) {
+                if (!$userApplication->isActive()) {
+                    throw new AccessDeniedHttpException('Application is not active for current user.');
+                }
+
                 return $userApplication;
             }
         }
 
-        throw new NotFoundHttpException('No active user application found for current user.');
+        throw new NotFoundHttpException('Application not enabled for current user.');
+    }
+
+    private function isAdminOrRoot(User $user): bool
+    {
+        return in_array('ROLE_ROOT', $user->getRoles(), true) || in_array('ROLE_ADMIN', $user->getRoles(), true);
     }
 
     /**
@@ -399,13 +328,7 @@ readonly class ConfigurationsController
     private function jsonResponse(mixed $data, int $status = Response::HTTP_OK): JsonResponse
     {
         return new JsonResponse(
-            $this->serializer->serialize(
-                $data,
-                'json',
-                [
-                    'groups' => ['Configuration.show'],
-                ],
-            ),
+            $this->serializer->serialize($data, 'json', ['groups' => ['Configuration.show']]),
             $status,
             json: true,
         );

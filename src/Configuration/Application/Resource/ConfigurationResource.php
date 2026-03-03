@@ -23,11 +23,27 @@ class ConfigurationResource extends RestResource implements ConfigurationResourc
         parent::__construct($repository);
     }
 
+    public function findByUserApplication(UserApplication $userApplication): array
+    {
+        /** @var RepositoryInterface $repository */
+        $repository = $this->repository;
+
+        return $repository->findByUserApplication($userApplication);
+    }
+
     public function findByUserApplicationAndKeyName(UserApplication $userApplication, ?string $keyName = null): array
     {
         /** @var RepositoryInterface $repository */
         $repository = $this->repository;
 
         return $repository->findByUserApplicationAndKeyName($userApplication, $keyName);
+    }
+
+    public function findOneByUserApplicationAndKeyName(UserApplication $userApplication, string $keyName): ?Entity
+    {
+        /** @var RepositoryInterface $repository */
+        $repository = $this->repository;
+
+        return $repository->findOneByUserApplicationAndKeyName($userApplication, $keyName);
     }
 }
