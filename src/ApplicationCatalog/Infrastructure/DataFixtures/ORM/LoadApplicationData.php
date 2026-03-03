@@ -15,10 +15,11 @@ final class LoadApplicationData extends Fixture implements OrderedFixtureInterfa
     #[Override]
     public function load(ObjectManager $manager): void
     {
-        foreach ($this->getApplications() as $name => $logo) {
+        foreach ($this->getApplications() as $name => $data) {
             $application = (new Application())
                 ->setName($name)
-                ->setLogo($logo)
+                ->setLogo($data['logo'])
+                ->setDescription($data['description'])
                 ->setActive(true);
 
             $manager->persist($application);
@@ -35,15 +36,27 @@ final class LoadApplicationData extends Fixture implements OrderedFixtureInterfa
     }
 
     /**
-     * @return array<string, string|null>
+     * @return array<string, array{logo: string, description: string}>
      */
     private function getApplications(): array
     {
         return [
-            'CRM' => null,
-            'Shop' => null,
-            'Recruit' => null,
-            'School' => null,
+            'CRM' => [
+                'logo' => 'https://cdn.fake.example/apps/crm-logo.png',
+                'description' => 'Centralise les relations clients, le suivi commercial et le support.',
+            ],
+            'Shop' => [
+                'logo' => 'https://cdn.fake.example/apps/shop-logo.png',
+                'description' => 'Gère les produits, commandes, stocks et paiements e-commerce.',
+            ],
+            'Recruit' => [
+                'logo' => 'https://cdn.fake.example/apps/recruit-logo.png',
+                'description' => 'Pilote le recrutement : offres, candidatures et workflow RH.',
+            ],
+            'School' => [
+                'logo' => 'https://cdn.fake.example/apps/school-logo.png',
+                'description' => 'Organise les cours, élèves, évaluations et communication pédagogique.',
+            ],
         ];
     }
 }

@@ -8,6 +8,7 @@ use App\ApplicationCatalog\Application\DTO\Application;
 use App\ApplicationCatalog\Application\DTO\UserApplicationTogglePayload;
 use App\ApplicationCatalog\Application\Resource\Interfaces\ApplicationListResourceInterface;
 use App\ApplicationCatalog\Application\Resource\Interfaces\UserApplicationToggleResourceInterface;
+use App\ApplicationCatalog\Domain\Entity\Application as ApplicationEntity;
 use App\ApplicationCatalog\Infrastructure\Repository\ApplicationRepository;
 use App\General\Domain\Utils\JSON;
 use App\User\Application\Security\UserTypeIdentification;
@@ -59,20 +60,49 @@ final readonly class ProfileApplicationController
     #[OA\Patch(summary: 'Toggle application activation for current user')]
     public function patchAction(Request $request, string $id): JsonResponse
     {
-        $application = $this->applicationRepository->find($id);
-
-        if (!$application instanceof \App\ApplicationCatalog\Domain\Entity\Application) {
-            throw new NotFoundHttpException('Application not found.');
-        }
+        $application = $this->findApplicationOrFail($id);
 
         $payload = UserApplicationTogglePayload::fromPayload(JSON::decode((string)$request->getContent(), true));
+
+        return $this->toggle($application, $payload->isActive());
+    }
+
+    #[Route(path: '/v1/profile/applications/{id}/activate', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/me/profile/applications/{id}/activate', methods: [Request::METHOD_POST])]
+    #[OA\Post(summary: 'Activate an application for current user')]
+    public function activateAction(string $id): JsonResponse
+    {
+        return $this->toggle($this->findApplicationOrFail($id), true);
+    }
+
+    #[Route(path: '/v1/profile/applications/{id}/deactivate', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/me/profile/applications/{id}/deactivate', methods: [Request::METHOD_POST])]
+    #[OA\Post(summary: 'Deactivate an application for current user')]
+    public function deactivateAction(string $id): JsonResponse
+    {
+        return $this->toggle($this->findApplicationOrFail($id), false);
+    }
+
+    private function toggle(ApplicationEntity $application, bool $active): JsonResponse
+    {
         $dto = $this->userApplicationToggleResource->toggle(
             $this->getCurrentUserOrDeny(),
             $application,
-            $payload->isActive(),
+            $active,
         );
 
         return new JsonResponse($dto->toArray());
+    }
+
+    private function findApplicationOrFail(string $id): ApplicationEntity
+    {
+        $application = $this->applicationRepository->find($id);
+
+        if (!$application instanceof ApplicationEntity) {
+            throw new NotFoundHttpException('Application not found.');
+        }
+
+        return $application;
     }
 
     private function getCurrentUserOrDeny(): User

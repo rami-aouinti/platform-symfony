@@ -34,6 +34,8 @@ final class ProfileApplicationControllerTest extends WebTestCase
         self::assertArrayHasKey('items', $payload);
         self::assertIsArray($payload['items']);
         self::assertNotEmpty($payload['items']);
+        self::assertArrayHasKey('description', $payload['items'][0]);
+        self::assertNotEmpty($payload['items'][0]['description']);
         self::assertArrayHasKey('enabled', $payload['items'][0]);
         self::assertNull($payload['items'][0]['enabled']);
     }
@@ -79,6 +81,36 @@ final class ProfileApplicationControllerTest extends WebTestCase
         self::assertFalse($this->findEnabledStateByName($aliceList['items'], 'CRM'));
     }
 
+
+
+    /**
+     * @throws Throwable
+     */
+    #[TestDox('POST /api/v1/profile/applications/{id}/activate and /deactivate toggle current user activation')]
+    public function testActivateAndDeactivateEndpoints(): void
+    {
+        $applicationRepository = static::getContainer()->get(ApplicationRepositoryInterface::class);
+        $application = $applicationRepository->findOneByName('School');
+        self::assertNotNull($application);
+
+        $client = $this->getTestClient('john-user', 'password-user');
+
+        $client->request(Request::METHOD_POST, self::PROFILE_URL . '/' . $application->getId() . '/activate');
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode(), "Response:
+" . $client->getResponse());
+
+        $client->request(Request::METHOD_GET, self::PROFILE_URL);
+        $list = $this->decodeResponse($client->getResponse()->getContent());
+        self::assertTrue($this->findEnabledStateByName($list['items'], 'School'));
+
+        $client->request(Request::METHOD_POST, self::PROFILE_URL . '/' . $application->getId() . '/deactivate');
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode(), "Response:
+" . $client->getResponse());
+
+        $client->request(Request::METHOD_GET, self::PROFILE_URL);
+        $list = $this->decodeResponse($client->getResponse()->getContent());
+        self::assertFalse($this->findEnabledStateByName($list['items'], 'School'));
+    }
     /**
      * @param string|false $content
      *

@@ -15,6 +15,7 @@ final class ApplicationMapper
             id: $application->getId(),
             name: $application->getName(),
             logo: $application->getLogo(),
+            description: $application->getDescription(),
             active: $application->isActive(),
             enabled: $userApplication?->isActive(),
         );
