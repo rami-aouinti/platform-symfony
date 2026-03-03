@@ -34,4 +34,20 @@ class UserApplicationRepository extends BaseRepository implements UserApplicatio
             'application' => $application,
         ]);
     }
+
+    public function findByUser(User $user): array
+    {
+        return $this->findBy(['user' => $user]);
+    }
+
+    public function findByUserIndexedByApplicationId(User $user): array
+    {
+        $items = [];
+
+        foreach ($this->findByUser($user) as $userApplication) {
+            $items[$userApplication->getApplication()->getId()] = $userApplication;
+        }
+
+        return $items;
+    }
 }
