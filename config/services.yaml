@@ -258,6 +258,9 @@ services:
     App\Blog\Domain\Repository\Interfaces\BlogPostLinkRepositoryInterface:
         class: App\Blog\Infrastructure\Repository\BlogPostLinkRepository
 
+    App\ApplicationCatalog\Domain\Repository\Interfaces\ApplicationRepositoryInterface:
+        class: App\ApplicationCatalog\Infrastructure\Repository\ApplicationRepository
+
 when@dev:
     services:
         _defaults:
@@ -302,6 +305,9 @@ when@dev:
 
         App\Friend\Infrastructure\DataFixtures\:
             resource: '../src/Friend/Infrastructure/DataFixtures/*'
+
+        App\ApplicationCatalog\Infrastructure\DataFixtures\:
+            resource: '../src/ApplicationCatalog/Infrastructure/DataFixtures/*'
 
         App\Tests\TestCase\:
             resource: '../tests/TestCase/*'
@@ -357,3 +363,6 @@ when@test:
 
         App\Calendar\Infrastructure\DataFixtures\:
             resource: '../src/Calendar/Infrastructure/DataFixtures/*'
+
+        App\ApplicationCatalog\Infrastructure\DataFixtures\:
+            resource: '../src/ApplicationCatalog/Infrastructure/DataFixtures/*'
