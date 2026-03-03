@@ -7,7 +7,7 @@ namespace App\Configuration\Infrastructure\Repository;
 use App\Configuration\Domain\Entity\Configuration as Entity;
 use App\Configuration\Domain\Repository\Interfaces\ConfigurationRepositoryInterface;
 use App\General\Infrastructure\Repository\BaseRepository;
-use App\User\Domain\Entity\UserProfile;
+use App\ApplicationCatalog\Domain\Entity\UserApplication;
 use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -29,13 +29,13 @@ class ConfigurationRepository extends BaseRepository implements ConfigurationRep
     ) {
     }
 
-    public function findByProfileAndKeyName(UserProfile $profile, ?string $keyName = null): array
+    public function findByUserApplicationAndKeyName(UserApplication $userApplication, ?string $keyName = null): array
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('c')
             ->from(Entity::class, 'c')
-            ->where('c.profile = :profile')
-            ->setParameter('profile', $profile)
+            ->where('c.userApplication = :userApplication')
+            ->setParameter('userApplication', $userApplication)
             ->orderBy('c.keyName', 'ASC');
 
         if (is_string($keyName) && $keyName !== '') {

@@ -6,7 +6,7 @@ namespace App\Configuration\Application\Resource\Interfaces;
 
 use App\Configuration\Domain\Entity\Configuration;
 use App\General\Application\Rest\Interfaces\RestResourceInterface;
-use App\User\Domain\Entity\UserProfile;
+use App\ApplicationCatalog\Domain\Entity\UserApplication;
 
 /**
  * ConfigurationResourceInterface.
@@ -19,5 +19,5 @@ interface ConfigurationResourceInterface extends RestResourceInterface
     /**
      * @return Configuration[]
      */
-    public function findByProfileAndKeyName(UserProfile $profile, ?string $keyName = null): array;
+    public function findByUserApplicationAndKeyName(UserApplication $userApplication, ?string $keyName = null): array;
 }
