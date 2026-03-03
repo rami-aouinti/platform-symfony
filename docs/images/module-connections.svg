@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1400" viewBox="0 0 1800 1400">
+<defs>
+<marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 z" fill="#6b7280" /></marker>
+</defs>
+<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
+<text x="900" y="52" text-anchor="middle" font-size="30" font-family="Arial" fill="#111827">
+Carte des modules Symfony et leurs connexions
+</text>
+<text x="900" y="84" text-anchor="middle" font-size="18" font-family="Arial" fill="#4b5563">
+Connexion A → B : un fichier de A importe App\B\* (seuil d&apos;affichage ≥ 5)
+</text>
+<line x1="430.88" y1="833.93" x2="1087.78" y2="1150.28" stroke="#6b7280" stroke-width="5.00" stroke-opacity="0.70" marker-end="url(#arrow)" />
+<line x1="762.07" y1="242.20" x2="1110.28" y2="1129.41" stroke="#6b7280" stroke-width="2.43" stroke-opacity="0.43" marker-end="url(#arrow)" />
+<line x1="519.63" y1="408.62" x2="1099.43" y2="1135.67" stroke="#6b7280" stroke-width="2.18" stroke-opacity="0.40" marker-end="url(#arrow)" />
+<line x1="909.35" y1="220.95" x2="1116.27" y2="1127.56" stroke="#6b7280" stroke-width="2.15" stroke-opacity="0.40" marker-end="url(#arrow)" />
+<line x1="1189.79" y1="312.24" x2="1128.76" y2="1126.62" stroke="#6b7280" stroke-width="2.06" stroke-opacity="0.39" marker-end="url(#arrow)" />
+<line x1="1397.55" y1="697.51" x2="1146.62" y2="1132.13" stroke="#6b7280" stroke-width="1.68" stroke-opacity="0.35" marker-end="url(#arrow)" />
+<line x1="414.04" y1="779.34" x2="725.73" y2="239.48" stroke="#6b7280" stroke-width="1.62" stroke-opacity="0.35" marker-end="url(#arrow)" />
+<line x1="1090.92" y1="1144.84" x2="416.16" y2="684.80" stroke="#6b7280" stroke-width="1.50" stroke-opacity="0.33" marker-end="url(#arrow)" />
+<line x1="720.54" y1="235.94" x2="407.64" y2="628.30" stroke="#6b7280" stroke-width="1.43" stroke-opacity="0.33" marker-end="url(#arrow)" />
+<line x1="1368.71" y1="549.12" x2="1140.96" y2="1129.41" stroke="#6b7280" stroke-width="1.38" stroke-opacity="0.32" marker-end="url(#arrow)" />
+<line x1="1017.64" y1="1201.81" x2="1085.49" y2="1180.88" stroke="#6b7280" stroke-width="1.33" stroke-opacity="0.32" marker-end="url(#arrow)" />
+<line x1="628.07" y1="306.73" x2="1104.62" y2="1132.13" stroke="#6b7280" stroke-width="1.31" stroke-opacity="0.31" marker-end="url(#arrow)" />
+<line x1="864.03" y1="1207.93" x2="1084.09" y2="1174.76" stroke="#6b7280" stroke-width="1.26" stroke-opacity="0.31" marker-end="url(#arrow)" />
+<line x1="528.15" y1="352.13" x2="712.03" y2="226.76" stroke="#6b7280" stroke-width="1.26" stroke-opacity="0.31" marker-end="url(#arrow)" />
+<line x1="1346.21" y1="491.80" x2="784.57" y2="221.33" stroke="#6b7280" stroke-width="1.25" stroke-opacity="0.31" marker-end="url(#arrow)" />
+<line x1="489.80" y1="972.38" x2="1085.49" y2="1156.12" stroke="#6b7280" stroke-width="1.25" stroke-opacity="0.31" marker-end="url(#arrow)" />
+<line x1="1297.21" y1="416.73" x2="1134.97" y2="1127.56" stroke="#6b7280" stroke-width="1.24" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="434.57" y1="809.45" x2="1377.02" y2="667.40" stroke="#6b7280" stroke-width="1.22" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="858.47" y1="186.26" x2="788.26" y2="196.84" stroke="#6b7280" stroke-width="1.21" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="1056.41" y1="244.98" x2="1122.48" y2="1126.62" stroke="#6b7280" stroke-width="1.21" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="1380.78" y1="848.55" x2="1151.81" y2="1135.67" stroke="#6b7280" stroke-width="1.21" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="716.38" y1="1168.50" x2="1083.62" y2="1168.50" stroke="#6b7280" stroke-width="1.19" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="1011.27" y1="203.10" x2="788.73" y2="203.10" stroke="#6b7280" stroke-width="1.18" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="416.16" y1="684.80" x2="1090.92" y2="1144.84" stroke="#6b7280" stroke-width="1.18" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="1151.40" y1="276.62" x2="534.98" y2="369.53" stroke="#6b7280" stroke-width="1.17" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="567.31" y1="1044.81" x2="1032.27" y2="239.48" stroke="#6b7280" stroke-width="1.17" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="533.58" y1="388.17" x2="1378.41" y2="648.76" stroke="#6b7280" stroke-width="1.17" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="1383.84" y1="637.48" x2="781.43" y2="226.76" stroke="#6b7280" stroke-width="1.15" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="968.16" y1="1173.25" x2="756.07" y2="244.05" stroke="#6b7280" stroke-width="1.15" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="677.52" y1="1126.62" x2="743.59" y2="244.98" stroke="#6b7280" stroke-width="1.15" stroke-opacity="0.30" marker-end="url(#arrow)" />
+<line x1="869.21" y1="208.57" x2="412.24" y2="632.57" stroke="#6b7280" stroke-width="1.12" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="1110.28" y1="1129.41" x2="762.07" y2="242.20" stroke="#6b7280" stroke-width="1.12" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="587.84" y1="1087.45" x2="1084.09" y2="1162.24" stroke="#6b7280" stroke-width="1.12" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="756.07" y1="244.05" x2="968.16" y2="1173.25" stroke="#6b7280" stroke-width="1.12" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="1266.42" y1="363.41" x2="786.86" y2="215.48" stroke="#6b7280" stroke-width="1.10" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="465.01" y1="920.90" x2="731.38" y2="242.20" stroke="#6b7280" stroke-width="1.10" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="433.17" y1="803.33" x2="1343.92" y2="522.40" stroke="#6b7280" stroke-width="1.10" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="1151.40" y1="264.10" x2="788.26" y2="209.36" stroke="#6b7280" stroke-width="1.08" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="1319.55" y1="988.57" x2="1156.41" y2="1139.94" stroke="#6b7280" stroke-width="1.08" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="1218.99" y1="1104.85" x2="1160.32" y2="1144.84" stroke="#6b7280" stroke-width="1.08" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="708.89" y1="221.33" x2="644.91" y2="252.13" stroke="#6b7280" stroke-width="1.08" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="1385.96" y1="779.34" x2="1074.27" y2="239.48" stroke="#6b7280" stroke-width="1.07" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="407.64" y1="628.30" x2="720.54" y2="235.94" stroke="#6b7280" stroke-width="1.07" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<line x1="781.43" y1="226.76" x2="1383.84" y2="637.48" stroke="#6b7280" stroke-width="1.07" stroke-opacity="0.29" marker-end="url(#arrow)" />
+<circle cx="900.00" cy="180.00" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="900.00" y="185.00" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">ApiKey</text>
+<circle cx="1053.27" cy="203.10" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="1053.27" y="208.10" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">ApplicationCatalog</text>
+<circle cx="1192.93" cy="270.36" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="1192.93" y="275.36" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Blog</text>
+<circle cx="1306.55" cy="375.79" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="1306.55" y="380.79" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Calendar</text>
+<circle cx="1384.05" cy="510.02" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="1384.05" y="515.02" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Chat</text>
+<circle cx="1418.55" cy="661.14" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="1418.55" y="666.14" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Company</text>
+<circle cx="1406.96" cy="815.71" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="1406.96" y="820.71" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Configuration</text>
+<circle cx="1350.33" cy="960.00" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="1350.33" y="965.00" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">DateDimension</text>
+<circle cx="1253.69" cy="1081.19" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="1253.69" y="1086.19" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Friend</text>
+<circle cx="1125.62" cy="1168.50" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="1125.62" y="1173.50" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">General</text>
+<circle cx="977.50" cy="1214.19" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="977.50" y="1219.19" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Log</text>
+<circle cx="822.50" cy="1214.19" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="822.50" y="1219.19" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Media</text>
+<circle cx="674.38" cy="1168.50" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="674.38" y="1173.50" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Notification</text>
+<circle cx="546.31" cy="1081.19" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="546.31" y="1086.19" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">PluginCatalog</text>
+<circle cx="449.67" cy="960.00" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="449.67" y="965.00" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Quiz</text>
+<circle cx="393.04" cy="815.71" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="393.04" y="820.71" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Recruit</text>
+<circle cx="381.45" cy="661.14" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="381.45" y="666.14" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Role</text>
+<circle cx="415.95" cy="510.02" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="415.95" y="515.02" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Statistic</text>
+<circle cx="493.45" cy="375.79" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="493.45" y="380.79" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Task</text>
+<circle cx="607.07" cy="270.36" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="607.07" y="275.36" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">Tool</text>
+<circle cx="746.73" cy="203.10" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="746.73" y="208.10" text-anchor="middle" font-size="14" font-family="Arial" fill="#1e3a8a">User</text>
+<rect x="90" y="1160" width="700" height="160" rx="12" fill="#f9fafb" stroke="#d1d5db"/>
+<text x="110" y="1194" font-size="18" font-family="Arial" fill="#111827">Légende</text>
+<text x="110" y="1222" font-size="14" font-family="Arial" fill="#374151">• Noeud : module (dossier de premier niveau sous src/)</text>
+<text x="110" y="1246" font-size="14" font-family="Arial" fill="#374151">• Flèche A → B : A dépend de B via imports PHP</text>
+<text x="110" y="1270" font-size="14" font-family="Arial" fill="#374151">• Épaisseur/opacité de ligne : nombre d&apos;imports (plus fort = plus visible)</text>
+<text x="110" y="1294" font-size="14" font-family="Arial" fill="#374151">• Liens affichés : poids ≥ 5</text>
+</svg>
