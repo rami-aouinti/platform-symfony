@@ -21,6 +21,7 @@ use DateTimeImmutable;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+use function array_values;
 use function in_array;
 
 /**
@@ -129,6 +130,33 @@ class CompanyMembershipResource extends RestSmallResource implements CompanyMemb
         return $this->find(criteria: [
             'user' => $currentUser,
         ]);
+    }
+
+    public function findMyAccessibleCompanies(): array
+    {
+        $currentUser = $this->getCurrentUser();
+
+        $memberships = $this->find(criteria: [
+            'user' => $currentUser,
+            'status' => CompanyMembershipStatus::ACTIVE,
+        ]);
+
+        $companies = [];
+
+        foreach ($memberships as $membership) {
+            $company = $membership->getCompany();
+            $companies[$company->getId()] = $company;
+        }
+
+        $ownedCompanies = $this->companyRepository->findBy([
+            'owner' => $currentUser,
+        ]);
+
+        foreach ($ownedCompanies as $company) {
+            $companies[$company->getId()] = $company;
+        }
+
+        return array_values($companies);
     }
 
     public function findMyMembership(string $companyId): ?Entity

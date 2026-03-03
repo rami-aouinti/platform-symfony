@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Company\Application\Resource\Interfaces;
 
+use App\Company\Domain\Entity\Company;
 use App\Company\Domain\Entity\CompanyMembership;
 use App\General\Application\Rest\Interfaces\RestSmallResourceInterface;
 
@@ -39,6 +40,11 @@ interface CompanyMembershipResourceInterface extends RestSmallResourceInterface
      * @return array<int, CompanyMembership>
      */
     public function findMyCompanies(): array;
+
+    /**
+     * @return array<int, Company>
+     */
+    public function findMyAccessibleCompanies(): array;
 
     public function findMyMembership(string $companyId): ?CompanyMembership;
 }

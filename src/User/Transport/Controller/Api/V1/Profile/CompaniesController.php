@@ -51,7 +51,7 @@ class CompaniesController
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Get(
-        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Retourne les companies liées à l’utilisateur authentifié via ses memberships.',
+        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Retourne les companies possédées et/ou rejointes par l’utilisateur authentifié.',
         summary: 'Lister les companies du profil courant',
         security: [[
             'Bearer' => [],
@@ -78,11 +78,10 @@ class CompaniesController
     {
         $this->getCurrentUserOrDeny();
 
-        $memberships = $this->companyMembershipResource->findMyCompanies();
+        $accessibleCompanies = $this->companyMembershipResource->findMyAccessibleCompanies();
         $companies = [];
 
-        foreach ($memberships as $membership) {
-            $company = $membership->getCompany();
+        foreach ($accessibleCompanies as $company) {
             $companies[$company->getId()] = $company;
         }
 
