@@ -8,7 +8,7 @@ use App\Configuration\Application\Resource\Interfaces\ConfigurationResourceInter
 use App\Configuration\Domain\Entity\Configuration as Entity;
 use App\Configuration\Domain\Repository\Interfaces\ConfigurationRepositoryInterface as RepositoryInterface;
 use App\General\Application\Rest\RestResource;
-use App\User\Domain\Entity\UserProfile;
+use App\ApplicationCatalog\Domain\Entity\UserApplication;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
@@ -23,11 +23,11 @@ class ConfigurationResource extends RestResource implements ConfigurationResourc
         parent::__construct($repository);
     }
 
-    public function findByProfileAndKeyName(UserProfile $profile, ?string $keyName = null): array
+    public function findByUserApplicationAndKeyName(UserApplication $userApplication, ?string $keyName = null): array
     {
         /** @var RepositoryInterface $repository */
         $repository = $this->repository;
 
-        return $repository->findByProfileAndKeyName($profile, $keyName);
+        return $repository->findByUserApplicationAndKeyName($userApplication, $keyName);
     }
 }

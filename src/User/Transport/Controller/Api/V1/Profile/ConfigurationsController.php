@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\User\Transport\Controller\Api\V1\Profile;
 
+use App\ApplicationCatalog\Domain\Entity\UserApplication;
 use App\Configuration\Application\Resource\Interfaces\ConfigurationResourceInterface;
 use App\Configuration\Domain\Entity\Configuration;
 use App\General\Domain\Utils\JSON;
@@ -96,10 +97,10 @@ readonly class ConfigurationsController
     public function __invoke(Request $request): JsonResponse
     {
         $currentUser = $this->getCurrentUserOrDeny();
-        $profile = $currentUser->getOrCreateUserProfile();
+        $userApplication = $this->getActiveUserApplicationOr404($currentUser);
 
-        $items = $this->configurationResource->findByProfileAndKeyName(
-            $profile,
+        $items = $this->configurationResource->findByUserApplicationAndKeyName(
+            $userApplication,
             $this->resolveKeyNameFilter($request),
         );
 
@@ -150,7 +151,7 @@ readonly class ConfigurationsController
         $payload = $this->decodePayload($request);
 
         $configuration = new Configuration()
-            ->setProfile($user->getOrCreateUserProfile());
+            ->setUserApplication($this->getActiveUserApplicationOr404($user));
 
         $this->applyPayload($configuration, $payload, true);
         $this->configurationResource->save($configuration, true);
@@ -372,12 +373,24 @@ readonly class ConfigurationsController
             throw new NotFoundHttpException('Configuration not found for current user.');
         }
 
-        $profile = $configuration->getProfile();
-        if ($profile === null || $profile->getId() !== $user->getOrCreateUserProfile()->getId()) {
+        $userApplication = $configuration->getUserApplication();
+        if (!$userApplication instanceof UserApplication || $userApplication->getUser()->getId() !== $user->getId()) {
             throw new NotFoundHttpException('Configuration not found for current user.');
         }
 
         return $configuration;
+    }
+
+
+    private function getActiveUserApplicationOr404(User $user): UserApplication
+    {
+        foreach ($user->getUserApplications() as $userApplication) {
+            if ($userApplication->isActive()) {
+                return $userApplication;
+            }
+        }
+
+        throw new NotFoundHttpException('No active user application found for current user.');
     }
 
     /**

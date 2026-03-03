@@ -23,8 +23,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'configuration')]
-#[ORM\UniqueConstraint(name: 'uq_configuration_profile_key', columns: ['profile_id', 'key_name'])]
-#[ORM\UniqueConstraint(name: 'uq_configuration_user_application_key', columns: ['user_application_id', 'key_name'])]
+#[ORM\UniqueConstraint(name: 'uq_configuration_user_application_code_key', columns: ['user_application_id', 'code', 'key_name'])]
 #[ORM\Index(name: 'idx_configuration_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_configuration_profile', columns: ['profile_id'])]
 #[ORM\Index(name: 'idx_configuration_user_application', columns: ['user_application_id'])]
