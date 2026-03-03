@@ -38,6 +38,56 @@ class ProjectResource extends AbstractOwnedResource implements ProjectResourceIn
         parent::__construct($repository, $userTypeIdentification);
     }
 
+
+    /**
+     * @return array<int, Entity>
+     */
+    public function findMyAccessibleProjects(User $currentUser): array
+    {
+        $projects = [];
+
+        foreach ($this->getRepository()->findByAdvanced(criteria: ['owner' => $currentUser]) as $project) {
+            if ($project instanceof Entity) {
+                $projects[$project->getId()] = $project;
+            }
+        }
+
+        $companies = [];
+
+        foreach ($this->companyRepository->findBy(['owner' => $currentUser]) as $company) {
+            if ($company instanceof Company) {
+                $companies[$company->getId()] = $company;
+            }
+        }
+
+        foreach ($this->companyMembershipRepository->findBy([
+            'user' => $currentUser,
+            'status' => CompanyMembershipStatus::ACTIVE,
+        ]) as $membership) {
+            if (!$membership instanceof CompanyMembership) {
+                continue;
+            }
+
+            $company = $membership->getCompany();
+
+            if ($company !== null) {
+                $companies[$company->getId()] = $company;
+            }
+        }
+
+        if ($companies !== []) {
+            foreach ($this->getRepository()->findByAdvanced(criteria: ['company' => array_values($companies)]) as $project) {
+                if ($project instanceof Entity) {
+                    $projects[$project->getId()] = $project;
+                }
+            }
+        }
+
+        usort($projects, static fn (Entity $left, Entity $right): int => $left->getName() <=> $right->getName());
+
+        return array_values($projects);
+    }
+
     /**
      * @param string $companyId
      * @param User   $currentUser

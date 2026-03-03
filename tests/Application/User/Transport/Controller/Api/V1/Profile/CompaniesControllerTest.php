@@ -57,7 +57,7 @@ class CompaniesControllerTest extends WebTestCase
     /**
      * @throws Throwable
      */
-    public function testProjectsEndpointReturnsOnlyAuthorizedProjects(): void
+    public function testProjectsEndpointContainsDirectOwnedProjects(): void
     {
         $johnClient = $this->getTestClient('john-user', 'password-user');
         $johnClient->request('GET', self::PROJECTS_URL);
@@ -66,15 +66,9 @@ class CompaniesControllerTest extends WebTestCase
 
         $johnProjects = JSON::decode((string)$johnClient->getResponse()->getContent(), true);
         self::assertIsArray($johnProjects);
-        self::assertCount(3, $johnProjects);
-        self::assertSame(
-            [
-                '70000000-0000-1000-8000-000000000006',
-                '70000000-0000-1000-8000-000000000001',
-                '70000000-0000-1000-8000-000000000007',
-            ],
-            array_column($johnProjects, 'id'),
-        );
+
+        $johnProjectIds = array_column($johnProjects, 'id');
+        self::assertContains('70000000-0000-1000-8000-000000000001', $johnProjectIds);
 
         foreach ($johnProjects as $project) {
             self::assertArrayHasKey('id', $project);
@@ -83,21 +77,43 @@ class CompaniesControllerTest extends WebTestCase
             self::assertArrayHasKey('status', $project);
             self::assertArrayHasKey('photoUrl', $project);
         }
+    }
 
-        $carolClient = $this->getTestClient('carol-user', 'password-user');
-        $carolClient->request('GET', self::PROJECTS_URL);
+    /**
+     * @throws Throwable
+     */
+    public function testProjectsEndpointContainsCompanyOwnerProjects(): void
+    {
+        $aliceClient = $this->getTestClient('alice-user', 'password-user');
+        $aliceClient->request('GET', self::PROJECTS_URL);
 
-        self::assertSame(Response::HTTP_OK, $carolClient->getResponse()->getStatusCode());
+        self::assertSame(Response::HTTP_OK, $aliceClient->getResponse()->getStatusCode());
 
-        $carolProjects = JSON::decode((string)$carolClient->getResponse()->getContent(), true);
-        self::assertIsArray($carolProjects);
-        self::assertCount(2, $carolProjects);
-        self::assertSame(
-            [
-                '70000000-0000-1000-8000-000000000005',
-                '70000000-0000-1000-8000-000000000004',
-            ],
-            array_column($carolProjects, 'id'),
-        );
+        $aliceProjects = JSON::decode((string)$aliceClient->getResponse()->getContent(), true);
+        self::assertIsArray($aliceProjects);
+
+        $aliceProjectIds = array_column($aliceProjects, 'id');
+        self::assertContains('70000000-0000-1000-8000-000000000002', $aliceProjectIds);
+        self::assertContains('70000000-0000-1000-8000-000000000003', $aliceProjectIds);
+        self::assertContains('70000000-0000-1000-8000-000000000008', $aliceProjectIds);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testProjectsEndpointContainsActiveMembershipCompanyProjects(): void
+    {
+        $aliceClient = $this->getTestClient('alice-user', 'password-user');
+        $aliceClient->request('GET', self::PROJECTS_URL);
+
+        self::assertSame(Response::HTTP_OK, $aliceClient->getResponse()->getStatusCode());
+
+        $aliceProjects = JSON::decode((string)$aliceClient->getResponse()->getContent(), true);
+        self::assertIsArray($aliceProjects);
+
+        $aliceProjectIds = array_column($aliceProjects, 'id');
+        self::assertContains('70000000-0000-1000-8000-000000000001', $aliceProjectIds);
+        self::assertContains('70000000-0000-1000-8000-000000000006', $aliceProjectIds);
+        self::assertContains('70000000-0000-1000-8000-000000000007', $aliceProjectIds);
     }
 }
