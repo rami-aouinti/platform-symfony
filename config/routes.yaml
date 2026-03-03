@@ -152,3 +152,12 @@ application-catalog-controllers:
     prefix: /api
     defaults:
         _format: json
+
+plugin-catalog-controllers:
+    resource:
+        path: ../src/PluginCatalog/Transport/Controller/Api/
+        namespace: App\PluginCatalog\Transport\Controller\Api
+    type: attribute
+    prefix: /api
+    defaults:
+        _format: json

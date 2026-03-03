@@ -278,6 +278,21 @@ services:
     App\ApplicationCatalog\Application\Resource\Interfaces\AdminApplicationResourceInterface:
         class: App\ApplicationCatalog\Application\Resource\AdminApplicationResource
 
+    App\PluginCatalog\Domain\Repository\Interfaces\PluginRepositoryInterface:
+        class: App\PluginCatalog\Infrastructure\Repository\PluginRepository
+
+    App\PluginCatalog\Domain\Repository\Interfaces\UserApplicationPluginRepositoryInterface:
+        class: App\PluginCatalog\Infrastructure\Repository\UserApplicationPluginRepository
+
+    App\PluginCatalog\Application\Service\Interfaces\UserApplicationPluginToggleServiceInterface:
+        class: App\PluginCatalog\Application\Service\UserApplicationPluginToggleService
+
+    App\PluginCatalog\Application\Resource\Interfaces\PluginListResourceInterface:
+        class: App\PluginCatalog\Application\Resource\PluginListResource
+
+    App\PluginCatalog\Application\Resource\Interfaces\UserApplicationPluginToggleResourceInterface:
+        class: App\PluginCatalog\Application\Resource\UserApplicationPluginToggleResource
+
 when@dev:
     services:
         _defaults:
@@ -325,6 +340,9 @@ when@dev:
 
         App\ApplicationCatalog\Infrastructure\DataFixtures\:
             resource: '../src/ApplicationCatalog/Infrastructure/DataFixtures/*'
+
+        App\PluginCatalog\Infrastructure\DataFixtures\:
+            resource: '../src/PluginCatalog/Infrastructure/DataFixtures/*'
 
         App\Tests\TestCase\:
             resource: '../tests/TestCase/*'
@@ -383,3 +401,6 @@ when@test:
 
         App\ApplicationCatalog\Infrastructure\DataFixtures\:
             resource: '../src/ApplicationCatalog/Infrastructure/DataFixtures/*'
+
+        App\PluginCatalog\Infrastructure\DataFixtures\:
+            resource: '../src/PluginCatalog/Infrastructure/DataFixtures/*'
