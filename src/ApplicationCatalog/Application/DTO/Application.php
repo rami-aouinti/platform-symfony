@@ -10,13 +10,14 @@ final readonly class Application
         private string $id,
         private string $name,
         private ?string $logo,
+        private ?string $description,
         private bool $active,
         private ?bool $enabled,
     ) {
     }
 
     /**
-     * @return array{id: string, name: string, logo: string|null, active: bool, enabled: bool|null}
+     * @return array{id: string, name: string, logo: string|null, description: string|null, active: bool, enabled: bool|null}
      */
     public function toArray(): array
     {
@@ -24,6 +25,7 @@ final readonly class Application
             'id' => $this->id,
             'name' => $this->name,
             'logo' => $this->logo,
+            'description' => $this->description,
             'active' => $this->active,
             'enabled' => $this->enabled,
         ];

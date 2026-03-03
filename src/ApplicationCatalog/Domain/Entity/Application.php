@@ -28,6 +28,9 @@ class Application
     #[ORM\Column(name: 'logo', type: Types::STRING, length: 255, nullable: true)]
     private ?string $logo = null;
 
+    #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
     #[ORM\Column(name: 'active', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
     private bool $active = true;
 
@@ -68,6 +71,18 @@ class Application
     public function isActive(): bool
     {
         return $this->active;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
     }
 
     public function setActive(bool $active): self

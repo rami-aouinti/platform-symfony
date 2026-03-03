@@ -274,6 +274,10 @@ services:
     App\ApplicationCatalog\Application\Resource\Interfaces\UserApplicationToggleResourceInterface:
         class: App\ApplicationCatalog\Application\Resource\UserApplicationToggleResource
 
+
+    App\ApplicationCatalog\Application\Resource\Interfaces\AdminApplicationResourceInterface:
+        class: App\ApplicationCatalog\Application\Resource\AdminApplicationResource
+
 when@dev:
     services:
         _defaults:
