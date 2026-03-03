@@ -143,6 +143,12 @@ doctrine:
                         dir: '%kernel.project_dir%/src/Calendar/Domain/Entity'
                         prefix: 'App\Calendar\Domain\Entity'
                         alias: Calendar
+                    ApplicationCatalog:
+                        type: attribute
+                        is_bundle: false
+                        dir: '%kernel.project_dir%/src/ApplicationCatalog/Domain/Entity'
+                        prefix: 'App\ApplicationCatalog\Domain\Entity'
+                        alias: ApplicationCatalog
                 dql:
                     datetime_functions:
                         datesub: DoctrineExtensions\Query\Mysql\DateSub
