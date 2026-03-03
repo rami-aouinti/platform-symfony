@@ -7,6 +7,7 @@ namespace App\Tests\Application\User\Transport\Controller\Api\V1\Profile;
 use App\Configuration\Domain\Entity\Configuration;
 use App\General\Domain\Utils\JSON;
 use App\Tests\TestCase\WebTestCase;
+use App\User\Domain\Entity\User;
 use App\User\Domain\Repository\Interfaces\UserRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -106,6 +107,57 @@ class ConfigurationsControllerTest extends WebTestCase
         self::assertCount(1, $notificationConfig);
         self::assertCount(4, $notificationConfig[0]['value'] ?? []);
         self::assertSame('mentions', $notificationConfig[0]['value'][0]['key'] ?? null);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testAuthenticatedUserCanGetConfigurationsWithoutApplicationParametersUsingDefaultActiveApplication(): void
+    {
+        $client = $this->getTestClient('john-root', 'password-root');
+
+        $container = static::getContainer();
+        /** @var EntityManagerInterface $em */
+        $em = $container->get(EntityManagerInterface::class);
+        /** @var UserRepositoryInterface $userRepository */
+        $userRepository = $container->get(UserRepositoryInterface::class);
+
+        /** @var User|null $user */
+        $user = $userRepository->loadUserByIdentifier('john-root', true);
+        self::assertNotNull($user);
+
+        $defaultUserApplication = null;
+        foreach ($user->getUserApplications() as $userApplication) {
+            if ($userApplication->isActive()) {
+                $defaultUserApplication = $userApplication;
+                break;
+            }
+        }
+
+        self::assertNotNull($defaultUserApplication);
+
+        $configuration = (new Configuration())
+            ->setCode('me-default-app-cfg-' . uniqid())
+            ->setKeyName('default-app-' . uniqid())
+            ->setValue([
+                'ok' => true,
+            ])
+            ->setStatus('active')
+            ->setUserApplication($defaultUserApplication);
+
+        $em->persist($configuration);
+        $em->flush();
+
+        $client->request('GET', self::ENDPOINT . '?keyName=' . $configuration->getKeyName());
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $payload = JSON::decode((string)$client->getResponse()->getContent(), true);
+        self::assertIsArray($payload);
+        self::assertCount(1, $payload);
+        self::assertSame($configuration->getId(), $payload[0]['id'] ?? null);
+
+        $em->remove($configuration);
+        $em->flush();
     }
 
     /**
