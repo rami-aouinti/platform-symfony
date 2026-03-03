@@ -135,7 +135,6 @@
 		"platform": {
 			"php": "8.4.0"
 		},
-		"platform-check": false,
 		"preferred-install": {
 			"*": "dist"
 		},
