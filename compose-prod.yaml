@@ -1,52 +1,5 @@
 services:
 
-    nginx:
-        image: ${COMPOSE_PROJECT_NAME}-nginx:latest
-        build:
-            context: ./docker/
-            args:
-                BUILD_ARGUMENT_ENV: prod
-            dockerfile: ./nginx/Dockerfile
-        container_name: ${COMPOSE_PROJECT_NAME}-nginx
-        restart: always
-        ports:
-            - "${WEB_PORT_HTTP}:80"
-            - "${WEB_PORT_SSL}:443"
-        volumes:
-            - ./:/var/www/html:ro,cached
-        depends_on:
-            - symfony
-        networks:
-            - symfony
-
-    symfony: &symfony-template
-        image: ${COMPOSE_PROJECT_NAME}-symfony:latest
-        build:
-            context: .
-            args:
-                BUILD_ARGUMENT_ENV: prod
-                HOST_UID: ${HOST_UID}
-                HOST_GID: ${HOST_GID}
-            dockerfile: ./Dockerfile
-        container_name: ${COMPOSE_PROJECT_NAME}-symfony
-        restart: always
-        depends_on:
-            - mysql
-            - rabbitmq
-            - elasticsearch
-            - redis
-            - mongodb
-            - mercure
-        networks:
-            - symfony
-
-    ### Cron tasks, RabbitMQ consumers
-    supervisord:
-        <<: *symfony-template
-        container_name: ${COMPOSE_PROJECT_NAME}-supervisord
-        expose: [ ]
-        command: [ "/usr/bin/supervisord" ]
-
     mysql:
         image: mysql:${MYSQL_VERSION}
         platform: linux/x86_64
@@ -188,8 +141,6 @@ services:
             GRAPHQL_ENDPOINT: ${GRAPHQL_ENDPOINT}
         ports:
             - "${GRAPHQL_PORT}:80"
-        depends_on:
-            - nginx
         networks:
             - symfony
 
