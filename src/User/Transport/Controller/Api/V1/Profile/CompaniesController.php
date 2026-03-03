@@ -107,7 +107,7 @@ class CompaniesController
     )]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
     #[OA\Get(
-        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Retourne les projets possédés par l’utilisateur authentifié (et donc accessibles côté profil).',
+        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. Retourne les projets accessibles à l’utilisateur authentifié (owner direct, owner de company, membership actif).',
         summary: 'Lister les projets du profil courant',
         security: [[
             'Bearer' => [],
@@ -134,14 +134,7 @@ class CompaniesController
     {
         $currentUser = $this->getCurrentUserOrDeny();
 
-        $projects = $this->projectResource->find(
-            criteria: [
-                'owner' => $currentUser,
-            ],
-            orderBy: [
-                'name' => 'ASC',
-            ],
-        );
+        $projects = $this->projectResource->findMyAccessibleProjects($currentUser);
 
         return new JsonResponse(
             $this->serializer->serialize(

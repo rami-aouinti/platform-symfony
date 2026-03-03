@@ -19,5 +19,10 @@ interface ProjectResourceInterface extends RestResourceInterface
     /**
      * @return array<int, Project>
      */
+    public function findMyAccessibleProjects(User $currentUser): array;
+
+    /**
+     * @return array<int, Project>
+     */
     public function findProjectsForMyCompanyAccess(string $companyId, User $currentUser): array;
 }
