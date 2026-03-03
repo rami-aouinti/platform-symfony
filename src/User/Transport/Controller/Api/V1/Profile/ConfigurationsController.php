@@ -13,7 +13,9 @@ use App\General\Domain\Utils\JSON;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use JsonException;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
+use OpenApi\Attributes\JsonContent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,6 +57,47 @@ readonly class ConfigurationsController
      */
     #[Route(path: '/v1/me/profile/configurations', methods: [Request::METHOD_GET])]
     #[IsGranted(AuthenticatedVoter::IS_AUTHENTICATED_FULLY)]
+    #[OA\Get(
+        summary: 'Lister les configurations du profil courant',
+        description: 'Audience cible: utilisateurs connectés. Rôle minimal: IS_AUTHENTICATED_FULLY. La résolution de l\'application se fait avec `userApplicationId`, sinon `applicationId`, sinon la première application active de l\'utilisateur connecté.',
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
+    )]
+    #[OA\Parameter(
+        name: 'userApplicationId',
+        in: 'query',
+        required: false,
+        description: 'Identifiant explicite de la userApplication à utiliser. Prioritaire sur `applicationId`.',
+        schema: new OA\Schema(type: 'string', format: 'uuid'),
+    )]
+    #[OA\Parameter(
+        name: 'applicationId',
+        in: 'query',
+        required: false,
+        description: 'Identifiant applicatif utilisé pour résoudre la userApplication de l\'utilisateur connecté. Ignoré si `userApplicationId` est fourni.',
+        schema: new OA\Schema(type: 'string', format: 'uuid'),
+    )]
+    #[OA\Parameter(
+        name: 'keyName',
+        in: 'query',
+        required: false,
+        description: 'Filtre optionnel (contient, insensible à la casse) sur `keyName`.',
+        schema: new OA\Schema(type: 'string'),
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Liste des configurations pour la userApplication résolue implicitement ou explicitement.',
+        content: new JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Configuration::class, groups: ['Configuration.show'])),
+        ),
+    )]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
+    #[OA\Response(response: 404, description: 'Aucune application active trouvée pour l\'utilisateur courant.')]
     public function __invoke(Request $request): JsonResponse
     {
         $currentUser = $this->getCurrentUserOrDeny();
@@ -277,7 +320,7 @@ readonly class ConfigurationsController
     private function resolveUserApplication(?string $applicationId, ?string $userApplicationId, User $currentUser): UserApplication
     {
         if ($applicationId === null && $userApplicationId === null) {
-            throw new BadRequestHttpException('Either "applicationId" or "userApplicationId" must be provided.');
+            return $this->resolveDefaultActiveUserApplication($currentUser);
         }
 
         if (is_string($userApplicationId) && $userApplicationId !== '') {
@@ -315,6 +358,17 @@ readonly class ConfigurationsController
         }
 
         throw new NotFoundHttpException('Application not enabled for current user.');
+    }
+
+    private function resolveDefaultActiveUserApplication(User $currentUser): UserApplication
+    {
+        foreach ($currentUser->getUserApplications() as $userApplication) {
+            if ($userApplication->isActive()) {
+                return $userApplication;
+            }
+        }
+
+        throw new NotFoundHttpException('No active application found for current user.');
     }
 
     private function isAdminOrRoot(User $user): bool
