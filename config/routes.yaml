@@ -143,3 +143,12 @@ friend-controllers:
     prefix: /api
     defaults:
         _format: json
+
+application-catalog-controllers:
+    resource:
+        path: ../src/ApplicationCatalog/Transport/Controller/Api/
+        namespace: App\ApplicationCatalog\Transport\Controller\Api
+    type: attribute
+    prefix: /api
+    defaults:
+        _format: json
