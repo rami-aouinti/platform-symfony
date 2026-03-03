@@ -335,18 +335,17 @@ class RepositoryHelper
         } else {
             // Otherwise this must be IN or NOT IN expression
             try {
-                $value = array_map(static fn (string $value): string => UuidHelper::getBytes($value), $value);
+                $value = array_map(
+                    static fn (mixed $value): mixed => is_string($value) ? UuidHelper::getBytes($value) : $value,
+                    $value
+                );
             } catch (InvalidUuidStringException $exception) {
                 // Ok so value isn't list of UUIDs
                 syslog(LOG_INFO, $exception->getMessage());
             }
 
-            $parameters[] = array_map(
-                static fn (string $value): Literal => $queryBuilder->expr()->literal(
-                    is_numeric($value) ? (int)$value : $value
-                ),
-                $value
-            );
+            $parameters[] = '?' . self::$parameterCount;
+            $queryBuilder->setParameter(self::$parameterCount, $value);
         }
 
         return $parameters;
