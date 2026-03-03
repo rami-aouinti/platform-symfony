@@ -17,6 +17,8 @@ use function array_key_exists;
 use function hash;
 use function implode;
 use function in_array;
+use function mb_strtolower;
+use function trim;
 
 /**
  * @package App\User\Transport\EventSubscriber
@@ -77,8 +79,7 @@ class JWTDecodedSubscriber implements EventSubscriberInterface
         $payload = $event->getPayload();
         // Get bits for checksum calculation
         $bits = [
-            $request->getClientIp(),
-            $request->headers->get('User-Agent'),
+            $this->normalizeUserAgent($request->headers->get('User-Agent')),
         ];
         // Calculate checksum
         $checksum = hash('sha512', implode('|', $bits));
@@ -101,5 +102,10 @@ class JWTDecodedSubscriber implements EventSubscriberInterface
                 $event->markAsInvalid();
             }
         }
+    }
+
+    private function normalizeUserAgent(?string $userAgent): string
+    {
+        return mb_strtolower(trim((string)$userAgent));
     }
 }
