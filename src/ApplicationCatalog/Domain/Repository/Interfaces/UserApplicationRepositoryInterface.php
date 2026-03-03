@@ -14,6 +14,16 @@ interface UserApplicationRepositoryInterface
 {
     public function findOneByUserAndApplication(User $user, Application $application): ?UserApplication;
 
+    /**
+     * @return UserApplication[]
+     */
+    public function findByUser(User $user): array;
+
+    /**
+     * @return array<string, UserApplication>
+     */
+    public function findByUserIndexedByApplicationId(User $user): array;
+
     public function save(EntityInterface $entity, ?bool $flush = null, ?string $entityManagerName = null): BaseRepositoryInterface;
 
     public function remove(EntityInterface $entity, ?bool $flush = null, ?string $entityManagerName = null): BaseRepositoryInterface;
