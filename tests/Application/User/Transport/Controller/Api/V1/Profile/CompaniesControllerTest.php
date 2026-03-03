@@ -17,41 +17,59 @@ class CompaniesControllerTest extends WebTestCase
     /**
      * @throws Throwable
      */
-    public function testCompaniesEndpointReturnsOnlyCurrentUserCompanies(): void
+    public function testCompaniesEndpointReturnsOwnedCompanyWithoutExplicitMembership(): void
     {
-        $johnClient = $this->getTestClient('john-user', 'password-user');
-        $johnClient->request('GET', self::COMPANIES_URL);
+        $ownerClient = $this->getTestClient('dave-user', 'password-user');
+        $ownerClient->request('POST', self::COMPANIES_URL, content: JSON::encode([
+            'legalName' => 'Owned only in profile list',
+            'status' => 'active',
+            'mainAddress' => '10 Owner Street, Paris',
+        ]));
 
-        self::assertSame(Response::HTTP_OK, $johnClient->getResponse()->getStatusCode());
+        self::assertSame(Response::HTTP_CREATED, $ownerClient->getResponse()->getStatusCode());
+        $createdCompany = JSON::decode((string)$ownerClient->getResponse()->getContent(), true);
 
-        $johnCompanies = JSON::decode((string)$johnClient->getResponse()->getContent(), true);
-        self::assertIsArray($johnCompanies);
-        self::assertCount(2, $johnCompanies);
+        $ownerClient->request('GET', self::COMPANIES_URL);
+        self::assertSame(Response::HTTP_OK, $ownerClient->getResponse()->getStatusCode());
 
-        $johnCompanyIds = array_column($johnCompanies, 'id');
+        $companies = JSON::decode((string)$ownerClient->getResponse()->getContent(), true);
+        self::assertContains($createdCompany['id'], array_column($companies, 'id'));
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testCompaniesEndpointReturnsActiveMembershipCompany(): void
+    {
+        $aliceClient = $this->getTestClient('alice-user', 'password-user');
+        $aliceClient->request('GET', self::COMPANIES_URL);
+
+        self::assertSame(Response::HTTP_OK, $aliceClient->getResponse()->getStatusCode());
+
+        $aliceCompanies = JSON::decode((string)$aliceClient->getResponse()->getContent(), true);
+        self::assertIsArray($aliceCompanies);
         self::assertEqualsCanonicalizing(
             [
                 '30000000-0000-1000-8000-000000000001',
                 '30000000-0000-1000-8000-000000000008',
             ],
-            $johnCompanyIds,
+            array_column($aliceCompanies, 'id'),
         );
+    }
 
-        foreach ($johnCompanies as $company) {
-            self::assertArrayHasKey('id', $company);
-            self::assertArrayHasKey('legalName', $company);
-            self::assertArrayHasKey('status', $company);
-            self::assertArrayHasKey('photoUrl', $company);
-        }
+    /**
+     * @throws Throwable
+     */
+    public function testCompaniesEndpointReturnsEmptyWhenUserHasNoOwnershipOrMembership(): void
+    {
+        $outsiderClient = $this->getTestClient('emma-user', 'password-user');
+        $outsiderClient->request('GET', self::COMPANIES_URL);
 
-        $carolClient = $this->getTestClient('carol-user', 'password-user');
-        $carolClient->request('GET', self::COMPANIES_URL);
+        self::assertSame(Response::HTTP_OK, $outsiderClient->getResponse()->getStatusCode());
 
-        self::assertSame(Response::HTTP_OK, $carolClient->getResponse()->getStatusCode());
-
-        $carolCompanies = JSON::decode((string)$carolClient->getResponse()->getContent(), true);
-        self::assertCount(1, $carolCompanies);
-        self::assertSame('30000000-0000-1000-8000-000000000005', (string)$carolCompanies[0]['id']);
+        $outsiderCompanies = JSON::decode((string)$outsiderClient->getResponse()->getContent(), true);
+        self::assertIsArray($outsiderCompanies);
+        self::assertSame([], $outsiderCompanies);
     }
 
     /**
