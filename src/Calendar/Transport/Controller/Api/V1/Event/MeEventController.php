@@ -30,7 +30,7 @@ class MeEventController extends CrudController
 {
     protected static string $dtoBaseClass = Event::class;
 
-    private ?string $currentUserId = null;
+    private ?User $currentUser = null;
 
     public function __construct(
         EventResourceInterface $resource,
@@ -45,7 +45,7 @@ class MeEventController extends CrudController
     public function findAction(Request $request): Response
     {
         $loggedInUser = $this->getCurrentUserOrDeny();
-        $this->currentUserId = $loggedInUser->getId();
+        $this->currentUser = $loggedInUser;
 
         return $this->findMethod($request);
     }
@@ -111,11 +111,11 @@ class MeEventController extends CrudController
         return $this->deleteMethod($request, $id);
     }
 
-    /** @param array<int|string, string|array<mixed>> $criteria */
+    /** @param array<int|string, mixed> $criteria */
     public function processCriteria(array &$criteria, Request $request, string $method): void
     {
-        if ($this->currentUserId !== null) {
-            $criteria['user.id'] = $this->currentUserId;
+        if ($this->currentUser !== null) {
+            $criteria['user'] = $this->currentUser;
         }
     }
 
