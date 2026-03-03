@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\User\Domain\Entity;
 
+use App\ApplicationCatalog\Domain\Entity\UserApplication;
 use App\Company\Domain\Entity\CompanyMembership;
 use App\General\Domain\Doctrine\DBAL\Types\Types as AppTypes;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
@@ -284,6 +285,12 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     #[ORM\OneToMany(targetEntity: CompanyMembership::class, mappedBy: 'user')]
     private Collection | ArrayCollection $companyMemberships;
 
+    /**
+     * @var Collection<int, UserApplication>|ArrayCollection<int, UserApplication>
+     */
+    #[ORM\OneToMany(targetEntity: UserApplication::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection | ArrayCollection $userApplications;
+
     #[ORM\OneToOne(targetEntity: CandidateProfile::class, mappedBy: 'user')]
     private ?CandidateProfile $candidateProfile = null;
 
@@ -307,6 +314,7 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
         $this->logsLoginFailure = new ArrayCollection();
         $this->userProfile = new UserProfile($this);
         $this->companyMemberships = new ArrayCollection();
+        $this->userApplications = new ArrayCollection();
         $this->socialAccounts = new ArrayCollection();
     }
 
@@ -316,6 +324,30 @@ class User implements EntityInterface, UserInterface, UserGroupAwareInterface
     public function getCompanyMemberships(): Collection | ArrayCollection
     {
         return $this->companyMemberships;
+    }
+
+    /**
+     * @return Collection<int, UserApplication>|ArrayCollection<int, UserApplication>
+     */
+    public function getUserApplications(): Collection | ArrayCollection
+    {
+        return $this->userApplications;
+    }
+
+    public function addUserApplication(UserApplication $userApplication): self
+    {
+        if (!$this->userApplications->contains($userApplication)) {
+            $this->userApplications->add($userApplication);
+        }
+
+        return $this;
+    }
+
+    public function removeUserApplication(UserApplication $userApplication): self
+    {
+        $this->userApplications->removeElement($userApplication);
+
+        return $this;
     }
 
     public function getCandidateProfile(): ?CandidateProfile

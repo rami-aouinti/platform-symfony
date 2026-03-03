@@ -261,6 +261,12 @@ services:
     App\ApplicationCatalog\Domain\Repository\Interfaces\ApplicationRepositoryInterface:
         class: App\ApplicationCatalog\Infrastructure\Repository\ApplicationRepository
 
+    App\ApplicationCatalog\Domain\Repository\Interfaces\UserApplicationRepositoryInterface:
+        class: App\ApplicationCatalog\Infrastructure\Repository\UserApplicationRepository
+
+    App\ApplicationCatalog\Application\Service\Interfaces\UserApplicationToggleServiceInterface:
+        class: App\ApplicationCatalog\Application\Service\UserApplicationToggleService
+
 when@dev:
     services:
         _defaults:
