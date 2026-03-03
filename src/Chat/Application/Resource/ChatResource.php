@@ -326,17 +326,21 @@ readonly class ChatResource implements ChatResourceInterface
 
     private function tryBuildAllowedConversationView(string $conversationId): ?ConversationView
     {
-        $conversation = $this->conversationRepository->find($conversationId);
+        try {
+            $conversation = $this->conversationRepository->find($conversationId);
 
-        if (!$conversation instanceof Conversation) {
+            if (!$conversation instanceof Conversation) {
+                return null;
+            }
+
+            if (!$this->authorizationChecker->isGranted(Permission::CHAT_VIEW->value, $conversation)) {
+                return null;
+            }
+
+            return $this->toView($conversation);
+        } catch (Throwable) {
             return null;
         }
-
-        if (!$this->authorizationChecker->isGranted(Permission::CHAT_VIEW->value, $conversation)) {
-            return null;
-        }
-
-        return $this->toView($conversation);
     }
 
     private function toView(Conversation $conversation): ConversationView
