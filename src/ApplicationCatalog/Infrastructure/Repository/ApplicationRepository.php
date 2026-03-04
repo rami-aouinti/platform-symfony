@@ -34,12 +34,7 @@ class ApplicationRepository extends BaseRepository implements ApplicationReposit
     public function findOneById(string $id): ?Entity
     {
         /** @var Entity|null $application */
-        $application = $this
-            ->createQueryBuilder()
-            ->where('entity.id = :id')
-            ->setParameter('id', $id, UuidHelper::getType($id))
-            ->getQuery()
-            ->getOneOrNullResult();
+        $application = $this->findOneBy(['id' => $id]);
 
         return $application;
     }
