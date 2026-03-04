@@ -6,6 +6,7 @@ namespace App\PluginCatalog\Transport\Controller\Api\V1\Application;
 
 use App\ApplicationCatalog\Domain\Entity\UserApplication;
 use App\ApplicationCatalog\Infrastructure\Repository\UserApplicationRepository;
+use App\General\Domain\Rest\UuidHelper;
 use App\General\Domain\Utils\JSON;
 use App\PluginCatalog\Application\DTO\Plugin;
 use App\PluginCatalog\Application\DTO\UserApplicationPluginTogglePayload;
@@ -153,9 +154,17 @@ final readonly class ProfileApplicationPluginController
         return $userApplication;
     }
 
-    private function findPluginOrFail(string $id): PluginEntity
+    private function findPluginOrFail(string $idOrKeyName): PluginEntity
     {
-        $plugin = $this->pluginRepository->find($id);
+        $plugin = null;
+
+        if (UuidHelper::getType($idOrKeyName) !== null) {
+            $plugin = $this->pluginRepository->findAdvanced($idOrKeyName);
+        }
+
+        if (!$plugin instanceof PluginEntity) {
+            $plugin = $this->pluginRepository->findOneBy(['keyName' => $idOrKeyName]);
+        }
 
         if (!$plugin instanceof PluginEntity) {
             throw new NotFoundHttpException('Plugin not found.');
