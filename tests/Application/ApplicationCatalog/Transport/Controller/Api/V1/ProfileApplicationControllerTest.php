@@ -182,6 +182,31 @@ final class ProfileApplicationControllerTest extends WebTestCase
     }
 
 
+    /**
+     * @throws Throwable
+     */
+    #[TestDox('POST /api/v1/profile/user-applications/{applicationId} can create with empty payload')]
+    public function testCreateUserApplicationEndpointWithEmptyPayload(): void
+    {
+        $applicationRepository = static::getContainer()->get(ApplicationRepositoryInterface::class);
+        $application = $applicationRepository->findOneByName('ERP');
+        self::assertNotNull($application);
+
+        $client = $this->getTestClient('john-user', 'password-user');
+        $client->request(
+            Request::METHOD_POST,
+            self::API_URL_PREFIX . '/v1/profile/user-applications/' . $application->getId(),
+        );
+
+        self::assertSame(Response::HTTP_CREATED, $client->getResponse()->getStatusCode(), "Response:
+" . $client->getResponse());
+
+        $payload = $this->decodeResponse($client->getResponse()->getContent());
+        self::assertSame('ERP', $payload['applicationName'] ?? null);
+        self::assertTrue((bool)($payload['owner'] ?? false));
+    }
+
+
 
     /**
      * @throws Throwable

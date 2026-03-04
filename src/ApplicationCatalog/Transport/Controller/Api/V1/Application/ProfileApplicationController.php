@@ -105,7 +105,10 @@ final readonly class ProfileApplicationController
     #[OA\Post(summary: 'Create a user application for current user')]
     public function createUserApplicationAction(Request $request, string $applicationId): JsonResponse
     {
-        $payload = UserApplicationCreatePayload::fromPayload(JSON::decode((string)$request->getContent(), true));
+        $content = trim((string)$request->getContent());
+        $payload = UserApplicationCreatePayload::fromPayload(
+            $content === '' ? [] : JSON::decode($content, true),
+        );
         $application = $this->findApplicationOrFail($applicationId);
         $currentUser = $this->getCurrentUserOrDeny();
 
