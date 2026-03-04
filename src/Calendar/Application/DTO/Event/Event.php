@@ -130,6 +130,10 @@ class Event extends RestDto
     {
         return $this->isAllDay;
     }
+    public function getIsAllDay(): bool
+    {
+        return $this->isAllDay;
+    }
     public function setIsAllDay(bool $isAllDay): self
     {
         $this->setVisited('isAllDay');
@@ -171,6 +175,10 @@ class Event extends RestDto
         return $this;
     }
     public function isCancelled(): bool
+    {
+        return $this->isCancelled;
+    }
+    public function getIsCancelled(): bool
     {
         return $this->isCancelled;
     }
