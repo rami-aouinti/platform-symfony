@@ -121,7 +121,7 @@ final readonly class ProfileApplicationController
 
     private function findApplicationOrFail(string $id): ApplicationEntity
     {
-        $application = $this->applicationRepository->find($id);
+        $application = $this->applicationRepository->findAdvanced($id);
 
         if (!$application instanceof ApplicationEntity) {
             throw new NotFoundHttpException('Application not found.');
