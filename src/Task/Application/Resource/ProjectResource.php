@@ -108,7 +108,7 @@ class ProjectResource extends AbstractOwnedResource implements ProjectResourceIn
             throw new AccessDeniedHttpException('You are not allowed to access projects for this company.');
         }
 
-        return $this->find(criteria: [
+        return $this->getRepository()->findByAdvanced(criteria: [
             'company' => $company,
         ]);
     }
