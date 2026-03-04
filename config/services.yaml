@@ -372,6 +372,9 @@ when@dev:
         App\Page\Infrastructure\DataFixtures\:
             resource: '../src/Page/Infrastructure/DataFixtures/*'
 
+        App\Media\Infrastructure\DataFixtures\:
+            resource: '../src/Media/Infrastructure/DataFixtures/*'
+
         App\Tests\TestCase\:
             resource: '../tests/TestCase/*'
 
