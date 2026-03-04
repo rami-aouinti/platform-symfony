@@ -6,6 +6,7 @@ namespace App\ApplicationCatalog\Infrastructure\Repository;
 
 use App\ApplicationCatalog\Domain\Entity\Application as Entity;
 use App\ApplicationCatalog\Domain\Repository\Interfaces\ApplicationRepositoryInterface;
+use App\General\Domain\Rest\UuidHelper;
 use App\General\Infrastructure\Repository\BaseRepository;
 use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
