@@ -49,6 +49,42 @@ class MediaFolderControllerTest extends WebTestCase
         self::assertSame('application/pdf', $reportFile['mimeType']);
     }
 
+
+    /**
+     * @throws Throwable
+     */
+    public function testListReturnsChildrenAndFilesWithoutParentIdField(): void
+    {
+        $client = $this->getTestClient('john-root', 'password-root');
+        $client->request('GET', self::BASE_URL);
+
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        /** @var array<int, array<string, mixed>> $payload */
+        $payload = JSON::decode((string)$client->getResponse()->getContent(), true);
+
+        self::assertNotEmpty($payload);
+
+        $images = null;
+
+        foreach ($payload as $folder) {
+            if (($folder['name'] ?? null) === 'Images') {
+                $images = $folder;
+                break;
+            }
+        }
+
+        self::assertIsArray($images);
+        self::assertArrayNotHasKey('parentId', $images);
+        self::assertSame('folder', $images['type'] ?? null);
+        self::assertIsArray($images['children'] ?? null);
+
+        $avatar = $this->findNodeByName($images, 'avatar-john.png', 'file');
+        self::assertNotNull($avatar);
+        self::assertArrayHasKey('mimeType', $avatar);
+        self::assertArrayHasKey('folderId', $avatar);
+    }
+
     /**
      * @param array<string, mixed> $node
      *
