@@ -9,6 +9,7 @@ final readonly class Application
     public function __construct(
         private string $id,
         private ?string $userApplicationId,
+        private string $keyName,
         private string $name,
         private ?string $logo,
         private ?string $description,
@@ -18,13 +19,14 @@ final readonly class Application
     }
 
     /**
-     * @return array{id: string, userApplicationId: string|null, name: string, logo: string|null, description: string|null, active: bool, enabled: bool|null}
+     * @return array{id: string, userApplicationId: string|null, keyName: string, name: string, logo: string|null, description: string|null, active: bool, enabled: bool|null}
      */
     public function toArray(): array
     {
         return [
             'id' => $this->id,
             'userApplicationId' => $this->userApplicationId,
+            'keyName' => $this->keyName,
             'name' => $this->name,
             'logo' => $this->logo,
             'description' => $this->description,
