@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Media\Transport\Controller\Api\V1\Media;
 
+use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Transport\Rest\CrudController;
 use App\General\Transport\Rest\ResponseHandler;
 use App\Media\Application\DTO\Media\Media;
@@ -43,6 +44,13 @@ class AdminMediaController extends CrudController
     ) {
         parent::__construct($resource);
     }
+
+    #[Route(path: '', methods: [Request::METHOD_POST])]
+    public function createAction(Request $request, RestDtoInterface $restDto): Response
+    {
+        return $this->createMethod($request, $restDto);
+    }
+
 
     #[Route(path: '/upload', methods: [Request::METHOD_POST])]
     public function uploadAction(Request $request): Response
