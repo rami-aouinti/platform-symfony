@@ -6,6 +6,7 @@ namespace App\ApplicationCatalog\Infrastructure\Repository;
 
 use App\ApplicationCatalog\Domain\Entity\Application as Entity;
 use App\ApplicationCatalog\Domain\Repository\Interfaces\ApplicationRepositoryInterface;
+use App\General\Domain\Rest\UuidHelper;
 use App\General\Infrastructure\Repository\BaseRepository;
 use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
@@ -28,6 +29,19 @@ class ApplicationRepository extends BaseRepository implements ApplicationReposit
     public function findOneByName(string $name): ?Entity
     {
         return $this->findOneBy(['name' => $name]);
+    }
+
+    public function findOneById(string $id): ?Entity
+    {
+        /** @var Entity|null $application */
+        $application = $this
+            ->createQueryBuilder()
+            ->where('entity.id = :id')
+            ->setParameter('id', $id, UuidHelper::getType($id))
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $application;
     }
 
     public function findAllOrderedByName(): array
