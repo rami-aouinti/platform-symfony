@@ -25,6 +25,11 @@ interface UserApplicationRepositoryInterface
     public function findByUser(User $user): array;
 
     /**
+     * @return UserApplication[]
+     */
+    public function findAllOrderedByCreatedAt(): array;
+
+    /**
      * @return array<string, UserApplication>
      */
     public function findByUserIndexedByApplicationId(User $user): array;

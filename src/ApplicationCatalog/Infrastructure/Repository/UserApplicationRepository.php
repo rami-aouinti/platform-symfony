@@ -55,6 +55,11 @@ class UserApplicationRepository extends BaseRepository implements UserApplicatio
         return $this->findBy(['user' => $user]);
     }
 
+    public function findAllOrderedByCreatedAt(): array
+    {
+        return $this->findBy([], ['createdAt' => 'DESC']);
+    }
+
     public function findByUserIndexedByApplicationId(User $user): array
     {
         $items = [];
