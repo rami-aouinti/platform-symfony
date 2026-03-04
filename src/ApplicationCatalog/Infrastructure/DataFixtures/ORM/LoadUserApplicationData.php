@@ -20,20 +20,26 @@ final class LoadUserApplicationData extends Fixture implements OrderedFixtureInt
         $johnRoot = $this->getReference('User-john-root', User::class);
 
         $activations = [
-            'CRM' => true,
-            'Shop' => true,
-            'Recruit' => true,
-            'School' => false,
+            ['application' => 'CRM', 'name' => 'CRM 1', 'active' => true],
+            ['application' => 'CRM', 'name' => 'CRM 2', 'active' => true],
+            ['application' => 'Shop', 'name' => 'Shop Principal', 'active' => true],
+            ['application' => 'Recruit', 'name' => 'Recruit Principal', 'active' => true],
+            ['application' => 'School', 'name' => 'School Principal', 'active' => false],
         ];
 
-        foreach ($activations as $applicationName => $active) {
-            $application = $this->getReference('Application-' . $applicationName, Application::class);
+        foreach ($activations as $index => $activation) {
+            $application = $this->getReference('Application-' . $activation['application'], Application::class);
 
             $userApplication = (new UserApplication($johnRoot, $application))
-                ->setActive($active);
+                ->setName($activation['name'])
+                ->setActive($activation['active']);
 
             $manager->persist($userApplication);
-            $this->addReference('UserApplication-john-root-' . $applicationName, $userApplication);
+            $this->addReference('UserApplication-john-root-' . $index, $userApplication);
+
+            if (!$this->hasReference('UserApplication-john-root-' . $activation['application'], UserApplication::class)) {
+                $this->addReference('UserApplication-john-root-' . $activation['application'], $userApplication);
+            }
         }
 
         $manager->flush();
