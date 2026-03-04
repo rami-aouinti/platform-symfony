@@ -147,6 +147,41 @@ final class ProfileApplicationControllerTest extends WebTestCase
         self::assertFalse($this->findEnabledStateByName($list['items'], 'ERP'));
     }
 
+
+
+    /**
+     * @throws Throwable
+     */
+    #[TestDox('POST /api/v1/profile/user-applications creates a user application with generated key')]
+    public function testCreateUserApplicationEndpoint(): void
+    {
+        $applicationRepository = static::getContainer()->get(ApplicationRepositoryInterface::class);
+        $application = $applicationRepository->findOneByName('CRM');
+        self::assertNotNull($application);
+
+        $client = $this->getTestClient('john-user', 'password-user');
+        $client->request(
+            Request::METHOD_POST,
+            self::API_URL_PREFIX . '/v1/profile/user-applications',
+            content: JSON::encode([
+                'applicationId' => $application->getId(),
+                'name' => 'CRM Special',
+                'logo' => 'https://example.test/crm-special.png',
+                'description' => 'Custom instance',
+                'public' => true,
+            ]),
+        );
+
+        self::assertSame(Response::HTTP_CREATED, $client->getResponse()->getStatusCode(), "Response:
+" . $client->getResponse());
+
+        $payload = $this->decodeResponse($client->getResponse()->getContent());
+        self::assertSame('CRM Special', $payload['name'] ?? null);
+        self::assertSame('crm-special', $payload['keyName'] ?? null);
+        self::assertTrue((bool)($payload['public'] ?? false));
+        self::assertTrue((bool)($payload['owner'] ?? false));
+    }
+
     /**
      * @param string|false $content
      *
