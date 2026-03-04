@@ -21,6 +21,11 @@ class AdminApplication extends RestDto
     #[Assert\NotBlank]
     #[Assert\NotNull]
     #[Assert\Length(min: 2, max: 255)]
+    protected string $keyName = '';
+
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Length(min: 2, max: 255)]
     protected string $name = '';
 
     #[Assert\Length(max: 255)]
@@ -30,6 +35,19 @@ class AdminApplication extends RestDto
     protected ?string $description = null;
 
     protected bool $active = true;
+
+    public function getKeyName(): string
+    {
+        return $this->keyName;
+    }
+
+    public function setKeyName(string $keyName): self
+    {
+        $this->setVisited('keyName');
+        $this->keyName = $keyName;
+
+        return $this;
+    }
 
     public function getName(): string
     {
@@ -91,6 +109,7 @@ class AdminApplication extends RestDto
     {
         if ($entity instanceof Entity) {
             $this->id = $entity->getId();
+            $this->keyName = $entity->getKeyName();
             $this->name = $entity->getName();
             $this->logo = $entity->getLogo();
             $this->description = $entity->getDescription();

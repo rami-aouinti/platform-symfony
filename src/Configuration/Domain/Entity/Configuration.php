@@ -57,7 +57,7 @@ class Configuration implements EntityInterface
     #[ORM\JoinColumn(name: 'profile_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?UserProfile $profile = null;
 
-    #[ORM\ManyToOne(targetEntity: UserApplication::class)]
+    #[ORM\ManyToOne(targetEntity: UserApplication::class, inversedBy: 'configurations')]
     #[ORM\JoinColumn(name: 'user_application_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?UserApplication $userApplication = null;
 

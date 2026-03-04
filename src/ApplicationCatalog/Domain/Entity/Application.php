@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\ApplicationCatalog\Domain\Entity;
 
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\General\Domain\Entity\Traits\Timestampable;
 use App\General\Domain\Entity\Traits\Uuid;
-use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
@@ -18,6 +18,7 @@ use Ramsey\Uuid\UuidInterface;
 #[ORM\Index(name: 'idx_application_active', columns: ['active'])]
 class Application implements EntityInterface
 {
+    use Timestampable;
     use Uuid;
 
     #[ORM\Id]
@@ -26,6 +27,9 @@ class Application implements EntityInterface
 
     #[ORM\Column(name: 'name', type: Types::STRING, length: 255, unique: true, nullable: false)]
     private string $name = '';
+
+    #[ORM\Column(name: 'key_name', type: Types::STRING, length: 255, unique: true, nullable: false)]
+    private string $keyName = '';
 
     #[ORM\Column(name: 'logo', type: Types::STRING, length: 255, nullable: true)]
     private ?string $logo = null;
@@ -94,8 +98,15 @@ class Application implements EntityInterface
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTimeImmutable
+    public function getKeyName(): string
     {
-        return null;
+        return $this->keyName;
+    }
+
+    public function setKeyName(string $keyName): self
+    {
+        $this->keyName = $keyName;
+
+        return $this;
     }
 }

@@ -21,6 +21,7 @@ final class AdminApplicationControllerTest extends WebTestCase
         $client = $this->getTestClient('john-root', 'password-root');
 
         $createPayload = [
+            'keyName' => 'supportdesk-' . uniqid(),
             'name' => 'SupportDesk-' . uniqid(),
             'logo' => 'https://cdn.fake.example/apps/supportdesk-logo.png',
             'description' => 'Gestion SAV et tickets clients.',
@@ -41,6 +42,7 @@ final class AdminApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
 
         $updatePayload = [
+            'keyName' => 'supportdesk-updated-' . uniqid(),
             'name' => 'SupportDeskUpdated-' . uniqid(),
             'logo' => 'https://cdn.fake.example/apps/supportdesk-logo-updated.png',
             'description' => 'Gestion SAV avancée.',
