@@ -15,15 +15,16 @@ final class LoadApplicationData extends Fixture implements OrderedFixtureInterfa
     #[Override]
     public function load(ObjectManager $manager): void
     {
-        foreach ($this->getApplications() as $name => $data) {
+        foreach ($this->getApplications() as $keyName => $data) {
             $application = (new Application())
-                ->setName($name)
+                ->setKeyName($keyName)
+                ->setName($data['name'])
                 ->setLogo($data['logo'])
                 ->setDescription($data['description'])
                 ->setActive(true);
 
             $manager->persist($application);
-            $this->addReference('Application-' . $name, $application);
+            $this->addReference('Application-' . $data['name'], $application);
         }
 
         $manager->flush();
@@ -36,26 +37,30 @@ final class LoadApplicationData extends Fixture implements OrderedFixtureInterfa
     }
 
     /**
-     * @return array<string, array{logo: string, description: string}>
+     * @return array<string, array{name: string, logo: string, description: string}>
      */
     private function getApplications(): array
     {
         return [
-            'CRM' => [
-                'logo' => 'https://cdn.fake.example/apps/crm-logo.png',
-                'description' => 'Centralise les relations clients, le suivi commercial et le support.',
+            'crm' => [
+                'name' => 'CRM',
+                'logo' => 'https://ui-avatars.com/api/?name=CRM&background=0D8ABC&color=fff&size=256',
+                'description' => "Module CRM complet pour centraliser les relations clients, suivre les opportunités commerciales et piloter les interactions du support sur un historique unifié et exploitable.",
             ],
-            'Shop' => [
-                'logo' => 'https://cdn.fake.example/apps/shop-logo.png',
-                'description' => 'Gère les produits, commandes, stocks et paiements e-commerce.',
+            'recruit' => [
+                'name' => 'Recruit',
+                'logo' => 'https://ui-avatars.com/api/?name=Recruit&background=4F46E5&color=fff&size=256',
+                'description' => "Espace recrutement pour publier des offres, qualifier les candidatures et orchestrer le cycle d'embauche avec des étapes collaboratives entre RH et managers.",
             ],
-            'Recruit' => [
-                'logo' => 'https://cdn.fake.example/apps/recruit-logo.png',
-                'description' => 'Pilote le recrutement : offres, candidatures et workflow RH.',
+            'shop' => [
+                'name' => 'Shop',
+                'logo' => 'https://ui-avatars.com/api/?name=Shop&background=059669&color=fff&size=256',
+                'description' => "Suite e-commerce pour gérer le catalogue produits, les commandes, la facturation et le suivi logistique avec une vue opérationnelle de bout en bout.",
             ],
-            'School' => [
-                'logo' => 'https://cdn.fake.example/apps/school-logo.png',
-                'description' => 'Organise les cours, élèves, évaluations et communication pédagogique.',
+            'school' => [
+                'name' => 'School',
+                'logo' => 'https://ui-avatars.com/api/?name=School&background=DC2626&color=fff&size=256',
+                'description' => "Module scolaire pour organiser les classes, planifier les enseignements, diffuser les contenus pédagogiques et suivre la progression des apprenants.",
             ],
         ];
     }

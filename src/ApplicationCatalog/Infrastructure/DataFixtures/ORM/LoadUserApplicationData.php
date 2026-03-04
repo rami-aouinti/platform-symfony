@@ -17,23 +17,32 @@ final class LoadUserApplicationData extends Fixture implements OrderedFixtureInt
     #[Override]
     public function load(ObjectManager $manager): void
     {
-        $johnRoot = $this->getReference('User-john-root', User::class);
-
-        $activations = [
-            'CRM' => true,
-            'Shop' => true,
-            'Recruit' => true,
-            'School' => false,
+        $rows = [
+            ['user' => 'john-root', 'application' => 'CRM', 'name' => 'CRM 1', 'keyName' => 'crm-1', 'public' => true, 'active' => true],
+            ['user' => 'john-root', 'application' => 'CRM', 'name' => 'CRM 2', 'keyName' => 'crm-2', 'public' => false, 'active' => true],
+            ['user' => 'john-root', 'application' => 'Shop', 'name' => 'Shop Principal', 'keyName' => 'shop-principal', 'public' => false, 'active' => true],
+            ['user' => 'john-user', 'application' => 'Recruit', 'name' => 'Recruit John', 'keyName' => 'recruit-john', 'public' => false, 'active' => true],
+            ['user' => 'alice-user', 'application' => 'School', 'name' => 'School Alice', 'keyName' => 'school-alice', 'public' => true, 'active' => true],
+            ['user' => 'carol-user', 'application' => 'Shop', 'name' => 'Shop Carol', 'keyName' => 'shop-carol', 'public' => false, 'active' => true],
+            ['user' => 'hugo-user', 'application' => 'CRM', 'name' => 'CRM Hugo', 'keyName' => 'crm-hugo', 'public' => true, 'active' => false],
         ];
 
-        foreach ($activations as $applicationName => $active) {
-            $application = $this->getReference('Application-' . $applicationName, Application::class);
+        foreach ($rows as $index => $row) {
+            $user = $this->getReference('User-' . $row['user'], User::class);
+            $application = $this->getReference('Application-' . $row['application'], Application::class);
 
-            $userApplication = (new UserApplication($johnRoot, $application))
-                ->setActive($active);
+            $userApplication = (new UserApplication($user, $application))
+                ->setName($row['name'])
+                ->setKeyName($row['keyName'])
+                ->setPublic($row['public'])
+                ->setActive($row['active']);
 
             $manager->persist($userApplication);
-            $this->addReference('UserApplication-john-root-' . $applicationName, $userApplication);
+            $this->addReference('UserApplication-' . $row['user'] . '-' . $index, $userApplication);
+
+            if ($row['user'] === 'john-root' && !$this->hasReference('UserApplication-john-root-' . $row['application'], UserApplication::class)) {
+                $this->addReference('UserApplication-john-root-' . $row['application'], $userApplication);
+            }
         }
 
         $manager->flush();
