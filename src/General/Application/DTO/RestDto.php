@@ -148,6 +148,10 @@ abstract class RestDto implements RestDtoInterface
      */
     private function getGetterMethod(RestDtoInterface $dto, string $property): ?string
     {
+        if (method_exists($dto, $property)) {
+            return $property;
+        }
+
         $getters = [
             'get' . ucfirst($property),
             'is' . ucfirst($property),
