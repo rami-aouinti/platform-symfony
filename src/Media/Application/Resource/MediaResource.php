@@ -102,14 +102,15 @@ class MediaResource extends RestResource implements MediaResourceInterface
         $this->mediaStorageService->delete($entity->getPath());
     }
 
-    public function createFromUploadedFile(UploadedFile $file): Entity
+    public function createFromUploadedFile(UploadedFile $file, ?string $folderId = null): Entity
     {
         $owner = $this->getCurrentUser();
+        $folder = $this->resolveTargetFolder($owner, $folderId);
         $storedFile = $this->mediaStorageService->store($file, $owner->getId());
 
         $media = (new Entity())
             ->setOwner($owner)
-            ->setFolder($this->getOrCreateRootFolder($owner))
+            ->setFolder($folder)
             ->setName($storedFile->getOriginalName())
             ->setPath($storedFile->getPath())
             ->setMimeType($storedFile->getMimeType())
@@ -142,6 +143,26 @@ class MediaResource extends RestResource implements MediaResourceInterface
         $this->mediaFolderRepository->save($rootFolder);
 
         return $rootFolder;
+    }
+
+
+    private function resolveTargetFolder(User $owner, ?string $folderId): MediaFolder
+    {
+        if ($folderId === null) {
+            return $this->getOrCreateRootFolder($owner);
+        }
+
+        $folder = $this->mediaFolderRepository->findAccessible($folderId, $owner, $this->isAdminLike($owner));
+
+        if (!$folder instanceof MediaFolder) {
+            throw new NotFoundHttpException('Media folder not found.');
+        }
+
+        if (!$this->isAdminLike($owner) && $folder->getOwner()->getId() !== $owner->getId()) {
+            throw new AccessDeniedHttpException('Only folder owner can upload media to this folder.');
+        }
+
+        return $folder;
     }
 
     public function findForExport(?string $status = null): array
