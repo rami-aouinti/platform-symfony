@@ -13,6 +13,7 @@ final class ApplicationMapper
     {
         return new Application(
             id: $application->getId(),
+            userApplicationId: $userApplication?->getId(),
             name: $application->getName(),
             logo: $application->getLogo(),
             description: $application->getDescription(),

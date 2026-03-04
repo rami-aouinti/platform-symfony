@@ -38,6 +38,8 @@ final class ProfileApplicationControllerTest extends WebTestCase
         self::assertNotEmpty($payload['items'][0]['description']);
         self::assertArrayHasKey('enabled', $payload['items'][0]);
         self::assertNull($payload['items'][0]['enabled']);
+        self::assertArrayHasKey('userApplicationId', $payload['items'][0]);
+        self::assertNull($payload['items'][0]['userApplicationId']);
     }
 
     /**
@@ -128,9 +130,13 @@ final class ProfileApplicationControllerTest extends WebTestCase
         self::assertSame(Response::HTTP_CREATED, $client->getResponse()->getStatusCode(), "Response:
 " . $client->getResponse());
 
+        $attachPayload = $this->decodeResponse($client->getResponse()->getContent());
+        self::assertArrayHasKey('id', $attachPayload);
+
         $client->request(Request::METHOD_GET, self::PROFILE_URL);
         $list = $this->decodeResponse($client->getResponse()->getContent());
         self::assertTrue($this->findEnabledStateByName($list['items'], 'ERP'));
+        self::assertSame($attachPayload['id'], $this->findUserApplicationIdByName($list['items'], 'ERP'));
 
         $client->request(Request::METHOD_DELETE, self::PROFILE_URL . '/' . $application->getId() . '/detach');
         self::assertSame(Response::HTTP_NO_CONTENT, $client->getResponse()->getStatusCode(), "Response:
@@ -156,6 +162,23 @@ final class ProfileApplicationControllerTest extends WebTestCase
         $decoded = JSON::decode($content, true);
 
         return $decoded;
+    }
+
+
+    /**
+     * @param array<int, array<string, mixed>> $items
+     */
+    private function findUserApplicationIdByName(array $items, string $name): ?string
+    {
+        foreach ($items as $item) {
+            if (($item['name'] ?? null) === $name) {
+                $userApplicationId = $item['userApplicationId'] ?? null;
+
+                return is_string($userApplicationId) ? $userApplicationId : null;
+            }
+        }
+
+        self::fail('Application was not found in payload.');
     }
 
     /**
