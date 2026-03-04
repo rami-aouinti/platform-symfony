@@ -27,6 +27,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Throwable;
 
 use function in_array;
+use function is_array;
 use function is_file;
 use function is_string;
 use function str_starts_with;
@@ -183,6 +184,43 @@ class MeMediaController extends CrudController
         return $response;
     }
 
+
+
+    #[Route(path: '/files/upload', methods: [Request::METHOD_POST])]
+    public function uploadFileAction(Request $request): Response
+    {
+        return $this->uploadAction($request);
+    }
+
+    #[Route(path: '/files/{id}/rename', methods: [Request::METHOD_PATCH])]
+    public function renameFileAction(Request $request, string $id): Response
+    {
+        $payload = $request->toArray();
+
+        if (!is_array($payload)) {
+            return $this->createValidationError('Invalid JSON payload.');
+        }
+
+        $name = $payload['name'] ?? null;
+
+        if (!is_string($name) || trim($name) === '') {
+            return $this->createValidationError('Field "name" is required and must be a non-empty string.');
+        }
+
+        $media = $this->getResource()->findOneAccessible($id);
+        $media->setName(trim($name));
+        $this->getResource()->save($media);
+
+        return $this->getResponseHandler()->createResponse($request, $media, $this->getResource());
+    }
+
+    #[Route(path: '/files/{id}', methods: [Request::METHOD_DELETE])]
+    public function deleteFileAction(string $id): Response
+    {
+        $this->getResource()->delete($id);
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
 
     private function resolveFolderId(Request $request): ?string
     {

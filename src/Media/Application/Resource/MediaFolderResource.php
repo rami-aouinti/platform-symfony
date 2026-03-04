@@ -42,7 +42,10 @@ class MediaFolderResource implements MediaFolderResourceInterface
 
         $parent = $parentId !== null ? $this->findOwnedOrAdminFolder($parentId, $user) : $this->getOrCreateRootFolder($user);
 
-        return array_map(fn (MediaFolder $folder): array => $this->toArray($folder), $this->mediaFolderRepository->findByOwnerAndParent($user, $parent));
+        return array_map(
+            fn (MediaFolder $folder): array => $this->buildTreeNode($folder, $user),
+            $this->mediaFolderRepository->findByOwnerAndParent($user, $parent),
+        );
     }
 
     public function create(string $name, ?string $parentId): MediaFolder
@@ -111,7 +114,6 @@ class MediaFolderResource implements MediaFolderResourceInterface
         return [
             'id' => $folder->getId(),
             'name' => $folder->getName(),
-            'parentId' => $folder->getParent()?->getId(),
             'ownerId' => $folder->getOwner()->getId(),
         ];
     }
