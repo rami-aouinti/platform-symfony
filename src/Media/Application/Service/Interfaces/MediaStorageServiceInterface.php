@@ -17,4 +17,6 @@ interface MediaStorageServiceInterface
     public function store(UploadedFile $file, ?string $ownerId = null): StoredMedia;
 
     public function delete(string $path): void;
+
+    public function resolveFilesystemPath(string $path): string;
 }

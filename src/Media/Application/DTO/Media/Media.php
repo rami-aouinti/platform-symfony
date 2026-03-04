@@ -9,6 +9,7 @@ use App\General\Application\DTO\RestDto;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Media\Domain\Entity\Media as Entity;
 use Override;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -20,6 +21,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Media extends RestDto
 {
+    private static ?RequestStack $requestStack = null;
+
+    private static ?string $publicBaseUrl = null;
+
     #[Assert\NotBlank]
     #[Assert\NotNull]
     #[Assert\Length(min: 2, max: 255)]
@@ -43,6 +48,14 @@ class Media extends RestDto
     #[Assert\NotNull]
     #[Assert\Length(min: 2, max: 64)]
     protected string $status = 'active';
+
+    protected ?string $publicUrl = null;
+
+    public static function configurePublicUrlResolver(RequestStack $requestStack, ?string $publicBaseUrl): void
+    {
+        self::$requestStack = $requestStack;
+        self::$publicBaseUrl = $publicBaseUrl;
+    }
 
     public function getName(): string
     {
@@ -101,6 +114,11 @@ class Media extends RestDto
         return $this->status;
     }
 
+    public function getPublicUrl(): ?string
+    {
+        return $this->publicUrl;
+    }
+
     public function setStatus(string $status): self
     {
         $this->setVisited('status');
@@ -122,8 +140,27 @@ class Media extends RestDto
             $this->mimeType = $entity->getMimeType();
             $this->size = $entity->getSize();
             $this->status = $entity->getStatus()->value;
+            $this->publicUrl = $this->buildPublicUrl($entity->getPath());
         }
 
         return $this;
+    }
+
+    private function buildPublicUrl(string $path): string
+    {
+        $normalizedPath = '/' . ltrim($path, '/');
+        $configuredBaseUrl = self::$publicBaseUrl;
+
+        if ($configuredBaseUrl !== null && $configuredBaseUrl !== '') {
+            return rtrim($configuredBaseUrl, '/') . $normalizedPath;
+        }
+
+        $request = self::$requestStack?->getCurrentRequest();
+
+        if ($request === null) {
+            return $normalizedPath;
+        }
+
+        return rtrim($request->getSchemeAndHttpHost(), '/') . $normalizedPath;
     }
 }

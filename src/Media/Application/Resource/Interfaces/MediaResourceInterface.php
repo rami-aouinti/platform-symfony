@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Media\Application\Resource\Interfaces;
 
 use App\General\Application\Rest\Interfaces\RestResourceInterface;
+use App\Media\Application\Service\Interfaces\MediaStorageServiceInterface;
 use App\Media\Domain\Entity\Media;
 use App\Media\Domain\Entity\MediaFolder;
 use App\User\Domain\Entity\User;
@@ -30,4 +31,8 @@ interface MediaResourceInterface extends RestResourceInterface
      * @return Media[]
      */
     public function findForExport(?string $status = null): array;
+
+    public function findOneAccessible(string $id): Media;
+
+    public function getStorageService(): MediaStorageServiceInterface;
 }

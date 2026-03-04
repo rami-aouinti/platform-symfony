@@ -9,6 +9,7 @@ use App\Configuration\Domain\Repository\Interfaces\ConfigurationRepositoryInterf
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\RestResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\Media\Application\DTO\Media\Media as MediaDto;
 use App\Media\Application\Resource\Interfaces\MediaResourceInterface;
 use App\Media\Application\Service\Interfaces\MediaStorageServiceInterface;
 use App\Media\Domain\Entity\Media as Entity;
@@ -19,6 +20,7 @@ use App\Media\Domain\Repository\Interfaces\MediaRepositoryInterface as Repositor
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -43,8 +45,11 @@ class MediaResource extends RestResource implements MediaResourceInterface
         private readonly MediaStorageServiceInterface $mediaStorageService,
         private readonly ConfigurationRepositoryInterface $configurationRepository,
         private readonly MediaFolderRepositoryInterface $mediaFolderRepository,
+        RequestStack $requestStack,
+        ?string $mediaPublicBaseUrl = null,
     ) {
         parent::__construct($repository);
+        MediaDto::configurePublicUrlResolver($requestStack, $mediaPublicBaseUrl);
     }
 
     public function beforeFind(array &$criteria, array &$orderBy, ?int &$limit, ?int &$offset, array &$search): void
@@ -163,6 +168,22 @@ class MediaResource extends RestResource implements MediaResourceInterface
         }
 
         return $folder;
+    }
+
+    public function getStorageService(): MediaStorageServiceInterface
+    {
+        return $this->mediaStorageService;
+    }
+
+    public function findOneAccessible(string $id): Entity
+    {
+        $entity = $this->findOne(id: $id, throwExceptionIfNotFound: true);
+
+        if (!$entity instanceof Entity) {
+            throw new NotFoundHttpException('Media not found.');
+        }
+
+        return $entity;
     }
 
     public function findForExport(?string $status = null): array
