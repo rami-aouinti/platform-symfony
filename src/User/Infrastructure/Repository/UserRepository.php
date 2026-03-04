@@ -115,6 +115,16 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     /**
      * {@inheritdoc}
      */
+    public function findOneByEmail(string $email): ?Entity
+    {
+        $user = $this->findOneBy(['email' => $email]);
+
+        return $user instanceof Entity ? $user : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function findByGroupOrInheritedRole(UserGroup $group): array
     {
         $roles = $this->getRolesGrantingAccessToRole($group->getRole()->getId());

@@ -12,6 +12,7 @@ use App\Company\Domain\Repository\Interfaces\CompanyRepositoryInterface;
 use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Application\Rest\AbstractOwnedResource;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
+use App\Task\Application\DTO\Project\Project as ProjectDto;
 use App\Task\Application\Resource\Interfaces\ProjectResourceInterface;
 use App\Task\Application\Service\Interfaces\TaskAccessServiceInterface;
 use App\Task\Domain\Entity\Project as Entity;
@@ -136,14 +137,7 @@ class ProjectResource extends AbstractOwnedResource implements ProjectResourceIn
             $currentUser = $this->getCurrentUserOrDeny();
             $entity->setOwner($currentUser);
 
-            $company = $this->companyRepository->findOneBy([
-                'owner' => $currentUser,
-            ]);
-
-            if ($company === null) {
-                throw new AccessDeniedHttpException('No company found for current user.');
-            }
-
+            $company = $this->resolveCompanyForProjectCreation($restDto, $currentUser);
             $entity->setCompany($company);
         }
     }
@@ -186,6 +180,36 @@ class ProjectResource extends AbstractOwnedResource implements ProjectResourceIn
         ]);
 
         return $membership instanceof CompanyMembership;
+    }
+
+
+    private function resolveCompanyForProjectCreation(RestDtoInterface $restDto, User $currentUser): Company
+    {
+        $company = null;
+
+        if ($restDto instanceof ProjectDto && is_string($restDto->getCompanyId()) && $restDto->getCompanyId() !== '') {
+            $company = $this->companyRepository->find($restDto->getCompanyId());
+
+            if (!$company instanceof Company) {
+                throw new AccessDeniedHttpException('Company not found.');
+            }
+
+            if (!$this->taskAccessService->isAdminLike($currentUser) && $company->getOwner()?->getId() !== $currentUser->getId()) {
+                throw new AccessDeniedHttpException('Only company owner can add project to this company.');
+            }
+
+            return $company;
+        }
+
+        $company = $this->companyRepository->findOneBy([
+            'owner' => $currentUser,
+        ]);
+
+        if (!$company instanceof Company) {
+            throw new AccessDeniedHttpException('No company found for current user.');
+        }
+
+        return $company;
     }
 
     private function assertCanManageProject(Entity $project): void
