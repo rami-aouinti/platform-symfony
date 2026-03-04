@@ -115,7 +115,8 @@ class MeEventController extends CrudController
     public function processCriteria(array &$criteria, Request $request, string $method): void
     {
         if ($this->currentUser !== null) {
-            $criteria['user'] = $this->currentUser;
+            unset($criteria['user']);
+            $criteria['and'][] = ['IDENTITY(entity.user)', 'eq', $this->currentUser->getId()];
         }
     }
 
