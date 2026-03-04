@@ -153,9 +153,10 @@ final readonly class ProfileApplicationPluginController
         return $userApplication;
     }
 
-    private function findPluginOrFail(string $id): PluginEntity
+    private function findPluginOrFail(string $idOrKeyName): PluginEntity
     {
-        $plugin = $this->pluginRepository->find($id);
+        $plugin = $this->pluginRepository->findOneBy(['id' => $idOrKeyName])
+            ?? $this->pluginRepository->findOneBy(['keyName' => $idOrKeyName]);
 
         if (!$plugin instanceof PluginEntity) {
             throw new NotFoundHttpException('Plugin not found.');
