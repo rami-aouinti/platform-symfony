@@ -40,7 +40,7 @@ final readonly class UserApplicationCreateService implements UserApplicationCrea
         return $entity;
     }
 
-    private function generateUniqueKeyName(string $name): string
+    public function generateUniqueKeyName(string $name, ?string $excludeUserApplicationId = null): string
     {
         $baseKeyName = strtolower($this->slugger->slug($name)->toString());
 
@@ -51,7 +51,13 @@ final readonly class UserApplicationCreateService implements UserApplicationCrea
         $candidate = $baseKeyName;
         $index = 2;
 
-        while ($this->userApplicationRepository->findOneByKeyName($candidate) instanceof UserApplication) {
+        while (true) {
+            $existing = $this->userApplicationRepository->findOneByKeyName($candidate);
+
+            if (!$existing instanceof UserApplication || $existing->getId() === $excludeUserApplicationId) {
+                break;
+            }
+
             $candidate = sprintf('%s-%d', $baseKeyName, $index);
             ++$index;
         }

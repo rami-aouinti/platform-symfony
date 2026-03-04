@@ -20,6 +20,17 @@ final readonly class PluginListResource implements PluginListResourceInterface
     ) {
     }
 
+    public function listCatalog(): array
+    {
+        $items = [];
+
+        foreach ($this->pluginRepository->findActiveOrderedByName() as $plugin) {
+            $items[] = $this->pluginMapper->mapEntityToDto($plugin);
+        }
+
+        return $items;
+    }
+
     public function listForUserApplication(UserApplication $userApplication): array
     {
         $indexedUserApplicationPlugins = $this->userApplicationPluginRepository

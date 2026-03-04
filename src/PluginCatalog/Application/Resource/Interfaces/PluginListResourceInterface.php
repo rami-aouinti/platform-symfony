@@ -13,4 +13,9 @@ interface PluginListResourceInterface
      * @return Plugin[]
      */
     public function listForUserApplication(UserApplication $userApplication): array;
+
+    /**
+     * @return Plugin[]
+     */
+    public function listCatalog(): array;
 }
