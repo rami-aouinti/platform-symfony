@@ -152,7 +152,7 @@ final class ProfileApplicationControllerTest extends WebTestCase
     /**
      * @throws Throwable
      */
-    #[TestDox('POST /api/v1/profile/user-applications creates a user application with generated key')]
+    #[TestDox('POST /api/v1/profile/user-applications/{applicationId} creates a user application with generated key')]
     public function testCreateUserApplicationEndpoint(): void
     {
         $applicationRepository = static::getContainer()->get(ApplicationRepositoryInterface::class);
@@ -162,9 +162,8 @@ final class ProfileApplicationControllerTest extends WebTestCase
         $client = $this->getTestClient('john-user', 'password-user');
         $client->request(
             Request::METHOD_POST,
-            self::API_URL_PREFIX . '/v1/profile/user-applications',
+            self::API_URL_PREFIX . '/v1/profile/user-applications/' . $application->getId(),
             content: JSON::encode([
-                'applicationId' => $application->getId(),
                 'name' => 'CRM Special',
                 'logo' => 'https://example.test/crm-special.png',
                 'description' => 'Custom instance',
