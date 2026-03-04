@@ -21,17 +21,19 @@ final class LoadMediaFolderData extends Fixture implements OrderedFixtureInterfa
     #[Override]
     public function load(ObjectManager $manager): void
     {
-        /** @var User $john */
-        $john = $this->getReference('User-john-user', User::class);
+        /** @var User $johnRoot */
+        $johnRoot = $this->getReference('User-john-root', User::class);
         /** @var User $alice */
         $alice = $this->getReference('User-alice-user', User::class);
 
-        $johnRoot = $this->createFolder($manager, 'MediaFolder-john-user-root', '80000000-0000-1000-8000-000000000001', MediaFolder::ROOT_FOLDER_NAME, $john, null);
+        $johnRootFolder = $this->createFolder($manager, 'MediaFolder-john-root-root', '80000000-0000-1000-8000-000000000001', MediaFolder::ROOT_FOLDER_NAME, $johnRoot, null);
         $aliceRoot = $this->createFolder($manager, 'MediaFolder-alice-user-root', '80000000-0000-1000-8000-000000000002', MediaFolder::ROOT_FOLDER_NAME, $alice, null);
 
-        $this->createFolder($manager, 'MediaFolder-john-user-images', '80000000-0000-1000-8000-000000000011', 'Images', $john, $johnRoot);
-        $this->createFolder($manager, 'MediaFolder-john-user-documents', '80000000-0000-1000-8000-000000000012', 'Documents', $john, $johnRoot);
-        $this->createFolder($manager, 'MediaFolder-john-user-contracts', '80000000-0000-1000-8000-000000000013', 'Contrats', $john, $johnRoot);
+        $this->createFolder($manager, 'MediaFolder-john-root-images', '80000000-0000-1000-8000-000000000011', 'Images', $johnRoot, $johnRootFolder);
+        $this->createFolder($manager, 'MediaFolder-john-root-documents', '80000000-0000-1000-8000-000000000012', 'Documents', $johnRoot, $johnRootFolder);
+        $this->createFolder($manager, 'MediaFolder-john-root-contracts', '80000000-0000-1000-8000-000000000013', 'Contrats', $johnRoot, $johnRootFolder);
+        $this->createFolder($manager, 'MediaFolder-john-root-archives', '80000000-0000-1000-8000-000000000014', 'Archives', $johnRoot, $johnRootFolder);
+        $this->createFolder($manager, 'MediaFolder-john-root-shared', '80000000-0000-1000-8000-000000000015', 'Shared', $johnRoot, $johnRootFolder);
 
         $this->createFolder($manager, 'MediaFolder-alice-user-images', '80000000-0000-1000-8000-000000000021', 'Images', $alice, $aliceRoot);
         $this->createFolder($manager, 'MediaFolder-alice-user-documents', '80000000-0000-1000-8000-000000000022', 'Documents', $alice, $aliceRoot);
@@ -39,7 +41,7 @@ final class LoadMediaFolderData extends Fixture implements OrderedFixtureInterfa
 
         $manager->flush();
 
-        $this->addReference('MediaFolder-owner-ok', $johnRoot);
+        $this->addReference('MediaFolder-owner-ok', $johnRootFolder);
         $this->addReference('MediaFolder-forbidden-cross-user', $aliceRoot);
     }
 
