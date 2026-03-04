@@ -89,6 +89,30 @@ class MeEventController extends CrudController
 
     /** @throws Throwable */
     #[Route(path: '/{id}', methods: [Request::METHOD_PATCH])]
+    #[OA\Patch(
+        summary: 'Modifier partiellement un événement du calendrier de l’utilisateur connecté',
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
+    )]
+    #[OA\RequestBody(
+        request: 'body',
+        description: 'Payload de mise à jour partielle de l’événement',
+        content: new OA\JsonContent(
+            type: 'object',
+            example: [
+                'startAt' => '2026-03-05T17:28:00+01:00',
+                'endAt' => '2026-03-05T19:28:00+01:00',
+                'isAllDay' => false,
+            ],
+        ),
+    )]
+    #[OA\Response(response: 200, description: 'Événement partiellement modifié')]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
+    #[OA\Response(response: 404, ref: '#/components/responses/NotFoundError')]
     public function patchAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
         $loggedInUser = $this->getCurrentUserOrDeny();
