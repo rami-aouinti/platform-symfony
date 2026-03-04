@@ -5,9 +5,19 @@ declare(strict_types=1);
 namespace App\ApplicationCatalog\Transport\Controller\Api\V1\Application;
 
 use App\ApplicationCatalog\Application\DTO\Application;
+use App\ApplicationCatalog\Application\DTO\UserApplicationCreatePayload;
+use App\ApplicationCatalog\Application\DTO\UserApplicationConfigurationCreatePayload;
+use App\ApplicationCatalog\Application\DTO\UserApplicationPatchPayload;
+use App\ApplicationCatalog\Application\Service\UserApplicationCreateService;
+use App\ApplicationCatalog\Domain\Entity\UserApplication;
+use App\ApplicationCatalog\Infrastructure\Repository\UserApplicationRepository;
+use App\Configuration\Domain\Entity\Configuration;
+use App\Configuration\Infrastructure\Repository\ConfigurationRepository;
+use App\ApplicationCatalog\Application\DTO\UserApplicationMapper;
 use App\ApplicationCatalog\Application\DTO\UserApplicationTogglePayload;
 use App\ApplicationCatalog\Application\Resource\Interfaces\ApplicationListResourceInterface;
 use App\ApplicationCatalog\Application\Resource\Interfaces\UserApplicationToggleResourceInterface;
+use App\ApplicationCatalog\Application\Service\Interfaces\UserApplicationCreateServiceInterface;
 use App\ApplicationCatalog\Domain\Entity\Application as ApplicationEntity;
 use App\ApplicationCatalog\Infrastructure\Repository\ApplicationRepository;
 use App\General\Domain\Utils\JSON;
@@ -36,6 +46,11 @@ final readonly class ProfileApplicationController
         private UserApplicationToggleResourceInterface $userApplicationToggleResource,
         private UserTypeIdentification $userTypeIdentification,
         private ApplicationRepository $applicationRepository,
+        private UserApplicationCreateServiceInterface $userApplicationCreateService,
+        private UserApplicationCreateService $userApplicationCreateServiceConcrete,
+        private UserApplicationRepository $userApplicationRepository,
+        private ConfigurationRepository $configurationRepository,
+        private UserApplicationMapper $userApplicationMapper,
     ) {
     }
 
@@ -79,6 +94,118 @@ final readonly class ProfileApplicationController
         $dto = $this->userApplicationToggleResource->attach($this->getCurrentUserOrDeny(), $application);
 
         return new JsonResponse($dto->toArray(), JsonResponse::HTTP_CREATED);
+    }
+
+
+    /**
+     * @throws JsonException
+     */
+    #[Route(path: '/v1/profile/user-applications', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/me/profile/user-applications', methods: [Request::METHOD_POST])]
+    #[OA\Post(summary: 'Create a user application for current user')]
+    public function createUserApplicationAction(Request $request): JsonResponse
+    {
+        $payload = UserApplicationCreatePayload::fromPayload(JSON::decode((string)$request->getContent(), true));
+        $application = $this->findApplicationOrFail($payload->getApplicationId());
+        $currentUser = $this->getCurrentUserOrDeny();
+
+        $created = $this->userApplicationCreateService->create(
+            $currentUser,
+            $application,
+            $payload->getName(),
+            $payload->getLogo(),
+            $payload->getDescription(),
+            $payload->isPublic(),
+        );
+
+        return new JsonResponse(
+            $this->userApplicationMapper->mapEntityToDto($created, $currentUser)->toArray(),
+            JsonResponse::HTTP_CREATED,
+        );
+    }
+
+
+    /**
+     * @throws JsonException
+     */
+    #[Route(path: '/v1/profile/user-applications/{id}', methods: [Request::METHOD_PATCH])]
+    #[Route(path: '/v1/me/profile/user-applications/{id}', methods: [Request::METHOD_PATCH])]
+    #[OA\Patch(summary: 'Update current user user-application metadata')]
+    public function patchUserApplicationAction(Request $request, string $id): JsonResponse
+    {
+        $payload = UserApplicationPatchPayload::fromPayload(JSON::decode((string)$request->getContent(), true));
+        $currentUser = $this->getCurrentUserOrDeny();
+        $userApplication = $this->findUserApplicationOrFail($id);
+        $this->denyUnlessOwner($userApplication, $currentUser);
+
+        if (is_string($payload->getName()) && trim($payload->getName()) !== '') {
+            $name = trim($payload->getName());
+            $userApplication
+                ->setName($name)
+                ->setKeyName($this->userApplicationCreateServiceConcrete->generateUniqueKeyName($name, $userApplication->getId()));
+        }
+
+        if (is_string($payload->getLogo())) {
+            $userApplication->setLogo($payload->getLogo());
+        }
+
+        if (is_string($payload->getDescription())) {
+            $userApplication->setDescription($payload->getDescription());
+        }
+
+        if (is_bool($payload->isPublic())) {
+            $userApplication->setPublic($payload->isPublic());
+        }
+
+        $this->userApplicationRepository->save($userApplication);
+
+        return new JsonResponse($this->userApplicationMapper->mapEntityToDto($userApplication, $currentUser)->toArray());
+    }
+
+    #[Route(path: '/v1/profile/user-applications/{id}', methods: [Request::METHOD_DELETE])]
+    #[Route(path: '/v1/me/profile/user-applications/{id}', methods: [Request::METHOD_DELETE])]
+    #[OA\Delete(summary: 'Delete current user user-application')]
+    public function deleteUserApplicationAction(string $id): JsonResponse
+    {
+        $currentUser = $this->getCurrentUserOrDeny();
+        $userApplication = $this->findUserApplicationOrFail($id);
+        $this->denyUnlessOwner($userApplication, $currentUser);
+
+        $this->userApplicationRepository->remove($userApplication);
+
+        return new JsonResponse(status: JsonResponse::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @throws JsonException
+     */
+    #[Route(path: '/v1/profile/user-applications/{id}/configurations', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/me/profile/user-applications/{id}/configurations', methods: [Request::METHOD_POST])]
+    #[OA\Post(summary: 'Create a configuration for current user user-application')]
+    public function createUserApplicationConfigurationAction(Request $request, string $id): JsonResponse
+    {
+        $payload = UserApplicationConfigurationCreatePayload::fromPayload(JSON::decode((string)$request->getContent(), true));
+        $currentUser = $this->getCurrentUserOrDeny();
+        $userApplication = $this->findUserApplicationOrFail($id);
+        $this->denyUnlessOwner($userApplication, $currentUser);
+
+        $configuration = (new Configuration())
+            ->setCode($payload->getCode())
+            ->setKeyName($payload->getKeyName())
+            ->setValue($payload->getValue())
+            ->setStatus($payload->getStatus())
+            ->setUserApplication($userApplication);
+
+        $this->configurationRepository->save($configuration);
+
+        return new JsonResponse([
+            'id' => $configuration->getId(),
+            'code' => $configuration->getCode(),
+            'keyName' => $configuration->getKeyName(),
+            'value' => $configuration->getValue(),
+            'status' => $configuration->getStatus(),
+            'userApplicationId' => $userApplication->getId(),
+        ], JsonResponse::HTTP_CREATED);
     }
 
     #[Route(path: '/v1/profile/applications/{id}/activate', methods: [Request::METHOD_POST])]
@@ -128,6 +255,25 @@ final readonly class ProfileApplicationController
         }
 
         return $application;
+    }
+
+
+    private function findUserApplicationOrFail(string $id): UserApplication
+    {
+        $userApplication = $this->userApplicationRepository->find($id);
+
+        if (!$userApplication instanceof UserApplication) {
+            throw new NotFoundHttpException('User application not found.');
+        }
+
+        return $userApplication;
+    }
+
+    private function denyUnlessOwner(UserApplication $userApplication, User $currentUser): void
+    {
+        if ($userApplication->getUser()->getId() !== $currentUser->getId()) {
+            throw new AccessDeniedHttpException('Only owner can modify this user application.');
+        }
     }
 
     private function getCurrentUserOrDeny(): User

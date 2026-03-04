@@ -147,6 +147,131 @@ final class ProfileApplicationControllerTest extends WebTestCase
         self::assertFalse($this->findEnabledStateByName($list['items'], 'ERP'));
     }
 
+
+
+    /**
+     * @throws Throwable
+     */
+    #[TestDox('POST /api/v1/profile/user-applications creates a user application with generated key')]
+    public function testCreateUserApplicationEndpoint(): void
+    {
+        $applicationRepository = static::getContainer()->get(ApplicationRepositoryInterface::class);
+        $application = $applicationRepository->findOneByName('CRM');
+        self::assertNotNull($application);
+
+        $client = $this->getTestClient('john-user', 'password-user');
+        $client->request(
+            Request::METHOD_POST,
+            self::API_URL_PREFIX . '/v1/profile/user-applications',
+            content: JSON::encode([
+                'applicationId' => $application->getId(),
+                'name' => 'CRM Special',
+                'logo' => 'https://example.test/crm-special.png',
+                'description' => 'Custom instance',
+                'public' => true,
+            ]),
+        );
+
+        self::assertSame(Response::HTTP_CREATED, $client->getResponse()->getStatusCode(), "Response:
+" . $client->getResponse());
+
+        $payload = $this->decodeResponse($client->getResponse()->getContent());
+        self::assertSame('CRM Special', $payload['name'] ?? null);
+        self::assertSame('crm-special', $payload['keyName'] ?? null);
+        self::assertTrue((bool)($payload['public'] ?? false));
+        self::assertTrue((bool)($payload['owner'] ?? false));
+    }
+
+
+
+    /**
+     * @throws Throwable
+     */
+    #[TestDox('Owner can patch, add configuration and delete own user application')]
+    public function testOwnerCanPatchDeleteAndAddConfigurationOnUserApplication(): void
+    {
+        $client = $this->getTestClient('john-root', 'password-root');
+
+        $client->request(Request::METHOD_GET, self::API_URL_PREFIX . '/v1/user-applications');
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $listPayload = $this->decodeResponse($client->getResponse()->getContent());
+
+        $ownedId = null;
+        foreach ($listPayload['items'] as $item) {
+            if (($item['owner'] ?? false) === true) {
+                $ownedId = $item['id'] ?? null;
+                break;
+            }
+        }
+        self::assertIsString($ownedId);
+
+        $client->request(
+            Request::METHOD_PATCH,
+            self::API_URL_PREFIX . '/v1/profile/user-applications/' . $ownedId,
+            content: JSON::encode([
+                'name' => 'CRM Renamed',
+                'logo' => 'https://example.test/new-logo.png',
+                'description' => 'updated',
+                'public' => true,
+            ]),
+        );
+        self::assertSame(Response::HTTP_OK, $client->getResponse()->getStatusCode(), "Response:
+" . $client->getResponse());
+        $patched = $this->decodeResponse($client->getResponse()->getContent());
+        self::assertSame('CRM Renamed', $patched['name'] ?? null);
+        self::assertSame('crm-renamed', $patched['keyName'] ?? null);
+        self::assertTrue((bool)($patched['public'] ?? false));
+
+        $client->request(
+            Request::METHOD_POST,
+            self::API_URL_PREFIX . '/v1/profile/user-applications/' . $ownedId . '/configurations',
+            content: JSON::encode([
+                'code' => 'ui',
+                'keyName' => 'theme',
+                'value' => ['mode' => 'dark'],
+                'status' => 'active',
+            ]),
+        );
+        self::assertSame(Response::HTTP_CREATED, $client->getResponse()->getStatusCode(), "Response:
+" . $client->getResponse());
+        $createdConfig = $this->decodeResponse($client->getResponse()->getContent());
+        self::assertSame('ui', $createdConfig['code'] ?? null);
+        self::assertSame('theme', $createdConfig['keyName'] ?? null);
+
+        $client->request(Request::METHOD_DELETE, self::API_URL_PREFIX . '/v1/profile/user-applications/' . $ownedId);
+        self::assertSame(Response::HTTP_NO_CONTENT, $client->getResponse()->getStatusCode(), "Response:
+" . $client->getResponse());
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[TestDox('Non-owner cannot patch another user application')]
+    public function testNonOwnerCannotPatchAnotherUserApplication(): void
+    {
+        $ownerClient = $this->getTestClient('john-root', 'password-root');
+        $ownerClient->request(Request::METHOD_GET, self::API_URL_PREFIX . '/v1/user-applications');
+        $payload = $this->decodeResponse($ownerClient->getResponse()->getContent());
+
+        $ownedId = null;
+        foreach ($payload['items'] as $item) {
+            if (($item['owner'] ?? false) === true) {
+                $ownedId = $item['id'] ?? null;
+                break;
+            }
+        }
+        self::assertIsString($ownedId);
+
+        $client = $this->getTestClient('alice-user', 'password-user');
+        $client->request(
+            Request::METHOD_PATCH,
+            self::API_URL_PREFIX . '/v1/profile/user-applications/' . $ownedId,
+            content: JSON::encode(['name' => 'hacked']),
+        );
+
+        self::assertSame(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
+    }
+
     /**
      * @param string|false $content
      *
