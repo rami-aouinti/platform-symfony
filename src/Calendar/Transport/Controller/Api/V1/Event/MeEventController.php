@@ -116,7 +116,7 @@ class MeEventController extends CrudController
     {
         if ($this->currentUser !== null) {
             unset($criteria['user']);
-            $criteria['user.id'] = $this->currentUser->getId();
+            $criteria[] = ['IDENTITY(entity.user)', 'eq', $this->currentUser->getId()];
         }
     }
 
