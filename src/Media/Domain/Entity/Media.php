@@ -24,6 +24,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity]
 #[ORM\Table(name: 'media')]
 #[ORM\Index(name: 'idx_media_owner_id', columns: ['owner_id'])]
+#[ORM\Index(name: 'idx_media_folder_id', columns: ['folder_id'])]
 #[ORM\Index(name: 'idx_media_status', columns: ['status'])]
 #[ORM\Index(name: 'idx_media_mime_type', columns: ['mime_type'])]
 #[ORM\UniqueConstraint(name: 'uq_media_owner_path', columns: ['owner_id', 'path'])]
@@ -43,6 +44,11 @@ class Media implements EntityInterface
     #[ORM\JoinColumn(name: 'owner_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     #[Groups(['Media', 'Media.owner', 'Media.show', 'Media.edit'])]
     private ?User $owner = null;
+
+    #[ORM\ManyToOne(targetEntity: MediaFolder::class)]
+    #[ORM\JoinColumn(name: 'folder_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[Groups(['Media', 'Media.folder', 'Media.show', 'Media.edit'])]
+    private ?MediaFolder $folder = null;
 
     #[ORM\Column(name: 'path', type: Types::STRING, length: 512, nullable: false)]
     #[Groups(['Media', 'Media.path', 'Media.create', 'Media.show', 'Media.edit'])]
@@ -85,6 +91,18 @@ class Media implements EntityInterface
     public function getPath(): string
     {
         return $this->path;
+    }
+
+    public function getFolder(): ?MediaFolder
+    {
+        return $this->folder;
+    }
+
+    public function setFolder(?MediaFolder $folder): self
+    {
+        $this->folder = $folder;
+
+        return $this;
     }
 
     public function setPath(string $path): self

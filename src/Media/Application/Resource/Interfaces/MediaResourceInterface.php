@@ -6,6 +6,8 @@ namespace App\Media\Application\Resource\Interfaces;
 
 use App\General\Application\Rest\Interfaces\RestResourceInterface;
 use App\Media\Domain\Entity\Media;
+use App\Media\Domain\Entity\MediaFolder;
+use App\User\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -16,6 +18,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 interface MediaResourceInterface extends RestResourceInterface
 {
     public function createFromUploadedFile(UploadedFile $file): Media;
+
+    public function getOrCreateRootFolder(User $user): MediaFolder;
 
     /**
      * @return array{columns: string[], status: string|null, title: string}
