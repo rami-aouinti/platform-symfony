@@ -176,6 +176,9 @@ services:
     App\Media\Domain\Repository\Interfaces\MediaFolderRepositoryInterface:
         class: App\Media\Infrastructure\Repository\MediaFolderRepository
 
+    App\Media\Application\Resource\Interfaces\MediaFolderResourceInterface:
+        class: App\Media\Application\Resource\MediaFolderResource
+
     App\Configuration\Application\Resource\Interfaces\ConfigurationResourceInterface:
         class: App\Configuration\Application\Resource\ConfigurationResource
 
