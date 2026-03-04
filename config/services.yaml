@@ -258,6 +258,24 @@ services:
     App\Blog\Domain\Repository\Interfaces\BlogPostLinkRepositoryInterface:
         class: App\Blog\Infrastructure\Repository\BlogPostLinkRepository
 
+    App\Page\Application\Resource\Interfaces\AboutResourceInterface:
+        class: App\Page\Application\Resource\AboutResource
+
+    App\Page\Application\Resource\Interfaces\ContactResourceInterface:
+        class: App\Page\Application\Resource\ContactResource
+
+    App\Page\Application\Resource\Interfaces\FaqResourceInterface:
+        class: App\Page\Application\Resource\FaqResource
+
+    App\Page\Domain\Repository\Interfaces\AboutRepositoryInterface:
+        class: App\Page\Infrastructure\Repository\AboutRepository
+
+    App\Page\Domain\Repository\Interfaces\ContactRepositoryInterface:
+        class: App\Page\Infrastructure\Repository\ContactRepository
+
+    App\Page\Domain\Repository\Interfaces\FaqRepositoryInterface:
+        class: App\Page\Infrastructure\Repository\FaqRepository
+
     App\ApplicationCatalog\Domain\Repository\Interfaces\ApplicationRepositoryInterface:
         class: App\ApplicationCatalog\Infrastructure\Repository\ApplicationRepository
 
@@ -344,6 +362,9 @@ when@dev:
         App\PluginCatalog\Infrastructure\DataFixtures\:
             resource: '../src/PluginCatalog/Infrastructure/DataFixtures/*'
 
+        App\Page\Infrastructure\DataFixtures\:
+            resource: '../src/Page/Infrastructure/DataFixtures/*'
+
         App\Tests\TestCase\:
             resource: '../tests/TestCase/*'
 
@@ -404,3 +425,6 @@ when@test:
 
         App\PluginCatalog\Infrastructure\DataFixtures\:
             resource: '../src/PluginCatalog/Infrastructure/DataFixtures/*'
+
+        App\Page\Infrastructure\DataFixtures\:
+            resource: '../src/Page/Infrastructure/DataFixtures/*'
