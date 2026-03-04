@@ -6,6 +6,7 @@ namespace App\ApplicationCatalog\Domain\Entity;
 
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Uuid;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
@@ -91,5 +92,10 @@ class Application implements EntityInterface
         $this->active = $active;
 
         return $this;
+    }
+
+    public function getCreatedAt(): ?DateTimeImmutable
+    {
+        return null;
     }
 }
