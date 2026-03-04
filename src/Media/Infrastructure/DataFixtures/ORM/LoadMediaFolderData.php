@@ -1,0 +1,72 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Media\Infrastructure\DataFixtures\ORM;
+
+use App\General\Domain\Rest\UuidHelper;
+use App\Media\Domain\Entity\MediaFolder;
+use App\Tests\Utils\PhpUnitUtil;
+use App\User\Domain\Entity\User;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
+use Override;
+
+/**
+ * @package App\Media\Infrastructure\DataFixtures\ORM
+ */
+final class LoadMediaFolderData extends Fixture implements OrderedFixtureInterface
+{
+    #[Override]
+    public function load(ObjectManager $manager): void
+    {
+        /** @var User $john */
+        $john = $this->getReference('User-john-user', User::class);
+        /** @var User $alice */
+        $alice = $this->getReference('User-alice-user', User::class);
+
+        $johnRoot = $this->createFolder($manager, 'MediaFolder-john-user-root', '80000000-0000-1000-8000-000000000001', MediaFolder::ROOT_FOLDER_NAME, $john, null);
+        $aliceRoot = $this->createFolder($manager, 'MediaFolder-alice-user-root', '80000000-0000-1000-8000-000000000002', MediaFolder::ROOT_FOLDER_NAME, $alice, null);
+
+        $this->createFolder($manager, 'MediaFolder-john-user-images', '80000000-0000-1000-8000-000000000011', 'Images', $john, $johnRoot);
+        $this->createFolder($manager, 'MediaFolder-john-user-documents', '80000000-0000-1000-8000-000000000012', 'Documents', $john, $johnRoot);
+        $this->createFolder($manager, 'MediaFolder-john-user-contracts', '80000000-0000-1000-8000-000000000013', 'Contrats', $john, $johnRoot);
+
+        $this->createFolder($manager, 'MediaFolder-alice-user-images', '80000000-0000-1000-8000-000000000021', 'Images', $alice, $aliceRoot);
+        $this->createFolder($manager, 'MediaFolder-alice-user-documents', '80000000-0000-1000-8000-000000000022', 'Documents', $alice, $aliceRoot);
+        $this->createFolder($manager, 'MediaFolder-alice-user-contracts', '80000000-0000-1000-8000-000000000023', 'Contrats', $alice, $aliceRoot);
+
+        $manager->flush();
+
+        $this->addReference('MediaFolder-owner-ok', $johnRoot);
+        $this->addReference('MediaFolder-forbidden-cross-user', $aliceRoot);
+    }
+
+    #[Override]
+    public function getOrder(): int
+    {
+        return 6;
+    }
+
+    private function createFolder(
+        ObjectManager $manager,
+        string $reference,
+        string $uuid,
+        string $name,
+        User $owner,
+        ?MediaFolder $parent,
+    ): MediaFolder {
+        $folder = (new MediaFolder())
+            ->setName($name)
+            ->setOwner($owner)
+            ->setParent($parent);
+
+        PhpUnitUtil::setProperty('id', UuidHelper::fromString($uuid), $folder);
+
+        $manager->persist($folder);
+        $this->addReference($reference, $folder);
+
+        return $folder;
+    }
+}
