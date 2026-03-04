@@ -11,16 +11,22 @@ use App\Media\Application\Resource\Interfaces\MediaResourceInterface;
 use App\Media\Application\Resource\MediaResource;
 use App\Media\Application\Service\MediaExportService;
 use OpenApi\Attributes as OA;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+use function in_array;
+use function is_file;
 use function is_string;
+use function str_starts_with;
 use function trim;
 
 /**
@@ -113,6 +119,58 @@ class MeMediaController extends CrudController
                 'Content-Disposition' => 'attachment; filename="media-export.pdf"',
             ],
         );
+    }
+
+
+    #[Route(path: '/{id}/download', methods: [Request::METHOD_GET])]
+    public function downloadAction(string $id): Response
+    {
+        $media = $this->getResource()->findOneAccessible($id);
+        $filePath = $this->getResource()->getStorageService()->resolveFilesystemPath($media->getPath());
+
+        if (!is_file($filePath)) {
+            return $this->json([
+                'message' => 'Media file not found on storage.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $response = new BinaryFileResponse($filePath);
+        $disposition = HeaderUtils::makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $media->getName(),
+        );
+
+        $response->headers->set('Content-Type', $media->getMimeType());
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
+    }
+
+    #[Route(path: '/{id}/view', methods: [Request::METHOD_GET])]
+    public function viewAction(string $id): Response
+    {
+        $media = $this->getResource()->findOneAccessible($id);
+        $filePath = $this->getResource()->getStorageService()->resolveFilesystemPath($media->getPath());
+
+        if (!is_file($filePath)) {
+            return $this->json([
+                'message' => 'Media file not found on storage.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $inlineMimeTypes = ['application/pdf'];
+        $dispositionType =
+            str_starts_with($media->getMimeType(), 'image/') || in_array($media->getMimeType(), $inlineMimeTypes, true)
+                ? ResponseHeaderBag::DISPOSITION_INLINE
+                : ResponseHeaderBag::DISPOSITION_ATTACHMENT;
+
+        $response = new BinaryFileResponse($filePath);
+        $disposition = HeaderUtils::makeDisposition($dispositionType, $media->getName());
+
+        $response->headers->set('Content-Type', $media->getMimeType());
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
     }
 
 

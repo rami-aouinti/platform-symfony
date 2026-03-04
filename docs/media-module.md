@@ -4,25 +4,34 @@
 Le module `App\Media\...` centralise la gestion des médias utilisateurs (CRUD + upload), avec des conventions de sécurité alignées sur le framework interne.
 
 ## Routes API
-Préfixe commun : `/api/v1/media`
+Préfixe commun : `/api/v1/me/media` (espace utilisateur)
 
 ### CRUD REST (contrôleur standard)
-- `GET /api/v1/media` : liste des médias
-- `GET /api/v1/media/{id}` : détail d’un média
-- `POST /api/v1/media` : création manuelle d’un média (payload JSON)
-- `PUT /api/v1/media/{id}` : remplacement complet
-- `PATCH /api/v1/media/{id}` : mise à jour partielle
-- `DELETE /api/v1/media/{id}` : suppression d’un média
+- `GET /api/v1/me/media` : liste des médias
+- `GET /api/v1/me/media/{id}` : détail d’un média
+- `POST /api/v1/me/media` : création manuelle d’un média (payload JSON)
+- `PUT /api/v1/me/media/{id}` : remplacement complet
+- `PATCH /api/v1/me/media/{id}` : mise à jour partielle
+- `DELETE /api/v1/me/media/{id}` : suppression d’un média
 
 ### Upload
-- `POST /api/v1/media/upload`
+
+### Download / View
+- `GET /api/v1/me/media/{id}/download`
+  - force le téléchargement (`Content-Disposition: attachment`)
+- `GET /api/v1/me/media/{id}/view`
+  - rendu inline pour `image/*` et `application/pdf`
+  - fallback en `attachment` pour les autres MIME types
+- Contrôle d’accès: propriétaire du média ou rôle admin/root.
+
+- `POST /api/v1/me/media/upload`
 - Authentification requise (`IS_AUTHENTICATED_FULLY` + `ROLE_USER`)
 - Content-Type : `multipart/form-data`
 - Champ attendu : `file` (fichier uploadé)
 
 ## Payloads
 
-### `POST /api/v1/media` (JSON)
+### `POST /api/v1/me/media` (JSON)
 ```json
 {
   "name": "avatar.png",
@@ -33,10 +42,33 @@ Préfixe commun : `/api/v1/media`
 }
 ```
 
-### `POST /api/v1/media/upload` (multipart)
+### `POST /api/v1/me/media/upload` (multipart)
 - `file`: binaire
 
 Réponse : entité `Media` sérialisée (groupes `Media.show`/`Media.edit` selon le contexte de réponse).
+
+
+### Réponses `Media` (JSON)
+Format retourné pour les endpoints CRUD/upload:
+```json
+{
+  "id": "c0e7f7f0-4c0a-11ef-9a5a-0242ac120002",
+  "name": "avatar.png",
+  "path": "/uploads/media/2026/06/<owner-id>/avatar-uuid.png",
+  "publicUrl": "https://cdn.example.com/uploads/media/2026/06/<owner-id>/avatar-uuid.png",
+  "mimeType": "image/png",
+  "size": 1024,
+  "status": "active"
+}
+```
+
+Résolution de `publicUrl`:
+- utilise `MEDIA_PUBLIC_BASE_URL` si renseigné (cas CDN),
+- sinon construit une URL absolue à partir du host courant (`RequestStack`) + `path`.
+
+### Réponses `download/view`
+- Succès: flux binaire du fichier (`200 OK`) avec `Content-Type` basé sur le media.
+- Erreur: JSON `{ "message": "Media file not found on storage." }` avec `404` si le fichier n’existe plus sur le disque.
 
 ## Validation
 - `Media` DTO (REST JSON):
@@ -73,6 +105,7 @@ Le provider de stockage est encapsulé dans le service applicatif :
 Ajouter/configurer :
 - `MEDIA_STORAGE_PATH` (ex: `%kernel.project_dir%/public/uploads/media`)
 - `MEDIA_STORAGE_PUBLIC_PREFIX` (ex: `/uploads/media`)
+- `MEDIA_PUBLIC_BASE_URL` (optionnel, ex: `https://cdn.example.com`)
 
 ## Erreurs fréquentes
 - `400 Bad Request`

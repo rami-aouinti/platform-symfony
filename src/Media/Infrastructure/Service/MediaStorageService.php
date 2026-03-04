@@ -51,6 +51,15 @@ final readonly class MediaStorageService implements MediaStorageServiceInterface
 
     public function delete(string $path): void
     {
+        $target = $this->resolveFilesystemPath($path);
+
+        if ($this->filesystem->exists($target)) {
+            $this->filesystem->remove($target);
+        }
+    }
+
+    public function resolveFilesystemPath(string $path): string
+    {
         $relativePath = ltrim($path, '/');
         $prefix = trim($this->mediaStoragePublicPrefix, '/');
 
@@ -58,11 +67,7 @@ final readonly class MediaStorageService implements MediaStorageServiceInterface
             $relativePath = substr($relativePath, strlen($prefix) + 1);
         }
 
-        $target = sprintf('%s/%s', rtrim($this->mediaStoragePath, '/'), $relativePath);
-
-        if ($this->filesystem->exists($target)) {
-            $this->filesystem->remove($target);
-        }
+        return sprintf('%s/%s', rtrim($this->mediaStoragePath, '/'), $relativePath);
     }
 
     private function slug(string $name): string
