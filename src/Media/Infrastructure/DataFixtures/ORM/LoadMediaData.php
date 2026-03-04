@@ -23,17 +23,21 @@ final class LoadMediaData extends Fixture implements OrderedFixtureInterface
     #[Override]
     public function load(ObjectManager $manager): void
     {
-        /** @var User $john */
-        $john = $this->getReference('User-john-user', User::class);
+        /** @var User $johnRoot */
+        $johnRoot = $this->getReference('User-john-root', User::class);
         /** @var User $alice */
         $alice = $this->getReference('User-alice-user', User::class);
 
         /** @var MediaFolder $johnImages */
-        $johnImages = $this->getReference('MediaFolder-john-user-images', MediaFolder::class);
+        $johnImages = $this->getReference('MediaFolder-john-root-images', MediaFolder::class);
         /** @var MediaFolder $johnDocuments */
-        $johnDocuments = $this->getReference('MediaFolder-john-user-documents', MediaFolder::class);
+        $johnDocuments = $this->getReference('MediaFolder-john-root-documents', MediaFolder::class);
         /** @var MediaFolder $johnContracts */
-        $johnContracts = $this->getReference('MediaFolder-john-user-contracts', MediaFolder::class);
+        $johnContracts = $this->getReference('MediaFolder-john-root-contracts', MediaFolder::class);
+        /** @var MediaFolder $johnArchives */
+        $johnArchives = $this->getReference('MediaFolder-john-root-archives', MediaFolder::class);
+        /** @var MediaFolder $johnShared */
+        $johnShared = $this->getReference('MediaFolder-john-root-shared', MediaFolder::class);
 
         /** @var MediaFolder $aliceImages */
         $aliceImages = $this->getReference('MediaFolder-alice-user-images', MediaFolder::class);
@@ -42,62 +46,86 @@ final class LoadMediaData extends Fixture implements OrderedFixtureInterface
 
         $ownerOkMedia = $this->createMedia(
             manager: $manager,
-            reference: 'Media-john-user-avatar-png',
+            reference: 'Media-john-root-avatar-png',
             uuid: '81000000-0000-1000-8000-000000000001',
-            owner: $john,
+            owner: $johnRoot,
             folder: $johnImages,
             name: 'avatar-john.png',
-            path: 'media/john-user/images/avatar-john.png',
+            path: 'media/john-root/images/avatar-john.png',
             mimeType: 'image/png',
             size: 245760,
         );
 
         $this->createMedia(
             manager: $manager,
-            reference: 'Media-john-user-cover-jpg',
+            reference: 'Media-john-root-cover-jpg',
             uuid: '81000000-0000-1000-8000-000000000002',
-            owner: $john,
+            owner: $johnRoot,
             folder: $johnImages,
             name: 'cover-john.jpg',
-            path: 'media/john-user/images/cover-john.jpg',
+            path: 'media/john-root/images/cover-john.jpg',
             mimeType: 'image/jpeg',
             size: 532480,
         );
 
         $this->createMedia(
             manager: $manager,
-            reference: 'Media-john-user-cv-pdf',
+            reference: 'Media-john-root-cv-pdf',
             uuid: '81000000-0000-1000-8000-000000000003',
-            owner: $john,
+            owner: $johnRoot,
             folder: $johnDocuments,
             name: 'cv-john.pdf',
-            path: 'media/john-user/documents/cv-john.pdf',
+            path: 'media/john-root/documents/cv-john.pdf',
             mimeType: 'application/pdf',
             size: 870400,
         );
 
         $this->createMedia(
             manager: $manager,
-            reference: 'Media-john-user-budget-xlsx',
+            reference: 'Media-john-root-budget-xlsx',
             uuid: '81000000-0000-1000-8000-000000000004',
-            owner: $john,
+            owner: $johnRoot,
             folder: $johnDocuments,
             name: 'budget-2026.xlsx',
-            path: 'media/john-user/documents/budget-2026.xlsx',
+            path: 'media/john-root/documents/budget-2026.xlsx',
             mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             size: 1245184,
         );
 
         $this->createMedia(
             manager: $manager,
-            reference: 'Media-john-user-contract-pptx',
+            reference: 'Media-john-root-contract-pptx',
             uuid: '81000000-0000-1000-8000-000000000005',
-            owner: $john,
+            owner: $johnRoot,
             folder: $johnContracts,
             name: 'contract-review.pptx',
-            path: 'media/john-user/contracts/contract-review.pptx',
+            path: 'media/john-root/contracts/contract-review.pptx',
             mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
             size: 2187264,
+        );
+
+        $this->createMedia(
+            manager: $manager,
+            reference: 'Media-john-root-archive-zip',
+            uuid: '81000000-0000-1000-8000-000000000008',
+            owner: $johnRoot,
+            folder: $johnArchives,
+            name: 'archives-2025.zip',
+            path: 'media/john-root/archives/archives-2025.zip',
+            mimeType: 'application/zip',
+            size: 3024896,
+        );
+
+        $this->createMedia(
+            manager: $manager,
+            reference: 'Media-john-root-shared-docx',
+            uuid: '81000000-0000-1000-8000-000000000009',
+            owner: $johnRoot,
+            folder: $johnShared,
+            name: 'shared-roadmap.docx',
+            path: 'media/john-root/shared/shared-roadmap.docx',
+            mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            size: 512000,
         );
 
         $forbiddenMedia = $this->createMedia(
