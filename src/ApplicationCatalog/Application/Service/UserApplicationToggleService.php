@@ -19,7 +19,12 @@ class UserApplicationToggleService implements UserApplicationToggleServiceInterf
 
     public function attach(User $user, Application $application): UserApplication
     {
-        return $this->toggle($user, $application, true);
+        $userApplication = new UserApplication($user, $application);
+        $user->addUserApplication($userApplication);
+
+        $this->userApplicationRepository->save($userApplication);
+
+        return $userApplication;
     }
 
     public function activate(User $user, Application $application): UserApplication
@@ -34,31 +39,36 @@ class UserApplicationToggleService implements UserApplicationToggleServiceInterf
 
     public function toggle(User $user, Application $application, bool $active): UserApplication
     {
-        $userApplication = $this->userApplicationRepository->findOneByUserAndApplication($user, $application);
+        $userApplications = $this->userApplicationRepository->findByUserAndApplication($user, $application);
+        $userApplication = $userApplications[0] ?? null;
 
         if (!$userApplication instanceof UserApplication) {
             $userApplication = new UserApplication($user, $application);
             $user->addUserApplication($userApplication);
+            $userApplications = [$userApplication];
         }
 
-        if ($userApplication->isActive() !== $active) {
-            $userApplication->setActive($active);
-        }
+        foreach ($userApplications as $item) {
+            if ($item->isActive() !== $active) {
+                $item->setActive($active);
+            }
 
-        $this->userApplicationRepository->save($userApplication);
+            $this->userApplicationRepository->save($item);
+        }
 
         return $userApplication;
     }
 
     public function detach(User $user, Application $application): void
     {
-        $userApplication = $this->userApplicationRepository->findOneByUserAndApplication($user, $application);
-
-        if (!$userApplication instanceof UserApplication) {
+        $userApplications = $this->userApplicationRepository->findByUserAndApplication($user, $application);
+        if ($userApplications === []) {
             return;
         }
 
-        $user->removeUserApplication($userApplication);
-        $this->userApplicationRepository->remove($userApplication);
+        foreach ($userApplications as $userApplication) {
+            $user->removeUserApplication($userApplication);
+            $this->userApplicationRepository->remove($userApplication);
+        }
     }
 }

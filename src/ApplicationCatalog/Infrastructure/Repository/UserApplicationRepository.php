@@ -30,22 +30,34 @@ class UserApplicationRepository extends BaseRepository implements UserApplicatio
 
     public function findOneByUserAndApplication(User $user, Application $application): ?Entity
     {
+        $items = $this->findByUserAndApplication($user, $application);
+
+        return $items[0] ?? null;
+    }
+
+    public function findByUserAndApplication(User $user, Application $application): array
+    {
         /** @var Entity|null $userApplication */
-        $userApplication = $this
+        $userApplications = $this
             ->createQueryBuilder()
             ->where('IDENTITY(entity.user) = :userId')
             ->andWhere('IDENTITY(entity.application) = :applicationId')
             ->setParameter('userId', $user->getId(), UuidHelper::getType($user->getId()))
             ->setParameter('applicationId', $application->getId(), UuidHelper::getType($application->getId()))
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
 
-        return $userApplication;
+        return $userApplications;
     }
 
     public function findByUser(User $user): array
     {
         return $this->findBy(['user' => $user]);
+    }
+
+    public function findAllOrderedByCreatedAt(): array
+    {
+        return $this->findBy([], ['createdAt' => 'DESC']);
     }
 
     public function findByUserIndexedByApplicationId(User $user): array
