@@ -18,6 +18,7 @@ use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'user_application')]
+#[ORM\UniqueConstraint(name: 'uq_user_application_key_name', columns: ['key_name'])]
 #[ORM\Index(name: 'idx_user_application_user_id', columns: ['user_id'])]
 #[ORM\Index(name: 'idx_user_application_application_id', columns: ['application_id'])]
 #[ORM\Index(name: 'idx_user_application_active', columns: ['active'])]
@@ -46,6 +47,12 @@ class UserApplication implements EntityInterface
 
     #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
     private ?string $description = null;
+
+    #[ORM\Column(name: 'key_name', type: Types::STRING, length: 255, unique: true, nullable: false)]
+    private string $keyName = '';
+
+    #[ORM\Column(name: 'is_public', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    private bool $public = false;
 
     #[ORM\Column(name: 'active', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
     private bool $active = true;
@@ -114,6 +121,30 @@ class UserApplication implements EntityInterface
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getKeyName(): string
+    {
+        return $this->keyName;
+    }
+
+    public function setKeyName(string $keyName): self
+    {
+        $this->keyName = $keyName;
+
+        return $this;
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->public;
+    }
+
+    public function setPublic(bool $public): self
+    {
+        $this->public = $public;
 
         return $this;
     }

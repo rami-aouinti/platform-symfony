@@ -12,15 +12,17 @@ final readonly class UserApplication
         private string $applicationKeyName,
         private string $applicationName,
         private string $name,
+        private string $keyName,
         private ?string $logo,
         private ?string $description,
         private bool $active,
+        private bool $public,
         private bool $owner,
     ) {
     }
 
     /**
-     * @return array{id: string, applicationId: string, applicationKeyName: string, applicationName: string, name: string, logo: string|null, description: string|null, active: bool, owner: bool}
+     * @return array{id: string, applicationId: string, applicationKeyName: string, applicationName: string, name: string, keyName: string, logo: string|null, description: string|null, active: bool, public: bool, owner: bool}
      */
     public function toArray(): array
     {
@@ -30,9 +32,11 @@ final readonly class UserApplication
             'applicationKeyName' => $this->applicationKeyName,
             'applicationName' => $this->applicationName,
             'name' => $this->name,
+            'keyName' => $this->keyName,
             'logo' => $this->logo,
             'description' => $this->description,
             'active' => $this->active,
+            'public' => $this->public,
             'owner' => $this->owner,
         ];
     }

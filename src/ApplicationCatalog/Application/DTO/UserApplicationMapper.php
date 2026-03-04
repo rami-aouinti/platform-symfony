@@ -19,9 +19,11 @@ final class UserApplicationMapper
             applicationKeyName: $application->getKeyName(),
             applicationName: $application->getName(),
             name: $userApplication->getName(),
+            keyName: $userApplication->getKeyName(),
             logo: $userApplication->getLogo(),
             description: $userApplication->getDescription(),
             active: $userApplication->isActive(),
+            public: $userApplication->isPublic(),
             owner: $currentUser instanceof User && $currentUser->getId() === $userApplication->getUser()->getId(),
         );
     }

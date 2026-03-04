@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\ApplicationCatalog\Transport\Controller\Api\V1\Application;
 
 use App\ApplicationCatalog\Application\DTO\Application;
+use App\ApplicationCatalog\Application\DTO\UserApplicationCreatePayload;
+use App\ApplicationCatalog\Application\DTO\UserApplicationMapper;
 use App\ApplicationCatalog\Application\DTO\UserApplicationTogglePayload;
 use App\ApplicationCatalog\Application\Resource\Interfaces\ApplicationListResourceInterface;
 use App\ApplicationCatalog\Application\Resource\Interfaces\UserApplicationToggleResourceInterface;
+use App\ApplicationCatalog\Application\Service\Interfaces\UserApplicationCreateServiceInterface;
 use App\ApplicationCatalog\Domain\Entity\Application as ApplicationEntity;
 use App\ApplicationCatalog\Infrastructure\Repository\ApplicationRepository;
 use App\General\Domain\Utils\JSON;
@@ -36,6 +39,8 @@ final readonly class ProfileApplicationController
         private UserApplicationToggleResourceInterface $userApplicationToggleResource,
         private UserTypeIdentification $userTypeIdentification,
         private ApplicationRepository $applicationRepository,
+        private UserApplicationCreateServiceInterface $userApplicationCreateService,
+        private UserApplicationMapper $userApplicationMapper,
     ) {
     }
 
@@ -79,6 +84,34 @@ final readonly class ProfileApplicationController
         $dto = $this->userApplicationToggleResource->attach($this->getCurrentUserOrDeny(), $application);
 
         return new JsonResponse($dto->toArray(), JsonResponse::HTTP_CREATED);
+    }
+
+
+    /**
+     * @throws JsonException
+     */
+    #[Route(path: '/v1/profile/user-applications', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/me/profile/user-applications', methods: [Request::METHOD_POST])]
+    #[OA\Post(summary: 'Create a user application for current user')]
+    public function createUserApplicationAction(Request $request): JsonResponse
+    {
+        $payload = UserApplicationCreatePayload::fromPayload(JSON::decode((string)$request->getContent(), true));
+        $application = $this->findApplicationOrFail($payload->getApplicationId());
+        $currentUser = $this->getCurrentUserOrDeny();
+
+        $created = $this->userApplicationCreateService->create(
+            $currentUser,
+            $application,
+            $payload->getName(),
+            $payload->getLogo(),
+            $payload->getDescription(),
+            $payload->isPublic(),
+        );
+
+        return new JsonResponse(
+            $this->userApplicationMapper->mapEntityToDto($created, $currentUser)->toArray(),
+            JsonResponse::HTTP_CREATED,
+        );
     }
 
     #[Route(path: '/v1/profile/applications/{id}/activate', methods: [Request::METHOD_POST])]

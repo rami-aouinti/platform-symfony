@@ -60,6 +60,14 @@ class UserApplicationRepository extends BaseRepository implements UserApplicatio
         return $this->findBy([], ['createdAt' => 'DESC']);
     }
 
+    public function findOneByKeyName(string $keyName): ?Entity
+    {
+        /** @var Entity|null $userApplication */
+        $userApplication = $this->findOneBy(['keyName' => $keyName]);
+
+        return $userApplication;
+    }
+
     public function findByUserIndexedByApplicationId(User $user): array
     {
         $items = [];

@@ -29,6 +29,8 @@ interface UserApplicationRepositoryInterface
      */
     public function findAllOrderedByCreatedAt(): array;
 
+    public function findOneByKeyName(string $keyName): ?UserApplication;
+
     /**
      * @return array<string, UserApplication>
      */
