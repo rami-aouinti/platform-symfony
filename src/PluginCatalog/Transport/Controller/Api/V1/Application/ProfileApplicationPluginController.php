@@ -44,6 +44,8 @@ final readonly class ProfileApplicationPluginController
 
     #[Route(path: '/v1/profile/user-applications/{userApplicationId}/plugins', methods: [Request::METHOD_GET])]
     #[Route(path: '/v1/me/profile/user-applications/{userApplicationId}/plugins', methods: [Request::METHOD_GET])]
+    #[Route(path: '/v1/profile/applications/{userApplicationId}/plugins', methods: [Request::METHOD_GET])]
+    #[Route(path: '/v1/me/profile/applications/{userApplicationId}/plugins', methods: [Request::METHOD_GET])]
     #[OA\Get(summary: 'List plugins and activation state for a user application')]
     public function __invoke(string $userApplicationId): JsonResponse
     {
@@ -63,6 +65,8 @@ final readonly class ProfileApplicationPluginController
      */
     #[Route(path: '/v1/profile/user-applications/{userApplicationId}/plugins/{pluginId}', methods: [Request::METHOD_PATCH])]
     #[Route(path: '/v1/me/profile/user-applications/{userApplicationId}/plugins/{pluginId}', methods: [Request::METHOD_PATCH])]
+    #[Route(path: '/v1/profile/applications/{userApplicationId}/plugins/{pluginId}', methods: [Request::METHOD_PATCH])]
+    #[Route(path: '/v1/me/profile/applications/{userApplicationId}/plugins/{pluginId}', methods: [Request::METHOD_PATCH])]
     #[OA\Patch(summary: 'Toggle plugin activation for a user application')]
     public function patchAction(Request $request, string $userApplicationId, string $pluginId): JsonResponse
     {
@@ -74,8 +78,39 @@ final readonly class ProfileApplicationPluginController
         return $this->toggle($userApplication, $plugin, $payload->isActive());
     }
 
+    #[Route(path: '/v1/profile/user-applications/{userApplicationId}/plugins/{pluginId}/attach', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/me/profile/user-applications/{userApplicationId}/plugins/{pluginId}/attach', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/profile/applications/{userApplicationId}/plugins/{pluginId}/attach', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/me/profile/applications/{userApplicationId}/plugins/{pluginId}/attach', methods: [Request::METHOD_POST])]
+    #[OA\Post(summary: 'Attach a plugin to a user application')]
+    public function attachAction(string $userApplicationId, string $pluginId): JsonResponse
+    {
+        $userApplication = $this->findUserApplicationOrFail($userApplicationId);
+        $plugin = $this->findPluginOrFail($pluginId);
+        $dto = $this->userApplicationPluginToggleResource->attach($userApplication, $plugin);
+
+        return new JsonResponse($dto->toArray(), JsonResponse::HTTP_CREATED);
+    }
+
+    #[Route(path: '/v1/profile/user-applications/{userApplicationId}/plugins/{pluginId}/detach', methods: [Request::METHOD_DELETE])]
+    #[Route(path: '/v1/me/profile/user-applications/{userApplicationId}/plugins/{pluginId}/detach', methods: [Request::METHOD_DELETE])]
+    #[Route(path: '/v1/profile/applications/{userApplicationId}/plugins/{pluginId}/detach', methods: [Request::METHOD_DELETE])]
+    #[Route(path: '/v1/me/profile/applications/{userApplicationId}/plugins/{pluginId}/detach', methods: [Request::METHOD_DELETE])]
+    #[OA\Delete(summary: 'Detach a plugin from a user application')]
+    public function detachAction(string $userApplicationId, string $pluginId): JsonResponse
+    {
+        $this->userApplicationPluginToggleResource->detach(
+            $this->findUserApplicationOrFail($userApplicationId),
+            $this->findPluginOrFail($pluginId),
+        );
+
+        return new JsonResponse(status: JsonResponse::HTTP_NO_CONTENT);
+    }
+
     #[Route(path: '/v1/profile/user-applications/{userApplicationId}/plugins/{pluginId}/activate', methods: [Request::METHOD_POST])]
     #[Route(path: '/v1/me/profile/user-applications/{userApplicationId}/plugins/{pluginId}/activate', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/profile/applications/{userApplicationId}/plugins/{pluginId}/activate', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/me/profile/applications/{userApplicationId}/plugins/{pluginId}/activate', methods: [Request::METHOD_POST])]
     #[OA\Post(summary: 'Activate a plugin for a user application')]
     public function activateAction(string $userApplicationId, string $pluginId): JsonResponse
     {
@@ -88,6 +123,8 @@ final readonly class ProfileApplicationPluginController
 
     #[Route(path: '/v1/profile/user-applications/{userApplicationId}/plugins/{pluginId}/deactivate', methods: [Request::METHOD_POST])]
     #[Route(path: '/v1/me/profile/user-applications/{userApplicationId}/plugins/{pluginId}/deactivate', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/profile/applications/{userApplicationId}/plugins/{pluginId}/deactivate', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/me/profile/applications/{userApplicationId}/plugins/{pluginId}/deactivate', methods: [Request::METHOD_POST])]
     #[OA\Post(summary: 'Deactivate a plugin for a user application')]
     public function deactivateAction(string $userApplicationId, string $pluginId): JsonResponse
     {

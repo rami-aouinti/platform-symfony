@@ -10,9 +10,13 @@ use App\PluginCatalog\Domain\Entity\UserApplicationPlugin;
 
 interface UserApplicationPluginToggleServiceInterface
 {
+    public function attach(UserApplication $userApplication, Plugin $plugin): UserApplicationPlugin;
+
     public function activate(UserApplication $userApplication, Plugin $plugin): UserApplicationPlugin;
 
     public function deactivate(UserApplication $userApplication, Plugin $plugin): UserApplicationPlugin;
 
     public function toggle(UserApplication $userApplication, Plugin $plugin, bool $active): UserApplicationPlugin;
+
+    public function detach(UserApplication $userApplication, Plugin $plugin): void;
 }

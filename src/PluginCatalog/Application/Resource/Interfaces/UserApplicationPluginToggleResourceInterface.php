@@ -10,5 +10,9 @@ use App\PluginCatalog\Domain\Entity\Plugin as PluginEntity;
 
 interface UserApplicationPluginToggleResourceInterface
 {
+    public function attach(UserApplication $userApplication, PluginEntity $plugin): Plugin;
+
     public function toggle(UserApplication $userApplication, PluginEntity $plugin, bool $active): Plugin;
+
+    public function detach(UserApplication $userApplication, PluginEntity $plugin): void;
 }
