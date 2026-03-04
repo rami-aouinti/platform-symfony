@@ -52,45 +52,12 @@ class MeMediaController extends CrudController
         parent::__construct($resource);
     }
 
-    /**
-     * @throws Throwable
-     */
     #[Route(path: '', methods: [Request::METHOD_POST])]
-    #[OA\Post(
-        operationId: 'meMediaCreate',
-        summary: 'Créer un média',
-        description: "Création d'un média pour le module Media.",
-        security: [[
-            'Bearer' => [],
-        ], [
-            'ApiKey' => [],
-        ]],
-    )]
-    #[OA\RequestBody(
-        request: 'meMediaCreateBody',
-        description: 'Exemple de payload de création',
-        content: new JsonContent(
-            type: 'object',
-            example: [
-                'name' => 'Example name',
-                'description' => 'Description initiale',
-            ],
-        ),
-    )]
-    #[OA\Response(
-        response: 201,
-        description: 'created',
-        content: new JsonContent(
-            type: 'object',
-            example: [],
-        ),
-    )]
-    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
-    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
     public function createAction(Request $request, RestDtoInterface $restDto): Response
     {
         return $this->createMethod($request, $restDto);
     }
+
 
     #[Route(path: '/upload', methods: [Request::METHOD_POST])]
     public function uploadAction(Request $request): Response
