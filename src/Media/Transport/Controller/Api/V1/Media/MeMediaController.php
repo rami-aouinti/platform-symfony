@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Media\Transport\Controller\Api\V1\Media;
 
+use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Transport\Rest\CrudController;
 use App\General\Transport\Rest\ResponseHandler;
 use App\Media\Application\DTO\Media\Media;
@@ -11,6 +12,7 @@ use App\Media\Application\Resource\Interfaces\MediaResourceInterface;
 use App\Media\Application\Resource\MediaResource;
 use App\Media\Application\Service\MediaExportService;
 use OpenApi\Attributes as OA;
+use OpenApi\Attributes\JsonContent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -22,6 +24,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Throwable;
 
 use function in_array;
 use function is_file;
@@ -47,6 +50,46 @@ class MeMediaController extends CrudController
         private readonly MediaExportService $mediaExportService,
     ) {
         parent::__construct($resource);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    #[Route(path: '', methods: [Request::METHOD_POST])]
+    #[OA\Post(
+        operationId: 'meMediaCreate',
+        summary: 'Créer un média',
+        description: "Création d'un média pour le module Media.",
+        security: [[
+            'Bearer' => [],
+        ], [
+            'ApiKey' => [],
+        ]],
+    )]
+    #[OA\RequestBody(
+        request: 'meMediaCreateBody',
+        description: 'Exemple de payload de création',
+        content: new JsonContent(
+            type: 'object',
+            example: [
+                'name' => 'Example name',
+                'description' => 'Description initiale',
+            ],
+        ),
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'created',
+        content: new JsonContent(
+            type: 'object',
+            example: [],
+        ),
+    )]
+    #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
+    #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
+    public function createAction(Request $request, RestDtoInterface $restDto): Response
+    {
+        return $this->createMethod($request, $restDto);
     }
 
     #[Route(path: '/upload', methods: [Request::METHOD_POST])]
