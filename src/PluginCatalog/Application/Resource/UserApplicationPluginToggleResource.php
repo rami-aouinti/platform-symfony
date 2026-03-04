@@ -25,6 +25,11 @@ final readonly class UserApplicationPluginToggleResource implements UserApplicat
     ) {
     }
 
+    public function attach(UserApplication $userApplication, PluginEntity $plugin): Plugin
+    {
+        return $this->toggle($userApplication, $plugin, true);
+    }
+
     public function toggle(UserApplication $userApplication, PluginEntity $plugin, bool $active): Plugin
     {
         $actor = $this->userTypeIdentification->getUser();
@@ -44,6 +49,21 @@ final readonly class UserApplicationPluginToggleResource implements UserApplicat
         $userApplicationPlugin = $this->userApplicationPluginToggleService->toggle($userApplication, $plugin, $active);
 
         return $this->pluginMapper->mapEntityToDto($plugin, $userApplicationPlugin);
+    }
+
+    public function detach(UserApplication $userApplication, PluginEntity $plugin): void
+    {
+        $actor = $this->userTypeIdentification->getUser();
+
+        if (!$actor instanceof User) {
+            throw new AccessDeniedHttpException('Authenticated user not found.');
+        }
+
+        if ($actor->getId() !== $userApplication->getUser()->getId() && !$this->isAdminLike($actor)) {
+            throw new AccessDeniedHttpException('You cannot update plugin activations for another user application.');
+        }
+
+        $this->userApplicationPluginToggleService->detach($userApplication, $plugin);
     }
 
     private function isAdminLike(User $user): bool

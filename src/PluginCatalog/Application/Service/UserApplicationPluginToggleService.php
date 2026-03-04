@@ -17,6 +17,11 @@ class UserApplicationPluginToggleService implements UserApplicationPluginToggleS
     ) {
     }
 
+    public function attach(UserApplication $userApplication, Plugin $plugin): UserApplicationPlugin
+    {
+        return $this->toggle($userApplication, $plugin, true);
+    }
+
     public function activate(UserApplication $userApplication, Plugin $plugin): UserApplicationPlugin
     {
         return $this->toggle($userApplication, $plugin, true);
@@ -43,5 +48,17 @@ class UserApplicationPluginToggleService implements UserApplicationPluginToggleS
         $this->userApplicationPluginRepository->save($userApplicationPlugin);
 
         return $userApplicationPlugin;
+    }
+
+    public function detach(UserApplication $userApplication, Plugin $plugin): void
+    {
+        $userApplicationPlugin = $this->userApplicationPluginRepository
+            ->findOneByUserApplicationAndPlugin($userApplication, $plugin);
+
+        if (!$userApplicationPlugin instanceof UserApplicationPlugin) {
+            return;
+        }
+
+        $this->userApplicationPluginRepository->remove($userApplicationPlugin);
     }
 }
