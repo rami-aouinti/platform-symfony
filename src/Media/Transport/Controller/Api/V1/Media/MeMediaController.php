@@ -20,6 +20,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+use function is_string;
+use function trim;
+
 /**
  * @method MediaResource getResource()
  * @method ResponseHandler getResponseHandler()
@@ -61,7 +64,19 @@ class MeMediaController extends CrudController
             return $this->createValidationError((string)$violations->get(0)->getMessage());
         }
 
-        $media = $this->getResource()->createFromUploadedFile($file);
+        $folderId = $this->resolveFolderId($request);
+
+        if ($folderId !== null) {
+            $folderViolations = $this->validator->validate($folderId, [
+                new Assert\Uuid(message: 'Invalid "folderId" format.'),
+            ]);
+
+            if ($folderViolations->count() > 0) {
+                return $this->createValidationError((string)$folderViolations->get(0)->getMessage());
+            }
+        }
+
+        $media = $this->getResource()->createFromUploadedFile($file, $folderId);
 
         return $this->getResponseHandler()->createResponse($request, $media, $this->getResource());
     }
@@ -98,6 +113,20 @@ class MeMediaController extends CrudController
                 'Content-Disposition' => 'attachment; filename="media-export.pdf"',
             ],
         );
+    }
+
+
+    private function resolveFolderId(Request $request): ?string
+    {
+        $folderId = $request->request->get('folderId');
+
+        if (!is_string($folderId)) {
+            return null;
+        }
+
+        $folderId = trim($folderId);
+
+        return $folderId !== '' ? $folderId : null;
     }
 
     private function createValidationError(string $message): Response

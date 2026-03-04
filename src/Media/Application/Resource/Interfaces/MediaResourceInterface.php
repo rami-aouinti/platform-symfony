@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 interface MediaResourceInterface extends RestResourceInterface
 {
-    public function createFromUploadedFile(UploadedFile $file): Media;
+    public function createFromUploadedFile(UploadedFile $file, ?string $folderId = null): Media;
 
     public function getOrCreateRootFolder(User $user): MediaFolder;
 
