@@ -57,4 +57,6 @@ interface UserRepositoryInterface
     public function findByGroupOrInheritedRole(UserGroup $group): array;
 
     public function find(string $id): ?EntityInterface;
+
+    public function findOneByEmail(string $email): ?Entity;
 }

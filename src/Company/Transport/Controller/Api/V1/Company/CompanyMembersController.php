@@ -66,12 +66,21 @@ class CompanyMembersController extends Controller
     public function inviteOrAttachAction(Request $request, string $companyId): Response
     {
         $payload = $request->toArray();
-        $membership = $this->getResource()->inviteOrAttach(
-            $companyId,
-            (string)($payload['userId'] ?? ''),
-            isset($payload['role']) ? (string)$payload['role'] : null,
-            isset($payload['status']) ? (string)$payload['status'] : null,
-        );
+        if (isset($payload['email']) && is_string($payload['email']) && $payload['email'] !== '') {
+            $membership = $this->getResource()->inviteOrAttachByEmail(
+                $companyId,
+                $payload['email'],
+                isset($payload['role']) ? (string)$payload['role'] : null,
+                isset($payload['status']) ? (string)$payload['status'] : null,
+            );
+        } else {
+            $membership = $this->getResource()->inviteOrAttach(
+                $companyId,
+                (string)($payload['userId'] ?? ''),
+                isset($payload['role']) ? (string)$payload['role'] : null,
+                isset($payload['status']) ? (string)$payload['status'] : null,
+            );
+        }
 
         return $this->getResponseHandler()->createResponse(
             $request,
@@ -99,6 +108,18 @@ class CompanyMembersController extends Controller
             ),
             $this->getResource(),
         );
+    }
+
+    #[Route(path: '/{companyId}/members/by-email', requirements: [
+        'companyId' => Requirement::UUID_V1,
+    ], methods: [Request::METHOD_DELETE])]
+    public function removeMembershipByEmailAction(Request $request, string $companyId): Response
+    {
+        $email = (string)$request->query->get('email', '');
+
+        $this->getResource()->removeMembershipByEmail($companyId, $email);
+
+        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
     }
 
     #[Route(path: '/{companyId}/members/{userId}', requirements: [

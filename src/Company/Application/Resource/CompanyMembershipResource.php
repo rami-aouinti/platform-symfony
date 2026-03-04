@@ -23,6 +23,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use function array_values;
 use function in_array;
+use function strtolower;
 
 /**
  * @method Entity[] find(?array $criteria = null, ?array $orderBy = null, ?int $limit = null, ?int $offset = null, ?array $search = null, ?string $entityManagerName = null)
@@ -41,6 +42,22 @@ class CompanyMembershipResource extends RestSmallResource implements CompanyMemb
         private readonly UserTypeIdentification $userTypeIdentification,
     ) {
         parent::__construct($repository);
+    }
+
+    public function inviteOrAttachByEmail(
+        string $companyId,
+        string $email,
+        ?string $role = null,
+        ?string $status = null,
+    ): Entity {
+        $normalizedEmail = strtolower($email);
+        $user = $this->userRepository->findOneByEmail($normalizedEmail);
+
+        if (!$user instanceof User) {
+            throw new NotFoundHttpException('User not found.');
+        }
+
+        return $this->inviteOrAttach($companyId, $user->getId(), $role, $status);
     }
 
     public function inviteOrAttach(
@@ -101,6 +118,18 @@ class CompanyMembershipResource extends RestSmallResource implements CompanyMemb
         }
 
         return $this->save($membership);
+    }
+
+    public function removeMembershipByEmail(string $companyId, string $email): void
+    {
+        $normalizedEmail = strtolower($email);
+        $user = $this->userRepository->findOneByEmail($normalizedEmail);
+
+        if (!$user instanceof User) {
+            throw new NotFoundHttpException('User not found.');
+        }
+
+        $this->removeMembership($companyId, $user->getId());
     }
 
     public function removeMembership(string $companyId, string $userId): void
