@@ -62,7 +62,7 @@ trait RepositoryMethodsTrait
         string $id,
         string|int|null $hydrationMode = null,
         string|null $entityManagerName = null
-    ): null|array|EntityInterface {
+    ): null|array|object {
         // Get query builder
         $queryBuilder = $this->getQueryBuilder(entityManagerName: $entityManagerName);
         // Process custom QueryBuilder actions

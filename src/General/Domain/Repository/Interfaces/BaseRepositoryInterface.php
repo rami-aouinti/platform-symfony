@@ -97,7 +97,7 @@ interface BaseRepositoryInterface
      *
      * @psalm-param string|AbstractQuery::HYDRATE_*|null $hydrationMode
      *
-     * @psalm-return array<int|string, mixed>|EntityInterface|null
+     * @psalm-return array<int|string, mixed>|EntityInterface|object|null
      *
      * @throws NonUniqueResultException
      */
@@ -105,7 +105,7 @@ interface BaseRepositoryInterface
         string $id,
         string|int|null $hydrationMode = null,
         string|null $entityManagerName = null
-    ): null|array|EntityInterface;
+    ): null|array|object;
 
     /**
      * Wrapper for default Doctrine repository findOneBy method.
