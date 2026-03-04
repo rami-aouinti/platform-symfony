@@ -30,6 +30,14 @@ class ApplicationRepository extends BaseRepository implements ApplicationReposit
         return $this->findOneBy(['name' => $name]);
     }
 
+    public function findOneById(string $id): ?Entity
+    {
+        /** @var Entity|null $application */
+        $application = $this->findOneBy(['id' => $id]);
+
+        return $application;
+    }
+
     public function findAllOrderedByName(): array
     {
         return $this->findBy([], ['name' => 'ASC']);
