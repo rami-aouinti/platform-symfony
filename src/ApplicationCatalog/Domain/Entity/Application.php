@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\ApplicationCatalog\Domain\Entity;
 
+use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Uuid;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,7 +15,7 @@ use Ramsey\Uuid\UuidInterface;
 #[ORM\Table(name: 'application')]
 #[ORM\UniqueConstraint(name: 'uq_application_name', columns: ['name'])]
 #[ORM\Index(name: 'idx_application_active', columns: ['active'])]
-class Application
+class Application implements EntityInterface
 {
     use Uuid;
 
