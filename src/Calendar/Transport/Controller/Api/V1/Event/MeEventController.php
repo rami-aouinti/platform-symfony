@@ -84,7 +84,7 @@ class MeEventController extends CrudController
             $restDto->setUser($loggedInUser);
         }
 
-        return $this->updateMethod($request, $id, $restDto);
+        return $this->updateMethod($request, $restDto, $id);
     }
 
     /** @throws Throwable */
@@ -122,7 +122,7 @@ class MeEventController extends CrudController
             $restDto->setUser($loggedInUser);
         }
 
-        return $this->patchMethod($request, $id, $restDto);
+        return $this->patchMethod($request, $restDto, $id);
     }
 
     /** @throws Throwable */
