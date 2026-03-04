@@ -75,7 +75,7 @@ class MeEventController extends CrudController
 
     /** @throws Throwable */
     #[Route(path: '/{id}', methods: [Request::METHOD_PUT])]
-    public function updateAction(Request $request, string $id, RestDtoInterface $restDto): Response
+    public function updateAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
         $loggedInUser = $this->getCurrentUserOrDeny();
         $this->assertOwnedEvent($id, $loggedInUser);
@@ -113,7 +113,7 @@ class MeEventController extends CrudController
     #[OA\Response(response: 401, ref: '#/components/responses/UnauthorizedError')]
     #[OA\Response(response: 403, ref: '#/components/responses/ForbiddenError')]
     #[OA\Response(response: 404, ref: '#/components/responses/NotFoundError')]
-    public function patchAction(Request $request, string $id, RestDtoInterface $restDto): Response
+    public function patchAction(Request $request, RestDtoInterface $restDto, string $id): Response
     {
         $loggedInUser = $this->getCurrentUserOrDeny();
         $this->assertOwnedEvent($id, $loggedInUser);
