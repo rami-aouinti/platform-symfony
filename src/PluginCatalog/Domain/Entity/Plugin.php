@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\PluginCatalog\Domain\Entity;
 
+use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\General\Domain\Entity\Traits\Uuid;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidBinaryOrderedTimeType;
@@ -14,7 +16,7 @@ use Ramsey\Uuid\UuidInterface;
 #[ORM\Table(name: 'plugin')]
 #[ORM\UniqueConstraint(name: 'uq_plugin_key_name', columns: ['key_name'])]
 #[ORM\Index(name: 'idx_plugin_active', columns: ['active'])]
-class Plugin
+class Plugin implements EntityInterface
 {
     use Uuid;
 
@@ -45,6 +47,11 @@ class Plugin
     public function getId(): string
     {
         return $this->id->toString();
+    }
+
+    public function getCreatedAt(): ?DateTimeImmutable
+    {
+        return null;
     }
 
     public function getKeyName(): string
