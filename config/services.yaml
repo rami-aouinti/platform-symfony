@@ -173,6 +173,9 @@ services:
     App\Media\Application\Service\Interfaces\MediaStorageServiceInterface:
         class: App\Media\Infrastructure\Service\MediaStorageService
 
+    App\Media\Domain\Repository\Interfaces\MediaFolderRepositoryInterface:
+        class: App\Media\Infrastructure\Repository\MediaFolderRepository
+
     App\Configuration\Application\Resource\Interfaces\ConfigurationResourceInterface:
         class: App\Configuration\Application\Resource\ConfigurationResource
 

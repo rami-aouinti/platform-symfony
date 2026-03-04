@@ -12,7 +12,9 @@ use App\General\Domain\Entity\Interfaces\EntityInterface;
 use App\Media\Application\Resource\Interfaces\MediaResourceInterface;
 use App\Media\Application\Service\Interfaces\MediaStorageServiceInterface;
 use App\Media\Domain\Entity\Media as Entity;
+use App\Media\Domain\Entity\MediaFolder;
 use App\Media\Domain\Enum\MediaStatus;
+use App\Media\Domain\Repository\Interfaces\MediaFolderRepositoryInterface;
 use App\Media\Domain\Repository\Interfaces\MediaRepositoryInterface as RepositoryInterface;
 use App\User\Application\Security\UserTypeIdentification;
 use App\User\Domain\Entity\User;
@@ -40,6 +42,7 @@ class MediaResource extends RestResource implements MediaResourceInterface
         private readonly UserTypeIdentification $userTypeIdentification,
         private readonly MediaStorageServiceInterface $mediaStorageService,
         private readonly ConfigurationRepositoryInterface $configurationRepository,
+        private readonly MediaFolderRepositoryInterface $mediaFolderRepository,
     ) {
         parent::__construct($repository);
     }
@@ -68,7 +71,11 @@ class MediaResource extends RestResource implements MediaResourceInterface
             return;
         }
 
-        $entity->setOwner($this->getCurrentUser());
+        $owner = $this->getCurrentUser();
+
+        $entity
+            ->setOwner($owner)
+            ->setFolder($entity->getFolder() ?? $this->getOrCreateRootFolder($owner));
     }
 
     public function beforeUpdate(string &$id, RestDtoInterface $restDto, EntityInterface $entity): void
@@ -102,6 +109,7 @@ class MediaResource extends RestResource implements MediaResourceInterface
 
         $media = (new Entity())
             ->setOwner($owner)
+            ->setFolder($this->getOrCreateRootFolder($owner))
             ->setName($storedFile->getOriginalName())
             ->setPath($storedFile->getPath())
             ->setMimeType($storedFile->getMimeType())
@@ -111,6 +119,29 @@ class MediaResource extends RestResource implements MediaResourceInterface
         $this->save($media);
 
         return $media;
+    }
+
+
+    public function getOrCreateRootFolder(User $user): MediaFolder
+    {
+        $rootFolder = $this->mediaFolderRepository->findOneBy([
+            'owner' => $user,
+            'parent' => null,
+            'name' => MediaFolder::ROOT_FOLDER_NAME,
+        ]);
+
+        if ($rootFolder instanceof MediaFolder) {
+            return $rootFolder;
+        }
+
+        $rootFolder = (new MediaFolder())
+            ->setOwner($user)
+            ->setParent(null)
+            ->setName(MediaFolder::ROOT_FOLDER_NAME);
+
+        $this->mediaFolderRepository->save($rootFolder);
+
+        return $rootFolder;
     }
 
     public function findForExport(?string $status = null): array
