@@ -22,19 +22,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * API controller for MediaController endpoints.
- *
  * @method MediaResource getResource()
  * @method ResponseHandler getResponseHandler()
- * @package App\Media\Transport\Controller\Api\V1\Media
- * @author  Rami Aouinti <rami.aouinti@gmail.com>
  */
 #[AsController]
 #[Route(path: '/v1/admin/media')]
-#[Route(path: '/v1/media')]
 #[IsGranted(new Expression("is_granted('ROLE_ADMIN') or is_granted('ROLE_ROOT')"))]
 #[OA\Tag(name: 'Admin - Media Management')]
-class MediaController extends CrudController
+class AdminMediaController extends CrudController
 {
     protected static string $dtoBaseClass = Media::class;
 
@@ -47,7 +42,6 @@ class MediaController extends CrudController
     }
 
     #[Route(path: '/upload', methods: [Request::METHOD_POST])]
-    #[IsGranted('ROLE_USER')]
     public function uploadAction(Request $request): Response
     {
         $file = $request->files->get('file');
@@ -74,7 +68,6 @@ class MediaController extends CrudController
     }
 
     #[Route(path: '/export/{configurationId}/excel', methods: [Request::METHOD_GET])]
-    #[IsGranted('ROLE_USER')]
     public function exportExcelAction(string $configurationId): Response
     {
         $configuration = $this->getResource()->resolveExportConfiguration($configurationId);
@@ -92,7 +85,6 @@ class MediaController extends CrudController
     }
 
     #[Route(path: '/export/{configurationId}/pdf', methods: [Request::METHOD_GET])]
-    #[IsGranted('ROLE_USER')]
     public function exportPdfAction(string $configurationId): Response
     {
         $configuration = $this->getResource()->resolveExportConfiguration($configurationId);
