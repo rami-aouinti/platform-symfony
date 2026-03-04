@@ -111,6 +111,36 @@ final class ProfileApplicationControllerTest extends WebTestCase
         $list = $this->decodeResponse($client->getResponse()->getContent());
         self::assertFalse($this->findEnabledStateByName($list['items'], 'School'));
     }
+
+    /**
+     * @throws Throwable
+     */
+    #[TestDox('POST /api/v1/profile/applications/{id}/attach and DELETE /detach attach and detach current user application')]
+    public function testAttachAndDetachEndpoints(): void
+    {
+        $applicationRepository = static::getContainer()->get(ApplicationRepositoryInterface::class);
+        $application = $applicationRepository->findOneByName('ERP');
+        self::assertNotNull($application);
+
+        $client = $this->getTestClient('john-user', 'password-user');
+
+        $client->request(Request::METHOD_POST, self::PROFILE_URL . '/' . $application->getId() . '/attach');
+        self::assertSame(Response::HTTP_CREATED, $client->getResponse()->getStatusCode(), "Response:
+" . $client->getResponse());
+
+        $client->request(Request::METHOD_GET, self::PROFILE_URL);
+        $list = $this->decodeResponse($client->getResponse()->getContent());
+        self::assertTrue($this->findEnabledStateByName($list['items'], 'ERP'));
+
+        $client->request(Request::METHOD_DELETE, self::PROFILE_URL . '/' . $application->getId() . '/detach');
+        self::assertSame(Response::HTTP_NO_CONTENT, $client->getResponse()->getStatusCode(), "Response:
+" . $client->getResponse());
+
+        $client->request(Request::METHOD_GET, self::PROFILE_URL);
+        $list = $this->decodeResponse($client->getResponse()->getContent());
+        self::assertFalse($this->findEnabledStateByName($list['items'], 'ERP'));
+    }
+
     /**
      * @param string|false $content
      *

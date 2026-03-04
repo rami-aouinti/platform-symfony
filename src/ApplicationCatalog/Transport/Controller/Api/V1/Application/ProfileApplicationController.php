@@ -69,6 +69,18 @@ final readonly class ProfileApplicationController
         return $this->toggle($application, $payload->isActive());
     }
 
+
+    #[Route(path: '/v1/profile/applications/{id}/attach', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/me/profile/applications/{id}/attach', methods: [Request::METHOD_POST])]
+    #[OA\Post(summary: 'Attach an application to current user')]
+    public function attachAction(string $id): JsonResponse
+    {
+        $application = $this->findApplicationOrFail($id);
+        $dto = $this->userApplicationToggleResource->attach($this->getCurrentUserOrDeny(), $application);
+
+        return new JsonResponse($dto->toArray(), JsonResponse::HTTP_CREATED);
+    }
+
     #[Route(path: '/v1/profile/applications/{id}/activate', methods: [Request::METHOD_POST])]
     #[Route(path: '/v1/me/profile/applications/{id}/activate', methods: [Request::METHOD_POST])]
     #[OA\Post(summary: 'Activate an application for current user')]
@@ -83,6 +95,17 @@ final readonly class ProfileApplicationController
     public function deactivateAction(string $id): JsonResponse
     {
         return $this->toggle($this->findApplicationOrFail($id), false);
+    }
+
+
+    #[Route(path: '/v1/profile/applications/{id}/detach', methods: [Request::METHOD_DELETE])]
+    #[Route(path: '/v1/me/profile/applications/{id}/detach', methods: [Request::METHOD_DELETE])]
+    #[OA\Delete(summary: 'Detach an application from current user')]
+    public function detachAction(string $id): JsonResponse
+    {
+        $this->userApplicationToggleResource->detach($this->getCurrentUserOrDeny(), $this->findApplicationOrFail($id));
+
+        return new JsonResponse(status: JsonResponse::HTTP_NO_CONTENT);
     }
 
     private function toggle(ApplicationEntity $application, bool $active): JsonResponse

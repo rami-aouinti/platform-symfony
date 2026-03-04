@@ -10,9 +10,13 @@ use App\User\Domain\Entity\User;
 
 interface UserApplicationToggleServiceInterface
 {
+    public function attach(User $user, Application $application): UserApplication;
+
     public function activate(User $user, Application $application): UserApplication;
 
     public function deactivate(User $user, Application $application): UserApplication;
 
     public function toggle(User $user, Application $application, bool $active): UserApplication;
+
+    public function detach(User $user, Application $application): void;
 }

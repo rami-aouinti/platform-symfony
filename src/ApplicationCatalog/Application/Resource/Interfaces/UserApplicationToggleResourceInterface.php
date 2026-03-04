@@ -10,5 +10,9 @@ use App\User\Domain\Entity\User;
 
 interface UserApplicationToggleResourceInterface
 {
+    public function attach(User $targetUser, ApplicationEntity $application): Application;
+
     public function toggle(User $targetUser, ApplicationEntity $application, bool $active): Application;
+
+    public function detach(User $targetUser, ApplicationEntity $application): void;
 }
