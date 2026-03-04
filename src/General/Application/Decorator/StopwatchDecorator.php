@@ -8,7 +8,6 @@ use App\General\Application\DTO\Interfaces\RestDtoInterface;
 use App\General\Domain\Entity\Interfaces\EntityInterface;
 use Closure;
 use Doctrine\DBAL\Schema\Index;
-use Doctrine\ORM\Mapping as ORM;
 use ProxyManager\Factory\AccessInterceptorValueHolderFactory;
 use ReflectionClass;
 use ReflectionMethod;
@@ -45,7 +44,6 @@ class StopwatchDecorator
             || str_contains($class->getName(), 'RequestStack')
             || str_contains($class->getName(), 'Mock_')
             || str_starts_with($class->getName(), Index::class)
-            || $this->isDoctrineEntityClass($class)
         ) {
             return $service;
         }
@@ -59,23 +57,6 @@ class StopwatchDecorator
         }
 
         return $output;
-    }
-
-    private function isDoctrineEntityClass(ReflectionClass $class): bool
-    {
-        while ($class !== false) {
-            if (
-                $class->getAttributes(ORM\Entity::class) !== []
-                || $class->getAttributes(ORM\MappedSuperclass::class) !== []
-                || $class->getAttributes(ORM\Embeddable::class) !== []
-            ) {
-                return true;
-            }
-
-            $class = $class->getParentClass();
-        }
-
-        return false;
     }
 
     /**
@@ -113,7 +94,6 @@ class StopwatchDecorator
                     is_object($returnValue)
                     && !$returnValue instanceof EntityInterface
                     && !$returnValue instanceof RestDtoInterface
-                    && !$this->isDoctrineEntityClass(new ReflectionClass($returnValue))
                 ) {
                     $returnValue = $this->decorate($returnValue);
                 }
