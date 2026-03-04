@@ -38,6 +38,14 @@ final class LoadMediaData extends Fixture implements OrderedFixtureInterface
         $johnArchives = $this->getReference('MediaFolder-john-root-archives', MediaFolder::class);
         /** @var MediaFolder $johnShared */
         $johnShared = $this->getReference('MediaFolder-john-root-shared', MediaFolder::class);
+        /** @var MediaFolder $johnImagesEvents */
+        $johnImagesEvents = $this->getReference('MediaFolder-john-root-images-events', MediaFolder::class);
+        /** @var MediaFolder $johnDocumentsReports */
+        $johnDocumentsReports = $this->getReference('MediaFolder-john-root-documents-reports', MediaFolder::class);
+        /** @var MediaFolder $johnContractsSigned */
+        $johnContractsSigned = $this->getReference('MediaFolder-john-root-contracts-signed', MediaFolder::class);
+        /** @var MediaFolder $johnArchives2024 */
+        $johnArchives2024 = $this->getReference('MediaFolder-john-root-archives-2024', MediaFolder::class);
 
         /** @var MediaFolder $aliceImages */
         $aliceImages = $this->getReference('MediaFolder-alice-user-images', MediaFolder::class);
@@ -126,6 +134,55 @@ final class LoadMediaData extends Fixture implements OrderedFixtureInterface
             path: 'media/john-root/shared/shared-roadmap.docx',
             mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             size: 512000,
+        );
+
+
+        $this->createMedia(
+            manager: $manager,
+            reference: 'Media-john-root-events-team-jpg',
+            uuid: '81000000-0000-1000-8000-000000000010',
+            owner: $johnRoot,
+            folder: $johnImagesEvents,
+            name: 'team-event.jpg',
+            path: 'media/john-root/images/events/team-event.jpg',
+            mimeType: 'image/jpeg',
+            size: 684032,
+        );
+
+        $this->createMedia(
+            manager: $manager,
+            reference: 'Media-john-root-report-q1-pdf',
+            uuid: '81000000-0000-1000-8000-000000000011',
+            owner: $johnRoot,
+            folder: $johnDocumentsReports,
+            name: 'report-q1.pdf',
+            path: 'media/john-root/documents/reports/report-q1.pdf',
+            mimeType: 'application/pdf',
+            size: 921600,
+        );
+
+        $this->createMedia(
+            manager: $manager,
+            reference: 'Media-john-root-signed-master-pdf',
+            uuid: '81000000-0000-1000-8000-000000000012',
+            owner: $johnRoot,
+            folder: $johnContractsSigned,
+            name: 'master-contract-signed.pdf',
+            path: 'media/john-root/contracts/signed/master-contract-signed.pdf',
+            mimeType: 'application/pdf',
+            size: 745472,
+        );
+
+        $this->createMedia(
+            manager: $manager,
+            reference: 'Media-john-root-archive-2024-zip',
+            uuid: '81000000-0000-1000-8000-000000000013',
+            owner: $johnRoot,
+            folder: $johnArchives2024,
+            name: 'archive-2024.zip',
+            path: 'media/john-root/archives/2024/archive-2024.zip',
+            mimeType: 'application/zip',
+            size: 3551232,
         );
 
         $forbiddenMedia = $this->createMedia(

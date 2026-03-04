@@ -29,11 +29,16 @@ final class LoadMediaFolderData extends Fixture implements OrderedFixtureInterfa
         $johnRootFolder = $this->createFolder($manager, 'MediaFolder-john-root-root', '80000000-0000-1000-8000-000000000001', MediaFolder::ROOT_FOLDER_NAME, $johnRoot, null);
         $aliceRoot = $this->createFolder($manager, 'MediaFolder-alice-user-root', '80000000-0000-1000-8000-000000000002', MediaFolder::ROOT_FOLDER_NAME, $alice, null);
 
-        $this->createFolder($manager, 'MediaFolder-john-root-images', '80000000-0000-1000-8000-000000000011', 'Images', $johnRoot, $johnRootFolder);
-        $this->createFolder($manager, 'MediaFolder-john-root-documents', '80000000-0000-1000-8000-000000000012', 'Documents', $johnRoot, $johnRootFolder);
-        $this->createFolder($manager, 'MediaFolder-john-root-contracts', '80000000-0000-1000-8000-000000000013', 'Contrats', $johnRoot, $johnRootFolder);
-        $this->createFolder($manager, 'MediaFolder-john-root-archives', '80000000-0000-1000-8000-000000000014', 'Archives', $johnRoot, $johnRootFolder);
+        $johnImages = $this->createFolder($manager, 'MediaFolder-john-root-images', '80000000-0000-1000-8000-000000000011', 'Images', $johnRoot, $johnRootFolder);
+        $johnDocuments = $this->createFolder($manager, 'MediaFolder-john-root-documents', '80000000-0000-1000-8000-000000000012', 'Documents', $johnRoot, $johnRootFolder);
+        $johnContracts = $this->createFolder($manager, 'MediaFolder-john-root-contracts', '80000000-0000-1000-8000-000000000013', 'Contrats', $johnRoot, $johnRootFolder);
+        $johnArchives = $this->createFolder($manager, 'MediaFolder-john-root-archives', '80000000-0000-1000-8000-000000000014', 'Archives', $johnRoot, $johnRootFolder);
         $this->createFolder($manager, 'MediaFolder-john-root-shared', '80000000-0000-1000-8000-000000000015', 'Shared', $johnRoot, $johnRootFolder);
+
+        $this->createFolder($manager, 'MediaFolder-john-root-images-events', '80000000-0000-1000-8000-000000000016', 'Events', $johnRoot, $johnImages);
+        $this->createFolder($manager, 'MediaFolder-john-root-documents-reports', '80000000-0000-1000-8000-000000000017', 'Reports', $johnRoot, $johnDocuments);
+        $this->createFolder($manager, 'MediaFolder-john-root-contracts-signed', '80000000-0000-1000-8000-000000000018', 'Signed', $johnRoot, $johnContracts);
+        $this->createFolder($manager, 'MediaFolder-john-root-archives-2024', '80000000-0000-1000-8000-000000000019', '2024', $johnRoot, $johnArchives);
 
         $this->createFolder($manager, 'MediaFolder-alice-user-images', '80000000-0000-1000-8000-000000000021', 'Images', $alice, $aliceRoot);
         $this->createFolder($manager, 'MediaFolder-alice-user-documents', '80000000-0000-1000-8000-000000000022', 'Documents', $alice, $aliceRoot);

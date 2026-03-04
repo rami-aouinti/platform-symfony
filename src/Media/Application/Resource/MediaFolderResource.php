@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Media\Application\Resource;
 
 use App\Media\Application\Resource\Interfaces\MediaFolderResourceInterface;
+use App\Media\Domain\Entity\Media;
 use App\Media\Domain\Entity\MediaFolder;
 use App\Media\Domain\Repository\Interfaces\MediaFolderRepositoryInterface;
 use App\Media\Domain\Repository\Interfaces\MediaRepositoryInterface;
@@ -16,6 +17,7 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use function array_map;
+use function array_merge;
 use function in_array;
 use function trim;
 
@@ -134,14 +136,35 @@ class MediaFolderResource implements MediaFolderResourceInterface
 
     private function buildTreeNode(MediaFolder $folder, User $user): array
     {
-        $children = array_map(
+        $folderChildren = array_map(
             fn (MediaFolder $child): array => $this->buildTreeNode($child, $user),
             $this->mediaFolderRepository->findByOwnerAndParent($user, $folder),
         );
 
+        $mediaChildren = array_map(
+            fn (Media $media): array => $this->toMediaArray($media),
+            $this->mediaRepository->findBy(['owner' => $user, 'folder' => $folder]),
+        );
+
         return [
             ...$this->toArray($folder),
-            'children' => $children,
+            'type' => 'folder',
+            'children' => array_merge($folderChildren, $mediaChildren),
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function toMediaArray(Media $media): array
+    {
+        return [
+            'id' => $media->getId(),
+            'name' => $media->getName(),
+            'folderId' => $media->getFolder()?->getId(),
+            'ownerId' => $media->getOwner()?->getId(),
+            'mimeType' => $media->getMimeType(),
+            'size' => $media->getSize(),
+            'path' => $media->getPath(),
+            'type' => 'file',
         ];
     }
 
