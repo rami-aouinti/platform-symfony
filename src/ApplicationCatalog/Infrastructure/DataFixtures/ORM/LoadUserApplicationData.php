@@ -21,6 +21,8 @@ final class LoadUserApplicationData extends Fixture implements OrderedFixtureInt
             ['user' => 'john-root', 'application' => 'CRM', 'name' => 'CRM 1', 'keyName' => 'crm-1', 'public' => true, 'active' => true],
             ['user' => 'john-root', 'application' => 'CRM', 'name' => 'CRM 2', 'keyName' => 'crm-2', 'public' => false, 'active' => true],
             ['user' => 'john-root', 'application' => 'Shop', 'name' => 'Shop Principal', 'keyName' => 'shop-principal', 'public' => false, 'active' => true],
+            ['user' => 'john-root', 'application' => 'Recruit', 'name' => 'Recruit Principal', 'keyName' => 'recruit-principal', 'public' => false, 'active' => true],
+            ['user' => 'john-root', 'application' => 'School', 'name' => 'School Principal', 'keyName' => 'school-principal', 'public' => false, 'active' => false],
             ['user' => 'john-user', 'application' => 'Recruit', 'name' => 'Recruit John', 'keyName' => 'recruit-john', 'public' => false, 'active' => true],
             ['user' => 'alice-user', 'application' => 'School', 'name' => 'School Alice', 'keyName' => 'school-alice', 'public' => true, 'active' => true],
             ['user' => 'carol-user', 'application' => 'Shop', 'name' => 'Shop Carol', 'keyName' => 'shop-carol', 'public' => false, 'active' => true],
