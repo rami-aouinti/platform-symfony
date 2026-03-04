@@ -9,17 +9,11 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 final readonly class UserApplicationCreatePayload
 {
     public function __construct(
-        private string $applicationId,
         private ?string $name,
         private ?string $logo,
         private ?string $description,
         private bool $public,
     ) {
-    }
-
-    public function getApplicationId(): string
-    {
-        return $this->applicationId;
     }
 
     public function getName(): ?string
@@ -51,12 +45,6 @@ final readonly class UserApplicationCreatePayload
             throw new BadRequestHttpException('Payload must be an object.');
         }
 
-        $applicationId = $payload['applicationId'] ?? null;
-
-        if (!is_string($applicationId) || trim($applicationId) === '') {
-            throw new BadRequestHttpException('Payload must contain a non-empty "applicationId" property.');
-        }
-
         $name = $payload['name'] ?? null;
 
         if ($name !== null && !is_string($name)) {
@@ -81,6 +69,6 @@ final readonly class UserApplicationCreatePayload
             throw new BadRequestHttpException('"public" must be a boolean.');
         }
 
-        return new self(trim($applicationId), $name, $logo, $description, $public);
+        return new self($name, $logo, $description, $public);
     }
 }

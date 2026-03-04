@@ -100,13 +100,13 @@ final readonly class ProfileApplicationController
     /**
      * @throws JsonException
      */
-    #[Route(path: '/v1/profile/user-applications', methods: [Request::METHOD_POST])]
-    #[Route(path: '/v1/me/profile/user-applications', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/profile/user-applications/{applicationId}', methods: [Request::METHOD_POST])]
+    #[Route(path: '/v1/me/profile/user-applications/{applicationId}', methods: [Request::METHOD_POST])]
     #[OA\Post(summary: 'Create a user application for current user')]
-    public function createUserApplicationAction(Request $request): JsonResponse
+    public function createUserApplicationAction(Request $request, string $applicationId): JsonResponse
     {
         $payload = UserApplicationCreatePayload::fromPayload(JSON::decode((string)$request->getContent(), true));
-        $application = $this->findApplicationOrFail($payload->getApplicationId());
+        $application = $this->findApplicationOrFail($applicationId);
         $currentUser = $this->getCurrentUserOrDeny();
 
         $created = $this->userApplicationCreateService->create(
