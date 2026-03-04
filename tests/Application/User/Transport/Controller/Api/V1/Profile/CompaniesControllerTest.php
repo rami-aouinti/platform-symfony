@@ -13,6 +13,7 @@ class CompaniesControllerTest extends WebTestCase
 {
     private const string COMPANIES_URL = self::API_URL_PREFIX . '/v1/me/profile/companies';
     private const string PROJECTS_URL = self::API_URL_PREFIX . '/v1/me/profile/projects';
+    private const string COMPANY_PROJECTS_URL = self::API_URL_PREFIX . '/v1/me/profile/companies/%s/projects';
 
     /**
      * @throws Throwable
@@ -133,5 +134,50 @@ class CompaniesControllerTest extends WebTestCase
         self::assertContains('70000000-0000-1000-8000-000000000001', $aliceProjectIds);
         self::assertContains('70000000-0000-1000-8000-000000000006', $aliceProjectIds);
         self::assertContains('70000000-0000-1000-8000-000000000007', $aliceProjectIds);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testCompanyProjectsEndpointReturnsProjectsForOwnedCompany(): void
+    {
+        $aliceClient = $this->getTestClient('alice-user', 'password-user');
+        $aliceClient->request('GET', sprintf(self::COMPANY_PROJECTS_URL, '30000000-0000-1000-8000-000000000008'));
+
+        self::assertSame(Response::HTTP_OK, $aliceClient->getResponse()->getStatusCode());
+
+        $companyProjects = JSON::decode((string)$aliceClient->getResponse()->getContent(), true);
+        self::assertIsArray($companyProjects);
+        self::assertContains('70000000-0000-1000-8000-000000000008', array_column($companyProjects, 'id'));
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testCompanyProjectsEndpointReturnsProjectsForActiveMembershipCompany(): void
+    {
+        $aliceClient = $this->getTestClient('alice-user', 'password-user');
+        $aliceClient->request('GET', sprintf(self::COMPANY_PROJECTS_URL, '30000000-0000-1000-8000-000000000001'));
+
+        self::assertSame(Response::HTTP_OK, $aliceClient->getResponse()->getStatusCode());
+
+        $companyProjects = JSON::decode((string)$aliceClient->getResponse()->getContent(), true);
+        self::assertIsArray($companyProjects);
+
+        $projectIds = array_column($companyProjects, 'id');
+        self::assertContains('70000000-0000-1000-8000-000000000001', $projectIds);
+        self::assertContains('70000000-0000-1000-8000-000000000006', $projectIds);
+        self::assertContains('70000000-0000-1000-8000-000000000007', $projectIds);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testCompanyProjectsEndpointReturnsForbiddenForInaccessibleCompany(): void
+    {
+        $emmaClient = $this->getTestClient('emma-user', 'password-user');
+        $emmaClient->request('GET', sprintf(self::COMPANY_PROJECTS_URL, '30000000-0000-1000-8000-000000000001'));
+
+        self::assertSame(Response::HTTP_FORBIDDEN, $emmaClient->getResponse()->getStatusCode());
     }
 }
