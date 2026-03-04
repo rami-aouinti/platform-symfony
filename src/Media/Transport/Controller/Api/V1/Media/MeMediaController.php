@@ -12,6 +12,7 @@ use App\Media\Application\Resource\Interfaces\MediaResourceInterface;
 use App\Media\Application\Resource\MediaResource;
 use App\Media\Application\Service\MediaExportService;
 use OpenApi\Attributes as OA;
+use OpenApi\Attributes\JsonContent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -23,6 +24,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Throwable;
 
 use function in_array;
 use function is_file;
