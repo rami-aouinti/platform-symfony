@@ -47,7 +47,6 @@ trait CreateAction
         ]],
     )]
     #[OA\RequestBody(
-        request: 'body',
         description: 'Exemple de payload de création',
         content: new JsonContent(
             type: 'object',
