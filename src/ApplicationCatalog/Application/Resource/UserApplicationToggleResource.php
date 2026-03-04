@@ -24,7 +24,31 @@ final readonly class UserApplicationToggleResource implements UserApplicationTog
     ) {
     }
 
+    public function attach(User $targetUser, ApplicationEntity $application): Application
+    {
+        $this->denyUnlessAllowed($targetUser);
+
+        $userApplication = $this->userApplicationToggleService->attach($targetUser, $application);
+
+        return $this->applicationMapper->mapEntityToDto($application, $userApplication);
+    }
+
     public function toggle(User $targetUser, ApplicationEntity $application, bool $active): Application
+    {
+        $this->denyUnlessAllowed($targetUser);
+
+        $userApplication = $this->userApplicationToggleService->toggle($targetUser, $application, $active);
+
+        return $this->applicationMapper->mapEntityToDto($application, $userApplication);
+    }
+
+    public function detach(User $targetUser, ApplicationEntity $application): void
+    {
+        $this->denyUnlessAllowed($targetUser);
+        $this->userApplicationToggleService->detach($targetUser, $application);
+    }
+
+    private function denyUnlessAllowed(User $targetUser): void
     {
         $actor = $this->userTypeIdentification->getUser();
 
@@ -35,10 +59,6 @@ final readonly class UserApplicationToggleResource implements UserApplicationTog
         if ($actor->getId() !== $targetUser->getId() && !$this->isAdminLike($actor)) {
             throw new AccessDeniedHttpException('You cannot update application activations for another user.');
         }
-
-        $userApplication = $this->userApplicationToggleService->toggle($targetUser, $application, $active);
-
-        return $this->applicationMapper->mapEntityToDto($application, $userApplication);
     }
 
     private function isAdminLike(User $user): bool

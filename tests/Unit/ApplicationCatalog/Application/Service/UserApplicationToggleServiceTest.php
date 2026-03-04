@@ -75,4 +75,48 @@ final class UserApplicationToggleServiceTest extends TestCase
         self::assertSame($existing, $result);
         self::assertFalse($result->isActive());
     }
+
+
+    public function testDetachRemovesExistingUserApplication(): void
+    {
+        $service = new UserApplicationToggleService($this->repository);
+        $user = new User();
+        $application = (new Application())->setName('CRM');
+        $existing = new UserApplication($user, $application);
+        $user->addUserApplication($existing);
+
+        $this->repository
+            ->expects(self::once())
+            ->method('findOneByUserAndApplication')
+            ->with($user, $application)
+            ->willReturn($existing);
+
+        $this->repository
+            ->expects(self::once())
+            ->method('remove')
+            ->with($existing);
+
+        $service->detach($user, $application);
+
+        self::assertCount(0, $user->getUserApplications());
+    }
+
+    public function testDetachDoesNothingWhenUserApplicationIsMissing(): void
+    {
+        $service = new UserApplicationToggleService($this->repository);
+        $user = new User();
+        $application = (new Application())->setName('CRM');
+
+        $this->repository
+            ->expects(self::once())
+            ->method('findOneByUserAndApplication')
+            ->with($user, $application)
+            ->willReturn(null);
+
+        $this->repository
+            ->expects(self::never())
+            ->method('remove');
+
+        $service->detach($user, $application);
+    }
 }

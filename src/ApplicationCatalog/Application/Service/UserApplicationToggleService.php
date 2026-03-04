@@ -17,6 +17,11 @@ class UserApplicationToggleService implements UserApplicationToggleServiceInterf
     ) {
     }
 
+    public function attach(User $user, Application $application): UserApplication
+    {
+        return $this->toggle($user, $application, true);
+    }
+
     public function activate(User $user, Application $application): UserApplication
     {
         return $this->toggle($user, $application, true);
@@ -43,5 +48,17 @@ class UserApplicationToggleService implements UserApplicationToggleServiceInterf
         $this->userApplicationRepository->save($userApplication);
 
         return $userApplication;
+    }
+
+    public function detach(User $user, Application $application): void
+    {
+        $userApplication = $this->userApplicationRepository->findOneByUserAndApplication($user, $application);
+
+        if (!$userApplication instanceof UserApplication) {
+            return;
+        }
+
+        $user->removeUserApplication($userApplication);
+        $this->userApplicationRepository->remove($userApplication);
     }
 }
