@@ -35,6 +35,8 @@ class Project extends RestDto
 
     protected ?string $photoMediaId = null;
 
+    protected ?string $companyId = null;
+
     public function getName(): string
     {
         return $this->name;
@@ -87,6 +89,19 @@ class Project extends RestDto
         return $this;
     }
 
+    public function getCompanyId(): ?string
+    {
+        return $this->companyId;
+    }
+
+    public function setCompanyId(?string $companyId): self
+    {
+        $this->setVisited('companyId');
+        $this->companyId = $companyId;
+
+        return $this;
+    }
+
     public function getPhotoMediaId(): ?string
     {
         return $this->photoMediaId;
@@ -110,6 +125,7 @@ class Project extends RestDto
             $this->status = $entity->getStatus()->value;
             $this->photoUrl = $entity->getPhotoUrl();
             $this->photoMediaId = $entity->getPhotoMediaId();
+            $this->companyId = $entity->getCompany()->getId();
         }
 
         return $this;

@@ -22,6 +22,13 @@ interface CompanyMembershipResourceInterface extends RestSmallResourceInterface
         ?string $status = null,
     ): CompanyMembership;
 
+    public function inviteOrAttachByEmail(
+        string $companyId,
+        string $email,
+        ?string $role = null,
+        ?string $status = null,
+    ): CompanyMembership;
+
     public function updateMembership(
         string $companyId,
         string $userId,
@@ -30,6 +37,8 @@ interface CompanyMembershipResourceInterface extends RestSmallResourceInterface
     ): CompanyMembership;
 
     public function removeMembership(string $companyId, string $userId): void;
+
+    public function removeMembershipByEmail(string $companyId, string $email): void;
 
     /**
      * @return array<int, CompanyMembership>
